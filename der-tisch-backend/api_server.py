@@ -171,7 +171,7 @@ def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: 
 
 def sync_call_perspective(system_prompt: str, question: str) -> dict:
     return _call_api(
-        model="claude_sonnet_4_6",
+        model="claude-sonnet-4-6",
         max_tokens=800,
         system=system_prompt,
         tools=[PERSPECTIVE_TOOL],
@@ -188,7 +188,7 @@ def sync_call_friction(context: str, question: str) -> dict:
         f"Sei KURZ — je 1 Satz pro Item."
     )
     return _call_api(
-        model="claude_sonnet_4_6",
+        model="claude-sonnet-4-6",
         max_tokens=800,
         system="Adversarial Agent. Finde Widersprüche. Keine Synthese. Kurze präzise Sätze.",
         tools=[FRICTION_TOOL],
@@ -206,7 +206,7 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
         f"Respektiere die Reibung. Sei KURZ — je 1 Satz pro Item."
     )
     return _call_api(
-        model="claude_sonnet_4_6",
+        model="claude-sonnet-4-6",
         max_tokens=1500,
         system="Meta-Integrations-Agent. Synthetisiere ohne zu glätten. Kurze präzise Sätze.",
         tools=[INTEGRATION_TOOL],
