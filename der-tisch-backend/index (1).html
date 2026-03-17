@@ -611,6 +611,33 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   color: var(--color-text-muted);
 }
 
+.claim-type-badge {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  padding: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-3);
+  background: rgba(196, 160, 80, 0.06);
+  border: 1px solid rgba(196, 160, 80, 0.18);
+  border-radius: var(--radius-md);
+}
+
+.claim-type-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-amber);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.claim-type-text {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
 .perspective-analysis {
   font-size: var(--text-base);
   line-height: 1.75;
@@ -944,6 +971,76 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 }
 
 /* =============================================
+   FAZIT, ENTSCHEIDUNGSHILFE, KURZFASSUNG
+============================================= */
+.fazit-card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-divider);
+  border-left: 3px solid var(--color-amber);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-7);
+}
+
+.fazit-text {
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--color-text);
+  font-style: italic;
+}
+
+.entscheidung-list,
+.kurzfassung-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+
+.entscheidung-item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--color-text);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+}
+
+.entscheidung-arrow {
+  font-weight: 700;
+  color: var(--color-amber);
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+}
+
+.kurzfassung-item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--color-text);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-divider);
+}
+
+.kurzfassung-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-amber);
+  flex-shrink: 0;
+  margin-top: 0.45em;
+}
+
+/* =============================================
    ERROR STATE
 ============================================= */
 .error-panel {
@@ -1139,8 +1236,8 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
       <div class="section-header">
         <div class="section-badge red">II</div>
         <div>
-          <h2 class="section-title" style="color: var(--color-friction);">Reibung &amp; Scheinkonsens</h2>
-          <p class="section-subtitle">Wo widersprechen sich die Methoden wirklich?</p>
+          <h2 class="section-title" style="color: var(--color-friction);">Reibung &amp; Inkommensurabilität</h2>
+          <p class="section-subtitle">Übersetzungsfehler von echten Widersprüchen unterscheiden.</p>
         </div>
       </div>
       <div class="friction-card">
@@ -1149,14 +1246,14 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
             <div>
               <p class="friction-col-title">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                Harte Widersprüche
+                Echte Widersprüche
               </p>
               <ul class="friction-list" id="hardContradictions"></ul>
             </div>
             <div>
               <p class="friction-col-title">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                Scheinkonsens
+                Übersetzungsfehler
               </p>
               <ul class="friction-list" id="pseudoConsensus"></ul>
             </div>
@@ -1177,15 +1274,15 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
       <div class="section-header">
         <div class="section-badge blue">III</div>
         <div>
-          <h2 class="section-title">Die Meta-Synthese</h2>
-          <p class="section-subtitle">Integration ohne Kuschelkonsens — Klarheit trotz Komplexität.</p>
+          <h2 class="section-title">Die Kartierung</h2>
+          <p class="section-subtitle">Nicht Synthese — ehrliche Karte der Ansprüche, Brücken und Unvereinbarkeiten.</p>
         </div>
       </div>
       <div class="integration-card">
 
         <!-- Vorläufiger Konsens -->
         <div class="integration-header">
-          <p class="integration-consensus-label">Vorläufiger Konsens</p>
+          <p class="integration-consensus-label">Anspruchskarte</p>
           <p class="integration-consensus-text" id="provisionalConsensus"></p>
         </div>
 
@@ -1194,14 +1291,14 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
           <div class="integration-cell cell-differenzen">
             <p class="integration-cell-title">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-              Fruchtbare Differenzen
+              Übersetzbare Brücken
             </p>
             <ul class="integration-cell-list" id="fruitfulDiffs"></ul>
           </div>
           <div class="integration-cell cell-translate">
             <p class="integration-cell-title">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-              Übersetzbarkeit
+              Übersetzbarkeit (optional)
             </p>
             <ul class="integration-cell-list" id="translatability"></ul>
           </div>
@@ -1227,6 +1324,50 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
         </div>
 
       </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 4. VORLÄUFIGES FAZIT -->
+    <section id="fazitSection" class="hidden">
+      <div class="section-header">
+        <div class="section-badge amber">IV</div>
+        <div>
+          <h2 class="section-title" id="fazitTitle">Vorläufiges Fazit</h2>
+          <p class="section-subtitle" id="fazitSubtitle">Keine Endantwort — aber eine belastbare Arbeitsorientierung.</p>
+        </div>
+      </div>
+      <div class="fazit-card">
+        <p class="fazit-text" id="vorlaeufiges_fazit"></p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 5. ENTSCHEIDUNGSHILFE -->
+    <section id="entscheidungSection" class="hidden">
+      <div class="section-header">
+        <div class="section-badge amber">V</div>
+        <div>
+          <h2 class="section-title" id="entscheidungTitle">Entscheidungshilfe</h2>
+          <p class="section-subtitle" id="entscheidungSubtitle">Welche Methode ist hier das richtige Werkzeug?</p>
+        </div>
+      </div>
+      <ul class="entscheidung-list" id="entscheidungList"></ul>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 6. KURZFASSUNG -->
+    <section id="kurzfassungSection" class="hidden">
+      <div class="section-header">
+        <div class="section-badge amber">VI</div>
+        <div>
+          <h2 class="section-title" id="kurzfassungTitle">Kurzfassung</h2>
+          <p class="section-subtitle" id="kurzfassungSubtitle">Der gesamte Tisch in Stichworten.</p>
+        </div>
+      </div>
+      <ul class="kurzfassung-list" id="kurzfassungList"></ul>
     </section>
 
   </div><!-- /results -->
@@ -1270,21 +1411,27 @@ const TRANSLATIONS = {
     ],
     loadingTitle: 'Die Architektur arbeitet',
     phase1: '4 Agenten denken parallel — Systemisch, Tiefenpsychologisch, Empirisch, Philosophisch',
-    phase2: 'Reibungs-Agent sucht Widersprüche und Scheinkonsens',
-    phase3: 'Integrations-Agent bildet die Meta-Synthese',
+    phase2: 'Reibungs-Agent unterscheidet Übersetzungsfehler von echten Widersprüchen',
+    phase3: 'Kartierungs-Agent baut die Anspruchskarte',
     errorTitle: 'Verbindungsfehler',
     errorDefault: 'Backend nicht erreichbar. Läuft der Server auf Port 8000?',
     sec1title: 'Perspektiven am Tisch',
     sec1sub: 'Vier Methoden. Parallele Analyse. Keine Absprache.',
-    sec2title: 'Reibung & Scheinkonsens',
-    sec2sub: 'Wo widersprechen sich die Methoden wirklich?',
-    hardContradictions: 'Harte Widersprüche',
-    pseudoConsensus: 'Scheinkonsens',
+    sec2title: 'Reibung & Inkommensurabilität',
+    sec2sub: 'Übersetzungsfehler von echten Widersprüchen unterscheiden.',
+    hardContradictions: 'Echte Widersprüche',
+    pseudoConsensus: 'Übersetzungsfehler',
+    claimTypeLabel: 'Anspruchstyp:',
+    provisionalConsensusLabel_v3: 'Anspruchskarte',
+    bridgesLabel: 'Übersetzbare Brücken',
+    claimMap: 'Anspruchskarte',
+    hardContradictions_old: 'Harte Widersprüche',
+    pseudoConsensus_old: 'Scheinkonsens',
     blindSpotTable: 'Blinder Fleck des gesamten Tisches',
-    sec3title: 'Die Meta-Synthese',
-    sec3sub: 'Integration ohne Kuschelkonsens — Klarheit trotz Komplexität.',
-    provisionalConsensusLabel: 'Vorläufiger Konsens',
-    fruitfulDiffsLabel: 'Fruchtbare Differenzen',
+    sec3title: 'Die Kartierung',
+    sec3sub: 'Nicht Synthese — ehrliche Karte der Ansprüche, Brücken und Unvereinbarkeiten.',
+    provisionalConsensusLabel: 'Anspruchskarte',
+    fruitfulDiffsLabel: 'Übersetzbare Brücken',
     translatabilityLabel: 'Übersetzbarkeit',
     incompatibilitiesLabel: 'Echte Unvereinbarkeiten',
     practicalOptionsLabel: 'Praktische Optionen',
@@ -1314,15 +1461,20 @@ const TRANSLATIONS = {
     errorDefault: 'Backend unreachable. Is the server running on port 8000?',
     sec1title: 'Perspectives at the Table',
     sec1sub: 'Four methods. Parallel analysis. No coordination.',
-    sec2title: 'Friction & Pseudo-Consensus',
-    sec2sub: 'Where do the methods genuinely contradict each other?',
-    hardContradictions: 'Hard Contradictions',
-    pseudoConsensus: 'Pseudo-Consensus',
+    sec2title: 'Friction & Incommensurability',
+    sec2sub: 'Distinguishing translation errors from genuine contradictions.',
+    hardContradictions: 'Genuine Contradictions',
+    pseudoConsensus: 'Translation Errors',
+    claimTypeLabel: 'Claim type:',
+    claimMap: 'Claim Map',
+    bridgesLabel: 'Translatable Bridges',
+    hardContradictions_old: 'Hard Contradictions',
+    pseudoConsensus_old: 'Pseudo-Consensus',
     blindSpotTable: 'Blind spot of the entire table',
-    sec3title: 'The Meta-Synthesis',
-    sec3sub: 'Integration without comfortable consensus — clarity despite complexity.',
-    provisionalConsensusLabel: 'Provisional Consensus',
-    fruitfulDiffsLabel: 'Fruitful Differences',
+    sec3title: 'The Mapping',
+    sec3sub: 'Not synthesis — an honest map of claims, bridges, and irreducible differences.',
+    provisionalConsensusLabel: 'Claim Map',
+    fruitfulDiffsLabel: 'Translatable Bridges',
     translatabilityLabel: 'Translatability',
     incompatibilitiesLabel: 'Genuine Incompatibilities',
     practicalOptionsLabel: 'Practical Options',
@@ -1491,6 +1643,7 @@ function renderPerspectiveCard(p) {
         <div class="role-icon ${cfg.iconClass}">${cfg.icon}</div>
         <span class="role-label">${escapeHtml(p.rolle)}</span>
       </div>
+      ${p.anspruchstyp ? `<div class="claim-type-badge"><span class="claim-type-label">${t.claimTypeLabel}</span><span class="claim-type-text">${escapeHtml(p.anspruchstyp)}</span></div>` : ''}
       <p class="perspective-analysis">${escapeHtml(p.kernanalyse)}</p>
       <div class="perspective-meta">
         <div class="meta-block evidence">
@@ -1521,6 +1674,10 @@ function renderListItems(items, type) {
       return `<li class="action-item"><span class="action-dot"></span><span>${escapeHtml(item)}</span></li>`;
     } else if (type === 'path') {
       return `<li class="path-item"><span class="path-q">?</span><span>${escapeHtml(item)}</span></li>`;
+    } else if (type === 'entscheidung') {
+      return `<li class="entscheidung-item"><span class="entscheidung-arrow">→</span><span>${escapeHtml(item)}</span></li>`;
+    } else if (type === 'kurzfassung') {
+      return `<li class="kurzfassung-item"><span class="kurzfassung-dot"></span><span>${escapeHtml(item)}</span></li>`;
     }
     return '';
   }).join('');
@@ -1532,17 +1689,43 @@ function renderResults(data) {
   grid.innerHTML = data.perspectives.map(renderPerspectiveCard).join('');
 
   // 2. Friction
-  document.getElementById('hardContradictions').innerHTML = renderListItems(data.friction.harte_widersprueche, 'friction');
-  document.getElementById('pseudoConsensus').innerHTML = renderListItems(data.friction.scheinkonsens, 'friction');
+  // Friction: new V3 fields (uebersetzungsfehler + echte_widersprueche) with fallback for old fields
+  document.getElementById('hardContradictions').innerHTML = renderListItems(
+    data.friction.echte_widersprueche || data.friction.harte_widersprueche, 'friction'
+  );
+  document.getElementById('pseudoConsensus').innerHTML = renderListItems(
+    data.friction.uebersetzungsfehler || data.friction.scheinkonsens, 'friction'
+  );
   document.getElementById('overlooked').textContent = data.friction.uebersehenes;
 
-  // 3. Integration
-  document.getElementById('provisionalConsensus').textContent = data.integration.vorlaeufiger_konsens;
-  document.getElementById('fruitfulDiffs').innerHTML = renderListItems(data.integration.fruchtbare_differenzen, 'integration-arrow');
-  document.getElementById('translatability').innerHTML = renderListItems(data.integration.uebersetzbarkeit, 'integration-approx');
-  document.getElementById('incompatibilities').innerHTML = renderListItems(data.integration.echte_unvereinbarkeiten, 'integration-cross');
+  // 3. Integration: new V3 fields with fallback
+  document.getElementById('provisionalConsensus').textContent =
+    data.integration.anspruchskarte || data.integration.vorlaeufiger_konsens;
+  document.getElementById('fruitfulDiffs').innerHTML = renderListItems(
+    data.integration.uebersetzbare_bruecken || data.integration.fruchtbare_differenzen, 'integration-arrow'
+  );
+  document.getElementById('translatability').innerHTML = renderListItems(
+    data.integration.uebersetzbarkeit || [], 'integration-approx'
+  );
+  document.getElementById('incompatibilities').innerHTML = renderListItems(
+    data.integration.echte_unvereinbarkeiten, 'integration-cross'
+  );
   document.getElementById('practicalOptions').innerHTML = renderListItems(data.integration.praktische_optionen, 'action');
   document.getElementById('openPaths').innerHTML = renderListItems(data.integration.offene_pruefpfade, 'path');
+
+  // 4-6: Fazit, Entscheidungshilfe, Kurzfassung
+  if (data.integration.vorlaeufiges_fazit) {
+    document.getElementById('vorlaeufiges_fazit').textContent = data.integration.vorlaeufiges_fazit;
+    document.getElementById('fazitSection').classList.remove('hidden');
+  }
+  if (data.integration.entscheidungshilfe && data.integration.entscheidungshilfe.length) {
+    document.getElementById('entscheidungList').innerHTML = renderListItems(data.integration.entscheidungshilfe, 'entscheidung');
+    document.getElementById('entscheidungSection').classList.remove('hidden');
+  }
+  if (data.integration.kurzfassung && data.integration.kurzfassung.length) {
+    document.getElementById('kurzfassungList').innerHTML = renderListItems(data.integration.kurzfassung, 'kurzfassung');
+    document.getElementById('kurzfassungSection').classList.remove('hidden');
+  }
 }
 
 // =============================================
@@ -1569,6 +1752,10 @@ async function submitQuestion() {
 
   // Hide examples, show loading
   document.getElementById('exampleQuestions').classList.add('hidden');
+  // Hide new sections until new results arrive
+  document.getElementById('fazitSection').classList.add('hidden');
+  document.getElementById('entscheidungSection').classList.add('hidden');
+  document.getElementById('kurzfassungSection').classList.add('hidden');
   btn.disabled = true;
   btn.textContent = TRANSLATIONS[currentLang].submitWorking;
   showState('loading');
