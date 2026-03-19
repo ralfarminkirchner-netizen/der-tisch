@@ -85,6 +85,22 @@ STIL_INSTRUCTIONS = {
             "Complex ideas should feel like a story — not like an encyclopedia entry."
         ),
     },
+    "therapeutisch": {
+        "de": (
+            "SPRACHSTIL: Therapeutisch-zugewandt. Sprich wie ein erfahrener Therapeut oder systemischer Berater: "
+            "Gefühle und innere Zustände ernst nehmen, Ambivalenzen halten statt auflösen, "
+            "keine Urteile fällen. Formuliere einladend und offen — 'Was könnte es bedeuten, wenn...' statt "
+            "'Das ist so'. Benenne emotionale Realitäten, Glaubenssätze und innere Konflikte beim Namen. "
+            "Sprache ist warm, präzise und nie wertend."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Therapeutic-relational. Speak like an experienced therapist or systemic counselor: "
+            "take feelings and inner states seriously, hold ambivalences rather than resolving them, "
+            "pass no judgments. Formulate invitingly and openly — 'What might it mean if...' rather than "
+            "'That is so'. Name emotional realities, beliefs, and inner conflicts explicitly. "
+            "Language is warm, precise, and never judgmental."
+        ),
+    },
 }
 
 # ==========================================

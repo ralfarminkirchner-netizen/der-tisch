@@ -966,6 +966,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
         <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
         <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-oekonomisch">Ökon.</button>
         <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht">Kind</button>
+        <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therap.</button>
       </div>
       <!-- Lang toggle -->
       <button class="lang-toggle" id="langToggle" aria-label="Switch language">
@@ -990,6 +991,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   <button class="stil-btn" data-stil="alltag" onclick="setStil(this)">Alltag</button>
   <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)">Ökon.</button>
   <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)">Kind</button>
+  <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)">Therap.</button>
 </div>
 
 <!-- MAIN -->
@@ -1308,6 +1310,7 @@ const STIL_LABELS = {
     alltag:        'Alltagssprache',
     oekonomisch:   'Ökonomisch',
     kindgerecht:   'Kindgerecht',
+    therapeutisch: 'Therapeutisch',
   },
   en: {
     philosophisch: 'Philosophical',
@@ -1315,6 +1318,7 @@ const STIL_LABELS = {
     alltag:        'Everyday',
     oekonomisch:   'Economic',
     kindgerecht:   'Child-friendly',
+    therapeutisch: 'Therapeutic',
   }
 };
 
@@ -1519,7 +1523,7 @@ function applyTranslation(lang) {
   document.getElementById('langEn').className = lang === 'en' ? 'lang-active' : '';
 
   // Update stil button labels
-  const stilMap = { philosophisch: lang==='de'?'Philos.':'Philos.', akademisch: lang==='de'?'Akad.':'Acad.', alltag: lang==='de'?'Alltag':'Every.', oekonomisch: lang==='de'?'Ökon.':'Econ.', kindgerecht: lang==='de'?'Kind':'Child' };
+  const stilMap = { philosophisch: lang==='de'?'Philos.':'Philos.', akademisch: lang==='de'?'Akad.':'Acad.', alltag: lang==='de'?'Alltag':'Every.', oekonomisch: lang==='de'?'Ökon.':'Econ.', kindgerecht: lang==='de'?'Kind':'Child', therapeutisch: lang==='de'?'Therap.':'Therap.' };
   document.querySelectorAll('.stil-btn[data-stil]').forEach(b => {
     if (stilMap[b.dataset.stil]) b.textContent = stilMap[b.dataset.stil];
   });
