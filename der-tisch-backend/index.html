@@ -1357,6 +1357,47 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
         </div>
 
       </div>
+
+
+      <!-- KLÄRUNGSGESPRÄCH PANEL -->
+      <div class="eigener-tisch-panel hidden" id="klaerungsPanel">
+
+        <!-- Frage -->
+        <div class="question-form" style="margin-bottom:var(--space-6);">
+          <div class="question-input-wrapper">
+            <input type="text" class="question-input" id="clarifyQuestionInput"
+              placeholder="Was ist der Streitpunkt / die Kernfrage?" autocomplete="off" data-testid="input-clarify-question"/>
+            <button class="question-submit" id="clarifySubmitBtn" type="button"
+              onclick="submitClarify()" data-testid="button-clarify-submit">Klären</button>
+          </div>
+        </div>
+
+        <!-- Parteien nebeneinander -->
+        <div class="clarify-parties-row">
+          <div class="clarify-party-card">
+            <div class="clarify-party-badge" style="background:rgba(110,170,255,0.15);color:#6eaaff;">A</div>
+            <input class="persp-input" type="text" id="clarifyNameA"
+              placeholder="Name / Rolle (optional)" data-testid="input-clarify-name-a"/>
+            <textarea class="persp-input persp-textarea" id="clarifyPosA" rows="3"
+              placeholder="Was sagt, will oder vertritt Partei A?" data-testid="input-clarify-pos-a"></textarea>
+          </div>
+          <div class="clarify-party-card">
+            <div class="clarify-party-badge" style="background:rgba(255,150,100,0.15);color:#ff9664;">B</div>
+            <input class="persp-input" type="text" id="clarifyNameB"
+              placeholder="Name / Rolle (optional)" data-testid="input-clarify-name-b"/>
+            <textarea class="persp-input persp-textarea" id="clarifyPosB" rows="3"
+              placeholder="Was sagt, will oder vertritt Partei B?" data-testid="input-clarify-pos-b"></textarea>
+          </div>
+        </div>
+
+        <!-- Methoden-Chips (Pre-aktiviert: Pädagogisch + Neurodivergent) -->
+        <div class="methods-section" style="margin-top:var(--space-6);">
+          <p class="methods-label" id="clarifyMethodsLabel">Methoden-Agenten hinzuziehen (Pädagogisch + Neurodivergent vorausgewählt)</p>
+          <div class="methods-chips" id="clarifyMethodsChips"></div>
+          <p class="methods-hint" id="clarifyMethodsHint"></p>
+        </div>
+
+      </div><!-- /klaerungsPanel -->
     </div>
   </section>
 
@@ -1606,46 +1647,6 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
     </section>
 
 
-
-      <!-- KLÄRUNGSGESPRÄCH PANEL -->
-      <div class="eigener-tisch-panel hidden" id="klaerungsPanel">
-
-        <!-- Frage -->
-        <div class="question-form" style="margin-bottom:var(--space-6);">
-          <div class="question-input-wrapper">
-            <input type="text" class="question-input" id="clarifyQuestionInput"
-              placeholder="Was ist der Streitpunkt / die Kernfrage?" autocomplete="off" data-testid="input-clarify-question"/>
-            <button class="question-submit" id="clarifySubmitBtn" type="button"
-              onclick="submitClarify()" data-testid="button-clarify-submit">Klären</button>
-          </div>
-        </div>
-
-        <!-- Parteien nebeneinander -->
-        <div class="clarify-parties-row">
-          <div class="clarify-party-card">
-            <div class="clarify-party-badge" style="background:rgba(110,170,255,0.15);color:#6eaaff;">A</div>
-            <input class="persp-input" type="text" id="clarifyNameA"
-              placeholder="Name / Rolle (optional)" data-testid="input-clarify-name-a"/>
-            <textarea class="persp-input persp-textarea" id="clarifyPosA" rows="3"
-              placeholder="Was sagt, will oder vertritt Partei A?" data-testid="input-clarify-pos-a"></textarea>
-          </div>
-          <div class="clarify-party-card">
-            <div class="clarify-party-badge" style="background:rgba(255,150,100,0.15);color:#ff9664;">B</div>
-            <input class="persp-input" type="text" id="clarifyNameB"
-              placeholder="Name / Rolle (optional)" data-testid="input-clarify-name-b"/>
-            <textarea class="persp-input persp-textarea" id="clarifyPosB" rows="3"
-              placeholder="Was sagt, will oder vertritt Partei B?" data-testid="input-clarify-pos-b"></textarea>
-          </div>
-        </div>
-
-        <!-- Methoden-Chips (Pre-aktiviert: Pädagogisch + Neurodivergent) -->
-        <div class="methods-section" style="margin-top:var(--space-6);">
-          <p class="methods-label" id="clarifyMethodsLabel">Methoden-Agenten hinzuziehen (Pädagogisch + Neurodivergent vorausgewählt)</p>
-          <div class="methods-chips" id="clarifyMethodsChips"></div>
-          <p class="methods-hint" id="clarifyMethodsHint"></p>
-        </div>
-
-      </div><!-- /klaerungsPanel -->
 
 
     <!-- VIII. HERZMENSCH / KOPFMENSCH -->
