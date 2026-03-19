@@ -526,6 +526,11 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
 async def fetch_perspective(role: str, system_prompt: str, question: str) -> Perspective:
     data = await asyncio.to_thread(sync_call_perspective, system_prompt, question)
     data["rolle"] = role
+    # Ensure all required fields exist (defensive fallbacks)
+    data.setdefault("kernanalyse", data.get("analyse", data.get("core_analysis", "—")))
+    data.setdefault("anspruchstyp", data.get("claim_type", "—"))
+    data.setdefault("evidenz", data.get("evidence", "—"))
+    data.setdefault("blinder_fleck", data.get("blind_spot", "—"))
     return Perspective(**data)
 
 async def fetch_friction(perspectives: List[Perspective], question: str, lang: str = "de") -> Friction:
