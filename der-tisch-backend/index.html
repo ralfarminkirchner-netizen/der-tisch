@@ -586,22 +586,32 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 
 /* Herzmensch / Kopfmensch */
 .hk-card {
-  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
   background: var(--color-surface); border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl); overflow: hidden;
 }
-@media (max-width: 640px) { .hk-card { grid-template-columns: 1fr; } }
+.hk-card-4 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) { .hk-card, .hk-card-4 { grid-template-columns: 1fr; } }
 .hk-col {
-  padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4);
+  padding: var(--space-7); display: flex; flex-direction: column; gap: var(--space-3);
+  border-right: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);
 }
-.hk-col-herz { border-right: 1px solid rgba(220,80,100,0.15); background: rgba(220,80,100,0.04); }
-.hk-col-kopf { background: rgba(80,140,220,0.04); }
-.hk-col-icon { font-size: 1.5rem; }
-.hk-col-herz .hk-col-icon { color: #e05070; }
-.hk-col-kopf .hk-col-icon { color: #508cdc; }
-.hk-col-title { font-size: var(--text-base); font-weight: 600; margin: 0; }
-.hk-col-herz .hk-col-title { color: #e05070; }
-.hk-col-kopf .hk-col-title { color: #508cdc; }
+.hk-col:nth-child(2n) { border-right: none; }
+@media (max-width: 640px) { .hk-col { border-right: none; } }
+.hk-col-herz   { background: rgba(220,80,100,0.04); }
+.hk-col-kopf   { background: rgba(80,140,220,0.04); }
+.hk-col-maennlich { background: rgba(200,150,60,0.04); }
+.hk-col-weiblich  { background: rgba(100,180,120,0.05); }
+.hk-col-icon { font-size: 1.3rem; }
+.hk-col-herz .hk-col-icon     { color: #e05070; }
+.hk-col-kopf .hk-col-icon     { color: #508cdc; }
+.hk-col-maennlich .hk-col-icon { color: #c89640; }
+.hk-col-weiblich .hk-col-icon  { color: #50b478; }
+.hk-col-title { font-size: var(--text-sm); font-weight: 600; margin: 0; letter-spacing: 0.02em; text-transform: uppercase; opacity: 0.85; }
+.hk-col-herz .hk-col-title     { color: #e05070; }
+.hk-col-kopf .hk-col-title     { color: #508cdc; }
+.hk-col-maennlich .hk-col-title { color: #c89640; }
+.hk-col-weiblich .hk-col-title  { color: #50b478; }
 .hk-col-text { font-size: var(--text-sm); line-height: 1.7; color: var(--color-text-secondary); margin: 0; }
 
 /* Role color accents */
@@ -1649,16 +1659,16 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 
 
 
-    <!-- VIII. HERZMENSCH / KOPFMENSCH -->
+    <!-- VIII. VIER GRUNDPERSPEKTIVEN -->
     <section id="herzkopfSection" class="hidden section-selectable" data-block="herzkopf">
       <div class="section-header">
-        <div class="section-badge" style="background:linear-gradient(135deg,rgba(220,80,100,0.25),rgba(80,140,220,0.25));color:var(--color-text);">VIII</div>
+        <div class="section-badge" style="background:linear-gradient(135deg,rgba(220,80,100,0.25),rgba(80,140,220,0.25),rgba(100,180,100,0.25),rgba(200,150,60,0.25));color:var(--color-text);">VIII</div>
         <div>
-          <h2 class="section-title" id="herzkopfTitle">Herzmensch &amp; Kopfmensch</h2>
-          <p class="section-subtitle" id="herzkopfSubtitle">Zwei grundlegende Perspektiven auf das Fazit.</p>
+          <h2 class="section-title" id="herzkopfTitle">Vier Grundperspektiven</h2>
+          <p class="section-subtitle" id="herzkopfSubtitle">Herzmensch · Kopfmensch · Männliche Energie · Weibliche Energie</p>
         </div>
       </div>
-      <div class="hk-card">
+      <div class="hk-card hk-card-4">
         <div class="hk-col hk-col-herz">
           <div class="hk-col-icon">♥</div>
           <h3 class="hk-col-title" id="herzTitle">Herzmensch</h3>
@@ -1668,6 +1678,16 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
           <div class="hk-col-icon">◆</div>
           <h3 class="hk-col-title" id="kopfTitle">Kopfmensch</h3>
           <p class="hk-col-text" id="kopfText"></p>
+        </div>
+        <div class="hk-col hk-col-maennlich">
+          <div class="hk-col-icon">↑</div>
+          <h3 class="hk-col-title" id="maennlichTitle">Männliche Energie</h3>
+          <p class="hk-col-text" id="maennlichText"></p>
+        </div>
+        <div class="hk-col hk-col-weiblich">
+          <div class="hk-col-icon">○</div>
+          <h3 class="hk-col-title" id="weiblichTitle">Weibliche Energie</h3>
+          <p class="hk-col-text" id="weiblichText"></p>
         </div>
       </div>
     </section>
@@ -1794,10 +1814,12 @@ const TRANSLATIONS = {
     modeClarify: 'Klärungsgespräch',
     clarifySubmitBtn: 'Klären',
     clarifyMethodsLabel: 'Methoden-Agenten hinzuziehen (Pädagogisch + Neurodivergent vorausgewählt)',
-    herzkopfTitle: 'Herzmensch & Kopfmensch',
-    herzkopfSub: 'Zwei grundlegende Perspektiven auf das Fazit.',
+    herzkopfTitle: 'Vier Grundperspektiven',
+    herzkopfSub: 'Herzmensch · Kopfmensch · Männliche Energie · Weibliche Energie',
     herzTitle: 'Herzmensch',
     kopfTitle: 'Kopfmensch',
+    maennlichTitle: 'Männliche Energie',
+    weiblichTitle: 'Weibliche Energie',
     // V5.0
     modeSingle: 'Einzelfrage',
     modeTable: 'Eigener Tisch',
@@ -1871,10 +1893,12 @@ const TRANSLATIONS = {
     modeClarify: 'Clarification',
     clarifySubmitBtn: 'Clarify',
     clarifyMethodsLabel: 'Add method agents (Pedagogical + Neurodivergent pre-selected)',
-    herzkopfTitle: 'Heart & Head',
-    herzkopfSub: 'Two fundamental perspectives on the verdict.',
+    herzkopfTitle: 'Four Core Perspectives',
+    herzkopfSub: 'Heart · Head · Masculine Energy · Feminine Energy',
     herzTitle: 'Heart-person',
     kopfTitle: 'Head-person',
+    maennlichTitle: 'Masculine Energy',
+    weiblichTitle: 'Feminine Energy',
     // V5.0
     modeSingle: 'Single question',
     modeTable: 'Your Table',
@@ -1963,6 +1987,10 @@ function applyTranslation(lang) {
   if (herzTitleEl && t.herzTitle) herzTitleEl.textContent = t.herzTitle;
   const kopfTitleEl = document.getElementById('kopfTitle');
   if (kopfTitleEl && t.kopfTitle) kopfTitleEl.textContent = t.kopfTitle;
+  const maennlichTitleEl = document.getElementById('maennlichTitle');
+  if (maennlichTitleEl && t.maennlichTitle) maennlichTitleEl.textContent = t.maennlichTitle;
+  const weiblichTitleEl = document.getElementById('weiblichTitle');
+  if (weiblichTitleEl && t.weiblichTitle) weiblichTitleEl.textContent = t.weiblichTitle;
   const clarifyModBtn = document.getElementById('modeClarify');
   if (clarifyModBtn && t.modeClarify) clarifyModBtn.textContent = t.modeClarify;
   const clarifyMethodsLbl = document.getElementById('clarifyMethodsLabel');
@@ -2250,12 +2278,16 @@ function renderResults(data) {
     document.getElementById('einfachSection').classList.remove('hidden');
   }
 
-  // 8. Herzmensch / Kopfmensch — immer anzeigen wenn vorhanden
-  const herz = data.integration.herzmensch;
-  const kopf = data.integration.kopfmensch;
-  if (herz || kopf) {
-    if (herz) document.getElementById('herzText').textContent = herz;
-    if (kopf) document.getElementById('kopfText').textContent = kopf;
+  // 8. Vier Grundperspektiven — immer anzeigen wenn vorhanden
+  const herz     = data.integration.herzmensch;
+  const kopf     = data.integration.kopfmensch;
+  const maennl   = data.integration.maennlich;
+  const weibl    = data.integration.weiblich;
+  if (herz || kopf || maennl || weibl) {
+    if (herz)   document.getElementById('herzText').textContent = herz;
+    if (kopf)   document.getElementById('kopfText').textContent = kopf;
+    if (maennl) document.getElementById('maennlichText').textContent = maennl;
+    if (weibl)  document.getElementById('weiblichText').textContent = weibl;
     document.getElementById('herzkopfSection').classList.remove('hidden');
   }
 }
@@ -2408,7 +2440,7 @@ function printSelection() {
     { key: 'entscheidung', titleDe: 'V. Entscheidungshilfe', titleEn: 'V. Decision Aids', id: 'entscheidungSection' },
     { key: 'kurzfassung', titleDe: 'VI. Kurzfassung', titleEn: 'VI. Summary', id: 'kurzfassungSection' },
     { key: 'einfach', titleDe: 'VII. Einfach gesagt', titleEn: 'VII. Simply put', id: 'einfachSection' },
-    { key: 'herzkopf', titleDe: 'VIII. Herz & Kopf', titleEn: 'VIII. Heart & Head', id: 'herzkopfSection' },
+    { key: 'herzkopf', titleDe: 'VIII. Vier Grundperspektiven', titleEn: 'VIII. Four Core Perspectives', id: 'herzkopfSection' },
   ];
   sectionMap.forEach(({ key, titleDe, titleEn, id }) => {
     const section = document.getElementById(id);

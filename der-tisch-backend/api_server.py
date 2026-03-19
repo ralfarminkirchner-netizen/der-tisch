@@ -130,6 +130,8 @@ class Integration(BaseModel):
     einfach_gesagt: str              # Alles kurz und klar auf den Punkt — für jedes Publikum
     herzmensch: str = ""             # Was sagt das Herz — Gefühl, Beziehung, Intuition, Bedeutung?
     kopfmensch: str = ""             # Was sagt der Kopf — Logik, Fakten, Strategie, Konsequenz?
+    maennlich: str = ""              # Männliche Energie-Perspektive — Handlung, Klarheit, Struktur, Fokus
+    weiblich: str = ""               # Weibliche Energie-Perspektive — Fürsorge, Verbindung, Intuition, Ganzheit
 
 class TableResponse(BaseModel):
     perspectives: List[Perspective]
@@ -300,11 +302,27 @@ INTEGRATION_TOOL = {
                     "What would someone thinking in systems, causes, and effects say about this?"
                 )
             },
+            "maennlich": {
+                "type": "string",
+                "description": (
+                    "What does the masculine energy perspective say? "
+                    "Not about gender — about archetypal masculine qualities: action, clarity, structure, focus, directness, protection. "
+                    "2-3 sentences. What does the energy of decisiveness, boundary-setting, and forward movement say here?"
+                )
+            },
+            "weiblich": {
+                "type": "string",
+                "description": (
+                    "What does the feminine energy perspective say? "
+                    "Not about gender — about archetypal feminine qualities: care, connection, intuition, receptivity, wholeness, nurturing. "
+                    "2-3 sentences. What does the energy of relation, feeling into, and holding complexity say here?"
+                )
+            },
         },
         "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
                      "praktische_optionen", "offene_pruefpfade",
                      "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt",
-                     "herzmensch", "kopfmensch"]
+                     "herzmensch", "kopfmensch", "maennlich", "weiblich"]
     }
 }
 
@@ -667,7 +685,7 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
     if lang == "en":
         user_content = (
-            f"You are the mapping and verdict agent. Your task has eight parts:\n\n"
+            f"You are the mapping and verdict agent. Your task has ten parts:\n\n"
             f"PART 1 — CLAIM MAP: Name which truth-claims are at stake and which were conflated. "
             f"Under 'truth' we often mix: statement-status (is it factually correct?), "
             f"validity-order (who gets to define it?), epistemic procedure (how do we check it?), "
@@ -687,18 +705,24 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"Speak to feelings, relationships, intuition, meaning. 2-3 warm sentences. Not advice — resonance.\\n\\n"
             f"PART 8 — HEAD-PERSON (kopfmensch): What does the head-person perspective say about this question? "
             f"Speak to logic, facts, strategy, consequences. 2-3 clear, structured sentences.\\n\\n"
+            f"PART 9 — MASCULINE ENERGY (maennlich): Not about gender — archetypal masculine qualities: "
+            f"action, clarity, structure, focus, decisiveness, forward movement. "
+            f"What does this energy say about this question? 2-3 sentences.\\n\\n"
+            f"PART 10 — FEMININE ENERGY (weiblich): Not about gender — archetypal feminine qualities: "
+            f"care, connection, intuition, receptivity, wholeness, holding complexity. "
+            f"What does this energy say about this question? 2-3 sentences.\\n\\n"
             f"QUESTION: {question}\n\n"
             f"PERSPECTIVES:\n{perspectives_text}\n\n"
             f"FRICTION:\n{friction_text}\n\n"
             f"Be BRIEF — 1 sentence per item. Respond in English.\n\n{stil_instr}"
         )
         system = (
-            "Mapping and verdict agent. Cartography first, then provisional verdict, then decision aids, then summary, then plain-language summary, then heart-person, then head-person. "
+            "Mapping and verdict agent. Cartography first, then provisional verdict, then decision aids, then summary, then plain-language summary, then heart-person, then head-person, then masculine energy, then feminine energy. "
             "Not synthesis — honest orientation. Short precise sentences. Respond in English."
         )
     else:
         user_content = (
-            f"Du bist Kartierungs- und Fazit-Agent. Deine Aufgabe hat acht Teile:\n\n"
+            f"Du bist Kartierungs- und Fazit-Agent. Deine Aufgabe hat zehn Teile:\n\n"
             f"TEIL 1 — ANSPRUCHSKARTE: Benenne, welche Wahrheitsansprüche wirklich vorliegen und welche vermischt wurden. "
             f"Unter 'Wahrheit' vermengen wir oft: Aussagenstatus (stimmt es faktisch?), "
             f"Geltungsordnung (wer darf es definieren?), Erkenntnisverfahren (wie prüfen wir es?), "
@@ -718,18 +742,24 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"Spreche Gefühle, Beziehungen, Intuition und Bedeutung an. 2-3 warme Sätze. Nicht Ratschlag — Resonanz.\\n\\n"
             f"TEIL 8 — KOPFMENSCH: Was sagt die Kopfmensch-Perspektive zu dieser Frage? "
             f"Spreche Logik, Fakten, Strategie und Konsequenzen an. 2-3 klare, strukturierte Sätze.\\n\\n"
+            f"TEIL 9 — MÄNNLICHE ENERGIE (maennlich): Nicht Geschlecht — archetypische männliche Qualitäten: "
+            f"Handlung, Klarheit, Struktur, Fokus, Entschlossenheit, Vorwärtsbewegung. "
+            f"Was sagt diese Energie zu dieser Frage? 2-3 Sätze.\\n\\n"
+            f"TEIL 10 — WEIBLICHE ENERGIE (weiblich): Nicht Geschlecht — archetypische weibliche Qualitäten: "
+            f"Fürsorge, Verbindung, Intuition, Empfänglichkeit, Ganzheit, Komplexität halten. "
+            f"Was sagt diese Energie zu dieser Frage? 2-3 Sätze.\\n\\n"
             f"FRAGE: {question}\\n\\n"
             f"PERSPEKTIVEN:\n{perspectives_text}\n\n"
             f"REIBUNG:\n{friction_text}\n\n"
             f"Sei KURZ — je 1 Satz pro Item.\n\n{stil_instr}"
         )
         system = (
-            "Kartierungs- und Fazit-Agent. Erst Kartographie, dann vorläufiges Fazit, dann Entscheidungshilfe, dann Kurzfassung, dann Einfach gesagt, dann Herzmensch, dann Kopfmensch. "
+            "Kartierungs- und Fazit-Agent. Erst Kartographie, dann vorläufiges Fazit, dann Entscheidungshilfe, dann Kurzfassung, dann Einfach gesagt, dann Herzmensch, dann Kopfmensch, dann Männliche Energie, dann Weibliche Energie. "
             "Keine Synthese — ehrliche Orientierung. Kurze präzise Sätze."
         )
     return _call_api(
         model="claude-sonnet-4-6",
-        max_tokens=2500,
+        max_tokens=3000,
         system=system,
         tools=[INTEGRATION_TOOL],
         tool_name="submit_integration",
@@ -801,6 +831,8 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
     data.setdefault("einfach_gesagt", data.get("plain_summary", data.get("simply_put", "")))
     data.setdefault("herzmensch", data.get("heart_person", ""))
     data.setdefault("kopfmensch", data.get("head_person", ""))
+    data.setdefault("maennlich", data.get("masculine", data.get("masculine_energy", "")))
+    data.setdefault("weiblich", data.get("feminine", data.get("feminine_energy", "")))
 
     fb = EMPTY_FALLBACKS_EN if lang == "en" else EMPTY_FALLBACKS_DE
     # Ensure no field is empty — inject fallbacks
@@ -826,6 +858,10 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         data["herzmensch"] = "Das Herz hält inne. Was auch immer die Analyse ergeben hat — es gibt etwas in dieser Frage, das mehr ist als Argumente." if lang == "de" else "The heart pauses here. Whatever the analysis found — there is something in this question that is more than arguments."
     if not str(data.get("kopfmensch", "")).strip():
         data["kopfmensch"] = "Der Kopf braucht mehr Informationen für eine belastbare Einschätzung. Die vorliegenden Daten reichen für eine definitive Bewertung nicht aus." if lang == "de" else "The head needs more information for a reliable assessment. The available data is insufficient for a definitive evaluation."
+    if not str(data.get("maennlich", "")).strip():
+        data["maennlich"] = "Die männliche Energie fragt: Was ist jetzt zu tun? Welcher Schritt bringt Klarheit — unabhängig von Unsicherheit?" if lang == "de" else "The masculine energy asks: What is to be done now? Which step brings clarity — regardless of uncertainty?"
+    if not str(data.get("weiblich", "")).strip():
+        data["weiblich"] = "Die weibliche Energie fragt: Was darf gehört werden, bevor entschieden wird? Welche Verbindung, welches Gefühl, welche Beziehung spricht hier?" if lang == "de" else "The feminine energy asks: What deserves to be heard before deciding? Which connection, which feeling, which relationship speaks here?"
 
     return Integration(**data)
 
