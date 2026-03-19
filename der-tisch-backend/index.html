@@ -569,6 +569,41 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .meta-text { font-size: var(--text-sm); line-height: 1.65; color: var(--color-text-muted); }
 .meta-block.blind-spot .meta-text { color: var(--color-text); opacity: 0.8; }
 
+/* Klärungsgespräch Parteien */
+.clarify-parties-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+@media (max-width: 640px) { .clarify-parties-row { grid-template-columns: 1fr; } }
+.clarify-party-card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3);
+}
+.clarify-party-badge {
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: var(--text-sm); letter-spacing: 0.01em; align-self: flex-start;
+}
+
+/* Herzmensch / Kopfmensch */
+.hk-card {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); overflow: hidden;
+}
+@media (max-width: 640px) { .hk-card { grid-template-columns: 1fr; } }
+.hk-col {
+  padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4);
+}
+.hk-col-herz { border-right: 1px solid rgba(220,80,100,0.15); background: rgba(220,80,100,0.04); }
+.hk-col-kopf { background: rgba(80,140,220,0.04); }
+.hk-col-icon { font-size: 1.5rem; }
+.hk-col-herz .hk-col-icon { color: #e05070; }
+.hk-col-kopf .hk-col-icon { color: #508cdc; }
+.hk-col-title { font-size: var(--text-base); font-weight: 600; margin: 0; }
+.hk-col-herz .hk-col-title { color: #e05070; }
+.hk-col-kopf .hk-col-title { color: #508cdc; }
+.hk-col-text { font-size: var(--text-sm); line-height: 1.7; color: var(--color-text-secondary); margin: 0; }
+
 /* Role color accents */
 .role-systemisch    { background: rgba(90, 143, 184, 0.15); color: #6ba3cf; }
 .role-tiefenpsy     { background: rgba(140, 90, 184, 0.15); color: #a07bd4; }
@@ -578,6 +613,8 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .role-abwaegung     { background: rgba(100, 180, 170, 0.15); color: #64b4aa; }
 .role-strategisch   { background: rgba(210, 130, 60, 0.15);  color: #d2823c; }
 .role-risiko        { background: rgba(220, 80, 80, 0.15);   color: #dc5050; }
+.role-paedagogisch  { background: rgba(80, 170, 100, 0.15);  color: #50aa64; }
+.role-neurodivergent { background: rgba(160, 90, 210, 0.15); color: #a05ad2; }
 
 /* =============================================
    FRICTION SECTION
@@ -1268,6 +1305,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
       <div class="mode-toggle-wrap" id="modeToggleWrap">
         <button class="mode-btn mode-active" id="modeSingle" onclick="setMode('single')" data-testid="mode-single">Einzelfrage</button>
         <button class="mode-btn" id="modeTable" onclick="setMode('table')" data-testid="mode-table">Eigener Tisch</button>
+        <button class="mode-btn" id="modeClarify" onclick="setMode('clarify')" data-testid="mode-clarify">Klärungsgespräch</button>
       </div>
 
       <!-- EINZELFRAGE-FORM -->
@@ -1567,6 +1605,72 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
       </div>
     </section>
 
+
+
+      <!-- KLÄRUNGSGESPRÄCH PANEL -->
+      <div class="eigener-tisch-panel hidden" id="klaerungsPanel">
+
+        <!-- Frage -->
+        <div class="question-form" style="margin-bottom:var(--space-6);">
+          <div class="question-input-wrapper">
+            <input type="text" class="question-input" id="clarifyQuestionInput"
+              placeholder="Was ist der Streitpunkt / die Kernfrage?" autocomplete="off" data-testid="input-clarify-question"/>
+            <button class="question-submit" id="clarifySubmitBtn" type="button"
+              onclick="submitClarify()" data-testid="button-clarify-submit">Klären</button>
+          </div>
+        </div>
+
+        <!-- Parteien nebeneinander -->
+        <div class="clarify-parties-row">
+          <div class="clarify-party-card">
+            <div class="clarify-party-badge" style="background:rgba(110,170,255,0.15);color:#6eaaff;">A</div>
+            <input class="persp-input" type="text" id="clarifyNameA"
+              placeholder="Name / Rolle (optional)" data-testid="input-clarify-name-a"/>
+            <textarea class="persp-input persp-textarea" id="clarifyPosA" rows="3"
+              placeholder="Was sagt, will oder vertritt Partei A?" data-testid="input-clarify-pos-a"></textarea>
+          </div>
+          <div class="clarify-party-card">
+            <div class="clarify-party-badge" style="background:rgba(255,150,100,0.15);color:#ff9664;">B</div>
+            <input class="persp-input" type="text" id="clarifyNameB"
+              placeholder="Name / Rolle (optional)" data-testid="input-clarify-name-b"/>
+            <textarea class="persp-input persp-textarea" id="clarifyPosB" rows="3"
+              placeholder="Was sagt, will oder vertritt Partei B?" data-testid="input-clarify-pos-b"></textarea>
+          </div>
+        </div>
+
+        <!-- Methoden-Chips (Pre-aktiviert: Pädagogisch + Neurodivergent) -->
+        <div class="methods-section" style="margin-top:var(--space-6);">
+          <p class="methods-label" id="clarifyMethodsLabel">Methoden-Agenten hinzuziehen (Pädagogisch + Neurodivergent vorausgewählt)</p>
+          <div class="methods-chips" id="clarifyMethodsChips"></div>
+          <p class="methods-hint" id="clarifyMethodsHint"></p>
+        </div>
+
+      </div><!-- /klaerungsPanel -->
+
+
+    <!-- VIII. HERZMENSCH / KOPFMENSCH -->
+    <section id="herzkopfSection" class="hidden section-selectable" data-block="herzkopf">
+      <div class="section-header">
+        <div class="section-badge" style="background:linear-gradient(135deg,rgba(220,80,100,0.25),rgba(80,140,220,0.25));color:var(--color-text);">VIII</div>
+        <div>
+          <h2 class="section-title" id="herzkopfTitle">Herzmensch &amp; Kopfmensch</h2>
+          <p class="section-subtitle" id="herzkopfSubtitle">Zwei grundlegende Perspektiven auf das Fazit.</p>
+        </div>
+      </div>
+      <div class="hk-card">
+        <div class="hk-col hk-col-herz">
+          <div class="hk-col-icon">♥</div>
+          <h3 class="hk-col-title" id="herzTitle">Herzmensch</h3>
+          <p class="hk-col-text" id="herzText"></p>
+        </div>
+        <div class="hk-col hk-col-kopf">
+          <div class="hk-col-icon">◆</div>
+          <h3 class="hk-col-title" id="kopfTitle">Kopfmensch</h3>
+          <p class="hk-col-text" id="kopfText"></p>
+        </div>
+      </div>
+    </section>
+
   </div><!-- /results -->
 
 </main>
@@ -1685,6 +1789,14 @@ const TRANSLATIONS = {
     einfachTitle: 'Einfach gesagt',
     einfachSub: 'Alles auf den Punkt — für jedes Publikum.',
     headlineTapHint: 'Antippen',
+    // V5.1
+    modeClarify: 'Klärungsgespräch',
+    clarifySubmitBtn: 'Klären',
+    clarifyMethodsLabel: 'Methoden-Agenten hinzuziehen (Pädagogisch + Neurodivergent vorausgewählt)',
+    herzkopfTitle: 'Herzmensch & Kopfmensch',
+    herzkopfSub: 'Zwei grundlegende Perspektiven auf das Fazit.',
+    herzTitle: 'Herzmensch',
+    kopfTitle: 'Kopfmensch',
     // V5.0
     modeSingle: 'Einzelfrage',
     modeTable: 'Eigener Tisch',
@@ -1754,6 +1866,14 @@ const TRANSLATIONS = {
     einfachTitle: 'Simply put',
     einfachSub: 'Everything to the point — for any audience.',
     headlineTapHint: 'Tap',
+    // V5.1
+    modeClarify: 'Clarification',
+    clarifySubmitBtn: 'Clarify',
+    clarifyMethodsLabel: 'Add method agents (Pedagogical + Neurodivergent pre-selected)',
+    herzkopfTitle: 'Heart & Head',
+    herzkopfSub: 'Two fundamental perspectives on the verdict.',
+    herzTitle: 'Heart-person',
+    kopfTitle: 'Head-person',
     // V5.0
     modeSingle: 'Single question',
     modeTable: 'Your Table',
@@ -1834,6 +1954,18 @@ function applyTranslation(lang) {
   if (einfachTitle) einfachTitle.textContent = t.einfachTitle;
   const einfachSub = document.getElementById('einfachSubtitle');
   if (einfachSub) einfachSub.textContent = t.einfachSub;
+  const herzkopfTitle = document.getElementById('herzkopfTitle');
+  if (herzkopfTitle && t.herzkopfTitle) herzkopfTitle.textContent = t.herzkopfTitle;
+  const herzkopfSub = document.getElementById('herzkopfSubtitle');
+  if (herzkopfSub && t.herzkopfSub) herzkopfSub.textContent = t.herzkopfSub;
+  const herzTitleEl = document.getElementById('herzTitle');
+  if (herzTitleEl && t.herzTitle) herzTitleEl.textContent = t.herzTitle;
+  const kopfTitleEl = document.getElementById('kopfTitle');
+  if (kopfTitleEl && t.kopfTitle) kopfTitleEl.textContent = t.kopfTitle;
+  const clarifyModBtn = document.getElementById('modeClarify');
+  if (clarifyModBtn && t.modeClarify) clarifyModBtn.textContent = t.modeClarify;
+  const clarifyMethodsLbl = document.getElementById('clarifyMethodsLabel');
+  if (clarifyMethodsLbl && t.clarifyMethodsLabel) clarifyMethodsLbl.textContent = t.clarifyMethodsLabel;
 
   const footerText = document.getElementById('footerText');
   if (footerText) footerText.textContent = t.footerText;
@@ -1974,6 +2106,9 @@ const roleConfig = {
   'Weighing':            { iconClass: 'role-abwaegung',     icon: '⊕' },
   'Strategic':           { iconClass: 'role-strategisch',   icon: '△' },
   'Risk':                { iconClass: 'role-risiko',        icon: '⚠' },
+  'Pädagogisch':         { iconClass: 'role-paedagogisch',   icon: '◎' },
+  'Neurodivergent':      { iconClass: 'role-neurodivergent', icon: '⬡' },
+  'Pedagogical':         { iconClass: 'role-paedagogisch',   icon: '◎' },
 };
 
 function escapeHtml(str) {
@@ -2112,6 +2247,15 @@ function renderResults(data) {
   if (data.integration.einfach_gesagt) {
     document.getElementById('einfachText').textContent = data.integration.einfach_gesagt;
     document.getElementById('einfachSection').classList.remove('hidden');
+  }
+
+  // 8. Herzmensch / Kopfmensch — immer anzeigen wenn vorhanden
+  const herz = data.integration.herzmensch;
+  const kopf = data.integration.kopfmensch;
+  if (herz || kopf) {
+    if (herz) document.getElementById('herzText').textContent = herz;
+    if (kopf) document.getElementById('kopfText').textContent = kopf;
+    document.getElementById('herzkopfSection').classList.remove('hidden');
   }
 }
 
@@ -2263,6 +2407,7 @@ function printSelection() {
     { key: 'entscheidung', titleDe: 'V. Entscheidungshilfe', titleEn: 'V. Decision Aids', id: 'entscheidungSection' },
     { key: 'kurzfassung', titleDe: 'VI. Kurzfassung', titleEn: 'VI. Summary', id: 'kurzfassungSection' },
     { key: 'einfach', titleDe: 'VII. Einfach gesagt', titleEn: 'VII. Simply put', id: 'einfachSection' },
+    { key: 'herzkopf', titleDe: 'VIII. Herz & Kopf', titleEn: 'VIII. Heart & Head', id: 'herzkopfSection' },
   ];
   sectionMap.forEach(({ key, titleDe, titleEn, id }) => {
     const section = document.getElementById(id);
@@ -2305,6 +2450,7 @@ async function submitQuestion() {
   document.getElementById('entscheidungSection').classList.add('hidden');
   document.getElementById('kurzfassungSection').classList.add('hidden');
   document.getElementById('einfachSection').classList.add('hidden');
+  document.getElementById('herzkopfSection').classList.add('hidden');
   // Hide/reset question headline
   const hl = document.getElementById('questionHeadline');
   if (hl) hl.classList.remove('visible', 'headline-pulse');
@@ -2453,33 +2599,44 @@ let currentMode = 'single';
 
 function setMode(mode) {
   currentMode = mode;
-  const single  = document.getElementById('modeSingle');
-  const table   = document.getElementById('modeTable');
-  const form    = document.getElementById('questionForm');
-  const panel   = document.getElementById('eigenerTischPanel');
+  const single   = document.getElementById('modeSingle');
+  const table    = document.getElementById('modeTable');
+  const clarify  = document.getElementById('modeClarify');
+  const form     = document.getElementById('questionForm');
+  const panel    = document.getElementById('eigenerTischPanel');
+  const klaerung = document.getElementById('klaerungsPanel');
+
+  // Reset all
+  [single, table, clarify].forEach(b => b && b.classList.remove('mode-active'));
+  form.classList.add('hidden');
+  panel.classList.add('hidden');
+  klaerung.classList.add('hidden');
 
   if (mode === 'single') {
     single.classList.add('mode-active');
-    table.classList.remove('mode-active');
     form.classList.remove('hidden');
-    panel.classList.add('hidden');
-  } else {
+  } else if (mode === 'table') {
     table.classList.add('mode-active');
-    single.classList.remove('mode-active');
-    form.classList.add('hidden');
     panel.classList.remove('hidden');
-    // Init chips and at least one perspective card on first open
     if (document.getElementById('methodsChips').children.length === 0) {
       initMethodChips();
     }
     if (document.getElementById('perspectivesBuilder').children.length === 0) {
       addPerspective();
     }
+  } else if (mode === 'clarify') {
+    clarify.classList.add('mode-active');
+    klaerung.classList.remove('hidden');
+    // Init Klärungsgespräch chips with Pädagogisch + Neurodivergent pre-selected
+    if (document.getElementById('clarifyMethodsChips').children.length === 0) {
+      initClarifyChips();
+    }
   }
   // Update mode button translations
   const t = TRANSLATIONS[currentLang];
-  if (t.modeSingle) single.textContent = t.modeSingle;
-  if (t.modeTable)  table.textContent  = t.modeTable;
+  if (t.modeSingle)  single.textContent  = t.modeSingle;
+  if (t.modeTable)   table.textContent   = t.modeTable;
+  if (t.modeClarify && clarify) clarify.textContent = t.modeClarify;
 }
 
 // =============================================
@@ -2583,6 +2740,8 @@ const METHOD_CHIPS_DE = [
   { key: 'Abwägung',            icon: '⊕' },
   { key: 'Strategisch',         icon: '△' },
   { key: 'Risiko',              icon: '⚠' },
+  { key: 'Pädagogisch',         icon: '◎' },
+  { key: 'Neurodivergent',      icon: '⬡' },
 ];
 const METHOD_CHIPS_EN = [
   { key: 'Systemic',            icon: '⊙' },
@@ -2593,6 +2752,8 @@ const METHOD_CHIPS_EN = [
   { key: 'Weighing',            icon: '⊕' },
   { key: 'Strategic',           icon: '△' },
   { key: 'Risk',                icon: '⚠' },
+  { key: 'Pedagogical',         icon: '◎' },
+  { key: 'Neurodivergent',      icon: '⬡' },
 ];
 
 // Track active chip keys (always use DE keys internally, map on send)
@@ -2711,6 +2872,7 @@ async function submitTable() {
   document.getElementById('entscheidungSection').classList.add('hidden');
   document.getElementById('kurzfassungSection').classList.add('hidden');
   document.getElementById('einfachSection').classList.add('hidden');
+  document.getElementById('herzkopfSection').classList.add('hidden');
   const hl = document.getElementById('questionHeadline');
   if (hl) hl.classList.remove('visible', 'headline-pulse');
   selectNone();

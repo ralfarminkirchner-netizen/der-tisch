@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
-   Version 4.1: Sprachstil-Modus + 'Einfach gesagt' + Keine leeren Felder.
+   Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
 """
 import asyncio
 from pathlib import Path
@@ -128,6 +128,8 @@ class Integration(BaseModel):
     entscheidungshilfe: List[str]    # Welche Methode ist hier zuständig? Konkrete Zuordnung für diesen Fall
     kurzfassung: List[str]           # Kernertrag in Stichworten: direkt verwendbar
     einfach_gesagt: str              # Alles kurz und klar auf den Punkt — für jedes Publikum
+    herzmensch: str = ""             # Was sagt das Herz — Gefühl, Beziehung, Intuition, Bedeutung?
+    kopfmensch: str = ""             # Was sagt der Kopf — Logik, Fakten, Strategie, Konsequenz?
 
 class TableResponse(BaseModel):
     perspectives: List[Perspective]
@@ -280,10 +282,29 @@ INTEGRATION_TOOL = {
                     "Use everyday language. No technical terms without immediate explanation."
                 )
             },
+            "herzmensch": {
+                "type": "string",
+                "description": (
+                    "What does the heart-person perspective say? "
+                    "Speak to feelings, relationships, intuition, meaning, and what truly matters. "
+                    "2-3 warm, human sentences. Not advice — resonance. "
+                    "What would someone deeply in touch with their emotions and relationships say about this?"
+                )
+            },
+            "kopfmensch": {
+                "type": "string",
+                "description": (
+                    "What does the head-person perspective say? "
+                    "Speak to logic, facts, strategy, and consequences. "
+                    "2-3 clear, structured sentences. Not cold — just precise. "
+                    "What would someone thinking in systems, causes, and effects say about this?"
+                )
+            },
         },
         "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
                      "praktische_optionen", "offene_pruefpfade",
-                     "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt"]
+                     "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt",
+                     "herzmensch", "kopfmensch"]
     }
 }
 
@@ -379,6 +400,32 @@ AGENTS_DE = {
         "Dein blinder Fleck: Du siehst Gefahren, aber kein Upside-Potenzial. "
         "Halte dich kurz und präzise."
     ),
+    "Pädagogisch": (
+        "Du bist der pädagogische Agent. Dein Finger zeigt auf: Was fehlt, damit Gelingen möglich wird? "
+        "Das ist dein Mond. Nicht Schuld, nicht Versagen — sondern: Welche Ressourcen, Rahmenbedingungen oder "
+        "Fähigkeiten sind noch nicht vorhanden, entwickelt oder zugänglich? "
+        "Deine Methode: Wende den Blick vom Fehler zum Lernpotenzial. "
+        "Transformiere 'wer hat es falsch gemacht?' zu 'was wird gebraucht, damit es gelingen kann?'. "
+        "Benenne konkret: Welche Kompetenz, welches Wissen, welche Unterstützungsstruktur fehlt hier? "
+        "Unterscheide: entwicklungsbedingte Lücken (Zeit + Ressourcen lösen es) — "
+        "von strategischem Widerstand (hier ist Lernen nicht das Thema). "
+        "Dein blinder Fleck: Du kannst nicht sehen, wenn Widerstand intentional und strategisch ist — "
+        "nicht jede Blockade ist eine Kompetenzlücke. "
+        "Halte dich kurz und präzise."
+    ),
+    "Neurodivergent": (
+        "Du bist der neurodivergente Übersetzungsagent. Dein Finger zeigt auf: "
+        "Kommunikationsmuster, die zwischen neurotypischen (NT) und neurodivergenten (ND) Menschen entstehen — "
+        "und die häufig als Konflikt erlebt werden, obwohl sie Übersetzungsfehler sind. "
+        "Das ist dein Mond. Nicht Diagnose — Übersetzung. "
+        "Drei Übersetzungsrichtungen, die du explizit bearbeitest: "
+        "(1) Subtext → Explizit: Indirekte NT-Kommunikation ('Es wäre schön, wenn...') bedeutet eigentlich eine Bitte oder Erwartung — benenne, was gemeint ist. "
+        "(2) Direktheit → Nicht-verletzend: Direkte ND-Aussagen ('Das ist falsch') sind oft sachlich, nicht persönlich — übersetze den Ton ohne die Information zu verfälschen. "
+        "(3) Überlastung/Shutdown → Geduldsignal: Was wie Rückzug oder Schweigen aussieht, ist oft Verarbeitungszeit — benenne das, ohne es zu pathologisieren. "
+        "Benenne in deiner Analyse explizit: Was könnte hier ein Übersetzungsproblem sein — kein Charakterproblem? "
+        "Dein blinder Fleck: Du kannst keine Neurodivergenz diagnostizieren — du übersetzt Kommunikationsmuster, keine Personen. "
+        "Halte dich kurz und präzise."
+    ),
 }
 
 AGENTS_EN = {
@@ -465,6 +512,32 @@ AGENTS_EN = {
         "and those that should not be taken (existential, non-compensable). "
         "Do not catastrophize — also illuminate the risk of not acting. "
         "Your blind spot: you see dangers, but not upside potential. "
+        "Be brief and precise. Respond in English."
+    ),
+    "Pedagogical": (
+        "You are the pedagogical agent. Your finger points at: what is missing for success to become possible? "
+        "That is your moon. Not blame, not failure — but: which resources, frameworks, or capabilities are "
+        "not yet present, developed, or accessible? "
+        "Method: shift the gaze from fault to learning potential. "
+        "Transform 'who got it wrong?' into 'what is needed for this to succeed?'. "
+        "Name concretely: which competence, knowledge, or support structure is missing here? "
+        "Distinguish: developmental gaps (time + resources can solve them) — "
+        "from strategic resistance (where learning is not the issue). "
+        "Your blind spot: you cannot see when resistance is intentional and strategic — "
+        "not every blockage is a competence gap. "
+        "Be brief and precise. Respond in English."
+    ),
+    "Neurodivergent": (
+        "You are the neurodivergent translation agent. Your finger points at: "
+        "communication patterns that arise between neurotypical (NT) and neurodivergent (ND) people — "
+        "and are frequently experienced as conflict, even though they are translation errors. "
+        "That is your moon. Not diagnosis — translation. "
+        "Three translation directions you explicitly address: "
+        "(1) Subtext → Explicit: Indirect NT communication ('It would be nice if...') actually means a request or expectation — name what is meant. "
+        "(2) Directness → Non-offensive: Direct ND statements ('That is wrong') are often factual, not personal — translate the tone without falsifying the information. "
+        "(3) Overload/Shutdown → Patience signal: What looks like withdrawal or silence is often processing time — name this without pathologizing it. "
+        "Explicitly name in your analysis: what could be a translation problem here — not a character problem? "
+        "Your blind spot: you cannot diagnose neurodivergence — you translate communication patterns, not persons. "
         "Be brief and precise. Respond in English."
     ),
 }
@@ -594,7 +667,7 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
     if lang == "en":
         user_content = (
-            f"You are the mapping and verdict agent. Your task has six parts:\n\n"
+            f"You are the mapping and verdict agent. Your task has eight parts:\n\n"
             f"PART 1 — CLAIM MAP: Name which truth-claims are at stake and which were conflated. "
             f"Under 'truth' we often mix: statement-status (is it factually correct?), "
             f"validity-order (who gets to define it?), epistemic procedure (how do we check it?), "
@@ -610,18 +683,22 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"PART 5 — SUMMARY: 5-6 crisp bullet-point takeaways from THIS analysis — concrete findings, not generic wisdom.\n\n"
             f"PART 6 — PLAIN LANGUAGE ('Einfach gesagt'): Summarize the entire analysis in 3-5 jargon-free sentences "
             f"that anyone can understand. Core question, key finding, what to do with it.\n\n"
+            f"PART 7 — HEART-PERSON (herzmensch): What does the heart-person perspective say about this question? "
+            f"Speak to feelings, relationships, intuition, meaning. 2-3 warm sentences. Not advice — resonance.\\n\\n"
+            f"PART 8 — HEAD-PERSON (kopfmensch): What does the head-person perspective say about this question? "
+            f"Speak to logic, facts, strategy, consequences. 2-3 clear, structured sentences.\\n\\n"
             f"QUESTION: {question}\n\n"
             f"PERSPECTIVES:\n{perspectives_text}\n\n"
             f"FRICTION:\n{friction_text}\n\n"
             f"Be BRIEF — 1 sentence per item. Respond in English.\n\n{stil_instr}"
         )
         system = (
-            "Mapping and verdict agent. Cartography first, then provisional verdict, then decision aids, then summary, then plain-language summary. "
+            "Mapping and verdict agent. Cartography first, then provisional verdict, then decision aids, then summary, then plain-language summary, then heart-person, then head-person. "
             "Not synthesis — honest orientation. Short precise sentences. Respond in English."
         )
     else:
         user_content = (
-            f"Du bist Kartierungs- und Fazit-Agent. Deine Aufgabe hat sechs Teile:\n\n"
+            f"Du bist Kartierungs- und Fazit-Agent. Deine Aufgabe hat acht Teile:\n\n"
             f"TEIL 1 — ANSPRUCHSKARTE: Benenne, welche Wahrheitsansprüche wirklich vorliegen und welche vermischt wurden. "
             f"Unter 'Wahrheit' vermengen wir oft: Aussagenstatus (stimmt es faktisch?), "
             f"Geltungsordnung (wer darf es definieren?), Erkenntnisverfahren (wie prüfen wir es?), "
@@ -637,13 +714,17 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"TEIL 5 — KURZFASSUNG: 5-6 knappe Stichpunkte aus DIESER Analyse — konkrete Befunde, keine allgemeine Weisheit.\n\n"
             f"TEIL 6 — EINFACH GESAGT: Fasse die gesamte Analyse in 3-5 klaren, jargonfreien Sätzen zusammen, "
             f"die jede Person verstehen kann. Kernfrage, Kernbefund, was man damit anfangen kann.\n\n"
-            f"FRAGE: {question}\n\n"
+            f"TEIL 7 — HERZMENSCH: Was sagt die Herzmensch-Perspektive zu dieser Frage? "
+            f"Spreche Gefühle, Beziehungen, Intuition und Bedeutung an. 2-3 warme Sätze. Nicht Ratschlag — Resonanz.\\n\\n"
+            f"TEIL 8 — KOPFMENSCH: Was sagt die Kopfmensch-Perspektive zu dieser Frage? "
+            f"Spreche Logik, Fakten, Strategie und Konsequenzen an. 2-3 klare, strukturierte Sätze.\\n\\n"
+            f"FRAGE: {question}\\n\\n"
             f"PERSPEKTIVEN:\n{perspectives_text}\n\n"
             f"REIBUNG:\n{friction_text}\n\n"
             f"Sei KURZ — je 1 Satz pro Item.\n\n{stil_instr}"
         )
         system = (
-            "Kartierungs- und Fazit-Agent. Erst Kartographie, dann vorläufiges Fazit, dann Entscheidungshilfe, dann Kurzfassung, dann Einfach gesagt. "
+            "Kartierungs- und Fazit-Agent. Erst Kartographie, dann vorläufiges Fazit, dann Entscheidungshilfe, dann Kurzfassung, dann Einfach gesagt, dann Herzmensch, dann Kopfmensch. "
             "Keine Synthese — ehrliche Orientierung. Kurze präzise Sätze."
         )
     return _call_api(
@@ -718,6 +799,8 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
     data.setdefault("entscheidungshilfe", data.get("decision_aids", []))
     data.setdefault("kurzfassung", data.get("summary", []))
     data.setdefault("einfach_gesagt", data.get("plain_summary", data.get("simply_put", "")))
+    data.setdefault("herzmensch", data.get("heart_person", ""))
+    data.setdefault("kopfmensch", data.get("head_person", ""))
 
     fb = EMPTY_FALLBACKS_EN if lang == "en" else EMPTY_FALLBACKS_DE
     # Ensure no field is empty — inject fallbacks
@@ -739,6 +822,10 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         data["kurzfassung"] = fb["kurzfassung"]
     if not str(data.get("einfach_gesagt", "")).strip():
         data["einfach_gesagt"] = fb["einfach_gesagt"]
+    if not str(data.get("herzmensch", "")).strip():
+        data["herzmensch"] = "Das Herz hält inne. Was auch immer die Analyse ergeben hat — es gibt etwas in dieser Frage, das mehr ist als Argumente." if lang == "de" else "The heart pauses here. Whatever the analysis found — there is something in this question that is more than arguments."
+    if not str(data.get("kopfmensch", "")).strip():
+        data["kopfmensch"] = "Der Kopf braucht mehr Informationen für eine belastbare Einschätzung. Die vorliegenden Daten reichen für eine definitive Bewertung nicht aus." if lang == "de" else "The head needs more information for a reliable assessment. The available data is insufficient for a definitive evaluation."
 
     return Integration(**data)
 
@@ -763,7 +850,7 @@ class TableRequest(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Der Tisch API", "version": "5.0"}
+    return {"status": "ok", "service": "Der Tisch API", "version": "5.1"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
@@ -871,6 +958,58 @@ async def ask_the_custom_table(req: TableRequest):
         import traceback
         tb = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
+
+
+
+# ==========================================
+# KLÄRUNGSGESPRÄCH — Modell + Endpunkt
+# ==========================================
+class ClarifyParty(BaseModel):
+    name: str = ""
+    position: str
+
+class ClarifyRequest(BaseModel):
+    question: str
+    lang: str = "de"
+    stil: str = "philosophisch"
+    party_a: ClarifyParty
+    party_b: ClarifyParty
+    methods: List[str] = []  # Wenn leer → Standard: Pädagogisch + Neurodivergent
+
+@app.post("/api/ask-clarify", response_model=TableResponse)
+async def ask_clarify(req: ClarifyRequest):
+    """Klärungsgespräch-Endpunkt: Zwei Parteien + optionale Methoden."""
+    if not req.question or len(req.question.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Question too short.")
+    if not req.party_a.position.strip():
+        raise HTTPException(status_code=400, detail="Party A position required.")
+    if not req.party_b.position.strip():
+        raise HTTPException(status_code=400, detail="Party B position required.")
+
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch"}
+    stil = req.stil if req.stil in valid_stile else "philosophisch"
+
+    # Parteien als CustomPerspective-Objekte aufbauen
+    name_a = req.party_a.name.strip() or ("Partei A" if req.lang == "de" else "Party A")
+    name_b = req.party_b.name.strip() or ("Partei B" if req.lang == "de" else "Party B")
+    party_a_cp = CustomPerspective(name=name_a, position=req.party_a.position)
+    party_b_cp = CustomPerspective(name=name_b, position=req.party_b.position)
+
+    # Methoden: Standard Pädagogisch + Neurodivergent wenn keine gewählt
+    methods = req.methods if req.methods else (
+        ["Pädagogisch", "Neurodivergent"] if req.lang == "de"
+        else ["Pedagogical", "Neurodivergent"]
+    )
+
+    # TableRequest zusammenbauen und an ask_the_custom_table weiterleiten
+    table_req = TableRequest(
+        question=req.question,
+        lang=req.lang,
+        stil=stil,
+        custom_perspectives=[party_a_cp, party_b_cp],
+        methods=methods,
+    )
+    return await ask_the_custom_table(table_req)
 
 
 if __name__ == "__main__":
