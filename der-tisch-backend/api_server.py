@@ -567,17 +567,23 @@ async def ask_the_table(req: QueryRequest):
 
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
-    # Phase 1: 4 Agenten PARALLEL — jeder benennt seinen Anspruchstyp
-    tasks = [fetch_perspective(role, prompt, req.question) for role, prompt in agents.items()]
-    perspectives = list(await asyncio.gather(*tasks))
+    try:
+        # Phase 1: 8 Agenten PARALLEL
+        tasks = [fetch_perspective(role, prompt, req.question) for role, prompt in agents.items()]
+        perspectives = list(await asyncio.gather(*tasks))
 
-    # Phase 2: Reibung — Übersetzungsfehler vs. echte Widersprüche
-    friction = await fetch_friction(perspectives, req.question, req.lang)
+        # Phase 2: Reibung
+        friction = await fetch_friction(perspectives, req.question, req.lang)
 
-    # Phase 3: Kartierung — nicht Synthese
-    integration = await fetch_integration(perspectives, friction, req.question, req.lang)
+        # Phase 3: Kartierung
+        integration = await fetch_integration(perspectives, friction, req.question, req.lang)
 
-    return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
 
 
 if __name__ == "__main__":
