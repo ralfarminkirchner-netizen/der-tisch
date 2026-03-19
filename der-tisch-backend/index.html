@@ -723,6 +723,92 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .kurzfassung-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); flex-shrink: 0; margin-top: 0.45em; }
 
 /* =============================================
+   QUESTION HEADLINE
+============================================= */
+#questionHeadline {
+  display: none;
+  margin-bottom: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow var(--duration) var(--ease-out), border-color var(--duration) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+#questionHeadline.visible {
+  display: block;
+  animation: questionReveal 700ms var(--ease-out) both;
+}
+
+@keyframes questionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#questionHeadline:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+/* Pulse uses outline glow so it never conflicts with transform animation */
+@keyframes headlinePulse {
+  0%   { outline: 0px solid transparent; }
+  25%  { outline: 4px solid var(--color-accent-dim); box-shadow: 0 0 0 4px var(--color-accent-dim), var(--shadow-md); }
+  100% { outline: 0px solid transparent; box-shadow: var(--shadow-sm); }
+}
+
+.headline-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.headline-logo-mini {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.headline-date {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+  font-family: var(--font-body);
+}
+
+.headline-question-text {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: 1.3;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.headline-tap-hint {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-5);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  opacity: 0.7;
+}
+
+/* =============================================
    EINFACH GESAGT (Section VII)
 ============================================= */
 .einfach-card {
@@ -857,17 +943,20 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 <!-- HEADER -->
 <header class="site-header">
   <div class="wrapper">
-    <a href="#" class="site-logo">
-      <svg class="site-logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Der Tisch Logo">
-        <rect x="6" y="13" width="20" height="2.5" rx="1.25" fill="currentColor" opacity="0.9"/>
-        <rect x="9" y="15.5" width="2" height="8" rx="1" fill="currentColor" opacity="0.5"/>
-        <rect x="21" y="15.5" width="2" height="8" rx="1" fill="currentColor" opacity="0.5"/>
-        <circle cx="10" cy="10" r="2" fill="currentColor" opacity="0.7"/>
-        <circle cx="16" cy="8" r="2" fill="currentColor"/>
-        <circle cx="22" cy="10" r="2" fill="currentColor" opacity="0.7"/>
-        <circle cx="16" cy="12.5" r="1.5" fill="currentColor" opacity="0.4"/>
+    <a href="#" class="site-logo" aria-label="Der Tisch — Zur Startseite">
+      <!-- DER TiSCH Logo: T letter drawn as a table -->
+      <svg class="site-logo-mark" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Table top (T crossbar) -->
+        <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
+        <!-- Left leg -->
+        <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+        <!-- Right leg -->
+        <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+        <!-- Subtle center stem (T) -->
+        <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
       </svg>
-      <span class="site-logo-wordmark">Der Tisch</span>
+      <!-- Wordmark: DER TiSCH with lowercase intentional i -->
+      <span class="site-logo-wordmark">DER T<span style="font-style:italic;font-size:0.85em;letter-spacing:0;">i</span>SCH</span>
     </a>
     <div class="header-actions">
       <!-- Sprachstil Toggle (desktop) -->
@@ -937,6 +1026,16 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   <!-- LOADING -->
   <div class="wrapper hidden" id="loadingPanel">
     <div class="loading-panel">
+      <!-- Mini logo mark centered above spinner -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:var(--space-5);opacity:0.5;">
+        <svg viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:24px;" aria-hidden="true">
+          <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
+          <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+          <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+          <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
+        </svg>
+        <span style="font-family:var(--font-display);font-size:var(--text-sm);letter-spacing:0.02em;">DER T<span style="font-style:italic;font-size:0.85em;">i</span>SCH</span>
+      </div>
       <div class="loading-spinner"></div>
       <h2 class="loading-title">Die Architektur arbeitet</h2>
       <ul class="loading-phases">
@@ -966,6 +1065,21 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 
   <!-- RESULTS -->
   <div class="wrapper hidden" id="resultsPanel">
+
+    <!-- QUESTION HEADLINE -->
+    <div id="questionHeadline" role="button" tabindex="0" aria-label="Gestellte Frage — zum Interagieren tippen">
+      <span class="headline-tap-hint" id="headlineTapHint">Antippen</span>
+      <div class="headline-meta">
+        <svg class="headline-logo-mini" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:19px;color:var(--color-accent);" aria-hidden="true">
+          <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
+          <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+          <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+          <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
+        </svg>
+        <span class="headline-date" id="headlineDate"></span>
+      </div>
+      <p class="headline-question-text" id="headlineQuestionText"></p>
+    </div>
 
     <!-- SELECTION TOOLBAR -->
     <div class="selection-toolbar visible" id="selectionToolbar">
@@ -1161,7 +1275,15 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="wrapper">
-    <p class="footer-text">Der Tisch — Epistemischer Perspektivenraum</p>
+    <div style="display:flex;align-items:center;gap:var(--space-3);">
+      <svg viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:24px;height:16px;opacity:0.35;" aria-hidden="true">
+        <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
+        <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+        <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+        <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
+      </svg>
+      <p class="footer-text" id="footerText">Der Tisch — Epistemischer Perspektivenraum</p>
+    </div>
     <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer" class="footer-attribution">
       Created with Perplexity Computer
     </a>
@@ -1261,6 +1383,7 @@ const TRANSLATIONS = {
     kurzfassungSub: 'Der gesamte Tisch in Stichworten.',
     einfachTitle: 'Einfach gesagt',
     einfachSub: 'Alles auf den Punkt — für jedes Publikum.',
+    headlineTapHint: 'Antippen',
   },
   en: {
     htmlLang: 'en',
@@ -1313,6 +1436,7 @@ const TRANSLATIONS = {
     kurzfassungSub: 'The entire table in bullet points.',
     einfachTitle: 'Simply put',
     einfachSub: 'Everything to the point — for any audience.',
+    headlineTapHint: 'Tap',
   }
 };
 
@@ -1378,13 +1502,18 @@ function applyTranslation(lang) {
   const einfachSub = document.getElementById('einfachSubtitle');
   if (einfachSub) einfachSub.textContent = t.einfachSub;
 
-  document.querySelector('.footer-text').textContent = t.footerText;
+  const footerText = document.getElementById('footerText');
+  if (footerText) footerText.textContent = t.footerText;
 
   document.getElementById('selAllLabel').textContent = t.selAllLabel;
   document.getElementById('selNoneLabel').textContent = t.selNoneLabel;
   document.getElementById('exportPdfLabel').textContent = t.exportPdfLabel;
   document.getElementById('exportPrintLabel').textContent = t.exportPrintLabel;
   updateSelectionCount();
+
+  // Update headline tap hint label
+  const tapHint = document.getElementById('headlineTapHint');
+  if (tapHint) tapHint.textContent = t.headlineTapHint;
 
   document.getElementById('langDe').className = lang === 'de' ? 'lang-active' : '';
   document.getElementById('langEn').className = lang === 'en' ? 'lang-active' : '';
@@ -1792,6 +1921,9 @@ async function submitQuestion() {
   document.getElementById('entscheidungSection').classList.add('hidden');
   document.getElementById('kurzfassungSection').classList.add('hidden');
   document.getElementById('einfachSection').classList.add('hidden');
+  // Hide/reset question headline
+  const hl = document.getElementById('questionHeadline');
+  if (hl) hl.classList.remove('visible', 'headline-pulse');
   selectNone();
   btn.disabled = true;
   btn.textContent = TRANSLATIONS[currentLang].submitWorking;
@@ -1820,6 +1952,9 @@ async function submitQuestion() {
     showState('results');
     setTimeout(initBlockSelection, 50);
 
+    // Show the question headline with reveal animation
+    showQuestionHeadline(question);
+
     setTimeout(() => {
       document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -1837,6 +1972,86 @@ async function submitQuestion() {
   btn.disabled = false;
   btn.textContent = TRANSLATIONS[currentLang].submitBtn;
 }
+
+// =============================================
+// QUESTION HEADLINE
+// =============================================
+function formatHeadlineDate(lang) {
+  const now = new Date();
+  if (lang === 'de') {
+    const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    const day   = now.getDate();
+    const month = months[now.getMonth()];
+    const year  = now.getFullYear();
+    const hh    = String(now.getHours()).padStart(2, '0');
+    const mm    = String(now.getMinutes()).padStart(2, '0');
+    return `${day}. ${month} ${year}, ${hh}:${mm}`;
+  } else {
+    const opts = { day: 'numeric', month: 'long', year: 'numeric' };
+    const dateStr = now.toLocaleDateString('en-GB', opts);
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    return `${dateStr}, ${hh}:${mm}`;
+  }
+}
+
+function showQuestionHeadline(questionText) {
+  const el = document.getElementById('questionHeadline');
+  const textEl = document.getElementById('headlineQuestionText');
+  const dateEl = document.getElementById('headlineDate');
+  if (!el || !textEl || !dateEl) return;
+  textEl.textContent = questionText;
+  dateEl.textContent = formatHeadlineDate(currentLang);
+  // Remove visible first (restart animation if re-submitting)
+  el.classList.remove('visible', 'headline-pulse');
+  void el.offsetWidth; // reflow to restart animation
+  el.classList.add('visible');
+}
+
+// Web Audio API: short soft click tone
+function playHeadlineClick() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(360, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.13);
+    osc.onended = () => ctx.close();
+  } catch(e) { /* silent fail if AudioContext not available */ }
+}
+
+// Attach click/tap feedback to the headline
+(function() {
+  const el = document.getElementById('questionHeadline');
+  if (!el) return;
+  let _pulseTO = null;
+  function triggerFeedback() {
+    playHeadlineClick();
+    // Apply pulse via inline style animation to guarantee override
+    if (_pulseTO) clearTimeout(_pulseTO);
+    el.style.animation = 'none';
+    void el.offsetWidth; // reflow
+    el.style.animation = 'headlinePulse 550ms cubic-bezier(0.16,1,0.3,1) forwards';
+    _pulseTO = setTimeout(() => {
+      el.style.animation = '';
+    }, 600);
+  }
+  el.addEventListener('click', triggerFeedback);
+  el.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // prevent ghost click on mobile
+    triggerFeedback();
+  }, { passive: false });
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerFeedback(); }
+  });
+})();
 
 // =============================================
 // EVENT LISTENERS
