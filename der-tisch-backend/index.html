@@ -1223,16 +1223,6 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   font-family: inherit;
   white-space: nowrap;
 }
-.method-chip:hover {
-  border-color: var(--color-text-muted);
-  color: var(--color-text);
-}
-.method-chip.chip-active {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: var(--color-accent-dim);
-  font-weight: 600;
-}
 .method-chip .chip-icon {
   font-size: 12px;
   line-height: 1;
@@ -1249,10 +1239,113 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.15s;
+  transition: stroke 0.15s, fill 0.15s;
+}
+/* =============================================
+   V5.4.1 — Per-method chip colors
+============================================= */
+.method-chip[data-chip-key="Systemisch"] {
+  --chip-color: #5b9e8a;
+  --chip-bg: rgba(91,158,138,0.10);
+}
+.method-chip[data-chip-key="Tiefenpsychologisch"] {
+  --chip-color: #8e6fc4;
+  --chip-bg: rgba(142,111,196,0.10);
+}
+.method-chip[data-chip-key="Empirisch-Rational"] {
+  --chip-color: #5b8ec4;
+  --chip-bg: rgba(91,142,196,0.10);
+}
+.method-chip[data-chip-key="Philosophisch"] {
+  --chip-color: #9b7fd4;
+  --chip-bg: rgba(155,127,212,0.10);
+}
+.method-chip[data-chip-key="Ethisch"] {
+  --chip-color: #c47c5b;
+  --chip-bg: rgba(196,124,91,0.10);
+}
+.method-chip[data-chip-key="Abwägung"] {
+  --chip-color: #c4a85b;
+  --chip-bg: rgba(196,168,91,0.10);
+}
+.method-chip[data-chip-key="Strategisch"] {
+  --chip-color: #4a9e6f;
+  --chip-bg: rgba(74,158,111,0.10);
+}
+.method-chip[data-chip-key="Risiko"] {
+  --chip-color: #c4585b;
+  --chip-bg: rgba(196,88,91,0.10);
+}
+.method-chip[data-chip-key="Pädagogisch"] {
+  --chip-color: #e87d3e;
+  --chip-bg: rgba(232,125,62,0.10);
+}
+.method-chip[data-chip-key="Neurodivergent"] {
+  --chip-color: #3eaec4;
+  --chip-bg: rgba(62,174,196,0.10);
+}
+.method-chip[data-chip-key="Systemic"] {
+  --chip-color: #5b9e8a;
+  --chip-bg: rgba(91,158,138,0.10);
+}
+.method-chip[data-chip-key="Depth-psychological"] {
+  --chip-color: #8e6fc4;
+  --chip-bg: rgba(142,111,196,0.10);
+}
+.method-chip[data-chip-key="Empirical-Rational"] {
+  --chip-color: #5b8ec4;
+  --chip-bg: rgba(91,142,196,0.10);
+}
+.method-chip[data-chip-key="Philosophical"] {
+  --chip-color: #9b7fd4;
+  --chip-bg: rgba(155,127,212,0.10);
+}
+.method-chip[data-chip-key="Ethical"] {
+  --chip-color: #c47c5b;
+  --chip-bg: rgba(196,124,91,0.10);
+}
+.method-chip[data-chip-key="Weighing"] {
+  --chip-color: #c4a85b;
+  --chip-bg: rgba(196,168,91,0.10);
+}
+.method-chip[data-chip-key="Strategic"] {
+  --chip-color: #4a9e6f;
+  --chip-bg: rgba(74,158,111,0.10);
+}
+.method-chip[data-chip-key="Risk"] {
+  --chip-color: #c4585b;
+  --chip-bg: rgba(196,88,91,0.10);
+}
+.method-chip[data-chip-key="Pedagogical"] {
+  --chip-color: #e87d3e;
+  --chip-bg: rgba(232,125,62,0.10);
+}
+
+/* Hover: show color as border + icon tint */
+.method-chip:hover {
+  border-color: var(--chip-color, var(--color-text-muted));
+  color: var(--chip-color, var(--color-text));
+}
+/* Active: full color treatment */
+.method-chip.chip-active {
+  border-color: var(--chip-color, var(--color-accent));
+  color: var(--chip-color, var(--color-accent));
+  background: var(--chip-bg, var(--color-accent-dim));
+  font-weight: 600;
 }
 .method-chip.chip-active .chip-icon svg {
-  stroke: var(--color-accent);
+  stroke: var(--chip-color, var(--color-accent));
+}
+/* Risiko chip: filled lightning gets fill color */
+.method-chip[data-chip-key="Risiko"].chip-active .chip-icon svg,
+.method-chip[data-chip-key="Risk"].chip-active .chip-icon svg {
+  fill: var(--chip-color, currentColor);
+  stroke: none;
+}
+.method-chip[data-chip-key="Risiko"]:hover .chip-icon svg,
+.method-chip[data-chip-key="Risk"]:hover .chip-icon svg {
+  fill: var(--chip-color, currentColor);
+  stroke: none;
 }
 
 .methods-hint {
@@ -1519,7 +1612,7 @@ html[data-stil] body {
           <div class="methods-header-row">
             <span class="methods-label" id="methodsLabel">Methoden-Agenten dazuklicken (optional)</span>
             <div class="methods-preset-btns">
-              <button type="button" class="preset-btn auto-active" id="autoModeBtn" onclick="setAutoMode()" title="KI wählt kontextbezogen">⚡ Auto</button>
+              <button type="button" class="preset-btn auto-active" id="autoModeBtn" onclick="setAutoMode()" title="KI wählt kontextbezogen">KI Auto</button>
               <button type="button" class="preset-btn" onclick="setAllChips(true)" title="Alle Methoden">Alle</button>
               <button type="button" class="preset-btn" id="lastComboBtn" onclick="restoreLastCombo()" title="Zuletzt verwendete Kombination" style="display:none;">Zuletzt</button>
             </div>
@@ -1995,8 +2088,8 @@ const TRANSLATIONS = {
     modeClarify: 'Klärungsgespräch',
     clarifySubmitBtn: 'Klären',
     clarifyMethodsLabel: 'Methoden-Agenten hinzuziehen (Pädagogisch + Neurodivergent vorausgewählt)',
-    methodsHintAuto: '⚡ Auto-Modus — KI wählt kontextbezogen die passenden Methoden',
-    autoModeActive: '⚡ Auto',
+    methodsHintAuto: 'KI Auto-Modus — KI wählt kontextbezogen die passenden Methoden',
+    autoModeActive: 'KI Auto',
     autoModeInactive: 'Auto',
     autoModeBtn: 'Auto',
     allChipsBtn: 'Alle',
@@ -2081,8 +2174,8 @@ const TRANSLATIONS = {
     modeClarify: 'Clarification',
     clarifySubmitBtn: 'Clarify',
     clarifyMethodsLabel: 'Add method agents (Pedagogical + Neurodivergent pre-selected)',
-    methodsHintAuto: '⚡ Auto mode — AI selects contextually appropriate methods',
-    autoModeActive: '⚡ Auto',
+    methodsHintAuto: 'KI Auto mode — AI selects contextually appropriate methods',
+    autoModeActive: 'KI Auto',
     autoModeInactive: 'Auto',
     autoModeBtn: 'Auto',
     allChipsBtn: 'All',
@@ -3234,7 +3327,7 @@ function updateAutoModeBtn() {
   if (!btn) return;
   const t = TRANSLATIONS[currentLang];
   if (_autoMode) {
-    btn.textContent = t.autoModeActive || '⚡ Auto';
+    btn.textContent = t.autoModeActive || 'KI Auto';
     btn.classList.add('auto-active');
   } else {
     btn.textContent = t.autoModeInactive || 'Auto';
@@ -3253,7 +3346,7 @@ function updateMethodsHint() {
   const t = TRANSLATIONS[currentLang];
   const count = _activeChips.size;
   if (count === 0) {
-    hint.innerHTML = `<span class="hint-auto">${t.methodsHintAuto || '⚡ Auto-Modus — KI wählt kontextbezogen die passenden Methoden'}</span>`;
+    hint.innerHTML = `<span class="hint-auto">${t.methodsHintAuto || 'KI Auto-Modus — KI wählt kontextbezogen die passenden Methoden'}</span>`;
   } else {
     hint.textContent = `${count} ${count === 1 ? (t.methodSelected || 'Methode ausgewählt') : (t.methodsSelected || 'Methoden ausgewählt')}${t.methodsHintSuffix || ' — werden als zusätzliche Tischsitzer eingeladen.'}`;
   }
