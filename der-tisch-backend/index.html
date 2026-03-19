@@ -933,6 +933,266 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .section-selectable .block-checkbox-wrap { top: 2px; right: 0; }
 
 /* =============================================
+   MODE TOGGLE (Einzelfrage / Eigener Tisch)
+============================================= */
+.mode-toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: var(--space-6);
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+.mode-btn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.mode-btn:hover { color: var(--color-text); }
+.mode-btn.mode-active {
+  background: var(--color-accent);
+  color: #000;
+  font-weight: 600;
+}
+
+/* =============================================
+   EIGENER TISCH — PERSPEKTIVEN BUILDER
+============================================= */
+.eigener-tisch-panel {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.perspectives-builder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.persp-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  position: relative;
+  transition: border-color 0.2s;
+}
+.persp-card:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-dim);
+}
+
+.persp-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.persp-badge {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent-dim);
+  border: 1px solid rgba(200,153,58,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  flex-shrink: 0;
+  font-style: italic;
+}
+
+.persp-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.persp-remove {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-faint);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.persp-remove:hover { color: var(--color-friction); background: var(--color-friction-dim); }
+
+.persp-field {
+  margin-bottom: var(--space-3);
+}
+.persp-field:last-child { margin-bottom: 0; }
+
+.persp-field-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+.persp-input, .persp-textarea {
+  width: 100%;
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  resize: none;
+}
+.persp-input:focus, .persp-textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-dim);
+  background: var(--color-surface);
+}
+.persp-input::placeholder, .persp-textarea::placeholder { color: var(--color-text-faint); }
+.persp-textarea { line-height: 1.55; min-height: 70px; }
+
+.add-persp-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  width: 100%;
+  justify-content: center;
+}
+.add-persp-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-glow);
+}
+.add-persp-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* =============================================
+   METHODEN-CHIPS
+============================================= */
+.methods-section {
+  margin-bottom: var(--space-6);
+}
+
+.methods-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  display: block;
+}
+
+.methods-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.method-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.method-chip:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+.method-chip.chip-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  font-weight: 600;
+}
+.method-chip .chip-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.methods-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  margin-top: var(--space-2);
+}
+
+/* =============================================
+   RESULT BADGE: eigene Perspektive vs. Methode
+============================================= */
+.role-badge-custom {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(200,153,58,0.15);
+  color: var(--color-accent);
+  border: 1px solid rgba(200,153,58,0.25);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+.role-badge-method {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(90,143,184,0.12);
+  color: var(--color-integration);
+  border: 1px solid rgba(90,143,184,0.2);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+
+/* custom-Perspektive-Karte: leicht wärmer getinted */
+.perspective-card.is-custom-persp {
+  border-left: 3px solid var(--color-accent);
+}
+
+/* =============================================
    UTILITY
 ============================================= */
 .hidden { display: none !important; }
@@ -1004,6 +1264,13 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
       <h1 class="hero-title">Der Tisch</h1>
       <p class="hero-subtitle">Keine absolute Wahrheit. Acht Methoden, die gleichzeitig denken — gefolgt von schonungsloser Reibung und ehrlicher Integration.</p>
 
+      <!-- MODE TOGGLE -->
+      <div class="mode-toggle-wrap" id="modeToggleWrap">
+        <button class="mode-btn mode-active" id="modeSingle" onclick="setMode('single')" data-testid="mode-single">Einzelfrage</button>
+        <button class="mode-btn" id="modeTable" onclick="setMode('table')" data-testid="mode-table">Eigener Tisch</button>
+      </div>
+
+      <!-- EINZELFRAGE-FORM -->
       <form class="question-form" id="questionForm" onsubmit="return false;">
         <div class="question-input-wrapper">
           <input
@@ -1022,6 +1289,36 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
           <button class="example-btn" data-testid="example-3" onclick="setExample(this)">Warum kann ich mich nicht entscheiden, obwohl ich alle Fakten kenne?</button>
         </div>
       </form>
+
+      <!-- EIGENER TISCH PANEL -->
+      <div class="eigener-tisch-panel hidden" id="eigenerTischPanel">
+
+        <!-- Frage -->
+        <div class="question-form" style="margin-bottom:var(--space-6);">
+          <div class="question-input-wrapper">
+            <input type="text" class="question-input" id="tableQuestionInput"
+              placeholder="Welche Frage liegt auf dem Tisch?" autocomplete="off" data-testid="input-table-question"/>
+            <button class="question-submit" id="tableSubmitBtn" type="button"
+              onclick="submitTable()" data-testid="button-table-submit">Untersuchen</button>
+          </div>
+        </div>
+
+        <!-- Perspektiven-Builder -->
+        <div class="perspectives-builder" id="perspectivesBuilder"></div>
+
+        <button class="add-persp-btn" id="addPerspBtn" onclick="addPerspective()" data-testid="button-add-persp">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span id="addPerspLabel">Perspektive hinzufügen</span>
+        </button>
+
+        <!-- Methoden-Chips -->
+        <div class="methods-section" style="margin-top:var(--space-6);">
+          <span class="methods-label" id="methodsLabel">Methoden-Agenten dazuklicken (optional)</span>
+          <div class="methods-chips" id="methodsChips"></div>
+          <p class="methods-hint" id="methodsHint">Keine Methode ausgewählt — nur eigene Perspektiven am Tisch.</p>
+        </div>
+
+      </div>
     </div>
   </section>
 
@@ -1388,6 +1685,22 @@ const TRANSLATIONS = {
     einfachTitle: 'Einfach gesagt',
     einfachSub: 'Alles auf den Punkt — für jedes Publikum.',
     headlineTapHint: 'Antippen',
+    // V5.0
+    modeSingle: 'Einzelfrage',
+    modeTable: 'Eigener Tisch',
+    perspCardLabel: 'Perspektive',
+    perspNameLabel: 'Name / Rolle (optional)',
+    perspNamePlaceholder: 'z.B. Mein Chef, Der Teil von mir, der Sicherheit will',
+    perspPosLabel: 'Position / Haltung \u2014 Was wird vertreten?',
+    perspPosPlaceholder: 'Was sagt, denkt oder will diese Perspektive?',
+    addPerspLabel: 'Perspektive hinzuf\u00fcgen',
+    perspMaxLabel: 'Maximum 4 Perspektiven',
+    methodsLabelText: 'Methoden-Agenten dazuklicken (optional)',
+    methodsHintNone: 'Keine Methode ausgew\u00e4hlt \u2014 nur eigene Perspektiven am Tisch.',
+    methodSelected: 'Methode ausgew\u00e4hlt',
+    methodsSelected: 'Methoden ausgew\u00e4hlt',
+    methodsHintSuffix: ' \u2014 werden als zus\u00e4tzliche Tischsitzer eingeladen.',
+    tablePlaceholder: 'Welche Frage liegt auf dem Tisch?',
   },
   en: {
     htmlLang: 'en',
@@ -1441,6 +1754,22 @@ const TRANSLATIONS = {
     einfachTitle: 'Simply put',
     einfachSub: 'Everything to the point — for any audience.',
     headlineTapHint: 'Tap',
+    // V5.0
+    modeSingle: 'Single question',
+    modeTable: 'Your Table',
+    perspCardLabel: 'Perspective',
+    perspNameLabel: 'Name / Role (optional)',
+    perspNamePlaceholder: 'e.g. My boss, The part of me that wants security',
+    perspPosLabel: 'Position / Stance \u2014 What is being argued?',
+    perspPosPlaceholder: 'What does this perspective say, think, or want?',
+    addPerspLabel: 'Add perspective',
+    perspMaxLabel: 'Maximum 4 perspectives',
+    methodsLabelText: 'Add method agents (optional)',
+    methodsHintNone: 'No method selected \u2014 only your own perspectives at the table.',
+    methodSelected: 'method selected',
+    methodsSelected: 'methods selected',
+    methodsHintSuffix: ' \u2014 invited as additional seats at the table.',
+    tablePlaceholder: 'What question is on the table?',
   }
 };
 
@@ -1529,6 +1858,33 @@ function applyTranslation(lang) {
   });
 
   currentLang = lang;
+
+  // V5.0: update mode toggle buttons
+  const modeSingleBtn = document.getElementById('modeSingle');
+  const modeTableBtn  = document.getElementById('modeTable');
+  if (modeSingleBtn && t.modeSingle) modeSingleBtn.textContent = t.modeSingle;
+  if (modeTableBtn  && t.modeTable)  modeTableBtn.textContent  = t.modeTable;
+
+  // V5.0: update table question placeholder
+  const tableQ = document.getElementById('tableQuestionInput');
+  if (tableQ && t.tablePlaceholder) tableQ.placeholder = t.tablePlaceholder;
+
+  // V5.0: update table submit button (if not disabled)
+  const tableSubmit = document.getElementById('tableSubmitBtn');
+  if (tableSubmit && !tableSubmit.disabled) tableSubmit.textContent = t.submitBtn;
+
+  // V5.0: update methods label
+  const methodsLbl = document.getElementById('methodsLabel');
+  if (methodsLbl && t.methodsLabelText) methodsLbl.textContent = t.methodsLabelText;
+
+  // V5.0: rebuild chips for new language (preserves active chips by position)
+  if (document.getElementById('methodsChips').children.length > 0) {
+    rebuildChipsForLang();
+  }
+
+  // V5.0: update add-persp button label + perspective card labels
+  updateAddPerspBtn();
+  renumberPerspBadges();
 }
 
 document.getElementById('langToggle').addEventListener('click', () => {
@@ -1627,18 +1983,42 @@ function escapeHtml(str) {
 }
 
 function renderPerspectiveCard(p) {
-  const cfg = roleConfig[p.rolle] || { iconClass: 'role-philosophisch', icon: '○' };
+  // Parse [custom] or [method] prefix from p.rolle
+  let rawRole = p.rolle;
+  let sourceType = null; // 'custom' | 'method' | null
+  let displayRole = rawRole;
+  if (rawRole.startsWith('[custom]')) {
+    sourceType = 'custom';
+    displayRole = rawRole.slice('[custom]'.length);
+  } else if (rawRole.startsWith('[method]')) {
+    sourceType = 'method';
+    displayRole = rawRole.slice('[method]'.length);
+  }
+
+  const cfg = roleConfig[displayRole] || { iconClass: 'role-philosophisch', icon: '○' };
   const t = TRANSLATIONS[currentLang];
-  const blockId = 'block-persp-' + p.rolle.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const blockId = 'block-persp-' + rawRole.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // Build source badge
+  let sourceBadge = '';
+  if (sourceType === 'custom') {
+    sourceBadge = `<span class="role-badge-custom">${currentLang === 'de' ? 'Eigene' : 'Custom'}</span>`;
+  } else if (sourceType === 'method') {
+    sourceBadge = `<span class="role-badge-method">${currentLang === 'de' ? 'Methode' : 'Method'}</span>`;
+  }
+
+  // Card extra class for custom perspectives
+  const cardClass = sourceType === 'custom' ? ' is-custom-persp' : '';
+
   return `
     <div class="block-selectable" data-block-id="${blockId}" data-block-type="perspective">
       <div class="block-checkbox-wrap">
-        <input type="checkbox" class="block-checkbox" data-block-id="${blockId}" onchange="onBlockCheck(this)" aria-label="Block auswählen: ${escapeHtml(p.rolle)}">
+        <input type="checkbox" class="block-checkbox" data-block-id="${blockId}" onchange="onBlockCheck(this)" aria-label="Block auswählen: ${escapeHtml(displayRole)}">
       </div>
-      <article class="perspective-card" data-testid="card-perspective-${p.rolle.toLowerCase().replace(/[^a-z]/g, '')}">
+      <article class="perspective-card${cardClass}" data-testid="card-perspective-${displayRole.toLowerCase().replace(/[^a-z]/g, '')}">
         <div class="perspective-role">
           <div class="role-icon ${cfg.iconClass}">${cfg.icon}</div>
-          <span class="role-label">${escapeHtml(p.rolle)}</span>
+          <span class="role-label">${escapeHtml(displayRole)}${sourceBadge}</span>
         </div>
         ${p.anspruchstyp ? `<div class="claim-type-badge"><span class="claim-type-label">${t.claimTypeLabel}</span><span class="claim-type-text">${escapeHtml(p.anspruchstyp)}</span></div>` : ''}
         <p class="perspective-analysis">${escapeHtml(p.kernanalyse)}</p>
@@ -2065,6 +2445,334 @@ document.getElementById('submitBtn').addEventListener('click', submitQuestion);
 document.getElementById('questionInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuestion(); }
 });
+
+// =============================================
+// V5.0 — MODE TOGGLE (Einzelfrage / Eigener Tisch)
+// =============================================
+let currentMode = 'single';
+
+function setMode(mode) {
+  currentMode = mode;
+  const single  = document.getElementById('modeSingle');
+  const table   = document.getElementById('modeTable');
+  const form    = document.getElementById('questionForm');
+  const panel   = document.getElementById('eigenerTischPanel');
+
+  if (mode === 'single') {
+    single.classList.add('mode-active');
+    table.classList.remove('mode-active');
+    form.classList.remove('hidden');
+    panel.classList.add('hidden');
+  } else {
+    table.classList.add('mode-active');
+    single.classList.remove('mode-active');
+    form.classList.add('hidden');
+    panel.classList.remove('hidden');
+    // Init chips and at least one perspective card on first open
+    if (document.getElementById('methodsChips').children.length === 0) {
+      initMethodChips();
+    }
+    if (document.getElementById('perspectivesBuilder').children.length === 0) {
+      addPerspective();
+    }
+  }
+  // Update mode button translations
+  const t = TRANSLATIONS[currentLang];
+  if (t.modeSingle) single.textContent = t.modeSingle;
+  if (t.modeTable)  table.textContent  = t.modeTable;
+}
+
+// =============================================
+// V5.0 — PERSPEKTIVEN-BUILDER
+// =============================================
+let _perspIdCounter = 0;
+const BADGE_LETTERS = ['A', 'B', 'C', 'D'];
+
+function addPerspective() {
+  const builder = document.getElementById('perspectivesBuilder');
+  const count   = builder.children.length;
+  if (count >= 4) return;
+
+  const id     = ++_perspIdCounter;
+  const letter = BADGE_LETTERS[count]; // A B C D in order
+  const t      = TRANSLATIONS[currentLang];
+
+  const card = document.createElement('div');
+  card.className = 'persp-card';
+  card.dataset.perspId = id;
+  card.innerHTML = `
+    <div class="persp-card-header">
+      <span class="persp-badge">${letter}</span>
+      <span class="persp-label">${t.perspCardLabel || 'Perspektive'} ${letter}</span>
+      <button class="persp-remove" onclick="removePerspective(${id})" aria-label="Perspektive entfernen" title="Entfernen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="persp-field">
+      <label class="persp-field-label" for="persp-name-${id}">${t.perspNameLabel || 'Name / Rolle (optional)'}</label>
+      <input class="persp-input" id="persp-name-${id}" type="text"
+        placeholder="${t.perspNamePlaceholder || 'z.B. Mein Chef, Der Teil von mir, der Sicherheit will'}"
+        data-persp-name="${id}" autocomplete="off">
+    </div>
+    <div class="persp-field">
+      <label class="persp-field-label" for="persp-pos-${id}">${t.perspPosLabel || 'Position / Haltung *'}</label>
+      <textarea class="persp-textarea" id="persp-pos-${id}"
+        placeholder="${t.perspPosPlaceholder || 'Was sagt, denkt oder will diese Perspektive?'}"
+        rows="3" data-persp-pos="${id}"></textarea>
+    </div>
+  `;
+  builder.appendChild(card);
+  updateAddPerspBtn();
+  // Re-number badge letters after any add
+  renumberPerspBadges();
+}
+
+function removePerspective(id) {
+  const card = document.querySelector(`.persp-card[data-persp-id="${id}"]`);
+  if (!card) return;
+  card.remove();
+  updateAddPerspBtn();
+  renumberPerspBadges();
+}
+
+function renumberPerspBadges() {
+  const builder = document.getElementById('perspectivesBuilder');
+  Array.from(builder.children).forEach((card, i) => {
+    const badge = card.querySelector('.persp-badge');
+    const label = card.querySelector('.persp-label');
+    const letter = BADGE_LETTERS[i] || String(i + 1);
+    if (badge) badge.textContent = letter;
+    const t = TRANSLATIONS[currentLang];
+    if (label) label.textContent = `${t.perspCardLabel || 'Perspektive'} ${letter}`;
+  });
+}
+
+function updateAddPerspBtn() {
+  const builder = document.getElementById('perspectivesBuilder');
+  const btn     = document.getElementById('addPerspBtn');
+  const label   = document.getElementById('addPerspLabel');
+  const count   = builder.children.length;
+  btn.disabled  = count >= 4;
+  const t = TRANSLATIONS[currentLang];
+  if (label) label.textContent = count >= 4
+    ? (t.perspMaxLabel || 'Maximum 4 Perspektiven')
+    : (t.addPerspLabel || 'Perspektive hinzufügen');
+}
+
+function getPerspectives() {
+  const builder = document.getElementById('perspectivesBuilder');
+  const result  = [];
+  Array.from(builder.children).forEach(card => {
+    const id   = card.dataset.perspId;
+    const name = (card.querySelector(`[data-persp-name="${id}"]`)?.value || '').trim();
+    const pos  = (card.querySelector(`[data-persp-pos="${id}"]`)?.value  || '').trim();
+    if (pos) result.push({ name: name || '', position: pos });
+  });
+  return result;
+}
+
+// =============================================
+// V5.0 — METHODEN-CHIPS
+// =============================================
+const METHOD_CHIPS_DE = [
+  { key: 'Systemisch',          icon: '⊙' },
+  { key: 'Tiefenpsychologisch', icon: '◑' },
+  { key: 'Empirisch-Rational',  icon: '▦' },
+  { key: 'Philosophisch',       icon: '◇' },
+  { key: 'Ethisch',             icon: '◬' },
+  { key: 'Abwägung',            icon: '⊕' },
+  { key: 'Strategisch',         icon: '△' },
+  { key: 'Risiko',              icon: '⚠' },
+];
+const METHOD_CHIPS_EN = [
+  { key: 'Systemic',            icon: '⊙' },
+  { key: 'Depth-psychological', icon: '◑' },
+  { key: 'Empirical-Rational',  icon: '▦' },
+  { key: 'Philosophical',       icon: '◇' },
+  { key: 'Ethical',             icon: '◬' },
+  { key: 'Weighing',            icon: '⊕' },
+  { key: 'Strategic',           icon: '△' },
+  { key: 'Risk',                icon: '⚠' },
+];
+
+// Track active chip keys (always use DE keys internally, map on send)
+let _activeChips = new Set();
+
+function initMethodChips() {
+  const container = document.getElementById('methodsChips');
+  container.innerHTML = '';
+  _activeChips = new Set();
+
+  const chips = currentLang === 'en' ? METHOD_CHIPS_EN : METHOD_CHIPS_DE;
+  chips.forEach(({ key, icon }) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'method-chip';
+    btn.dataset.chipKey = key;
+    btn.innerHTML = `<span class="chip-icon">${icon}</span><span>${key}</span>`;
+    btn.addEventListener('click', () => toggleChip(key));
+    container.appendChild(btn);
+  });
+  updateMethodsHint();
+}
+
+function toggleChip(key) {
+  if (_activeChips.has(key)) {
+    _activeChips.delete(key);
+  } else {
+    _activeChips.add(key);
+  }
+  // Sync visual state
+  document.querySelectorAll('.method-chip').forEach(btn => {
+    btn.classList.toggle('chip-active', _activeChips.has(btn.dataset.chipKey));
+  });
+  updateMethodsHint();
+}
+
+function updateMethodsHint() {
+  const hint = document.getElementById('methodsHint');
+  if (!hint) return;
+  const t = TRANSLATIONS[currentLang];
+  const count = _activeChips.size;
+  if (count === 0) {
+    hint.textContent = t.methodsHintNone || 'Keine Methode ausgewählt — nur eigene Perspektiven am Tisch.';
+  } else {
+    hint.textContent = `${count} ${count === 1 ? (t.methodSelected || 'Methode ausgewählt') : (t.methodsSelected || 'Methoden ausgewählt')}${t.methodsHintSuffix || ' — werden als zusätzliche Tischsitzer eingeladen.'}`;
+  }
+}
+
+function getSelectedMethods() {
+  // Return keys matching current language
+  const chips = currentLang === 'en' ? METHOD_CHIPS_EN : METHOD_CHIPS_DE;
+  // Build a map from DE<->EN so we always return the right language keys
+  const deChips = METHOD_CHIPS_DE;
+  const enChips = METHOD_CHIPS_EN;
+  const result = [];
+  _activeChips.forEach(key => {
+    // The key stored is always in the displayed language
+    result.push(key);
+  });
+  return result;
+}
+
+// Rebuild chips on language switch, preserving active state by position
+// NOTE: call AFTER currentLang has already been updated
+function rebuildChipsForLang() {
+  const oldActiveIndices = new Set();
+  // currentLang is NOW the new lang, so old lang is the opposite
+  const oldChips = currentLang === 'en' ? METHOD_CHIPS_DE : METHOD_CHIPS_EN;
+  const newChips = currentLang === 'en' ? METHOD_CHIPS_EN : METHOD_CHIPS_DE;
+  // Map old active keys to indices
+  oldChips.forEach((c, i) => { if (_activeChips.has(c.key)) oldActiveIndices.add(i); });
+  _activeChips = new Set();
+  newChips.forEach((c, i) => { if (oldActiveIndices.has(i)) _activeChips.add(c.key); });
+
+  const container = document.getElementById('methodsChips');
+  container.innerHTML = '';
+  newChips.forEach(({ key, icon }) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'method-chip' + (_activeChips.has(key) ? ' chip-active' : '');
+    btn.dataset.chipKey = key;
+    btn.innerHTML = `<span class="chip-icon">${icon}</span><span>${key}</span>`;
+    btn.addEventListener('click', () => toggleChip(key));
+    container.appendChild(btn);
+  });
+  updateMethodsHint();
+}
+
+// =============================================
+// V5.0 — SUBMIT TABLE
+// =============================================
+async function submitTable() {
+  const questionEl = document.getElementById('tableQuestionInput');
+  const btn        = document.getElementById('tableSubmitBtn');
+  const question   = questionEl.value.trim();
+
+  if (!question || question.length < 5) { questionEl.focus(); return; }
+
+  const perspectives = getPerspectives();
+  const methods      = getSelectedMethods();
+
+  // Validation: need at least 1 perspective OR 1 method
+  if (perspectives.length === 0 && methods.length === 0) {
+    // Shake the perspectives builder to indicate required input
+    const builder = document.getElementById('perspectivesBuilder');
+    builder.style.outline = '2px solid var(--color-friction)';
+    setTimeout(() => { builder.style.outline = ''; }, 1200);
+    const addBtn = document.getElementById('addPerspBtn');
+    addBtn.style.borderColor = 'var(--color-friction)';
+    setTimeout(() => { addBtn.style.borderColor = ''; }, 1200);
+    return;
+  }
+
+  // Hide optional sections + headline for fresh render
+  document.getElementById('fazitSection').classList.add('hidden');
+  document.getElementById('entscheidungSection').classList.add('hidden');
+  document.getElementById('kurzfassungSection').classList.add('hidden');
+  document.getElementById('einfachSection').classList.add('hidden');
+  const hl = document.getElementById('questionHeadline');
+  if (hl) hl.classList.remove('visible', 'headline-pulse');
+  selectNone();
+
+  btn.disabled = true;
+  btn.textContent = TRANSLATIONS[currentLang].submitWorking;
+
+  showState('loading');
+  stopPhaseAnimation();
+  startPhaseAnimation();
+  document.getElementById('loadingPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const res = await fetch(`${API}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question,
+        lang: currentLang,
+        stil: currentStil,
+        custom_perspectives: perspectives,
+        methods: methods,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    stopPhaseAnimation();
+    window._tischCurrentData = { data, question };
+    renderResults(data);
+    showState('results');
+    setTimeout(initBlockSelection, 50);
+    showQuestionHeadline(question);
+    setTimeout(() => {
+      document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
+  } catch (e) {
+    stopPhaseAnimation();
+    const t = TRANSLATIONS[currentLang];
+    document.getElementById('errorText').textContent =
+      e.message.includes('fetch') || e.message.includes('Failed')
+        ? t.errorDefault
+        : `${currentLang === 'de' ? 'Fehler' : 'Error'}: ${e.message}`;
+    showState('error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = TRANSLATIONS[currentLang].submitBtn;
+}
+
+// =============================================
+// V5.0 — ENTER KEY on table question input
+// =============================================
+document.getElementById('tableQuestionInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitTable(); }
+});
+
 </script>
 
 <!-- jsPDF for PDF export -->

@@ -748,36 +748,125 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
 class QueryRequest(BaseModel):
     question: str
     lang: str = "de"   # "de" or "en"
-    stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht
+    stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
+
+class CustomPerspective(BaseModel):
+    name: str        # Name/Rolle der Partei, z.B. "Mein Chef" oder "Teil von mir der Sicherheit will"
+    position: str    # Was diese Partei sagt/will/vertritt
+
+class TableRequest(BaseModel):
+    question: str
+    lang: str = "de"
+    stil: str = "philosophisch"
+    custom_perspectives: List[CustomPerspective] = []   # 0–4 eigene Perspektiven
+    methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Der Tisch API", "version": "4.1"}
+    return {"status": "ok", "service": "Der Tisch API", "version": "5.0"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
+    """Original-Endpunkt: immer alle 8 Methoden-Agenten."""
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
-    # Validate stil
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
-
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
     try:
-        # Phase 1: 8 Agenten PARALLEL
         tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
-
-        # Phase 2: Reibung
         friction = await fetch_friction(perspectives, req.question, req.lang, stil)
+        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
 
-        # Phase 3: Kartierung
+
+def build_custom_agent_prompt(cp: CustomPerspective, lang: str) -> str:
+    """Baut einen System-Prompt für eine eigene Perspektive (Name + Position)."""
+    if lang == "en":
+        return (
+            f"You are speaking FROM the perspective of: '{cp.name}'.\n"
+            f"This perspective's stated position is: '{cp.position}'\n\n"
+            f"Your task: Analyze the question STRICTLY from within this perspective's worldview, values, and assumptions. "
+            f"Do NOT judge this perspective from outside — inhabit it fully.\n"
+            f"Uncover: What deep values, needs, or fears drive this position? What does this perspective assume to be true? "
+            f"What would threaten it most? What can it genuinely NOT see from where it stands?\n"
+            f"Name the claim-type this perspective is making (factual, value-based, identity-based, existential, strategic).\n"
+            f"Be precise. Be fair. No straw-manning. Respond in English."
+        )
+    else:
+        return (
+            f"Du sprichst AUS der Perspektive von: '{cp.name}'.\n"
+            f"Die geäußerte Position dieser Perspektive ist: '{cp.position}'\n\n"
+            f"Deine Aufgabe: Analysiere die Frage STRENG aus der Innenperspektive dieser Weltsicht, ihrer Werte und Annahmen. "
+            f"Urteile NICHT von außen — bewohne diese Perspektive vollständig.\n"
+            f"Decke auf: Welche tiefen Werte, Bedürfnisse oder Ängste treiben diese Position an? "
+            f"Was setzt diese Perspektive als wahr voraus? Was würde sie am meisten bedrohen? "
+            f"Was kann sie von ihrem Standpunkt aus genuinely NICHT sehen?\n"
+            f"Benenne den Anspruchstyp, den diese Perspektive macht (faktenbasiert, wertbasiert, identitätsbasiert, existenziell, strategisch).\n"
+            f"Sei präzise. Sei fair. Kein Strohmann-Argument."
+        )
+
+
+@app.post("/api/ask-table", response_model=TableResponse)
+async def ask_the_custom_table(req: TableRequest):
+    """Eigener-Tisch-Endpunkt: eigene Perspektiven + optional gewählte Methoden."""
+    if not req.question or len(req.question.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Question too short.")
+    if not req.custom_perspectives and not req.methods:
+        raise HTTPException(status_code=400, detail="At least one perspective or method required.")
+
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch"}
+    stil = req.stil if req.stil in valid_stile else "philosophisch"
+
+    all_agents_pool = AGENTS_EN if req.lang == "en" else AGENTS_DE
+
+    try:
+        tasks = []
+        role_sources = []  # "custom" oder "method"
+
+        # 1. Eigene Perspektiven (dynamisch generierte Agenten)
+        for cp in req.custom_perspectives[:4]:
+            prompt = build_custom_agent_prompt(cp, req.lang)
+            # Rolle: Name der Partei, ge-slug-t
+            role_label = cp.name.strip() or ("Perspektive" if req.lang == "de" else "Perspective")
+            tasks.append(fetch_perspective(role_label, prompt, req.question, stil, req.lang))
+            role_sources.append("custom")
+
+        # 2. Gewählte Methoden-Agenten
+        if req.methods:
+            for method_name in req.methods:
+                if method_name in all_agents_pool:
+                    tasks.append(fetch_perspective(method_name, all_agents_pool[method_name], req.question, stil, req.lang))
+                    role_sources.append("method")
+        else:
+            # Keine Methoden gewählt = keine Methoden (reine Parteien-Analyse)
+            pass
+
+        if not tasks:
+            raise HTTPException(status_code=400, detail="No valid perspectives to analyze.")
+
+        perspectives = list(await asyncio.gather(*tasks))
+
+        # Quellinfo in Perspektiven einschreiben (role_source-Tag für Frontend)
+        for i, p in enumerate(perspectives):
+            # Wir fügen source als Präfix in die rolle, trennbar per Frontend
+            src = role_sources[i] if i < len(role_sources) else "method"
+            p.rolle = f"[{src}]{p.rolle}"
+
+        friction = await fetch_friction(perspectives, req.question, req.lang, stil)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
 
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
 
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
