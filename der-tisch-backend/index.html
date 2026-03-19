@@ -602,11 +602,13 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .hk-col-kopf   { background: rgba(80,140,220,0.04); }
 .hk-col-maennlich { background: rgba(200,150,60,0.04); }
 .hk-col-weiblich  { background: rgba(100,180,120,0.05); }
-.hk-col-icon { font-size: 1.3rem; }
+.hk-col-icon { font-size: 1.3rem; display: flex; align-items: center; }
+.hk-icon-svg { width: 28px; height: 28px; flex-shrink: 0; }
 .hk-col-herz .hk-col-icon     { color: #e05070; }
-.hk-col-kopf .hk-col-icon     { color: #508cdc; }
+.hk-col-herz .hk-icon-svg     { width: 24px; height: 24px; }
+.hk-col-kopf .hk-col-icon     { color: #6a9fd8; }
 .hk-col-maennlich .hk-col-icon { color: #c89640; }
-.hk-col-weiblich .hk-col-icon  { color: #50b478; }
+.hk-col-weiblich .hk-col-icon  { color: #8cb89a; }
 .hk-col-title { font-size: var(--text-sm); font-weight: 600; margin: 0; letter-spacing: 0.02em; text-transform: uppercase; opacity: 0.85; }
 .hk-col-herz .hk-col-title     { color: #e05070; }
 .hk-col-kopf .hk-col-title     { color: #508cdc; }
@@ -1243,6 +1245,102 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
    UTILITY
 ============================================= */
 .hidden { display: none !important; }
+
+/* =============================================
+   STIL-BASED COLOR THEMES
+   Applied via html[data-stil="..."]
+   Each overrides --color-accent, --color-accent-dim, --color-accent-glow
+   and subtle background tints for character
+============================================= */
+
+/* PHILOSOPHISCH — deep violet, contemplative */
+html[data-stil="philosophisch"] {
+  --color-accent:          #9b7fd4;
+  --color-accent-dim:      rgba(155, 127, 212, 0.12);
+  --color-accent-glow:     rgba(155, 127, 212, 0.05);
+  --stil-tint:             rgba(155, 127, 212, 0.03);
+}
+
+/* AKADEMISCH — cool steel blue, precise */
+html[data-stil="akademisch"] {
+  --color-accent:          #6a9fd8;
+  --color-accent-dim:      rgba(106, 159, 216, 0.12);
+  --color-accent-glow:     rgba(106, 159, 216, 0.05);
+  --stil-tint:             rgba(106, 159, 216, 0.03);
+}
+
+/* ALLTAG — warm amber, grounded */
+html[data-stil="alltag"] {
+  --color-accent:          #c8993a;
+  --color-accent-dim:      rgba(200, 153, 58, 0.12);
+  --color-accent-glow:     rgba(200, 153, 58, 0.05);
+  --stil-tint:             rgba(200, 153, 58, 0.03);
+}
+
+/* OEKONOMISCH — sharp teal, efficient */
+html[data-stil="oekonomisch"] {
+  --color-accent:          #3aaa8e;
+  --color-accent-dim:      rgba(58, 170, 142, 0.12);
+  --color-accent-glow:     rgba(58, 170, 142, 0.05);
+  --stil-tint:             rgba(58, 170, 142, 0.03);
+}
+
+/* KINDGERECHT — vivid coral+yellow, playful */
+html[data-stil="kindgerecht"] {
+  --color-accent:          #ff6b6b;
+  --color-accent-dim:      rgba(255, 107, 107, 0.15);
+  --color-accent-glow:     rgba(255, 107, 107, 0.07);
+  --stil-tint:             rgba(255, 200, 50, 0.04);
+  --color-text:            #f0ede8;
+}
+html[data-theme="light"][data-stil="kindgerecht"] {
+  --color-accent:          #e03d3d;
+  --color-accent-dim:      rgba(224, 61, 61, 0.12);
+}
+
+/* THERAPEUTISCH — soft sage/cream, warm white feeling */
+html[data-stil="therapeutisch"] {
+  --color-accent:          #8cb89a;
+  --color-accent-dim:      rgba(140, 184, 154, 0.15);
+  --color-accent-glow:     rgba(140, 184, 154, 0.07);
+  --stil-tint:             rgba(140, 184, 154, 0.04);
+}
+html[data-theme="dark"][data-stil="therapeutisch"] {
+  --color-bg:              #0f1210;
+  --color-surface:         #141a15;
+  --color-surface-2:       #1a2119;
+}
+html[data-theme="light"][data-stil="therapeutisch"] {
+  --color-bg:              #f7faf7;
+  --color-surface:         #fbfefb;
+  --color-accent:          #5a9068;
+}
+
+/* Stil tint on main background for immersion */
+html[data-stil] body {
+  background-color: var(--color-bg);
+}
+
+/* Section badge adapts to accent */
+.stil-badge-ring {
+  border: 1.5px solid var(--color-accent-dim);
+  color: var(--color-accent);
+  transition: border-color 0.4s, color 0.4s;
+}
+
+/* Stil button active state tracks theme */
+.stil-btn.stil-active {
+  background: var(--color-accent) !important;
+  color: var(--color-bg) !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* Smooth accent color transitions */
+.question-submit, .mode-btn, .stil-btn, .section-badge,
+.loading-phase.active .phase-icon, .method-chip.chip-active {
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.question-input { transition: border-color 0.4s ease, box-shadow 0.4s ease; }
 </style>
 </head>
 <body>
@@ -1670,22 +1768,36 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
       </div>
       <div class="hk-card hk-card-4">
         <div class="hk-col hk-col-herz">
-          <div class="hk-col-icon">♥</div>
+          <div class="hk-col-icon"><svg class="hk-icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg></div>
           <h3 class="hk-col-title" id="herzTitle">Herzmensch</h3>
           <p class="hk-col-text" id="herzText"></p>
         </div>
         <div class="hk-col hk-col-kopf">
-          <div class="hk-col-icon">◆</div>
+          <div class="hk-col-icon"><svg class="hk-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M9.5 2a2.5 2.5 0 0 1 0 5H9a2 2 0 0 0 0 4h.5a2.5 2.5 0 0 1 0 5A2.5 2.5 0 0 1 7 14v-.5a2 2 0 0 0-4 0V14a5 5 0 0 0 9.5 2.12"/>
+            <path d="M14.5 2a2.5 2.5 0 0 0 0 5H15a2 2 0 0 1 0 4h-.5a2.5 2.5 0 0 0 0 5A2.5 2.5 0 0 0 17 14v-.5a2 2 0 0 1 4 0V14a5 5 0 0 1-9.5 2.12"/>
+            <path d="M12 2v20"/>
+          </svg></div>
           <h3 class="hk-col-title" id="kopfTitle">Kopfmensch</h3>
           <p class="hk-col-text" id="kopfText"></p>
         </div>
         <div class="hk-col hk-col-maennlich">
-          <div class="hk-col-icon">↑</div>
+          <div class="hk-col-icon"><svg class="hk-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="10" cy="14" r="6"/>
+            <path d="M19 5l-5.5 5.5"/>
+            <path d="M15 5h4v4"/>
+          </svg></div>
           <h3 class="hk-col-title" id="maennlichTitle">Männliche Energie</h3>
           <p class="hk-col-text" id="maennlichText"></p>
         </div>
         <div class="hk-col hk-col-weiblich">
-          <div class="hk-col-icon">○</div>
+          <div class="hk-col-icon"><svg class="hk-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="9" r="6"/>
+            <path d="M12 15v6"/>
+            <path d="M9 19h6"/>
+          </svg></div>
           <h3 class="hk-col-title" id="weiblichTitle">Weibliche Energie</h3>
           <p class="hk-col-text" id="weiblichText"></p>
         </div>
@@ -1748,11 +1860,16 @@ function setStil(btn) {
   const stil = btn.dataset.stil;
   if (!stil) return;
   currentStil = stil;
+  // Apply theme: set data-stil on <html>
+  document.documentElement.setAttribute('data-stil', stil);
   // sync all stil buttons (desktop + mobile)
   document.querySelectorAll('.stil-btn[data-stil]').forEach(b => {
     b.classList.toggle('stil-active', b.dataset.stil === stil);
   });
 }
+
+// Init on load — set default stil theme
+document.documentElement.setAttribute('data-stil', 'philosophisch');
 
 // =============================================
 // TRANSLATIONS
@@ -2119,25 +2236,25 @@ function stopPhaseAnimation() {
 // RENDER HELPERS
 // =============================================
 const roleConfig = {
-  'Systemisch':          { iconClass: 'role-systemisch',    icon: '⊙' },
-  'Tiefenpsychologisch': { iconClass: 'role-tiefenpsy',     icon: '◑' },
-  'Empirisch-Rational':  { iconClass: 'role-empirisch',     icon: '▦' },
-  'Philosophisch':       { iconClass: 'role-philosophisch', icon: '◇' },
-  'Ethisch':             { iconClass: 'role-ethisch',       icon: '◬' },
-  'Abwägung':            { iconClass: 'role-abwaegung',     icon: '⊕' },
-  'Strategisch':         { iconClass: 'role-strategisch',   icon: '△' },
-  'Risiko':              { iconClass: 'role-risiko',        icon: '⚠' },
-  'Systemic':            { iconClass: 'role-systemisch',    icon: '⊙' },
-  'Depth-psychological': { iconClass: 'role-tiefenpsy',     icon: '◑' },
-  'Empirical-Rational':  { iconClass: 'role-empirisch',     icon: '▦' },
-  'Philosophical':       { iconClass: 'role-philosophisch', icon: '◇' },
-  'Ethical':             { iconClass: 'role-ethisch',       icon: '◬' },
-  'Weighing':            { iconClass: 'role-abwaegung',     icon: '⊕' },
-  'Strategic':           { iconClass: 'role-strategisch',   icon: '△' },
-  'Risk':                { iconClass: 'role-risiko',        icon: '⚠' },
-  'Pädagogisch':         { iconClass: 'role-paedagogisch',   icon: '◎' },
-  'Neurodivergent':      { iconClass: 'role-neurodivergent', icon: '⬡' },
-  'Pedagogical':         { iconClass: 'role-paedagogisch',   icon: '◎' },
+  'Systemisch':          { iconClass: 'role-systemisch',    icon: '↻' },
+  'Tiefenpsychologisch': { iconClass: 'role-tiefenpsy',     icon: 'Ψ' },
+  'Empirisch-Rational':  { iconClass: 'role-empirisch',     icon: '≡' },
+  'Philosophisch':       { iconClass: 'role-philosophisch', icon: 'Φ' },
+  'Ethisch':             { iconClass: 'role-ethisch',       icon: '⚖' },
+  'Abwägung':            { iconClass: 'role-abwaegung',     icon: '⇌' },
+  'Strategisch':         { iconClass: 'role-strategisch',   icon: '⌖' },
+  'Risiko':              { iconClass: 'role-risiko',        icon: '⚡' },
+  'Systemic':            { iconClass: 'role-systemisch',    icon: '↻' },
+  'Depth-psychological': { iconClass: 'role-tiefenpsy',     icon: 'Ψ' },
+  'Empirical-Rational':  { iconClass: 'role-empirisch',     icon: '≡' },
+  'Philosophical':       { iconClass: 'role-philosophisch', icon: 'Φ' },
+  'Ethical':             { iconClass: 'role-ethisch',       icon: '⚖' },
+  'Weighing':            { iconClass: 'role-abwaegung',     icon: '⇌' },
+  'Strategic':           { iconClass: 'role-strategisch',   icon: '⌖' },
+  'Risk':                { iconClass: 'role-risiko',        icon: '⚡' },
+  'Pädagogisch':         { iconClass: 'role-paedagogisch',   icon: '✦' },
+  'Neurodivergent':      { iconClass: 'role-neurodivergent', icon: '∞' },
+  'Pedagogical':         { iconClass: 'role-paedagogisch',   icon: '✦' },
 };
 
 function escapeHtml(str) {
@@ -2765,28 +2882,28 @@ function getPerspectives() {
 // V5.0 — METHODEN-CHIPS
 // =============================================
 const METHOD_CHIPS_DE = [
-  { key: 'Systemisch',          icon: '⊙' },
-  { key: 'Tiefenpsychologisch', icon: '◑' },
-  { key: 'Empirisch-Rational',  icon: '▦' },
-  { key: 'Philosophisch',       icon: '◇' },
-  { key: 'Ethisch',             icon: '◬' },
-  { key: 'Abwägung',            icon: '⊕' },
-  { key: 'Strategisch',         icon: '△' },
-  { key: 'Risiko',              icon: '⚠' },
-  { key: 'Pädagogisch',         icon: '◎' },
-  { key: 'Neurodivergent',      icon: '⬡' },
+  { key: 'Systemisch',          icon: '↻' },
+  { key: 'Tiefenpsychologisch', icon: 'Ψ' },
+  { key: 'Empirisch-Rational',  icon: '≡' },
+  { key: 'Philosophisch',       icon: 'Φ' },
+  { key: 'Ethisch',             icon: '⚖' },
+  { key: 'Abwägung',            icon: '⇌' },
+  { key: 'Strategisch',         icon: '⌖' },
+  { key: 'Risiko',              icon: '⚡' },
+  { key: 'Pädagogisch',         icon: '✦' },
+  { key: 'Neurodivergent',      icon: '∞' },
 ];
 const METHOD_CHIPS_EN = [
-  { key: 'Systemic',            icon: '⊙' },
-  { key: 'Depth-psychological', icon: '◑' },
-  { key: 'Empirical-Rational',  icon: '▦' },
-  { key: 'Philosophical',       icon: '◇' },
-  { key: 'Ethical',             icon: '◬' },
-  { key: 'Weighing',            icon: '⊕' },
-  { key: 'Strategic',           icon: '△' },
-  { key: 'Risk',                icon: '⚠' },
-  { key: 'Pedagogical',         icon: '◎' },
-  { key: 'Neurodivergent',      icon: '⬡' },
+  { key: 'Systemic',            icon: '↻' },
+  { key: 'Depth-psychological', icon: 'Ψ' },
+  { key: 'Empirical-Rational',  icon: '≡' },
+  { key: 'Philosophical',       icon: 'Φ' },
+  { key: 'Ethical',             icon: '⚖' },
+  { key: 'Weighing',            icon: '⇌' },
+  { key: 'Strategic',           icon: '⌖' },
+  { key: 'Risk',                icon: '⚡' },
+  { key: 'Pedagogical',         icon: '✦' },
+  { key: 'Neurodivergent',      icon: '∞' },
 ];
 
 // Track active chip keys (always use DE keys internally, map on send)

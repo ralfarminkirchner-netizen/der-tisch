@@ -886,7 +886,7 @@ class TableRequest(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Der Tisch API", "version": "5.2"}
+    return {"status": "ok", "service": "Der Tisch API", "version": "5.3"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
