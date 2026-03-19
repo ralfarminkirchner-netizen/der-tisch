@@ -20,7 +20,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Der Tisch — Perspektivenraum</title>
+<title>TEAM TiSCH — Perspektivenraum</title>
 <meta name="description" content="Ein orchestrierter Raum methodischer Perspektiven, Reibung und Integration. Keine absolute Wahrheit — nur ehrliche Analyse.">
 
 <!-- Fonts: Instrument Serif (Display) + Switzer (Body) -->
@@ -194,6 +194,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .site-logo-mark { width: 32px; height: 32px; flex-shrink: 0; }
 
 .site-logo-wordmark {
+  font-size: 0.92em;
   font-family: var(--font-display);
   font-size: var(--text-lg);
   letter-spacing: -0.01em;
@@ -328,8 +329,20 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   font-size: var(--text-hero);
   line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--color-text);
+  color: #b08fd8;
   margin-bottom: var(--space-6);
+}
+.hero-title .logo-i {
+  font-style: italic;
+  font-size: 0.85em;
+  letter-spacing: 0;
+  color: #9b7fd4;
+}
+[data-theme="light"] .hero-title {
+  color: #7856b8;
+}
+[data-theme="light"] .hero-title .logo-i {
+  color: #6644a8;
 }
 
 .hero-subtitle {
@@ -1491,6 +1504,285 @@ html[data-stil] body {
   transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 .question-input { transition: border-color 0.4s ease, box-shadow 0.4s ease; }
+
+/* =============================================
+   V5.5 — RUNDER TISCH VISUALISIERUNG
+============================================= */
+#roundTableSection {
+  margin: var(--space-8) 0 var(--space-4);
+  display: none; /* shown after results render */
+}
+#roundTableSection.visible { display: block; }
+
+.round-table-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.round-table-canvas {
+  width: 100%;
+  max-width: 680px;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  user-select: none;
+}
+
+/* The round table surface */
+.rt-table-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%, var(--color-surface-2) 0%, var(--color-surface) 60%, var(--color-surface-offset) 100%);
+  border: 2px solid var(--color-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.rt-table-logo {
+  opacity: 0.18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.rt-table-logo svg { color: var(--color-text); }
+.rt-table-logo-text {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* Seat + card units */
+.rt-seat {
+  position: absolute;
+  transform-origin: center center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* The chair icon */
+.rt-chair {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s var(--ease-out);
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.rt-seat:hover .rt-chair {
+  border-color: var(--chip-color, var(--color-accent));
+  color: var(--chip-color, var(--color-accent));
+  background: var(--color-surface-2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* The mini card on the table surface */
+.rt-card {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  max-width: 110px;
+  min-width: 80px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s var(--ease-out);
+  position: relative;
+  z-index: 3;
+}
+.rt-seat:hover .rt-card {
+  border-color: var(--chip-color, var(--color-accent));
+  box-shadow: 0 0 0 2px var(--chip-color, var(--color-accent-dim)), var(--shadow-md);
+  transform: scale(1.04);
+}
+.rt-card-role {
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--chip-color, var(--color-accent));
+  margin-bottom: 3px;
+}
+.rt-card-snippet {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Lines from chair to card (connector) */
+.rt-connector {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* =============================================
+   V5.5 — PERSPEKTIV-MODAL
+============================================= */
+.rt-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(4px);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out);
+}
+.rt-modal-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.rt-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  max-width: 640px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.22s var(--ease-out);
+}
+.rt-modal-overlay.visible .rt-modal {
+  transform: translateY(0) scale(1);
+}
+.rt-modal-header {
+  padding: var(--space-6) var(--space-8) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  z-index: 1;
+}
+.rt-modal-role {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.rt-modal-role-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: var(--chip-bg, var(--color-accent-dim));
+  color: var(--chip-color, var(--color-accent));
+  border: 1px solid var(--chip-color, var(--color-border));
+  flex-shrink: 0;
+}
+.rt-modal-role-name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+.rt-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.rt-modal-close:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+}
+.rt-modal-body {
+  padding: var(--space-6) var(--space-8) var(--space-8);
+}
+.rt-modal-section {
+  margin-bottom: var(--space-6);
+}
+.rt-modal-section:last-child { margin-bottom: 0; }
+.rt-modal-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-2);
+}
+.rt-modal-text {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.75;
+}
+.rt-modal-claim {
+  display: inline-block;
+  font-size: var(--text-xs);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--chip-bg, var(--color-accent-dim));
+  color: var(--chip-color, var(--color-accent));
+  border: 1px solid var(--chip-color, transparent);
+  margin-bottom: var(--space-4);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.rt-modal-evidence {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-md);
+  border-left: 2px solid var(--color-integration);
+}
+.rt-modal-blindspot {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-md);
+  border-left: 2px solid var(--color-friction);
+}
+
 </style>
 </head>
 <body>
@@ -1498,7 +1790,7 @@ html[data-stil] body {
 <!-- HEADER -->
 <header class="site-header">
   <div class="wrapper">
-    <a href="#" class="site-logo" aria-label="Der Tisch — Zur Startseite">
+    <a href="#" class="site-logo" aria-label="TEAM TiSCH — Zur Startseite">
       <!-- DER TiSCH Logo: T letter drawn as a table -->
       <svg class="site-logo-mark" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <!-- Table top (T crossbar) -->
@@ -1511,7 +1803,7 @@ html[data-stil] body {
         <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
       </svg>
       <!-- Wordmark: DER TiSCH with lowercase intentional i -->
-      <span class="site-logo-wordmark">DER T<span style="font-style:italic;font-size:0.85em;letter-spacing:0;">i</span>SCH</span>
+      <span class="site-logo-wordmark">TEAM T<span style="font-style:italic;font-size:0.85em;letter-spacing:0;">i</span>SCH</span>
     </a>
     <div class="header-actions">
       <!-- Sprachstil Toggle (desktop) -->
@@ -1555,9 +1847,9 @@ html[data-stil] body {
   <!-- HERO -->
   <section class="hero">
     <div class="wrapper">
-      <p class="hero-tagline">Epistemischer Perspektivenraum</p>
-      <h1 class="hero-title">Der Tisch</h1>
-      <p class="hero-subtitle">Keine absolute Wahrheit. Acht Methoden, die gleichzeitig denken — gefolgt von schonungsloser Reibung und ehrlicher Integration.</p>
+      <p class="hero-tagline">Gemeinsam denken. Ehrlich analysieren.</p>
+      <h1 class="hero-title">TEAM T<em class="logo-i">i</em>SCH</h1>
+      <p class="hero-subtitle">Verschiedene Perspektiven nehmen gemeinsam am runden Tisch Platz. Jede Stimme wird gehört — dann entscheidet ihr selbst.</p>
 
       <!-- MODE TOGGLE -->
       <div class="mode-toggle-wrap" id="modeToggleWrap">
@@ -1750,6 +2042,43 @@ html[data-stil] body {
     </div>
 
     <!-- I. PERSPEKTIVEN -->
+    <!-- V5.5 — RUNDER TISCH (rendered dynamically) -->
+    <section id="roundTableSection">
+      <div class="round-table-wrap">
+        <div class="round-table-canvas" id="roundTableCanvas" aria-label="Runder Tisch — klicke auf einen Stuhl um die Perspektive zu lesen">
+          <!-- Table circle -->
+          <div class="rt-table-circle">
+            <div class="rt-table-logo">
+              <svg width="28" height="20" viewBox="0 0 48 32" fill="none" aria-hidden="true">
+                <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
+                <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+                <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+                <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
+              </svg>
+              <span class="rt-table-logo-text">TEAM TiSCH</span>
+            </div>
+          </div>
+          <!-- Seats rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- V5.5 — PERSPEKTIV-MODAL -->
+    <div class="rt-modal-overlay" id="rtModalOverlay" onclick="closeRtModal(event)" role="dialog" aria-modal="true" aria-labelledby="rtModalRoleName">
+      <div class="rt-modal" id="rtModal">
+        <div class="rt-modal-header">
+          <div class="rt-modal-role">
+            <div class="rt-modal-role-icon" id="rtModalIcon"></div>
+            <span class="rt-modal-role-name" id="rtModalRoleName"></span>
+          </div>
+          <button class="rt-modal-close" onclick="closeRtModal()" aria-label="Schließen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="rt-modal-body" id="rtModalBody"></div>
+      </div>
+    </div>
+
     <section id="perspectivesSection" class="section-selectable" data-block="perspectives">
       <div class="section-header">
         <div class="section-badge amber">I</div>
@@ -2035,7 +2364,7 @@ const TRANSLATIONS = {
   de: {
     htmlLang: 'de',
     tagline: 'Epistemischer Perspektivenraum',
-    title: 'Der Tisch',
+    title: 'TEAM TiSCH',
     subtitle: 'Keine absolute Wahrheit. Acht Methoden, die gleichzeitig denken — gefolgt von schonungsloser Reibung und ehrlicher Integration.',
     placeholder: 'Welche Frage legen wir auf den Tisch?',
     submitBtn: 'Untersuchen',
@@ -2121,7 +2450,7 @@ const TRANSLATIONS = {
   en: {
     htmlLang: 'en',
     tagline: 'Epistemic Perspective Space',
-    title: 'The Table',
+    title: 'TEAM TABLE',
     subtitle: 'No absolute truth. Eight methods thinking simultaneously — followed by unsparing friction and honest integration.',
     placeholder: 'What question do we put on the table?',
     submitBtn: 'Examine',
@@ -2174,6 +2503,7 @@ const TRANSLATIONS = {
     modeClarify: 'Clarification',
     clarifySubmitBtn: 'Clarify',
     clarifyMethodsLabel: 'Add method agents (Pedagogical + Neurodivergent pre-selected)',
+    perspAnalysisLabel: 'Core Analysis',
     methodsHintAuto: 'KI Auto mode — AI selects contextually appropriate methods',
     autoModeActive: 'KI Auto',
     autoModeInactive: 'Auto',
@@ -2213,7 +2543,15 @@ function applyTranslation(lang) {
   document.documentElement.lang = t.htmlLang;
 
   document.querySelector('.hero-tagline').textContent = t.tagline;
-  document.querySelector('.hero-title').textContent = t.title;
+  // Keep the styled <em class="logo-i"> for the italic i
+  const heroTitleEl = document.querySelector('.hero-title');
+  if (heroTitleEl) {
+    if (currentLang === 'en') {
+      heroTitleEl.innerHTML = 'TEAM T<em class="logo-i">i</em>SCH';
+    } else {
+      heroTitleEl.innerHTML = 'TEAM T<em class="logo-i">i</em>SCH';
+    }
+  }
   document.querySelector('.hero-subtitle').textContent = t.subtitle;
   document.getElementById('questionInput').placeholder = t.placeholder;
   const submitBtn = document.getElementById('submitBtn');
@@ -2514,6 +2852,9 @@ function renderListItems(items, type) {
 }
 
 function renderResults(data) {
+  // 0. Round table visualization
+  renderRoundTable(data.perspectives);
+
   // 1. Perspectives
   const grid = document.getElementById('perspectivesGrid');
   grid.innerHTML = data.perspectives.map(renderPerspectiveCard).join('');
@@ -2694,7 +3035,7 @@ function printSelection() {
   const de = currentLang === 'de';
   const { data, question } = window._tischCurrentData || {};
   let html = `
-    <html><head><title>${de ? 'Der Tisch' : 'The Table'} — ${de ? 'Auswahl' : 'Selection'}</title>
+    <html><head><title>${de ? 'TEAM TiSCH' : 'TEAM TABLE'} — ${de ? 'Auswahl' : 'Selection'}</title>
     <style>
       body{font-family:Georgia,serif;max-width:700px;margin:40px auto;color:#1e1c18;line-height:1.7;font-size:14px;}
       h1{font-size:20px;margin-bottom:4px;} h2{font-size:15px;margin-top:28px;margin-bottom:8px;}
@@ -2704,7 +3045,7 @@ function printSelection() {
       .role{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px;}
       .einfach{background:#f0f8f2;border-left:3px solid #3d8a50;padding:14px;border-radius:6px;font-style:italic;}
     </style></head><body>
-    <h1>${de ? 'Der Tisch' : 'The Table'}</h1>
+    <h1>${de ? 'TEAM TiSCH' : 'TEAM TABLE'}</h1>
     <p class="q">${de ? 'Frage' : 'Question'}: ${question || ''}</p><hr>
   `;
 
@@ -3392,6 +3733,180 @@ function rebuildChipsForLang() {
   updateMethodsHint();
 }
 
+
+// =============================================
+// V5.5 — RUNDER TISCH + MODAL
+// =============================================
+
+// Color per method key (same as chip colors)
+const METHOD_CHIP_COLORS = {
+  'Systemisch': '#5b9e8a', 'Systemic': '#5b9e8a',
+  'Tiefenpsychologisch': '#8e6fc4', 'Depth-psychological': '#8e6fc4',
+  'Empirisch-Rational': '#5b8ec4', 'Empirical-Rational': '#5b8ec4',
+  'Philosophisch': '#9b7fd4', 'Philosophical': '#9b7fd4',
+  'Ethisch': '#c47c5b', 'Ethical': '#c47c5b',
+  'Abwägung': '#c4a85b', 'Weighing': '#c4a85b',
+  'Strategisch': '#4a9e6f', 'Strategic': '#4a9e6f',
+  'Risiko': '#c4585b', 'Risk': '#c4585b',
+  'Pädagogisch': '#e87d3e', 'Pedagogical': '#e87d3e',
+  'Neurodivergent': '#3eaec4',
+};
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function getMethodColor(role) {
+  // role may have [method] or [custom] prefix
+  const clean = role.replace(/^\[(custom|method)\]/, '').trim();
+  return METHOD_CHIP_COLORS[clean] || '#c8993a';
+}
+
+function getMethodIcon(role) {
+  const clean = role.replace(/^\[(custom|method)\]/, '').trim();
+  const icons = CHIP_ICONS || {};
+  return icons[clean] || null;
+}
+
+function renderRoundTable(perspectives) {
+  const section = document.getElementById('roundTableSection');
+  const canvas  = document.getElementById('roundTableCanvas');
+  if (!section || !canvas || !perspectives || perspectives.length === 0) return;
+
+  // Remove old seats
+  canvas.querySelectorAll('.rt-seat').forEach(el => el.remove());
+
+  const n = perspectives.length;
+  // Layout: seats are placed in a circle around the table
+  // We use percent-based positioning on the canvas
+  const cx = 50, cy = 50; // center %
+  const r  = 37;           // radius % from center to card center
+
+  // Angle offset: start at top (-90°), distribute evenly
+  perspectives.forEach((p, idx) => {
+    const angle = (idx / n) * 360 - 90; // degrees, start top
+    const rad   = (angle * Math.PI) / 180;
+    const x     = cx + r * Math.cos(rad); // %
+    const y     = cy + r * Math.sin(rad); // %
+
+    // Role display
+    let rawRole = p.rolle || '';
+    let displayRole = rawRole.replace(/^\[(custom|method)\]/, '').trim();
+
+    const color   = getMethodColor(rawRole);
+    const colorBg = hexToRgba(color, 0.12);
+    const svgIcon = getMethodIcon(displayRole);
+
+    // Snippet: first ~60 chars of kernanalyse
+    const snippet = (p.kernanalyse || '').slice(0, 70).trim() + (p.kernanalyse && p.kernanalyse.length > 70 ? '…' : '');
+
+    // Build icon HTML
+    let iconHTML = svgIcon
+      ? `<span style="display:flex;align-items:center;justify-content:center;width:14px;height:14px;">${svgIcon}</span>`
+      : `<span>${displayRole.slice(0,1)}</span>`;
+
+    const seat = document.createElement('div');
+    seat.className = 'rt-seat';
+    seat.style.cssText = `
+      left: ${x}%;
+      top:  ${y}%;
+      transform: translate(-50%, -50%);
+      --chip-color: ${color};
+      --chip-bg: ${colorBg};
+    `;
+    seat.setAttribute('title', displayRole);
+    seat.setAttribute('role', 'button');
+    seat.setAttribute('tabindex', '0');
+    seat.setAttribute('aria-label', `Perspektive: ${displayRole}`);
+
+    // Determine if card goes "inward" (toward center) or "outward"
+    // Cards always face the center, chair is on the outside
+    seat.innerHTML = `
+      <div class="rt-chair" style="color:${color};border-color:${hexToRgba(color,0.4)};background:${colorBg};">
+        <span style="display:flex;width:13px;height:13px;">${svgIcon ? svgIcon.replace('viewBox', 'style="width:13px;height:13px;stroke:'+color+';fill:'+(displayRole==='Risiko'||displayRole==='Risk'?color:'none')+';" viewBox') : displayRole.slice(0,1)}</span>
+      </div>
+      <div class="rt-card" style="border-color:${hexToRgba(color,0.3)};">
+        <div class="rt-card-role" style="color:${color};">${displayRole}</div>
+        <div class="rt-card-snippet">${escapeHtml(snippet)}</div>
+      </div>
+    `;
+
+    // Click to open modal
+    seat.addEventListener('click', () => openRtModal(p, displayRole, color, colorBg, svgIcon));
+    seat.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openRtModal(p, displayRole, color, colorBg, svgIcon); }});
+
+    canvas.appendChild(seat);
+  });
+
+  section.classList.add('visible');
+}
+
+function openRtModal(p, displayRole, color, colorBg, svgIcon) {
+  const overlay = document.getElementById('rtModalOverlay');
+  const icon    = document.getElementById('rtModalIcon');
+  const name    = document.getElementById('rtModalRoleName');
+  const body    = document.getElementById('rtModalBody');
+  const t       = TRANSLATIONS[currentLang];
+
+  // Set modal CSS vars
+  overlay.style.setProperty('--chip-color', color);
+  overlay.style.setProperty('--chip-bg', colorBg);
+
+  // Icon
+  if (svgIcon) {
+    icon.innerHTML = svgIcon.replace('viewBox', `style="width:18px;height:18px;stroke:${color};fill:${(['Risiko','Risk'].includes(displayRole)?color:'none')};" viewBox`);
+  } else {
+    icon.textContent = displayRole.slice(0,1);
+  }
+  icon.style.cssText = `--chip-color:${color};--chip-bg:${colorBg};background:${colorBg};border-color:${hexToRgba(color,0.4)};color:${color};`;
+
+  name.textContent = displayRole;
+
+  // Body content
+  const claimBadge = p.anspruchstyp
+    ? `<div class="rt-modal-claim">${escapeHtml(p.anspruchstyp)}</div>` : '';
+
+  body.innerHTML = `
+    ${claimBadge}
+    <div class="rt-modal-section">
+      <div class="rt-modal-label">${t.perspAnalysisLabel || 'Kernanalyse'}</div>
+      <p class="rt-modal-text">${escapeHtml(p.kernanalyse || '')}</p>
+    </div>
+    <div class="rt-modal-section">
+      <div class="rt-modal-label">${t.evidenceLabel || 'Evidenz'}</div>
+      <div class="rt-modal-evidence">${escapeHtml(p.evidenz || '')}</div>
+    </div>
+    <div class="rt-modal-section">
+      <div class="rt-modal-label">${t.blindSpotLabel || 'Blinder Fleck'}</div>
+      <div class="rt-modal-blindspot">${escapeHtml(p.blinder_fleck || '')}</div>
+    </div>
+  `;
+
+  overlay.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRtModal(event) {
+  // Only close if clicking overlay itself (not modal content)
+  if (event && event.target !== document.getElementById('rtModalOverlay')) return;
+  const overlay = document.getElementById('rtModalOverlay');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// Keyboard close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('rtModalOverlay');
+    if (overlay && overlay.classList.contains('visible')) {
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+  }
+});
+
 // =============================================
 // V5.0 — SUBMIT TABLE
 // =============================================
@@ -3574,7 +4089,7 @@ async function exportToPDF() {
   doc.setFillColor(20, 20, 20);
   doc.rect(0, 0, W, 28, 'F');
   doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.setTextColor(196, 160, 80);
-  doc.text(currentLang === 'de' ? 'Der Tisch' : 'The Table', margin, 13);
+  doc.text(currentLang === 'de' ? 'TEAM TiSCH' : 'TEAM TABLE', margin, 13);
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(160, 160, 160);
   doc.text(currentLang === 'de' ? 'Methodische Perspektivenanalyse' : 'Methodical Perspective Analysis', margin, 20);
   const dateStr = new Date().toLocaleDateString(currentLang === 'de' ? 'de-DE' : 'en-GB', {day:'2-digit', month:'long', year:'numeric'});
@@ -3702,7 +4217,7 @@ async function exportToPDF() {
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(160,160,160);
-    doc.text('Der Tisch — der-tisch-production.up.railway.app', margin, 292);
+    doc.text('TEAM TiSCH — der-tisch-production.up.railway.app', margin, 292);
     doc.text(`${i} / ${pageCount}`, W - margin - 8, 292);
   }
 
