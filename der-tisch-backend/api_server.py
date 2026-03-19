@@ -539,6 +539,9 @@ async def fetch_friction(perspectives: List[Perspective], question: str, lang: s
         for p in perspectives
     ])
     data = await asyncio.to_thread(sync_call_friction, context, question, lang)
+    data.setdefault("uebersetzungsfehler", data.get("translation_errors", data.get("scheinkonsens", [])))
+    data.setdefault("echte_widersprueche", data.get("genuine_contradictions", data.get("harte_widersprueche", [])))
+    data.setdefault("uebersehenes", data.get("overlooked", "—"))
     return Friction(**data)
 
 async def fetch_integration(perspectives: List[Perspective], friction: Friction, question: str, lang: str = "de") -> Integration:
@@ -552,6 +555,15 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         f"Übersehen: {friction.uebersehenes[:150]}"
     )
     data = await asyncio.to_thread(sync_call_integration, perspectives_text, friction_text, question, lang)
+    # Defensive fallbacks for all required fields
+    data.setdefault("anspruchskarte", data.get("claim_map", "—"))
+    data.setdefault("uebersetzbare_bruecken", data.get("translatable_bridges", data.get("fruchtbare_differenzen", [])))
+    data.setdefault("echte_unvereinbarkeiten", data.get("genuine_incompatibilities", []))
+    data.setdefault("praktische_optionen", data.get("practical_options", []))
+    data.setdefault("offene_pruefpfade", data.get("open_paths", []))
+    data.setdefault("vorlaeufiges_fazit", data.get("provisional_verdict", "—"))
+    data.setdefault("entscheidungshilfe", data.get("decision_aids", []))
+    data.setdefault("kurzfassung", data.get("summary", []))
     return Integration(**data)
 
 # ==========================================
