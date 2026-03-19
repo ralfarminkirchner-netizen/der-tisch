@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
-   Version 3: Inkommensurabilität als Methode. Finger zeigen auf den Mond — nicht der Mond.
+   Version 4.1: Sprachstil-Modus + 'Einfach gesagt' + Keine leeren Felder.
 """
 import asyncio
 from pathlib import Path
@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import anthropic
 
 app = FastAPI(title="Der Tisch API")
@@ -19,6 +19,73 @@ client = anthropic.Anthropic()
 @app.get("/")
 async def serve_index():
     return FileResponse(Path(__file__).parent / "index.html")
+
+# ==========================================
+# SPRACHSTIL INSTRUCTIONS
+# ==========================================
+# 5 Sprachstile: philosophisch (default), akademisch, alltag, oekonomisch, kindgerecht
+STIL_INSTRUCTIONS = {
+    "philosophisch": {
+        "de": (
+            "SPRACHSTIL: Philosophisch-reflektiv. Verwende Fachbegriffe präzise, "
+            "setze Begriffsklärung an den Anfang, arbeite mit Unterscheidungen und Präzisierungen. "
+            "Sprache darf anspruchsvoll sein — aber niemals hermetisch."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Philosophical-reflective. Use technical terms precisely, "
+            "start with conceptual clarification, work with distinctions and differentiations. "
+            "Language may be demanding — but never hermetic."
+        ),
+    },
+    "akademisch": {
+        "de": (
+            "SPRACHSTIL: Akademisch-wissenschaftlich. Präzise Definitionen, Quellenlogik, "
+            "hypothetisches Denken, strukturierte Argumentation. Formuliere wie in einem Fachaufsatz — "
+            "klar, belegt, distanziert."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Academic-scientific. Precise definitions, source logic, "
+            "hypothetical reasoning, structured argumentation. Write as in a scholarly essay — "
+            "clear, evidenced, detached."
+        ),
+    },
+    "alltag": {
+        "de": (
+            "SPRACHSTIL: Alltagssprache. Vermeide Fachbegriffe, nutze konkrete Beispiele aus dem Alltag, "
+            "sprich wie ein kluger Freund beim Kaffee. Keine Fremdwörter ohne Erklärung. "
+            "Kurze Sätze, direkte Sprache."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Everyday language. Avoid jargon, use concrete everyday examples, "
+            "speak like a smart friend over coffee. No foreign words without explanation. "
+            "Short sentences, direct language."
+        ),
+    },
+    "oekonomisch": {
+        "de": (
+            "SPRACHSTIL: Ökonomisch-pragmatisch. Denke in Kosten, Nutzen, Abwägungen und Optionen. "
+            "Nutze Sprache aus der Entscheidungs- und Managementliteratur. Klar, effizient, handlungsorientiert — "
+            "jeder Satz bringt eine verwertbare Erkenntnis."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Economic-pragmatic. Think in costs, benefits, trade-offs, and options. "
+            "Use language from decision and management literature. Clear, efficient, action-oriented — "
+            "every sentence delivers an actionable insight."
+        ),
+    },
+    "kindgerecht": {
+        "de": (
+            "SPRACHSTIL: Kindgerecht und einfach. Erkläre alles so, als würdest du es einem aufgeweckten "
+            "12-Jährigen erklären. Verwende Bilder, Analogien und einfache Wörter. "
+            "Komplexe Ideen müssen sich anfühlen wie eine Geschichte — nicht wie ein Lexikonartikel."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Child-friendly and simple. Explain everything as if to a bright "
+            "12-year-old. Use images, analogies, and simple words. "
+            "Complex ideas should feel like a story — not like an encyclopedia entry."
+        ),
+    },
+}
 
 # ==========================================
 # PYDANTIC MODELS
@@ -44,6 +111,7 @@ class Integration(BaseModel):
     vorlaeufiges_fazit: str          # Belastbare Arbeitsorientierung: welcher Anspruchstyp liegt vor, was bleibt offen
     entscheidungshilfe: List[str]    # Welche Methode ist hier zuständig? Konkrete Zuordnung für diesen Fall
     kurzfassung: List[str]           # Kernertrag in Stichworten: direkt verwendbar
+    einfach_gesagt: str              # Alles kurz und klar auf den Punkt — für jedes Publikum
 
 class TableResponse(BaseModel):
     perspectives: List[Perspective]
@@ -118,7 +186,7 @@ FRICTION_TOOL = {
 
 INTEGRATION_TOOL = {
     "name": "submit_integration",
-    "description": "Map the claim-types, build bridges, hold the incommensurability",
+    "description": "Map the claim-types, build bridges, hold the incommensurability, and produce a plain-language summary",
     "input_schema": {
         "type": "object",
         "properties": {
@@ -186,16 +254,25 @@ INTEGRATION_TOOL = {
                     "Each point should be a crisp, standalone insight from this specific analysis. "
                     "Not generic wisdom — concrete findings from this question. (1 sentence each)"
                 )
-            }
+            },
+            "einfach_gesagt": {
+                "type": "string",
+                "description": (
+                    "Plain-language summary for any audience — including someone with no prior knowledge. "
+                    "Distill the entire analysis into 3-5 clear, jargon-free sentences. "
+                    "What is the core of the question? What did the analysis find? What can someone actually do with this? "
+                    "Use everyday language. No technical terms without immediate explanation."
+                )
+            },
         },
         "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
                      "praktische_optionen", "offene_pruefpfade",
-                     "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung"]
+                     "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt"]
     }
 }
 
 # ==========================================
-# AGENT SYSTEM PROMPTS — Version 4
+# AGENT SYSTEM PROMPTS — Version 4.1
 # Prinzip: Jeder Agent ist ein Finger, nicht der Mond.
 # 8 Perspektiven: 4 epistemische + 4 praktische
 # ==========================================
@@ -377,6 +454,41 @@ AGENTS_EN = {
 }
 
 # ==========================================
+# EMPTY FIELD FALLBACKS
+# Wenn die KI keine Inhalte liefert, erscheinen informativer Begründungstext
+# statt leere Listen oder leere Strings.
+# ==========================================
+EMPTY_FALLBACKS_DE = {
+    "uebersetzungsfehler": ["Keine eindeutigen Übersetzungsfehler identifiziert — die Perspektiven arbeiten auf einem gemeinsamen Anspruchsniveau."],
+    "echte_widersprueche": ["Kein echter Widerspruch feststellbar — die Differenzen liegen auf verschiedenen Anspruchsebenen und lassen sich übersetzen."],
+    "uebersehenes": "Kein gemeinsamer blinder Fleck identifizierbar — die acht Methoden decken das Feld hier weitgehend ab.",
+    "uebersetzbare_bruecken": ["Keine direkte Brücke gefunden — die methodischen Rahmenbedingungen sind hier zu verschieden für eine direkte Übersetzung."],
+    "echte_unvereinbarkeiten": ["Keine echte Unvereinbarkeit identifiziert — die Differenzen lassen sich durch Präzisierung des Anspruchstyps auflösen."],
+    "praktische_optionen": ["Keine konkreten Optionen formulierbar, da die Frage noch zu offen ist — zunächst sollte der relevante Anspruchstyp geklärt werden."],
+    "offene_pruefpfade": ["Kein offener Prüfpfad benötigt — die Analyse hat die relevanten Felder bereits ausreichend kartiert."],
+    "entscheidungshilfe": ["Keine spezifische Methodenzuordnung möglich — die Frage liegt quer zu den üblichen Anspruchstypen und erfordert eine eigene Rahmung."],
+    "kurzfassung": ["Die Analyse lieferte keine verdichtbare Kurzfassung — die Komplexität der Frage widersteht der Reduktion auf Stichpunkte."],
+    "einfach_gesagt": "Die Kernbotschaft der Analyse: Diese Frage lässt sich nicht einfach beantworten — nicht weil sie unklar wäre, sondern weil verschiedene Methoden verschiedene Aspekte beleuchten, die sich gegenseitig ergänzen statt widersprechen.",
+    "anspruchskarte": "Die Anspruchskarte konnte nicht eindeutig erstellt werden — die Frage vermischt mehrere Anspruchstypen, die einer weiteren Differenzierung bedürfen.",
+    "vorlaeufiges_fazit": "Ein vorläufiges Fazit lässt sich nicht sicher formulieren — die Perspektiven liefern kein konvergierendes Signal. Das ist selbst ein Befund: Die Frage bleibt offen.",
+}
+
+EMPTY_FALLBACKS_EN = {
+    "uebersetzungsfehler": ["No clear translation errors identified — the perspectives operate on a shared claim level."],
+    "echte_widersprueche": ["No genuine contradiction detectable — the differences lie on different claim levels and can be translated."],
+    "uebersehenes": "No shared blind spot identifiable — the eight methods cover the field here adequately.",
+    "uebersetzbare_bruecken": ["No direct bridge found — the methodological frameworks are too different here for direct translation."],
+    "echte_unvereinbarkeiten": ["No genuine incompatibility identified — the differences can be resolved by clarifying the claim-type."],
+    "praktische_optionen": ["No concrete options formulable, as the question is still too open — first the relevant claim-type should be clarified."],
+    "offene_pruefpfade": ["No open inquiry path needed — the analysis has already mapped the relevant fields adequately."],
+    "entscheidungshilfe": ["No specific method assignment possible — the question cuts across usual claim-types and requires its own framing."],
+    "kurzfassung": ["The analysis yielded no condensable summary — the complexity of the question resists reduction to bullet points."],
+    "einfach_gesagt": "The core message of the analysis: this question cannot be answered simply — not because it is unclear, but because different methods illuminate different aspects that complement rather than contradict each other.",
+    "anspruchskarte": "The claim map could not be clearly established — the question mixes several claim-types that require further differentiation.",
+    "vorlaeufiges_fazit": "A provisional verdict cannot be formulated with confidence — the perspectives deliver no converging signal. That itself is a finding: the question remains open.",
+}
+
+# ==========================================
 # SYNC HELPERS — run in thread pool
 # ==========================================
 def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: str, messages: list) -> dict:
@@ -396,11 +508,12 @@ def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: 
     raise RuntimeError(f"No tool_use block (tool={tool_name}, stop_reason={stop}). Check max_tokens.")
 
 
-def sync_call_perspective(system_prompt: str, question: str) -> dict:
+def sync_call_perspective(system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de") -> dict:
+    stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
     return _call_api(
         model="claude-sonnet-4-6",
         max_tokens=900,
-        system=system_prompt,
+        system=system_prompt + "\n\n" + stil_instr,
         tools=[PERSPECTIVE_TOOL],
         tool_name="submit_perspective",
         messages=[{
@@ -415,7 +528,8 @@ def sync_call_perspective(system_prompt: str, question: str) -> dict:
     )
 
 
-def sync_call_friction(context: str, question: str, lang: str = "de") -> dict:
+def sync_call_friction(context: str, question: str, lang: str = "de", stil: str = "philosophisch") -> dict:
+    stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
     if lang == "en":
         user_content = (
             f"You are the friction agent. Your task: distinguish translation errors from genuine contradictions.\n\n"
@@ -427,7 +541,7 @@ def sync_call_friction(context: str, question: str, lang: str = "de") -> dict:
             f"(pain, love, dying — things that are true but not propositions)?\n\n"
             f"QUESTION: {question}\n\n"
             f"PERSPECTIVES (with claim-types):\n{context}\n\n"
-            f"Be BRIEF — 1 sentence per item. Respond in English."
+            f"Be BRIEF — 1 sentence per item. Respond in English.\n\n{stil_instr}"
         )
         system = (
             "Friction agent. Distinguish translation errors (different moons) from genuine contradictions (same moon, different answer). "
@@ -444,7 +558,7 @@ def sync_call_friction(context: str, question: str, lang: str = "de") -> dict:
             f"(Schmerz, Liebe, Sterben — Dinge, die wahr sind, aber keine Aussagen)?\n\n"
             f"FRAGE: {question}\n\n"
             f"PERSPEKTIVEN (mit Anspruchstypen):\n{context}\n\n"
-            f"Sei KURZ — je 1 Satz pro Item."
+            f"Sei KURZ — je 1 Satz pro Item.\n\n{stil_instr}"
         )
         system = (
             "Reibungs-Agent. Unterscheide Übersetzungsfehler (verschiedene Monde) von echten Widersprüchen (gleicher Mond, verschiedene Antwort). "
@@ -460,10 +574,11 @@ def sync_call_friction(context: str, question: str, lang: str = "de") -> dict:
     )
 
 
-def sync_call_integration(perspectives_text: str, friction_text: str, question: str, lang: str = "de") -> dict:
+def sync_call_integration(perspectives_text: str, friction_text: str, question: str, lang: str = "de", stil: str = "philosophisch") -> dict:
+    stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
     if lang == "en":
         user_content = (
-            f"You are the mapping and verdict agent. Your task has four parts:\n\n"
+            f"You are the mapping and verdict agent. Your task has six parts:\n\n"
             f"PART 1 — CLAIM MAP: Name which truth-claims are at stake and which were conflated. "
             f"Under 'truth' we often mix: statement-status (is it factually correct?), "
             f"validity-order (who gets to define it?), epistemic procedure (how do we check it?), "
@@ -477,18 +592,20 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"Use the pattern: Fact-question → Empirical | Recognition-question → Depth-psychological | "
             f"Power/context-question → Systemic | Concept-question → Philosophical. Make it specific.\n\n"
             f"PART 5 — SUMMARY: 5-6 crisp bullet-point takeaways from THIS analysis — concrete findings, not generic wisdom.\n\n"
+            f"PART 6 — PLAIN LANGUAGE ('Einfach gesagt'): Summarize the entire analysis in 3-5 jargon-free sentences "
+            f"that anyone can understand. Core question, key finding, what to do with it.\n\n"
             f"QUESTION: {question}\n\n"
             f"PERSPECTIVES:\n{perspectives_text}\n\n"
             f"FRICTION:\n{friction_text}\n\n"
-            f"Be BRIEF — 1 sentence per item. Respond in English."
+            f"Be BRIEF — 1 sentence per item. Respond in English.\n\n{stil_instr}"
         )
         system = (
-            "Mapping and verdict agent. Cartography first, then provisional verdict, then decision aids, then summary. "
+            "Mapping and verdict agent. Cartography first, then provisional verdict, then decision aids, then summary, then plain-language summary. "
             "Not synthesis — honest orientation. Short precise sentences. Respond in English."
         )
     else:
         user_content = (
-            f"Du bist Kartierungs- und Fazit-Agent. Deine Aufgabe hat fünf Teile:\n\n"
+            f"Du bist Kartierungs- und Fazit-Agent. Deine Aufgabe hat sechs Teile:\n\n"
             f"TEIL 1 — ANSPRUCHSKARTE: Benenne, welche Wahrheitsansprüche wirklich vorliegen und welche vermischt wurden. "
             f"Unter 'Wahrheit' vermengen wir oft: Aussagenstatus (stimmt es faktisch?), "
             f"Geltungsordnung (wer darf es definieren?), Erkenntnisverfahren (wie prüfen wir es?), "
@@ -502,18 +619,20 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"Nutze das Muster: Faktenfrage → Empirie | Anerkennungsfrage → Tiefenpsychologie | "
             f"Macht-/Kontextfrage → Systemik | Begriffsfrage → Philosophie. Spezifisch, nicht generisch.\n\n"
             f"TEIL 5 — KURZFASSUNG: 5-6 knappe Stichpunkte aus DIESER Analyse — konkrete Befunde, keine allgemeine Weisheit.\n\n"
+            f"TEIL 6 — EINFACH GESAGT: Fasse die gesamte Analyse in 3-5 klaren, jargonfreien Sätzen zusammen, "
+            f"die jede Person verstehen kann. Kernfrage, Kernbefund, was man damit anfangen kann.\n\n"
             f"FRAGE: {question}\n\n"
             f"PERSPEKTIVEN:\n{perspectives_text}\n\n"
             f"REIBUNG:\n{friction_text}\n\n"
-            f"Sei KURZ — je 1 Satz pro Item."
+            f"Sei KURZ — je 1 Satz pro Item.\n\n{stil_instr}"
         )
         system = (
-            "Kartierungs- und Fazit-Agent. Erst Kartographie, dann vorläufiges Fazit, dann Entscheidungshilfe, dann Kurzfassung. "
+            "Kartierungs- und Fazit-Agent. Erst Kartographie, dann vorläufiges Fazit, dann Entscheidungshilfe, dann Kurzfassung, dann Einfach gesagt. "
             "Keine Synthese — ehrliche Orientierung. Kurze präzise Sätze."
         )
     return _call_api(
         model="claude-sonnet-4-6",
-        max_tokens=2200,
+        max_tokens=2500,
         system=system,
         tools=[INTEGRATION_TOOL],
         tool_name="submit_integration",
@@ -523,28 +642,46 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
 # ==========================================
 # ASYNC WRAPPERS
 # ==========================================
-async def fetch_perspective(role: str, system_prompt: str, question: str) -> Perspective:
-    data = await asyncio.to_thread(sync_call_perspective, system_prompt, question)
+async def fetch_perspective(role: str, system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de") -> Perspective:
+    data = await asyncio.to_thread(sync_call_perspective, system_prompt, question, stil, lang)
     data["rolle"] = role
     # Ensure all required fields exist (defensive fallbacks)
     data.setdefault("kernanalyse", data.get("analyse", data.get("core_analysis", "—")))
     data.setdefault("anspruchstyp", data.get("claim_type", "—"))
     data.setdefault("evidenz", data.get("evidence", "—"))
     data.setdefault("blinder_fleck", data.get("blind_spot", "—"))
+    # Ensure no field is an empty string — inject fallback explanations
+    fb = EMPTY_FALLBACKS_EN if lang == "en" else EMPTY_FALLBACKS_DE
+    if not data.get("kernanalyse", "").strip():
+        data["kernanalyse"] = "Keine Kernanalyse formulierbar — die Frage liegt außerhalb des methodischen Zuständigkeitsbereichs dieser Perspektive." if lang == "de" else "No core analysis formulable — the question lies outside this perspective's methodological scope."
+    if not data.get("anspruchstyp", "").strip():
+        data["anspruchstyp"] = "Anspruchstyp nicht eindeutig zuordenbar." if lang == "de" else "Claim type not clearly assignable."
+    if not data.get("evidenz", "").strip():
+        data["evidenz"] = "Keine Evidenz benennbar — die Frage ist empirisch nicht direkt zugänglich." if lang == "de" else "No evidence nameable — the question is not directly empirically accessible."
+    if not data.get("blinder_fleck", "").strip():
+        data["blinder_fleck"] = "Blinder Fleck dieser Methode konnte nicht explizit benannt werden." if lang == "de" else "Blind spot of this method could not be explicitly named."
     return Perspective(**data)
 
-async def fetch_friction(perspectives: List[Perspective], question: str, lang: str = "de") -> Friction:
+async def fetch_friction(perspectives: List[Perspective], question: str, lang: str = "de", stil: str = "philosophisch") -> Friction:
     context = "\n".join([
         f"[{p.rolle}] Anspruchstyp: {p.anspruchstyp[:120]} | Analyse: {p.kernanalyse[:160]} | Blind: {p.blinder_fleck[:80]}"
         for p in perspectives
     ])
-    data = await asyncio.to_thread(sync_call_friction, context, question, lang)
+    data = await asyncio.to_thread(sync_call_friction, context, question, lang, stil)
     data.setdefault("uebersetzungsfehler", data.get("translation_errors", data.get("scheinkonsens", [])))
     data.setdefault("echte_widersprueche", data.get("genuine_contradictions", data.get("harte_widersprueche", [])))
-    data.setdefault("uebersehenes", data.get("overlooked", "—"))
+    data.setdefault("uebersehenes", data.get("overlooked", ""))
+    fb = EMPTY_FALLBACKS_EN if lang == "en" else EMPTY_FALLBACKS_DE
+    # Ensure lists are never empty
+    if not data.get("uebersetzungsfehler"):
+        data["uebersetzungsfehler"] = fb["uebersetzungsfehler"]
+    if not data.get("echte_widersprueche"):
+        data["echte_widersprueche"] = fb["echte_widersprueche"]
+    if not str(data.get("uebersehenes", "")).strip():
+        data["uebersehenes"] = fb["uebersehenes"]
     return Friction(**data)
 
-async def fetch_integration(perspectives: List[Perspective], friction: Friction, question: str, lang: str = "de") -> Integration:
+async def fetch_integration(perspectives: List[Perspective], friction: Friction, question: str, lang: str = "de", stil: str = "philosophisch") -> Integration:
     perspectives_text = "\n".join([
         f"[{p.rolle}] ({p.anspruchstyp[:80]}): {p.kernanalyse[:150]}"
         for p in perspectives
@@ -554,16 +691,39 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         f"Echte Widersprüche: {'; '.join(friction.echte_widersprueche[:2])}\n"
         f"Übersehen: {friction.uebersehenes[:150]}"
     )
-    data = await asyncio.to_thread(sync_call_integration, perspectives_text, friction_text, question, lang)
+    data = await asyncio.to_thread(sync_call_integration, perspectives_text, friction_text, question, lang, stil)
     # Defensive fallbacks for all required fields
-    data.setdefault("anspruchskarte", data.get("claim_map", "—"))
+    data.setdefault("anspruchskarte", data.get("claim_map", ""))
     data.setdefault("uebersetzbare_bruecken", data.get("translatable_bridges", data.get("fruchtbare_differenzen", [])))
     data.setdefault("echte_unvereinbarkeiten", data.get("genuine_incompatibilities", []))
     data.setdefault("praktische_optionen", data.get("practical_options", []))
     data.setdefault("offene_pruefpfade", data.get("open_paths", []))
-    data.setdefault("vorlaeufiges_fazit", data.get("provisional_verdict", "—"))
+    data.setdefault("vorlaeufiges_fazit", data.get("provisional_verdict", ""))
     data.setdefault("entscheidungshilfe", data.get("decision_aids", []))
     data.setdefault("kurzfassung", data.get("summary", []))
+    data.setdefault("einfach_gesagt", data.get("plain_summary", data.get("simply_put", "")))
+
+    fb = EMPTY_FALLBACKS_EN if lang == "en" else EMPTY_FALLBACKS_DE
+    # Ensure no field is empty — inject fallbacks
+    if not str(data.get("anspruchskarte", "")).strip():
+        data["anspruchskarte"] = fb["anspruchskarte"]
+    if not data.get("uebersetzbare_bruecken"):
+        data["uebersetzbare_bruecken"] = fb["uebersetzbare_bruecken"]
+    if not data.get("echte_unvereinbarkeiten"):
+        data["echte_unvereinbarkeiten"] = fb["echte_unvereinbarkeiten"]
+    if not data.get("praktische_optionen"):
+        data["praktische_optionen"] = fb["praktische_optionen"]
+    if not data.get("offene_pruefpfade"):
+        data["offene_pruefpfade"] = fb["offene_pruefpfade"]
+    if not str(data.get("vorlaeufiges_fazit", "")).strip():
+        data["vorlaeufiges_fazit"] = fb["vorlaeufiges_fazit"]
+    if not data.get("entscheidungshilfe"):
+        data["entscheidungshilfe"] = fb["entscheidungshilfe"]
+    if not data.get("kurzfassung"):
+        data["kurzfassung"] = fb["kurzfassung"]
+    if not str(data.get("einfach_gesagt", "")).strip():
+        data["einfach_gesagt"] = fb["einfach_gesagt"]
+
     return Integration(**data)
 
 # ==========================================
@@ -571,29 +731,34 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
 # ==========================================
 class QueryRequest(BaseModel):
     question: str
-    lang: str = "de"  # "de" or "en"
+    lang: str = "de"   # "de" or "en"
+    stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Der Tisch API", "version": "3.0"}
+    return {"status": "ok", "service": "Der Tisch API", "version": "4.1"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
+    # Validate stil
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht"}
+    stil = req.stil if req.stil in valid_stile else "philosophisch"
+
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
     try:
         # Phase 1: 8 Agenten PARALLEL
-        tasks = [fetch_perspective(role, prompt, req.question) for role, prompt in agents.items()]
+        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
 
         # Phase 2: Reibung
-        friction = await fetch_friction(perspectives, req.question, req.lang)
+        friction = await fetch_friction(perspectives, req.question, req.lang, stil)
 
         # Phase 3: Kartierung
-        integration = await fetch_integration(perspectives, friction, req.question, req.lang)
+        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
 
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
 
