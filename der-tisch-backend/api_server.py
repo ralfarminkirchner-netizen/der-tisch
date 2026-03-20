@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import anthropic
 
-app = FastAPI(title="Der Tisch API")
+app = FastAPI(title="TEAM TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = anthropic.Anthropic()
 
@@ -886,7 +886,7 @@ class TableRequest(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Der Tisch API", "version": "5.5"}
+    return {"status": "ok", "service": "TEAM TiSCH API", "version": "5.6"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
@@ -1047,6 +1047,76 @@ async def ask_clarify(req: ClarifyRequest):
     )
     return await ask_the_custom_table(table_req)
 
+
+
+# =============================================
+# V5.6 — ECOSYSTEM HOOKS (future-proofing)
+# Empty routing stubs — NO fake logic
+# =============================================
+
+class BlackHoleBoxPayload(BaseModel):
+    """Data condenser — receives full session payload for compression."""
+    session_id: str
+    question: str
+    variants: list = []
+
+class KiNtegrityPayload(BaseModel):
+    """Translation structure hook — receives bilingual output for structural alignment."""
+    text_de: str = ""
+    text_en: str = ""
+    field_name: str = ""
+
+class MycelPayload(BaseModel):
+    """myCEL read/write — accesses Muster-Ordner (pattern directory)."""
+    operation: str  # "read" | "write"
+    pattern_key: str = ""
+    data: dict = {}
+
+class BrainstormzPayload(BaseModel):
+    """BRaiNSTORMZ — routing destination for structured idea clouds from myCEL."""
+    idea_cloud: list = []
+    source_session: str = ""
+
+class PandoraLogicPayload(BaseModel):
+    """Pandora_Logic — trigger when idea cloud reaches maximum density."""
+    cloud_id: str = ""
+    density_score: float = 0.0
+
+@app.post("/api/hooks/black-hole-box", tags=["ecosystem"])
+async def hook_black_hole_box(payload: BlackHoleBoxPayload):
+    """BLACK-HOLE-BOX: Data condenser hook. Receives full session payload."""
+    # HOOKPOINT — integration pending
+    return {"status": "hookpoint_ready", "hook": "BLACK-HOLE-BOX", "received": payload.session_id}
+
+@app.post("/api/hooks/ki-ntegrity", tags=["ecosystem"])
+async def hook_ki_ntegrity(payload: KiNtegrityPayload):
+    """ki-NTEGRiTY: Translation structure hook."""
+    # HOOKPOINT — integration pending
+    return {"status": "hookpoint_ready", "hook": "ki-NTEGRiTY", "field": payload.field_name}
+
+@app.get("/api/hooks/mycel/patterns", tags=["ecosystem"])
+async def hook_mycel_read():
+    """myCEL: Read from Muster-Ordner (pattern directory)."""
+    # HOOKPOINT — returns empty pattern store until connected
+    return {"status": "hookpoint_ready", "hook": "myCEL", "patterns": []}
+
+@app.post("/api/hooks/mycel/patterns", tags=["ecosystem"])
+async def hook_mycel_write(payload: MycelPayload):
+    """myCEL: Write to Muster-Ordner (pattern directory)."""
+    # HOOKPOINT — write operation pending
+    return {"status": "hookpoint_ready", "hook": "myCEL", "operation": payload.operation, "key": payload.pattern_key}
+
+@app.post("/api/hooks/brainstormz", tags=["ecosystem"])
+async def hook_brainstormz(payload: BrainstormzPayload):
+    """BRaiNSTORMZ: Receive structured idea clouds from myCEL."""
+    # HOOKPOINT — routing pending
+    return {"status": "hookpoint_ready", "hook": "BRaiNSTORMZ", "cloud_size": len(payload.idea_cloud)}
+
+@app.post("/api/hooks/pandora-logic", tags=["ecosystem"])
+async def hook_pandora_logic(payload: PandoraLogicPayload):
+    """Pandora_Logic: Trigger when idea cloud reaches maximum density."""
+    # HOOKPOINT — trigger logic pending
+    return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
 
 if __name__ == "__main__":
     import uvicorn

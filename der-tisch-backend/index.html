@@ -191,9 +191,10 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   flex-shrink: 0;
 }
 
-.site-logo-mark { width: 32px; height: 32px; flex-shrink: 0; }
+.site-logo-mark { width: 80px; height: 35px; flex-shrink: 0; }
 
 .site-logo-wordmark {
+  display: none;
   font-size: 0.92em;
   font-family: var(--font-display);
   font-size: var(--text-lg);
@@ -329,20 +330,20 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   font-size: var(--text-hero);
   line-height: 1;
   letter-spacing: -0.02em;
-  color: #b08fd8;
+  color: var(--color-text);
   margin-bottom: var(--space-6);
 }
 .hero-title .logo-i {
   font-style: italic;
   font-size: 0.85em;
   letter-spacing: 0;
-  color: #9b7fd4;
+  color: var(--color-accent);
 }
 [data-theme="light"] .hero-title {
-  color: #7856b8;
+  color: #2c2618;
 }
 [data-theme="light"] .hero-title .logo-i {
-  color: #6644a8;
+  color: #9a6e1a;
 }
 
 .hero-subtitle {
@@ -1783,6 +1784,157 @@ html[data-stil] body {
   border-left: 2px solid var(--color-friction);
 }
 
+
+/* =============================================
+   V5.6 — TTS PLAYER
+============================================= */
+#ttsBar {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  z-index: 800;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s var(--ease-out), opacity 0.3s;
+  opacity: 0;
+  white-space: nowrap;
+  min-width: 280px;
+  max-width: 92vw;
+}
+#ttsBar.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.tts-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.tts-btn:hover { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
+.tts-btn.tts-active { background: var(--color-accent); color: #000; border-color: var(--color-accent); }
+.tts-btn svg { width: 13px; height: 13px; pointer-events: none; }
+.tts-progress-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tts-label {
+  font-size: 10px;
+  color: var(--color-text-faint);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  truncate: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 140px;
+}
+.tts-progress {
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.tts-progress-bar {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 9999px;
+  width: 0%;
+  transition: width 0.5s linear;
+}
+#ttsClose {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-faint);
+  font-size: 14px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+#ttsClose:hover { color: var(--color-text); }
+
+/* =============================================
+   V5.6 — SESSION CACHE PANEL
+============================================= */
+#sessionCachePanel {
+  margin: var(--space-8) 0;
+  display: none;
+}
+#sessionCachePanel.has-variants { display: block; }
+
+.session-cache-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+.session-cache-title {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.session-cache-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.cache-action-btn {
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cache-action-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.cache-action-btn.primary { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
+
+.session-variants-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.session-variant-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.session-variant-chip:hover { border-color: var(--color-accent); }
+.session-variant-chip.active-variant { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); font-weight: 600; }
+.session-variant-chip input[type=checkbox] { accent-color: var(--color-accent); width: 13px; height: 13px; flex-shrink: 0; cursor: pointer; }
+.variant-chip-label { pointer-events: none; }
+
 </style>
 </head>
 <body>
@@ -1791,19 +1943,19 @@ html[data-stil] body {
 <header class="site-header">
   <div class="wrapper">
     <a href="#" class="site-logo" aria-label="TEAM TiSCH — Zur Startseite">
-      <!-- DER TiSCH Logo: T letter drawn as a table -->
-      <svg class="site-logo-mark" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <!-- Table top (T crossbar) -->
-        <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
-        <!-- Left leg -->
-        <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
-        <!-- Right leg -->
-        <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
-        <!-- Subtle center stem (T) -->
-        <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
+      <!-- TEAM TiSCH Logo: two T-table shapes, EAM and iSCH below legs -->
+      <svg class="site-logo-mark" viewBox="0 0 120 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TEAM TiSCH" aria-hidden="false">
+        <!-- Horizontal table top (full width bar) -->
+        <rect x="2" y="2" width="116" height="7" fill="currentColor"/>
+        <!-- Left T leg -->
+        <rect x="26" y="9" width="7" height="28" fill="currentColor"/>
+        <!-- Right T leg -->
+        <rect x="87" y="9" width="7" height="28" fill="currentColor"/>
+        <!-- EAM text — below left leg -->
+        <text x="5" y="50" font-family="'Switzer','Helvetica Neue',sans-serif" font-size="15" font-weight="500" fill="currentColor" letter-spacing="1">EAM</text>
+        <!-- iSCH text — below right leg, i italic -->
+        <text x="66" y="50" font-family="'Switzer','Helvetica Neue',sans-serif" font-size="15" font-weight="500" fill="currentColor" letter-spacing="1"><tspan font-style="italic">i</tspan>SCH</text>
       </svg>
-      <!-- Wordmark: DER TiSCH with lowercase intentional i -->
-      <span class="site-logo-wordmark">TEAM T<span style="font-style:italic;font-size:0.85em;letter-spacing:0;">i</span>SCH</span>
     </a>
     <div class="header-actions">
       <!-- Sprachstil Toggle (desktop) -->
@@ -2504,6 +2656,13 @@ const TRANSLATIONS = {
     clarifySubmitBtn: 'Clarify',
     clarifyMethodsLabel: 'Add method agents (Pedagogical + Neurodivergent pre-selected)',
     perspAnalysisLabel: 'Core Analysis',
+    ttsReading: 'Reading…',
+    ttsReady: 'Read aloud',
+    variantsLabel: 'Variants',
+    sessionCacheTitle: 'Saved Variants',
+    sessionCacheSubtitle: 'All answers to this question',
+    cacheSelectAllBtn: 'Select all',
+    cacheExportBtn: 'PDF Export',
     methodsHintAuto: 'KI Auto mode — AI selects contextually appropriate methods',
     autoModeActive: 'KI Auto',
     autoModeInactive: 'Auto',
@@ -2854,6 +3013,8 @@ function renderListItems(items, type) {
 function renderResults(data) {
   // 0. Round table visualization
   renderRoundTable(data.perspectives);
+  // V5.6: Show TTS bar (small delay to let DOM settle)
+  setTimeout(ttsShowBar, 300);
 
   // 1. Perspectives
   const grid = document.getElementById('perspectivesGrid');
@@ -3081,7 +3242,26 @@ function printSelection() {
     html += `<h2>${de ? titleDe : titleEn}</h2>${clone.innerHTML}`;
   });
 
-  html += '</body></html>';
+  html += '
+  <!-- V5.6 — TTS PLAYER BAR -->
+  <div id="ttsBar" role="region" aria-label="Vorlesefunktion">
+    <button class="tts-btn" id="ttsSkipBack" onclick="ttsSkip(-10)" title="-10s" aria-label="10 Sekunden zurück">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 17l-5-5 5-5"/><path d="M18 17l-5-5 5-5"/></svg>
+    </button>
+    <button class="tts-btn" id="ttsPlayBtn" onclick="ttsToggle()" title="Wiedergabe / Pause" aria-label="Wiedergabe starten">
+      <svg id="ttsPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+    <button class="tts-btn" id="ttsSkipFwd" onclick="ttsSkip(10)" title="+10s" aria-label="10 Sekunden vor">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 17l5-5-5-5"/><path d="M6 17l5-5-5-5"/></svg>
+    </button>
+    <div class="tts-progress-wrap">
+      <span class="tts-label" id="ttsLabel">Vorlesen</span>
+      <div class="tts-progress"><div class="tts-progress-bar" id="ttsProgressBar"></div></div>
+    </div>
+    <button id="ttsClose" onclick="ttsStop(true)" aria-label="Schließen">×</button>
+  </div>
+
+</body></html>';
   win.document.write(html);
   win.document.close();
   win.focus();
@@ -3800,7 +3980,9 @@ function renderRoundTable(perspectives) {
     const svgIcon = getMethodIcon(displayRole);
 
     // Snippet: first ~60 chars of kernanalyse
-    const snippet = (p.kernanalyse || '').slice(0, 70).trim() + (p.kernanalyse && p.kernanalyse.length > 70 ? '…' : '');
+    // Use einfach_gesagt as table card text (concise summary on the table surface)
+  const tableText = p.einfach_gesagt || p.kernanalyse || '';
+  const snippet = tableText.slice(0, 80).trim() + (tableText.length > 80 ? '…' : '');
 
     // Build icon HTML
     let iconHTML = svgIcon
@@ -3981,6 +4163,8 @@ async function submitTable() {
     showState('results');
     setTimeout(initBlockSelection, 50);
     showQuestionHeadline(question);
+    // V5.6: Session cache — store this variant
+    sessionSaveVariant(question, currentStil, currentLang, data);
     setTimeout(() => {
       document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -4005,6 +4189,328 @@ async function submitTable() {
 document.getElementById('tableQuestionInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitTable(); }
 });
+
+
+// =============================================
+// V5.6 — TTS ENGINE (Web Speech API)
+// =============================================
+const _tts = {
+  utterance: null,
+  sentences: [],
+  currentIdx: 0,
+  isPlaying: false,
+  lang: 'de-DE',
+  charOffset: 0,
+  totalChars: 0,
+};
+
+function ttsGetText() {
+  // Collect all visible text from results panel, ordered by DOM position
+  const panel = document.getElementById('resultsPanel');
+  if (!panel) return '';
+  const textNodes = [];
+  const walker = document.createTreeWalker(panel, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const p = node.parentElement;
+      if (!p) return NodeFilter.FILTER_REJECT;
+      if (p.closest('.block-checkbox-wrap, .section-actions, script, style, .tts-bar')) return NodeFilter.FILTER_REJECT;
+      if (p.closest('.hidden')) return NodeFilter.FILTER_REJECT;
+      const txt = node.textContent.trim();
+      return txt.length > 2 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  let node;
+  while (node = walker.nextNode()) {
+    textNodes.push(node.textContent.trim());
+  }
+  return textNodes.join(' ');
+}
+
+function ttsSentenceSplit(text) {
+  // Split into ~200-char chunks at sentence boundaries
+  const raw = text.match(/[^.!?]+[.!?]+/g) || [text];
+  const chunks = [];
+  let cur = '';
+  for (const s of raw) {
+    if ((cur + s).length > 220 && cur.length > 0) {
+      chunks.push(cur.trim());
+      cur = s;
+    } else {
+      cur += ' ' + s;
+    }
+  }
+  if (cur.trim()) chunks.push(cur.trim());
+  return chunks;
+}
+
+function ttsStart(fromIdx) {
+  if (!('speechSynthesis' in window)) {
+    alert(currentLang === 'de'
+      ? 'Vorlesefunktion wird von diesem Browser nicht unterstützt.'
+      : 'Text-to-speech is not supported by this browser.');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  _tts.isPlaying = true;
+  _tts.currentIdx = fromIdx || 0;
+  ttsUpdateUI();
+  ttsPlayChunk();
+}
+
+function ttsPlayChunk() {
+  if (_tts.currentIdx >= _tts.sentences.length) {
+    ttsStop(false);
+    return;
+  }
+  const text = _tts.sentences[_tts.currentIdx];
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = currentLang === 'en' ? 'en-GB' : 'de-DE';
+  utt.rate = 0.95;
+  utt.onend = () => {
+    if (_tts.isPlaying) {
+      _tts.currentIdx++;
+      ttsPlayChunk();
+    }
+  };
+  utt.onboundary = () => {
+    const pct = (_tts.currentIdx / Math.max(1, _tts.sentences.length)) * 100;
+    const bar = document.getElementById('ttsProgressBar');
+    if (bar) bar.style.width = pct + '%';
+  };
+  _tts.utterance = utt;
+  window.speechSynthesis.speak(utt);
+}
+
+function ttsToggle() {
+  const bar = document.getElementById('ttsBar');
+  if (!bar.classList.contains('visible')) {
+    // First launch
+    const fullText = ttsGetText();
+    _tts.sentences = ttsSentenceSplit(fullText);
+    _tts.currentIdx = 0;
+    bar.classList.add('visible');
+    ttsStart(0);
+    return;
+  }
+  if (_tts.isPlaying) {
+    window.speechSynthesis.pause();
+    _tts.isPlaying = false;
+  } else {
+    _tts.isPlaying = true;
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    } else {
+      ttsPlayChunk();
+    }
+  }
+  ttsUpdateUI();
+}
+
+function ttsSkip(seconds) {
+  // Approximate skip: each sentence ~3s avg
+  const sentPerSec = 1 / 3;
+  const delta = Math.round(Math.abs(seconds) * sentPerSec) || 1;
+  if (seconds < 0) {
+    _tts.currentIdx = Math.max(0, _tts.currentIdx - delta);
+  } else {
+    _tts.currentIdx = Math.min(_tts.sentences.length - 1, _tts.currentIdx + delta);
+  }
+  if (_tts.isPlaying) {
+    window.speechSynthesis.cancel();
+    ttsPlayChunk();
+  }
+  ttsUpdateUI();
+}
+
+function ttsStop(hide) {
+  window.speechSynthesis.cancel();
+  _tts.isPlaying = false;
+  _tts.currentIdx = 0;
+  const bar = document.getElementById('ttsProgressBar');
+  if (bar) bar.style.width = '0%';
+  if (hide) {
+    const tbar = document.getElementById('ttsBar');
+    if (tbar) tbar.classList.remove('visible');
+  }
+  ttsUpdateUI();
+}
+
+function ttsUpdateUI() {
+  const playIcon = document.getElementById('ttsPlayIcon');
+  const label    = document.getElementById('ttsLabel');
+  const pct = _tts.sentences.length > 0
+    ? Math.round((_tts.currentIdx / _tts.sentences.length) * 100)
+    : 0;
+  const bar = document.getElementById('ttsProgressBar');
+  if (bar) bar.style.width = pct + '%';
+  if (playIcon) {
+    if (_tts.isPlaying) {
+      playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>';
+    } else {
+      playIcon.innerHTML = '<polygon points="5,3 19,12 5,21" fill="currentColor"/>';
+    }
+  }
+  if (label) {
+    const t = TRANSLATIONS[currentLang];
+    label.textContent = _tts.isPlaying
+      ? (t.ttsReading || 'Liest vor…')
+      : (t.ttsReady || 'Vorlesen');
+  }
+}
+
+// Show TTS bar when results appear
+function ttsShowBar() {
+  const bar = document.getElementById('ttsBar');
+  if (bar) {
+    bar.classList.add('visible');
+    // Rebuild sentences from new text
+    const fullText = ttsGetText();
+    _tts.sentences = ttsSentenceSplit(fullText);
+    _tts.currentIdx = 0;
+    _tts.isPlaying = false;
+    ttsUpdateUI();
+  }
+}
+
+// =============================================
+// V5.6 — SESSION CACHE
+// =============================================
+// Stores: { question, stil, lang, data, timestamp }
+let _sessionCache = [];
+let _activeVariantIdx = null;
+
+function sessionSaveVariant(question, stil, lang, data) {
+  const variant = {
+    question,
+    stil,
+    lang,
+    data: JSON.parse(JSON.stringify(data)), // deep copy
+    timestamp: Date.now(),
+    id: `v${_sessionCache.length + 1}`,
+  };
+  _sessionCache.push(variant);
+  _activeVariantIdx = _sessionCache.length - 1;
+  sessionRenderCache();
+}
+
+function sessionRenderCache() {
+  const panel = document.getElementById('sessionCachePanel');
+  const list  = document.getElementById('sessionVariantsList');
+  const count = document.getElementById('sessionCacheCount');
+  if (!panel || !list) return;
+
+  if (_sessionCache.length <= 1) {
+    panel.classList.remove('has-variants');
+    return;
+  }
+  panel.classList.add('has-variants');
+
+  const t = TRANSLATIONS[currentLang];
+  if (count) count.textContent = `${_sessionCache.length} ${t.variantsLabel || 'Varianten'}`;
+
+  list.innerHTML = _sessionCache.map((v, idx) => {
+    const d = new Date(v.timestamp);
+    const timeStr = d.toLocaleTimeString(currentLang === 'de' ? 'de-DE' : 'en-GB', {hour:'2-digit',minute:'2-digit'});
+    const isActive = idx === _activeVariantIdx;
+    const stilLabel = {
+      philosophisch:'Philos.', akademisch:'Akad.', alltag:'Alltag',
+      oekonomisch:'Ökon.', kindgerecht:'Kind', therapeutisch:'Therap.'
+    }[v.stil] || v.stil;
+    return `<button class="session-variant-chip${isActive ? ' active-variant' : ''}"
+      onclick="sessionLoadVariant(${idx})"
+      data-variant-idx="${idx}">
+      <input type="checkbox" onclick="event.stopPropagation()" data-variant-cb="${idx}"
+        ${isActive ? 'checked' : ''}>
+      <span class="variant-chip-label">${stilLabel} · ${v.lang.toUpperCase()} · ${timeStr}</span>
+    </button>`;
+  }).join('');
+}
+
+function sessionLoadVariant(idx) {
+  const v = _sessionCache[idx];
+  if (!v) return;
+  _activeVariantIdx = idx;
+  window._tischCurrentData = { data: v.data, question: v.question };
+  renderResults(v.data);
+  showState('results');
+  setTimeout(initBlockSelection, 50);
+  showQuestionHeadline(v.question);
+  sessionRenderCache();
+  document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function sessionSelectAll(checked) {
+  document.querySelectorAll('[data-variant-cb]').forEach(cb => { cb.checked = checked; });
+}
+
+async function exportCacheVariants() {
+  const selected = [];
+  document.querySelectorAll('[data-variant-cb]').forEach(cb => {
+    if (cb.checked) {
+      const idx = parseInt(cb.dataset.variantCb);
+      if (_sessionCache[idx]) selected.push(_sessionCache[idx]);
+    }
+  });
+  if (selected.length === 0) {
+    alert(currentLang === 'de' ? 'Keine Varianten ausgewählt.' : 'No variants selected.');
+    return;
+  }
+  // Use existing exportToPDF but loop over selected variants
+  const btn = document.getElementById('cacheExportBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  const W = 210, margin = 20, contentW = W - margin * 2;
+  let firstPage = true;
+
+  for (const v of selected) {
+    if (!firstPage) doc.addPage();
+    firstPage = false;
+    let y = margin;
+
+    // Header
+    doc.setFillColor(20,20,20);
+    doc.rect(0,0,W,28,'F');
+    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(196,160,80);
+    doc.text('TEAM TiSCH', margin, 13);
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(160,160,160);
+    const dateStr = new Date(v.timestamp).toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});
+    doc.text(`${v.stil.toUpperCase()} · ${v.lang.toUpperCase()} · ${dateStr}`, margin, 20);
+    y = 36;
+
+    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(20,20,20);
+    const qLines = doc.splitTextToSize(v.question, contentW);
+    doc.text(qLines, margin, y); y += qLines.length * 6 + 8;
+
+    // Einfach gesagt
+    if (v.data.integration && v.data.integration.einfach_gesagt) {
+      doc.setFontSize(9); doc.setFont('helvetica','italic'); doc.setTextColor(60,60,60);
+      const egLines = doc.splitTextToSize(v.data.integration.einfach_gesagt, contentW - 8);
+      doc.setFillColor(240,248,242);
+      doc.roundedRect(margin, y-2, contentW, egLines.length*5+10, 2,2,'F');
+      doc.text(egLines, margin+4, y+4); y += egLines.length*5+16;
+    }
+
+    // Perspectives summary
+    if (v.data.perspectives) {
+      for (const p of v.data.perspectives.slice(0,6)) {
+        if (y > 260) { doc.addPage(); y = margin; }
+        const role = (p.rolle||'').replace(/^\[(custom|method)\]/,'').trim();
+        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(60,60,60);
+        doc.text(role.toUpperCase(), margin, y); y += 5;
+        doc.setFont('helvetica','normal'); doc.setTextColor(80,80,80);
+        const lines = doc.splitTextToSize(p.kernanalyse||'', contentW-4);
+        doc.text(lines.slice(0,3), margin+2, y); y += Math.min(3,lines.length)*4.5+6;
+      }
+    }
+  }
+
+  const slug = selected[0].question.slice(0,30).replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  doc.save(`team-tisch-${selected.length}-varianten-${slug}.pdf`);
+  if (btn) { btn.disabled = false; btn.textContent = 'PDF Export'; }
+}
+
 
 </script>
 
@@ -4231,6 +4737,25 @@ async function exportToPDF() {
     <span id="exportPdfLabel">${pdfLabel}</span>`;
 }
 </script>
+
+
+  <!-- V5.6 — TTS PLAYER BAR -->
+  <div id="ttsBar" role="region" aria-label="Vorlesefunktion">
+    <button class="tts-btn" id="ttsSkipBack" onclick="ttsSkip(-10)" title="-10s" aria-label="10 Sekunden zurück">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 17l-5-5 5-5"/><path d="M18 17l-5-5 5-5"/></svg>
+    </button>
+    <button class="tts-btn" id="ttsPlayBtn" onclick="ttsToggle()" title="Wiedergabe / Pause" aria-label="Wiedergabe starten">
+      <svg id="ttsPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+    <button class="tts-btn" id="ttsSkipFwd" onclick="ttsSkip(10)" title="+10s" aria-label="10 Sekunden vor">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 17l5-5-5-5"/><path d="M6 17l5-5-5-5"/></svg>
+    </button>
+    <div class="tts-progress-wrap">
+      <span class="tts-label" id="ttsLabel">Vorlesen</span>
+      <div class="tts-progress"><div class="tts-progress-bar" id="ttsProgressBar"></div></div>
+    </div>
+    <button id="ttsClose" onclick="ttsStop(true)" aria-label="Schließen">×</button>
+  </div>
 
 </body>
 </html>
