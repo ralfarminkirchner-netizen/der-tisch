@@ -178,8 +178,9 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
+  height: 60px;
   gap: var(--space-3);
+  overflow: visible;
 }
 
 .site-logo {
@@ -189,9 +190,10 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   text-decoration: none;
   color: var(--color-text);
   flex-shrink: 0;
+  min-width: 0;
 }
 
-.site-logo-mark { width: 80px; height: 35px; flex-shrink: 0; }
+.site-logo-mark { height: 28px; width: auto; flex-shrink: 0; }
 
 .site-logo-wordmark {
   display: none;
@@ -207,12 +209,15 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   align-items: center;
   gap: var(--space-2);
   flex-wrap: nowrap;
+  overflow: visible;
+  flex-shrink: 0;
 }
 
 /* Sprachstil Toggle — 5 kleine Buttons */
 .stil-toggle-group {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 2px;
   background: var(--color-surface-offset);
   border: 1px solid var(--color-border);
