@@ -1131,6 +1131,200 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 }
 .optional-std-persp { margin-top: var(--space-4); }
 
+/* =============================================
+   V1.2 — Konflikttypen, Sprachstufe, Gender, Vorauswahlen
+============================================= */
+
+/* Einheitliche interaktive Basis */
+.konflikttyp-btn, .sprachstufe-btn, .gender-btn,
+.q-preset-chip, .themen-chip, .rollen-chip {
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  font-family: var(--font-body);
+}
+.konflikttyp-btn:hover, .sprachstufe-btn:hover, .gender-btn:hover,
+.q-preset-chip:hover, .themen-chip:hover, .rollen-chip:hover {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+  transform: translateY(-1px);
+}
+.konflikttyp-btn:active, .sprachstufe-btn:active, .gender-btn:active,
+.q-preset-chip:active, .themen-chip:active, .rollen-chip:active {
+  transform: translateY(0);
+}
+
+/* Konflikttyp-Grid */
+.konflikttyp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+@media (max-width: 680px) { .konflikttyp-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 420px) { .konflikttyp-grid { grid-template-columns: 1fr; } }
+.konflikttyp-btn {
+  padding: var(--space-3) var(--space-3);
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-align: left;
+  line-height: 1.4;
+}
+.konflikttyp-btn.konflikttyp-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  font-weight: 600;
+}
+
+/* Sprachstufe */
+.sprachstufe-group {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: var(--space-3) 0 var(--space-2);
+}
+.sprachstufe-btn {
+  padding: var(--space-1) var(--space-4);
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.sprachstufe-btn.sprachstufe-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* Gender */
+.gender-toggle-group {
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+.gender-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-right: var(--space-1);
+}
+.gender-btn {
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.gender-btn.gender-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.party-gender-select, .teilnehmer-gender-select {
+  width: 80px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-body);
+}
+
+/* Fragen-Preset-Chips */
+.question-presets {
+  max-width: 680px;
+  margin: 0 auto var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.presets-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.preset-questions-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.q-preset-chip {
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.q-preset-chip.q-preset-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Themen-Chips (Klärungsgespräch) */
+.themen-chips-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-2); }
+.themen-chip {
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.themen-chip.chip-used { border-color: var(--color-accent); color: var(--color-accent); opacity: 0.6; }
+
+/* Rollen-Chips (Freier Tisch) */
+.freier-rolle-vorschlaege { margin-bottom: var(--space-4); }
+.freier-rollen-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.rollen-chip {
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.rollen-chip.rollen-chip-added {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  opacity: 0.5;
+  cursor: default;
+}
+.rollen-chip:disabled { cursor: default; }
+
+/* Suggested perspectives */
+.suggested-persp-chip {
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  border: 1.5px solid var(--color-accent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  font-size: var(--text-xs);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.suggested-persp-chip:not(.chip-active) { opacity: 0.45; border-color: var(--color-border); color: var(--color-text-muted); background: transparent; }
+
+/* Input label */
+.input-label {
+  display: block;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+/* Party/Teilnehmer gender select in rows */
+.party-row { grid-template-columns: 1fr 1fr 1.5fr 80px auto; }
+@media (max-width: 600px) { .party-row { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -1181,6 +1375,20 @@ html[data-theme="light"][data-stil="therapeutisch"] {
           <button class="lang-btn active" id="langBtnDe" onclick="setLang('de')" data-testid="lang-de">DE</button>
           <button class="lang-btn" id="langBtnEn" onclick="setLang('en')" data-testid="lang-en">EN</button>
         </div>
+        <!-- V1.2: Sprachstufe -->
+        <div class="sprachstufe-group" id="sprachstufeGroup">
+          <button class="sprachstufe-btn" data-stufe="kind" onclick="setSprachstufe(this)" title="Grundschulniveau, einfache Sätze">👦 Kindgerecht</button>
+          <button class="sprachstufe-btn sprachstufe-active" data-stufe="alltag" onclick="setSprachstufe(this)" title="Normale Alltagssprache">👤 Alltagssprache</button>
+          <button class="sprachstufe-btn" data-stufe="akademisch" onclick="setSprachstufe(this)" title="Fachlich präzise, differenziert">🎓 Akademisch</button>
+        </div>
+        <!-- V1.2: Gender -->
+        <div class="gender-toggle-group" id="genderToggleGroup">
+          <span class="gender-label" id="genderLabel">Sprache:</span>
+          <button class="gender-btn gender-active" data-gender="neutral" onclick="setGender(this)">∅ Neutral</button>
+          <button class="gender-btn" data-gender="maennlich" onclick="setGender(this)">♂ Männlich</button>
+          <button class="gender-btn" data-gender="weiblich" onclick="setGender(this)">♀ Weiblich</button>
+          <button class="gender-btn" data-gender="divers" onclick="setGender(this)">⚧ Divers</button>
+        </div>
         <!-- Style selector -->
         <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
           <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
@@ -1201,6 +1409,17 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 
       <!-- QUESTION FORM -->
       <div id="perspektiveInputPanel">
+      <div class="question-presets" id="questionPresets">
+        <span class="presets-label" id="presetsLabel">Beispielfragen:</span>
+        <div class="preset-questions-chips" id="presetQuestionsChips">
+          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Gibt es Gott?</button>
+          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Warum sollte man Steuern zahlen?</button>
+          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Wie lässt sich Krieg verhindern?</button>
+          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Ist KI eine Gefahr?</button>
+          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Was ist gerechte Strafe?</button>
+          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Gibt es freien Willen?</button>
+        </div>
+      </div>
       <form class="question-form" id="questionForm" onsubmit="return false;">
         <div class="question-input-wrapper">
           <textarea
@@ -1218,31 +1437,53 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 
       <!-- KLÄRUNGSGESPRÄCH PANEL -->
       <div class="klaerung-panel hidden" id="klaerungInputPanel">
-        <div class="input-group">
-          <label id="klaerungContextLabel">Worum geht es? (kurze Beschreibung des Konflikts)</label>
-          <textarea id="klaerungContext" rows="2" placeholder="z.B. Streit über Urlaubsplanung, Meinungsverschiedenheit im Team..."></textarea>
-        </div>
-        <div id="klaerungPartiesContainer">
-          <div class="party-row" data-party-id="1">
-            <input type="text" class="party-name-input" placeholder="Name / Partei A" />
-            <input type="text" class="party-role-input" placeholder="Rolle / Position" />
-            <input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" />
-          </div>
-          <div class="party-row" data-party-id="2">
-            <input type="text" class="party-name-input" placeholder="Name / Partei B" />
-            <input type="text" class="party-role-input" placeholder="Rolle / Position" />
-            <input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" />
+        <!-- Schritt 1: Konflikttyp wählen -->
+        <div class="konflikttyp-section" id="konfliktTypSection">
+          <label class="input-label" id="konfliktTypLabel">Konflikttyp wählen</label>
+          <div class="konflikttyp-grid" id="konfliktTypGrid">
+            <button class="konflikttyp-btn" data-typ="beziehung" onclick="setKonflikttyp('beziehung')">💔 Beziehungsstreit</button>
+            <button class="konflikttyp-btn" data-typ="arbeit" onclick="setKonflikttyp('arbeit')">💼 Konflikt auf Arbeit</button>
+            <button class="konflikttyp-btn" data-typ="freunde" onclick="setKonflikttyp('freunde')">🤝 Konflikt im Freundeskreis</button>
+            <button class="konflikttyp-btn" data-typ="recht" onclick="setKonflikttyp('recht')">⚖️ Rechtliche Auseinandersetzung</button>
+            <button class="konflikttyp-btn" data-typ="fachlich" onclick="setKonflikttyp('fachlich')">🧠 Fachliche Debatte</button>
+            <button class="konflikttyp-btn" data-typ="entscheidung" onclick="setKonflikttyp('entscheidung')">🔀 Entscheidungshilfe (Pro / Contra)</button>
           </div>
         </div>
-        <button type="button" class="add-party-btn" onclick="addParty()">+ Weitere Partei hinzufügen</button>
-        <div class="optional-std-persp">
-          <button type="button" class="toggle-std-persp-btn" onclick="toggleStdPerspInKlaerung()" id="toggleStdPerspKlaerung">
-            + Ergänzende Standardperspektiven (optional)
-          </button>
-          <div class="std-persp-chips-wrap hidden" id="stdPerspChipsKlaerung"></div>
-        </div>
-        <div style="text-align:center;margin-top:var(--space-5);">
-          <button class="question-submit" id="submitBtnKlaerung" type="button" onclick="submitQuestion()" data-testid="button-submit-klaerung">Klären</button>
+
+        <!-- Schritt 2: Form (initial hidden bis Typ gewählt) -->
+        <div class="hidden" id="klaerungFormBody">
+          <!-- Themen-Chips -->
+          <div class="input-group">
+            <label class="input-label">Schnellauswahl Thema</label>
+            <div class="themen-chips-row" id="klaerungThemenChips"></div>
+          </div>
+
+          <!-- Kontext -->
+          <div class="input-group">
+            <label class="input-label" id="klaerungContextLabel">Worum geht es?</label>
+            <textarea id="klaerungContext" rows="2" placeholder="Beschreibe den Konflikt kurz…"></textarea>
+          </div>
+
+          <!-- Parteien -->
+          <div class="input-group">
+            <label class="input-label" id="klaerungPartiesLabel">Beteiligte am Tisch</label>
+            <div id="klaerungPartiesContainer"></div>
+            <button type="button" class="add-party-btn" onclick="addParty()">+ Weitere Partei hinzufügen</button>
+          </div>
+
+          <!-- Empfohlene Zusatzperspektiven -->
+          <div class="optional-std-persp">
+            <label class="input-label">Empfohlene Zusatzperspektiven</label>
+            <div id="suggestedPerspKlaerung" class="std-persp-chips-wrap"></div>
+            <button type="button" class="toggle-std-persp-btn" onclick="toggleStdPerspInKlaerung()" id="toggleStdPerspKlaerung">
+              + Weitere App-Perspektiven
+            </button>
+            <div class="std-persp-chips-wrap hidden" id="stdPerspChipsKlaerung"></div>
+          </div>
+
+          <div style="text-align:center;margin-top:var(--space-5);">
+            <button class="question-submit" id="submitBtnKlaerung" type="button" onclick="submitQuestion()" data-testid="button-submit-klaerung">Klären</button>
+          </div>
         </div>
       </div>
 
@@ -1251,6 +1492,19 @@ html[data-theme="light"][data-stil="therapeutisch"] {
         <div class="input-group">
           <label id="freierContextLabel">Worum soll es gehen? (optional)</label>
           <textarea id="freierContext" rows="2" placeholder="z.B. Teamgespräch über Strategie, Simulation eines Podiumsgesprächs..."></textarea>
+        </div>
+        <div class="freier-rolle-vorschlaege" id="freierRolleVorschlaege">
+          <label class="input-label" id="freierRolleLabel">Rollen-Vorschläge (klicken zum Hinzufügen)</label>
+          <div class="freier-rollen-chips" id="freierRollenChips">
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Moderator:in" data-role="Gesprächsleitung">Moderator:in</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Expert:in" data-role="Fachliche Perspektive">Expert:in</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Betroffene Person" data-role="Direkt involviert">Betroffene</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Kritiker:in" data-role="Gegenperspektive">Kritiker:in</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Vermittler:in" data-role="Brückenmacher">Vermittler:in</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Außenstehende Person" data-role="Neutrale Außenperspektive">Außenstehende</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Ethiker:in" data-role="Ethische Perspektive">Ethiker:in</button>
+            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Psycholog:in" data-role="Psychologische Perspektive">Psycholog:in</button>
+          </div>
         </div>
         <div id="freierTeilnehmerContainer"></div>
         <button type="button" class="add-teilnehmer-btn" onclick="addFreierTeilnehmer()">+ Person / Rolle hinzufügen</button>
@@ -1614,6 +1868,9 @@ const API = "";
 let currentLang = 'de';
 let currentStil = 'alltag';
 let currentMode = 'perspektive'; // 'perspektive' | 'klaerung' | 'freier'
+let currentKonflikttyp = null; // 'beziehung' | 'arbeit' | 'freunde' | 'recht' | 'fachlich' | 'entscheidung'
+let currentSprachstufe = 'alltag'; // 'kind' | 'alltag' | 'akademisch'
+let currentGender = 'neutral'; // 'maennlich' | 'weiblich' | 'divers' | 'neutral'
 
 // =============================================
 // STIL LABELS + MAPPING
@@ -1636,6 +1893,208 @@ function setStil(btn) {
   document.querySelectorAll('.stil-btn[data-stil]').forEach(function(b) {
     b.classList.toggle('stil-active', b.dataset.stil === stil);
   });
+}
+
+// =============================================
+// V1.2 — KONFLIKTTYPEN DATA
+// =============================================
+const KONFLIKTTYPEN = {
+  beziehung: {
+    label: { de: 'Beziehungsstreit', en: 'Relationship Conflict' },
+    icon: '💔',
+    defaultParties: [
+      { de: { name: 'Partner A', role: 'Beteiligte Person', desc: '' }, en: { name: 'Partner A', role: 'Person involved', desc: '' } },
+      { de: { name: 'Partner B', role: 'Beteiligte Person', desc: '' }, en: { name: 'Partner B', role: 'Person involved', desc: '' } }
+    ],
+    contextPlaceholder: { de: 'z.B. Streit über Urlaubsplanung, mangelnde Wertschätzung, Eifersucht…', en: 'e.g. Argument about vacation plans, lack of appreciation, jealousy…' },
+    suggestedPerspectives: ['Tiefenpsychologisch', 'Systemisch', 'Empirisch-Rational'],
+    themenChips: {
+      de: ['Gefühle nicht gehört', 'Missverständnis', 'Verletzung', 'Kommunikationsproblem', 'Eifersucht', 'Distanz', 'Erwartungen unerfüllt'],
+      en: ['Feelings ignored', 'Misunderstanding', 'Hurt', 'Communication issue', 'Jealousy', 'Distance', 'Unmet expectations']
+    }
+  },
+  arbeit: {
+    label: { de: 'Konflikt auf Arbeit', en: 'Workplace Conflict' },
+    icon: '💼',
+    defaultParties: [
+      { de: { name: 'Mitarbeiter:in', role: 'Angestellte Person', desc: '' }, en: { name: 'Employee', role: 'Staff member', desc: '' } },
+      { de: { name: 'Vorgesetzte Person', role: 'Führungskraft', desc: '' }, en: { name: 'Manager', role: 'Leadership', desc: '' } }
+    ],
+    contextPlaceholder: { de: 'z.B. Streit über Zuständigkeiten, Mobbing, unfaire Behandlung…', en: 'e.g. Dispute over responsibilities, bullying, unfair treatment…' },
+    suggestedPerspectives: ['Systemisch', 'Tiefenpsychologisch', 'Empirisch-Rational'],
+    themenChips: {
+      de: ['Zuständigkeit unklar', 'Unfaire Behandlung', 'Kommunikationsproblem', 'Mobbing', 'Überlastung', 'Grenzüberschreitung', 'Anerkennung fehlt'],
+      en: ['Unclear responsibilities', 'Unfair treatment', 'Communication breakdown', 'Bullying', 'Overload', 'Boundary violation', 'Lack of recognition']
+    }
+  },
+  freunde: {
+    label: { de: 'Konflikt im Freundeskreis', en: 'Friendship Conflict' },
+    icon: '🤝',
+    defaultParties: [
+      { de: { name: 'Freund A', role: 'Beteiligte Person', desc: '' }, en: { name: 'Friend A', role: 'Person involved', desc: '' } },
+      { de: { name: 'Freund B', role: 'Beteiligte Person', desc: '' }, en: { name: 'Friend B', role: 'Person involved', desc: '' } }
+    ],
+    contextPlaceholder: { de: 'z.B. Vertrauensbruch, Gruppenstreit, Ausgrenzung…', en: 'e.g. Breach of trust, group conflict, exclusion…' },
+    suggestedPerspectives: ['Tiefenpsychologisch', 'Systemisch', 'Philosophisch'],
+    themenChips: {
+      de: ['Vertrauensbruch', 'Ausgrenzung', 'Loyalitätskonflikt', 'Missverständnis', 'Neid', 'Gruppenstreit', 'Schweigen'],
+      en: ['Breach of trust', 'Exclusion', 'Loyalty conflict', 'Misunderstanding', 'Envy', 'Group conflict', 'Silence']
+    }
+  },
+  recht: {
+    label: { de: 'Rechtliche Auseinandersetzung', en: 'Legal Dispute' },
+    icon: '⚖️',
+    defaultParties: [
+      { de: { name: 'Partei A', role: 'Kläger / Antragsteller', desc: '' }, en: { name: 'Party A', role: 'Claimant', desc: '' } },
+      { de: { name: 'Partei B', role: 'Beklagte / Gegenseite', desc: '' }, en: { name: 'Party B', role: 'Respondent', desc: '' } }
+    ],
+    contextPlaceholder: { de: 'z.B. Mietstreit, Arbeitsrechtklage, Erbschaftskonflikt…', en: 'e.g. Rental dispute, employment law, inheritance conflict…' },
+    suggestedPerspectives: ['Empirisch-Rational', 'Systemisch', 'Ethisch'],
+    themenChips: {
+      de: ['Kernforderung', 'Gegenforderung', 'Sachverhalt', 'Streitpunkt', 'Beweislage', 'Vertragsbruch', 'Schadensersatz'],
+      en: ['Main claim', 'Counter-claim', 'Facts', 'Point of contention', 'Evidence', 'Breach of contract', 'Damages']
+    }
+  },
+  fachlich: {
+    label: { de: 'Fachliche Debatte', en: 'Expert Debate' },
+    icon: '🧠',
+    defaultParties: [
+      { de: { name: 'Position A', role: 'Fachliche Perspektive', desc: '' }, en: { name: 'Position A', role: 'Expert perspective', desc: '' } },
+      { de: { name: 'Position B', role: 'Gegenperspektive', desc: '' }, en: { name: 'Position B', role: 'Counter perspective', desc: '' } }
+    ],
+    contextPlaceholder: { de: 'z.B. Wissenschaftliche Kontroverse, Methodenstreit, Theorienkonflikt…', en: 'e.g. Scientific controversy, methodological dispute, theoretical conflict…' },
+    suggestedPerspectives: ['Empirisch-Rational', 'Philosophisch', 'Systemisch'],
+    themenChips: {
+      de: ['These', 'Gegenthese', 'Evidenz', 'Gegenargument', 'Methodik', 'Begriffspräzision', 'Falsifizierbarkeit'],
+      en: ['Thesis', 'Counter-thesis', 'Evidence', 'Counter-argument', 'Methodology', 'Conceptual precision', 'Falsifiability']
+    }
+  },
+  entscheidung: {
+    label: { de: 'Entscheidungshilfe (Pro / Contra)', en: 'Decision Help (Pro / Con)' },
+    icon: '🔀',
+    defaultParties: [
+      { de: { name: 'Pro', role: 'Argumente dafür', desc: '' }, en: { name: 'Pro', role: 'Arguments for', desc: '' } },
+      { de: { name: 'Contra', role: 'Argumente dagegen', desc: '' }, en: { name: 'Contra', role: 'Arguments against', desc: '' } }
+    ],
+    contextPlaceholder: { de: 'z.B. Jobwechsel, Umzug, Investition, Beziehungsentscheidung…', en: 'e.g. Job change, relocation, investment, relationship decision…' },
+    suggestedPerspectives: ['Systemisch', 'Empirisch-Rational', 'Tiefenpsychologisch'],
+    themenChips: {
+      de: ['Chancen', 'Risiken', 'Kurzfristig', 'Langfristig', 'Bauchgefühl', 'Werte', 'Konsequenzen'],
+      en: ['Opportunities', 'Risks', 'Short-term', 'Long-term', 'Gut feeling', 'Values', 'Consequences']
+    }
+  }
+};
+
+// V1.2 — Konflikttyp-Funktionen
+function setKonflikttyp(typ) {
+  currentKonflikttyp = typ;
+  document.querySelectorAll('.konflikttyp-btn').forEach(function(b) {
+    b.classList.toggle('konflikttyp-active', b.dataset.typ === typ);
+  });
+  document.getElementById('klaerungFormBody').classList.remove('hidden');
+  applyKonfliktDefaults(typ);
+}
+
+function applyKonfliktDefaults(typ) {
+  var cfg = KONFLIKTTYPEN[typ];
+  if (!cfg) return;
+  var lang = currentLang;
+
+  // Set context placeholder
+  var ctxEl = document.getElementById('klaerungContext');
+  ctxEl.placeholder = cfg.contextPlaceholder[lang];
+
+  // Render themen-chips
+  var chipsContainer = document.getElementById('klaerungThemenChips');
+  chipsContainer.innerHTML = '';
+  (cfg.themenChips[lang] || []).forEach(function(chip) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'themen-chip';
+    btn.textContent = chip;
+    btn.onclick = function() {
+      var cur = ctxEl.value.trim();
+      ctxEl.value = cur ? cur + ', ' + chip : chip;
+      btn.classList.add('chip-used');
+    };
+    chipsContainer.appendChild(btn);
+  });
+
+  // Reset and rebuild party rows with defaults
+  var container = document.getElementById('klaerungPartiesContainer');
+  container.innerHTML = '';
+  _partyCounter = 0;
+  cfg.defaultParties.forEach(function(party) {
+    _partyCounter++;
+    var p = party[lang] || party.de;
+    var row = document.createElement('div');
+    row.className = 'party-row';
+    row.dataset.partyId = _partyCounter;
+    row.innerHTML = buildPartyRowHTML(p.name, p.role, p.desc, _partyCounter > 2);
+    container.appendChild(row);
+  });
+
+  // Pre-select suggested perspectives
+  var suggestedWrap = document.getElementById('suggestedPerspKlaerung');
+  suggestedWrap.innerHTML = '';
+  (cfg.suggestedPerspectives || []).forEach(function(perspName) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'methods-chip chip-active suggested-persp-chip';
+    chip.dataset.key = perspName;
+    chip.textContent = perspName;
+    chip.onclick = function() { chip.classList.toggle('chip-active'); };
+    suggestedWrap.appendChild(chip);
+  });
+}
+
+function buildPartyRowHTML(name, role, desc, removable) {
+  return '<input type="text" class="party-name-input" placeholder="Name" value="' + escapeHtml(name) + '" />' +
+    '<input type="text" class="party-role-input" placeholder="Rolle / Position" value="' + escapeHtml(role) + '" />' +
+    '<input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" value="' + escapeHtml(desc) + '" />' +
+    '<select class="party-gender-select"><option value="neutral">∅ neutral</option><option value="maennlich">♂ m</option><option value="weiblich">♀ w</option><option value="divers">⚧ d</option></select>' +
+    (removable ? '<button type="button" class="remove-party-btn" onclick="this.parentElement.remove()">✕</button>' : '<span></span>');
+}
+
+// V1.2 — Sprachstufe
+function setSprachstufe(btn) {
+  currentSprachstufe = btn.dataset.stufe;
+  document.querySelectorAll('.sprachstufe-btn').forEach(function(b) { b.classList.remove('sprachstufe-active'); });
+  btn.classList.add('sprachstufe-active');
+}
+
+// V1.2 — Gender
+function setGender(btn) {
+  currentGender = btn.dataset.gender;
+  document.querySelectorAll('.gender-btn').forEach(function(b) { b.classList.remove('gender-active'); });
+  btn.classList.add('gender-active');
+}
+
+// V1.2 — Question Preset
+function setQuestionPreset(btn) {
+  var input = document.getElementById('questionInput');
+  input.value = btn.textContent.trim();
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 180) + 'px';
+  document.querySelectorAll('.q-preset-chip').forEach(function(c) { c.classList.remove('q-preset-active'); });
+  btn.classList.add('q-preset-active');
+}
+
+// V1.2 — Rollen-Chip (Freier Tisch)
+function addRolleFromChip(btn) {
+  _teilnehmerCounter++;
+  var container = document.getElementById('freierTeilnehmerContainer');
+  var row = document.createElement('div');
+  row.className = 'teilnehmer-row';
+  row.dataset.tid = _teilnehmerCounter;
+  row.innerHTML = '<input type="text" class="teilnehmer-name-input" placeholder="Name oder Rolle" value="' + escapeHtml(btn.dataset.name || '') + '" />' +
+    '<input type="text" class="teilnehmer-role-input" placeholder="Funktion / Position" value="' + escapeHtml(btn.dataset.role || '') + '" />' +
+    '<input type="text" class="teilnehmer-desc-input" placeholder="Kurzbeschreibung (optional)" />' +
+    '<select class="teilnehmer-gender-select"><option value="neutral">∅ neutral</option><option value="maennlich">♂ m</option><option value="weiblich">♀ w</option><option value="divers">⚧ d</option></select>' +
+    '<button type="button" class="remove-teilnehmer-btn" onclick="this.parentElement.remove()">✕</button>';
+  container.appendChild(row);
+  btn.classList.add('rollen-chip-added');
+  btn.disabled = true;
 }
 
 function setLang(lang) {
@@ -2796,6 +3255,9 @@ async function submitQuestion() {
   var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives);
 
   var body = { question: question, lang: currentLang, stil: currentStil };
+  body.sprachstufe = currentSprachstufe;
+  body.gender = currentGender;
+  if (currentKonflikttyp) body.konflikttyp = currentKonflikttyp;
   if (methods.length > 0) body.methods = methods;
   if (allCustom.length > 0) body.custom_perspectives = allCustom;
 
@@ -2852,20 +3314,19 @@ function addParty() {
   var row = document.createElement('div');
   row.className = 'party-row';
   row.dataset.partyId = _partyCounter;
-  row.innerHTML = '<input type="text" class="party-name-input" placeholder="Name / Partei ' + String.fromCharCode(64 + _partyCounter) + '" />' +
-    '<input type="text" class="party-role-input" placeholder="Rolle / Position" />' +
-    '<input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" />' +
-    '<button type="button" class="remove-party-btn" onclick="this.parentElement.remove()">\u2715</button>';
+  row.innerHTML = buildPartyRowHTML('', '', '', true);
   container.appendChild(row);
 }
 
 function getKlaerungParties() {
   var rows = document.querySelectorAll('#klaerungPartiesContainer .party-row');
   return Array.from(rows).map(function(row) {
+    var genderEl = row.querySelector('.party-gender-select');
     return {
       name: row.querySelector('.party-name-input').value.trim(),
       role: row.querySelector('.party-role-input').value.trim(),
-      desc: row.querySelector('.party-desc-input').value.trim()
+      desc: row.querySelector('.party-desc-input').value.trim(),
+      gender: genderEl ? genderEl.value : 'neutral'
     };
   }).filter(function(p) { return p.name || p.role; });
 }
@@ -2881,7 +3342,8 @@ function addFreierTeilnehmer() {
   row.innerHTML = '<input type="text" class="teilnehmer-name-input" placeholder="Name oder Rolle" />' +
     '<input type="text" class="teilnehmer-role-input" placeholder="Funktion / Position" />' +
     '<input type="text" class="teilnehmer-desc-input" placeholder="Kurzbeschreibung (optional)" />' +
-    '<button type="button" class="remove-teilnehmer-btn" onclick="this.parentElement.remove()">\u2715</button>';
+    '<select class="teilnehmer-gender-select"><option value="neutral">∅ neutral</option><option value="maennlich">♂ m</option><option value="weiblich">♀ w</option><option value="divers">⚧ d</option></select>' +
+    '<button type="button" class="remove-teilnehmer-btn" onclick="this.parentElement.remove()">✕</button>';
   container.appendChild(row);
 }
 
@@ -2915,13 +3377,33 @@ function toggleStdPerspInFreier() {
 }
 
 function getSelectedStdPerspForMode(mode) {
-  var wrapId = mode === 'klaerung' ? 'stdPerspChipsKlaerung' : 'stdPerspChipsFreier';
-  var wrap = document.getElementById(wrapId);
-  if (!wrap || wrap.classList.contains('hidden')) return [];
-  var active = wrap.querySelectorAll('.methods-chip.chip-active, .method-chip.chip-active');
-  return Array.from(active).map(function(chip) {
-    return { type: 'standard', rolle: chip.dataset.key || chip.textContent.trim(), profil: '' };
-  });
+  var result = [];
+
+  if (mode === 'klaerung') {
+    // Suggested perspectives (pre-selected by conflict type)
+    var suggested = document.querySelectorAll('#suggestedPerspKlaerung .suggested-persp-chip.chip-active');
+    suggested.forEach(function(chip) {
+      result.push({ type: 'standard', rolle: chip.dataset.key || chip.textContent.trim(), profil: '' });
+    });
+    // Additional manually selected
+    var wrapK = document.getElementById('stdPerspChipsKlaerung');
+    if (wrapK && !wrapK.classList.contains('hidden')) {
+      var activeK = wrapK.querySelectorAll('.methods-chip.chip-active, .method-chip.chip-active');
+      activeK.forEach(function(chip) {
+        result.push({ type: 'standard', rolle: chip.dataset.key || chip.textContent.trim(), profil: '' });
+      });
+    }
+  } else if (mode === 'freier') {
+    var wrapF = document.getElementById('stdPerspChipsFreier');
+    if (wrapF && !wrapF.classList.contains('hidden')) {
+      var activeF = wrapF.querySelectorAll('.methods-chip.chip-active, .method-chip.chip-active');
+      activeF.forEach(function(chip) {
+        result.push({ type: 'standard', rolle: chip.dataset.key || chip.textContent.trim(), profil: '' });
+      });
+    }
+  }
+
+  return result;
 }
 
 // =============================================
