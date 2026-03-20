@@ -1957,9 +1957,9 @@ html[data-stil] body {
     <div class="header-actions">
       <!-- Sprachstil Toggle (desktop) -->
       <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
-        <button class="stil-btn stil-active" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philos.</button>
+        <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philos.</button>
         <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch">Akad.</button>
-        <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
+        <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
         <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-oekonomisch">Ökon.</button>
         <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht">Kind</button>
         <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therap.</button>
@@ -1982,9 +1982,9 @@ html[data-stil] body {
 
 <!-- Sprachstil Toggle (mobile) -->
 <div class="stil-indicator-mobile" id="stilMobile">
-  <button class="stil-btn stil-active" data-stil="philosophisch" onclick="setStil(this)">Philos.</button>
+  <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)">Philos.</button>
   <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)">Akad.</button>
-  <button class="stil-btn" data-stil="alltag" onclick="setStil(this)">Alltag</button>
+  <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)">Alltag</button>
   <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)">Ökon.</button>
   <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)">Kind</button>
   <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)">Therap.</button>
@@ -2517,7 +2517,7 @@ function setStil(btn) {
 }
 
 // Init on load — set default stil theme
-document.documentElement.setAttribute('data-stil', 'philosophisch');
+document.documentElement.setAttribute('data-stil', 'alltag');
 
 // =============================================
 // TRANSLATIONS
