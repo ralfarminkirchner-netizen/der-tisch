@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iNTEGRATiONS TiSCH — Epistemischer Perspektivenraum</title>
+<meta name="description" content="iNTEGRATiONS TiSCH — Verschiedene Stimmen. Eine ehrliche Karte — keine endgültige Antwort.">
+
+<!-- Fonts: Instrument Serif (Display) + Switzer (Body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600&display=swap" rel="stylesheet">
+
+<style>
+/* =============================================
+   BASE TOKENS
+============================================= */
+:root {
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+  --text-hero: clamp(3rem,     0.5rem  + 7vw,    7rem);
+
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration: 220ms;
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Switzer', 'Helvetica Neue', sans-serif;
+
+  --content-default: 960px;
+  --content-wide: 1200px;
+}
+
+[data-theme="dark"] {
+  --color-bg:              #0e0d0b;
+  --color-surface:         #141311;
+  --color-surface-2:       #1a1917;
+  --color-surface-offset:  #1f1e1c;
+  --color-surface-hover:   #252320;
+  --color-divider:         #252320;
+  --color-border:          #2e2c29;
+  --color-text:            #d8d6d0;
+  --color-text-muted:      #7a7874;
+  --color-text-faint:      #4a4845;
+  --color-accent:          #c8993a;
+  --color-accent-dim:      rgba(200, 153, 58, 0.12);
+  --color-accent-glow:     rgba(200, 153, 58, 0.05);
+  --color-friction:        #c0574a;
+  --color-friction-dim:    rgba(192, 87, 74, 0.10);
+  --color-integration:     #5a8fb8;
+  --color-integration-dim: rgba(90, 143, 184, 0.10);
+  --color-einfach:         #6bab7e;
+  --color-einfach-dim:     rgba(107, 171, 126, 0.10);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.6);
+}
+
+[data-theme="light"] {
+  --color-bg:              #f5f4f0;
+  --color-surface:         #faf9f7;
+  --color-surface-2:       #fff;
+  --color-surface-offset:  #efede9;
+  --color-surface-hover:   #e8e6e2;
+  --color-divider:         #e0ded9;
+  --color-border:          #d5d3ce;
+  --color-text:            #1e1c18;
+  --color-text-muted:      #6b6966;
+  --color-text-faint:      #a8a6a2;
+  --color-accent:          #9a6e1a;
+  --color-accent-dim:      rgba(154, 110, 26, 0.10);
+  --color-accent-glow:     rgba(154, 110, 26, 0.04);
+  --color-friction:        #a33d32;
+  --color-friction-dim:    rgba(163, 61, 50, 0.08);
+  --color-integration:     #2d6a96;
+  --color-integration-dim: rgba(45, 106, 150, 0.08);
+  --color-einfach:         #3d8a50;
+  --color-einfach-dim:     rgba(61, 138, 80, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.09);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--space-16);
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: background-color 300ms var(--ease-out), color 300ms var(--ease-out);
+}
+
+h1, h2, h3, h4 { text-wrap: balance; line-height: 1.15; }
+p, li { text-wrap: pretty; }
+button { cursor: pointer; background: none; border: none; font: inherit; color: inherit; }
+a, button { transition: color var(--duration) var(--ease-out), background var(--duration) var(--ease-out), opacity var(--duration) var(--ease-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* =============================================
+   LAYOUT
+============================================= */
+.wrapper {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+@media (max-width: 640px) { .wrapper { padding: 0 var(--space-4); } }
+
+/* =============================================
+   HEADER / NAV
+============================================= */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-divider);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 300ms var(--ease-out);
+}
+.site-header .wrapper {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; gap: var(--space-3); overflow: visible;
+}
+.site-logo {
+  display: flex; align-items: center; gap: var(--space-3);
+  text-decoration: none; color: var(--color-text); flex-shrink: 0; min-width: 0;
+}
+.site-logo-mark { height: 32px; width: auto; flex-shrink: 0; }
+.header-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: nowrap; overflow: visible; flex-shrink: 0; }
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted); flex-shrink: 0;
+}
+.theme-toggle:hover { color: var(--color-text); background: var(--color-surface-offset); }
+
+/* =============================================
+   HERO / INTRO
+============================================= */
+.hero {
+  padding: clamp(var(--space-16), 10vw, var(--space-24)) 0 clamp(var(--space-12), 6vw, var(--space-20));
+  text-align: center;
+}
+.hero-tagline {
+  font-size: var(--text-xs); font-weight: 500; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-5);
+}
+.hero-title {
+  display: flex; justify-content: center; align-items: center;
+  margin-bottom: var(--space-6); line-height: 1;
+}
+.hero-logo-svg {
+  width: clamp(260px, 65vw, 560px); height: auto; display: block;
+}
+.hero-subtitle {
+  font-size: var(--text-base); color: var(--color-text-muted);
+  max-width: 520px; margin: 0 auto var(--space-10); line-height: 1.7;
+}
+
+/* =============================================
+   PRE-SUBMIT CONTROLS
+============================================= */
+.pre-controls {
+  max-width: 680px; margin: 0 auto var(--space-6);
+  display: flex; flex-direction: column; gap: var(--space-4); align-items: center;
+}
+.control-row {
+  display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; justify-content: center;
+}
+.control-label {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-text-faint); margin-right: var(--space-2);
+}
+.lang-btn, .stil-btn {
+  padding: 6px 14px; border-radius: 9999px;
+  font-size: var(--text-xs); font-weight: 500; letter-spacing: 0.04em;
+  color: var(--color-text-muted); background: transparent;
+  border: 1px solid var(--color-border); cursor: pointer;
+  transition: all 0.15s; font-family: inherit; white-space: nowrap;
+}
+.lang-btn:hover, .stil-btn:hover {
+  color: var(--color-text); background: var(--color-surface-hover); border-color: var(--color-text-muted);
+}
+.lang-btn.active, .stil-btn.stil-active {
+  background: var(--color-accent); color: #000; font-weight: 600; border-color: var(--color-accent);
+}
+.stil-toggle-group {
+  display: flex; align-items: center; flex-wrap: wrap; justify-content: center;
+  gap: 4px; background: var(--color-surface-offset);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 4px;
+}
+
+/* =============================================
+   INPUT AREA
+============================================= */
+.question-form { max-width: 680px; margin: 0 auto; }
+.question-input-wrapper {
+  position: relative;
+  border: 1px solid var(--color-border); border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  transition: border-color var(--duration) var(--ease-out), box-shadow var(--duration) var(--ease-out);
+  box-shadow: var(--shadow-sm);
+}
+.question-input-wrapper:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-dim), var(--shadow-md);
+}
+.question-input {
+  width: 100%; padding: var(--space-5) var(--space-6); padding-right: 160px;
+  background: transparent; border: none; outline: none;
+  font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text);
+  border-radius: var(--radius-xl); resize: none; line-height: 1.6;
+  overflow-x: hidden; overflow-y: hidden; max-height: 180px;
+  min-height: 0;
+}
+.question-input::placeholder { color: var(--color-text-faint); }
+.question-submit {
+  position: absolute; right: var(--space-3); top: 50%; transform: translateY(-50%);
+  padding: var(--space-3) var(--space-5); background: var(--color-accent); color: var(--color-bg);
+  border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 600;
+  letter-spacing: 0.01em; white-space: nowrap;
+  transition: background var(--duration) var(--ease-out), opacity var(--duration) var(--ease-out), transform var(--duration) var(--ease-out);
+}
+.question-submit:hover:not(:disabled) { background: #e0ab45; transform: translateY(-50%) scale(1.02); }
+.question-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (max-width: 580px) {
+  .question-input { padding-right: var(--space-6); padding-bottom: 60px; }
+  .question-submit {
+    position: static; transform: none;
+    width: calc(100% - var(--space-6));
+    margin: 0 var(--space-3) var(--space-3);
+    padding: var(--space-4); text-align: center;
+  }
+  .question-submit:hover:not(:disabled) { transform: scale(1.01); }
+}
+
+/* =============================================
+   LOADING STATE
+============================================= */
+.loading-panel {
+  max-width: 560px; margin: var(--space-16) auto 0;
+  padding: var(--space-10) var(--space-8);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); text-align: center; box-shadow: var(--shadow-lg);
+}
+.loading-spinner {
+  width: 40px; height: 40px; border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent); border-radius: 50%;
+  animation: spin 0.9s linear infinite; margin: 0 auto var(--space-6);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title {
+  font-family: var(--font-display); font-size: var(--text-xl);
+  color: var(--color-text); margin-bottom: var(--space-4);
+}
+.loading-phases { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+.loading-phase {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-size: var(--text-sm); color: var(--color-text-muted);
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface-offset); transition: all 400ms var(--ease-out);
+}
+.loading-phase.active {
+  color: var(--color-text); background: var(--color-accent-dim);
+  border: 1px solid rgba(200, 153, 58, 0.2);
+}
+.phase-icon {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--color-surface-hover);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 12px;
+}
+.loading-phase.active .phase-icon { background: var(--color-accent); color: #000; }
+
+/* =============================================
+   RESULTS CONTAINER
+============================================= */
+.results { padding-bottom: var(--space-24); animation: fadeUp 600ms var(--ease-out) forwards; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================
+   SECTION HEADER
+============================================= */
+.section-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-8); }
+.section-badge {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: var(--text-lg);
+  flex-shrink: 0; font-weight: 400; font-style: italic;
+}
+.section-badge.amber  { background: var(--color-accent-dim);       color: var(--color-accent);      border: 1px solid rgba(200,153,58,0.25); }
+.section-badge.red    { background: var(--color-friction-dim);      color: var(--color-friction);    border: 1px solid rgba(192,87,74,0.25); }
+.section-badge.blue   { background: var(--color-integration-dim);   color: var(--color-integration); border: 1px solid rgba(90,143,184,0.25); }
+.section-badge.green  { background: var(--color-einfach-dim);       color: var(--color-einfach);     border: 1px solid rgba(107,171,126,0.25); }
+.section-title { font-family: var(--font-display); font-size: var(--text-xl); color: var(--color-text); line-height: 1; }
+.section-subtitle { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-1); }
+.section-divider { border: none; height: 1px; background: var(--color-divider); margin: var(--space-16) 0; }
+
+/* =============================================
+   PERSPECTIVE CARDS
+============================================= */
+.perspectives-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
+@media (max-width: 720px) { .perspectives-grid { grid-template-columns: 1fr; } }
+.perspective-card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); padding: var(--space-8);
+  display: flex; flex-direction: column; gap: var(--space-5);
+  box-shadow: var(--shadow-sm); cursor: pointer;
+  transition: box-shadow var(--duration) var(--ease-out), border-color var(--duration) var(--ease-out);
+}
+.perspective-card:hover { box-shadow: var(--shadow-md); border-color: var(--color-surface-hover); }
+.perspective-role {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding-bottom: var(--space-5); border-bottom: 1px solid var(--color-divider);
+}
+.role-icon { width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.role-label { font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--color-text-muted); }
+.claim-type-badge {
+  display: flex; gap: var(--space-2); align-items: baseline;
+  padding: var(--space-2) var(--space-4); margin-bottom: var(--space-3);
+  background: rgba(196, 160, 80, 0.06); border: 1px solid rgba(196, 160, 80, 0.18); border-radius: var(--radius-md);
+}
+.claim-type-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); white-space: nowrap; flex-shrink: 0; }
+.claim-type-text { font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
+.perspective-analysis { font-size: var(--text-base); line-height: 1.75; color: var(--color-text); flex: 1; }
+.perspective-meta { display: flex; flex-direction: column; gap: var(--space-3); }
+.meta-block { padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg); }
+.meta-block.evidence { background: var(--color-surface-offset); border: 1px solid var(--color-divider); }
+.meta-block.blind-spot { background: var(--color-friction-dim); border: 1px solid rgba(192, 87, 74, 0.15); }
+.meta-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2); }
+.meta-block.evidence .meta-label  { color: var(--color-text-faint); }
+.meta-block.blind-spot .meta-label { color: var(--color-friction); }
+.meta-text { font-size: var(--text-sm); line-height: 1.65; color: var(--color-text-muted); }
+.meta-block.blind-spot .meta-text { color: var(--color-text); opacity: 0.8; }
+
+/* Role color accents */
+.role-systemisch    { background: rgba(90, 143, 184, 0.15); color: #6ba3cf; }
+.role-tiefenpsy     { background: rgba(140, 90, 184, 0.15); color: #a07bd4; }
+.role-empirisch     { background: rgba(90, 184, 130, 0.15); color: #5dc49a; }
+.role-philosophisch { background: rgba(200, 153, 58, 0.18); color: var(--color-accent); }
+.role-ethisch       { background: rgba(232, 100, 140, 0.15); color: #e8648c; }
+.role-abwaegung     { background: rgba(100, 180, 170, 0.15); color: #64b4aa; }
+.role-strategisch   { background: rgba(210, 130, 60, 0.15);  color: #d2823c; }
+.role-risiko        { background: rgba(220, 80, 80, 0.15);   color: #dc5050; }
+.role-paedagogisch  { background: rgba(80, 170, 100, 0.15);  color: #50aa64; }
+.role-kinderaugen   { background: rgba(212, 168, 0, 0.15);   color: #d4a800; }
+.role-neurodivergent { background: rgba(160, 90, 210, 0.15); color: #a05ad2; }
+
+.role-badge-custom {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 2px 6px; border-radius: var(--radius-sm);
+  background: rgba(200,153,58,0.15); color: var(--color-accent);
+  border: 1px solid rgba(200,153,58,0.25); margin-left: var(--space-2); vertical-align: middle;
+}
+.role-badge-method {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 2px 6px; border-radius: var(--radius-sm);
+  background: rgba(90,143,184,0.12); color: var(--color-integration);
+  border: 1px solid rgba(90,143,184,0.2); margin-left: var(--space-2); vertical-align: middle;
+}
+.perspective-card.is-custom-persp { border-left: 3px solid var(--color-accent); }
+
+/* =============================================
+   FRICTION SECTION
+============================================= */
+.friction-card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); overflow: hidden; box-shadow: var(--shadow-md);
+}
+.friction-inner { padding: var(--space-8); }
+.friction-cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); margin-bottom: var(--space-8); }
+@media (max-width: 640px) { .friction-cols { grid-template-columns: 1fr; gap: var(--space-6); } }
+.friction-col-title {
+  font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-friction); margin-bottom: var(--space-4);
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.friction-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+.friction-item { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); line-height: 1.65; color: var(--color-text); }
+.friction-bullet {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--color-friction-dim); border: 1px solid rgba(192, 87, 74, 0.3);
+  flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--color-friction); font-weight: 700;
+}
+.friction-divider { height: 1px; background: var(--color-friction-dim); border: none; margin-bottom: var(--space-6); }
+.friction-overlooked {
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-friction-dim); border-radius: var(--radius-lg);
+  border: 1px solid rgba(192, 87, 74, 0.2);
+}
+.friction-overlooked-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-friction); margin-bottom: var(--space-2); }
+.friction-overlooked-text { font-size: var(--text-base); font-style: italic; color: var(--color-text); line-height: 1.7; font-family: var(--font-display); }
+
+/* =============================================
+   INTEGRATION SECTION
+============================================= */
+.integration-card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); overflow: hidden; box-shadow: var(--shadow-lg);
+}
+.integration-header { padding: var(--space-8) var(--space-8) var(--space-6); border-bottom: 1px solid var(--color-divider); }
+.integration-consensus-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-integration); margin-bottom: var(--space-4); }
+.integration-consensus-text { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.45; color: var(--color-text); font-style: italic; }
+.integration-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--color-divider); }
+@media (max-width: 800px) { .integration-grid { grid-template-columns: 1fr; } }
+.integration-cell { padding: var(--space-6) var(--space-7); background: var(--color-surface); }
+.integration-cell-title {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-2);
+}
+.integration-cell-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+.integration-cell-item { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); line-height: 1.65; color: var(--color-text); }
+.integration-symbol { font-weight: 700; flex-shrink: 0; font-size: var(--text-base); line-height: 1.4; margin-top: 0.1em; }
+.cell-differenzen .integration-cell-title { color: var(--color-integration); }
+.cell-differenzen .integration-symbol { color: var(--color-integration); }
+.cell-translate .integration-cell-title { color: #6bab7e; }
+.cell-translate .integration-symbol { color: #6bab7e; }
+.cell-incompatible .integration-cell-title { color: var(--color-friction); }
+.cell-incompatible .integration-symbol { color: var(--color-friction); }
+.integration-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--color-divider); border-top: 1px solid var(--color-divider); }
+@media (max-width: 640px) { .integration-bottom { grid-template-columns: 1fr; } }
+.integration-actions { padding: var(--space-6) var(--space-7); background: var(--color-surface-offset); }
+.integration-paths { padding: var(--space-6) var(--space-7); background: var(--color-surface-offset); }
+.integration-actions-title { font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text); margin-bottom: var(--space-4); }
+.integration-paths-title { font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-4); }
+.action-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+.action-item { display: flex; gap: var(--space-3); font-size: var(--text-sm); line-height: 1.65; color: var(--color-text); }
+.action-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-muted); flex-shrink: 0; margin-top: 7px; }
+.path-item { display: flex; gap: var(--space-3); font-size: var(--text-sm); line-height: 1.65; color: var(--color-text); }
+.path-q { font-weight: 700; color: var(--color-accent); flex-shrink: 0; font-size: var(--text-base); line-height: 1.4; margin-top: 0.05em; }
+
+/* =============================================
+   FAZIT, ENTSCHEIDUNGSHILFE, KURZFASSUNG
+============================================= */
+.fazit-card {
+  background: var(--color-surface); border: 1px solid var(--color-divider);
+  border-left: 3px solid var(--color-accent); border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-7);
+}
+.fazit-text { font-size: var(--text-base); line-height: 1.8; color: var(--color-text); font-style: italic; }
+.entscheidung-list, .kurzfassung-list {
+  display: flex; flex-direction: column; gap: var(--space-3); padding: 0; list-style: none; margin: 0;
+}
+.entscheidung-item {
+  display: flex; gap: var(--space-3); align-items: baseline;
+  font-size: var(--text-sm); line-height: 1.65; color: var(--color-text);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-lg);
+}
+.entscheidung-arrow { font-weight: 700; color: var(--color-accent); flex-shrink: 0; font-size: var(--text-sm); }
+.kurzfassung-item {
+  display: flex; gap: var(--space-3); align-items: baseline;
+  font-size: var(--text-sm); line-height: 1.65; color: var(--color-text);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface-offset); border-radius: var(--radius-lg);
+  border: 1px solid var(--color-divider);
+}
+.kurzfassung-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); flex-shrink: 0; margin-top: 0.45em; }
+
+/* =============================================
+   EINFACH GESAGT
+============================================= */
+.einfach-card {
+  background: var(--color-einfach-dim); border: 1px solid rgba(107, 171, 126, 0.25);
+  border-left: 3px solid var(--color-einfach); border-radius: var(--radius-xl);
+  padding: var(--space-8); position: relative; overflow: hidden;
+}
+.einfach-card::before {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0;
+  width: 3px; background: linear-gradient(180deg, var(--color-einfach), transparent); opacity: 0.3;
+}
+.einfach-text {
+  font-size: var(--text-lg); line-height: 1.75; color: var(--color-text);
+  font-family: var(--font-display); font-style: italic;
+}
+
+/* =============================================
+   EXPORT BAR
+============================================= */
+.export-bar {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: var(--space-3); margin-bottom: var(--space-8);
+  padding-bottom: var(--space-5); border-bottom: 1px solid var(--color-divider);
+}
+.export-label { font-size: var(--text-xs); color: var(--color-text-faint); letter-spacing: 0.05em; }
+.export-btn {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4); background: transparent;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-lg);
+  color: var(--color-text-muted); font-size: var(--text-xs); font-weight: 500;
+  cursor: pointer; transition: border-color 0.15s, color 0.15s; font-family: inherit;
+}
+.export-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.export-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* =============================================
+   BLOCK SELECTION SYSTEM
+============================================= */
+.selection-toolbar {
+  display: none; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-sm);
+}
+.selection-toolbar.visible { display: flex; }
+.selection-toolbar-left { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.selection-toolbar-right { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.sel-count { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 500; min-width: 80px; }
+.sel-btn {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg);
+  font-size: var(--text-xs); font-weight: 500; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap; border: 1px solid transparent; font-family: inherit;
+}
+.sel-btn-ghost { background: transparent; border-color: var(--color-border); color: var(--color-text-muted); }
+.sel-btn-ghost:hover { border-color: var(--color-text-muted); color: var(--color-text); background: var(--color-surface-offset); }
+.sel-btn-primary { background: var(--color-accent); color: #000; border-color: transparent; }
+.sel-btn-primary:hover { background: #e0ab45; }
+.sel-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.block-selectable { position: relative; }
+.block-checkbox-wrap { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 10; }
+.block-checkbox {
+  appearance: none; -webkit-appearance: none;
+  width: 22px; height: 22px; border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border);
+  background: var(--color-surface-2, var(--color-surface));
+  cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.block-checkbox:hover { border-color: var(--color-accent); background: var(--color-accent-glow); }
+.block-checkbox:checked { background: var(--color-accent); border-color: var(--color-accent); }
+.block-checkbox:checked::after {
+  content: ''; display: block; width: 5px; height: 9px;
+  border: 2px solid #000; border-top: none; border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+  margin-left: 5px; margin-top: 2px;
+}
+.block-selectable.block-checked .perspective-card,
+.block-selectable.block-checked .friction-card,
+.block-selectable.block-checked .integration-card,
+.block-selectable.block-checked .fazit-card,
+.block-selectable.block-checked .einfach-card {
+  border-color: rgba(200, 153, 58, 0.5);
+  box-shadow: 0 0 0 2px var(--color-accent-dim);
+}
+.section-selectable { position: relative; }
+.section-selectable .block-checkbox-wrap { top: 2px; right: 0; }
+
+/* =============================================
+   ERROR STATE
+============================================= */
+.error-panel {
+  max-width: 560px; margin: var(--space-12) auto 0;
+  padding: var(--space-8);
+  background: var(--color-friction-dim);
+  border: 1px solid rgba(192, 87, 74, 0.2);
+  border-radius: var(--radius-2xl); text-align: center;
+}
+.error-title { font-size: var(--text-lg); font-weight: 600; color: var(--color-friction); margin-bottom: var(--space-3); }
+.error-text { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+
+/* =============================================
+   QUESTION HEADLINE
+============================================= */
+#questionHeadline {
+  display: none; margin-bottom: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+}
+#questionHeadline.visible { display: block; animation: questionReveal 700ms var(--ease-out) both; }
+@keyframes questionReveal {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.headline-meta { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+.headline-logo-mini { opacity: 0.6; flex-shrink: 0; }
+.headline-date { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: var(--color-text-faint); font-family: var(--font-body); }
+.headline-question-text { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.3; color: var(--color-text); letter-spacing: -0.01em; }
+
+/* =============================================
+   METHODEN-CHIPS
+============================================= */
+.methods-section { margin-bottom: var(--space-6); }
+.methods-header-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--space-3); gap: var(--space-3);
+}
+.methods-label {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 0; display: block;
+}
+.methods-preset-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.preset-btn {
+  font-family: inherit; font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+  padding: 3px 8px; border: 1px solid var(--color-border); border-radius: 9999px;
+  background: transparent; color: var(--color-text-muted); cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.preset-btn:hover { border-color: var(--color-text-muted); color: var(--color-text); }
+.preset-btn.auto-active { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
+.hint-auto { color: var(--color-accent); font-style: italic; opacity: 0.85; }
+.methods-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.method-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: var(--space-2) var(--space-4); border: 1px solid var(--color-border);
+  border-radius: 9999px; font-size: var(--text-xs); font-weight: 500;
+  color: var(--color-text-muted); background: transparent; cursor: pointer;
+  transition: all 0.15s; font-family: inherit; white-space: nowrap;
+}
+.method-chip .chip-icon { font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.method-chip .chip-icon svg {
+  width: 13px; height: 13px; flex-shrink: 0; stroke: currentColor; fill: none;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.15s, fill 0.15s;
+}
+
+/* Per-method chip colors */
+.method-chip[data-chip-key="Systemisch"],
+.method-chip[data-chip-key="Systemic"] { --chip-color: #5b9e8a; --chip-bg: rgba(91,158,138,0.10); }
+.method-chip[data-chip-key="Tiefenpsychologisch"],
+.method-chip[data-chip-key="Depth-psychological"] { --chip-color: #8e6fc4; --chip-bg: rgba(142,111,196,0.10); }
+.method-chip[data-chip-key="Empirisch-Rational"],
+.method-chip[data-chip-key="Empirical-Rational"] { --chip-color: #5b8ec4; --chip-bg: rgba(91,142,196,0.10); }
+.method-chip[data-chip-key="Philosophisch"],
+.method-chip[data-chip-key="Philosophical"] { --chip-color: #6a3db5; --chip-bg: rgba(106,61,181,0.12); }
+.method-chip[data-chip-key="Ethisch"],
+.method-chip[data-chip-key="Ethical"] { --chip-color: #d97020; --chip-bg: rgba(217,112,32,0.12); }
+.method-chip[data-chip-key="Abwägung"],
+.method-chip[data-chip-key="Weighing"] { --chip-color: #c8b89a; --chip-bg: rgba(200,184,154,0.15); }
+.method-chip[data-chip-key="Strategisch"],
+.method-chip[data-chip-key="Strategic"] { --chip-color: #e07a10; --chip-bg: rgba(224,122,16,0.12); }
+.method-chip[data-chip-key="Risiko"],
+.method-chip[data-chip-key="Risk"] { --chip-color: #d42b2b; --chip-bg: rgba(212,43,43,0.12); }
+.method-chip[data-chip-key="Pädagogisch"],
+.method-chip[data-chip-key="Pedagogical"] { --chip-color: #3a9e50; --chip-bg: rgba(58,158,80,0.12); }
+.method-chip[data-chip-key="Neurodivergent"] { --chip-color: #d45aa0; --chip-bg: rgba(212,90,160,0.12); }
+.method-chip[data-chip-key="Aus Kinderaugen"],
+.method-chip[data-chip-key="Child's Eyes"] { --chip-color: #d4a800; --chip-bg: rgba(212,168,0,0.13); }
+
+.method-chip:hover { border-color: var(--chip-color, var(--color-text-muted)); color: var(--chip-color, var(--color-text)); }
+.method-chip.chip-active {
+  border-color: var(--chip-color, var(--color-accent)); color: var(--chip-color, var(--color-accent));
+  background: var(--chip-bg, var(--color-accent-dim)); font-weight: 600;
+}
+.method-chip.chip-active .chip-icon svg { stroke: var(--chip-color, var(--color-accent)); }
+.method-chip[data-chip-key="Risiko"].chip-active .chip-icon svg,
+.method-chip[data-chip-key="Risk"].chip-active .chip-icon svg { fill: var(--chip-color, currentColor); stroke: none; }
+.method-chip[data-chip-key="Risiko"]:hover .chip-icon svg,
+.method-chip[data-chip-key="Risk"]:hover .chip-icon svg { fill: var(--chip-color, currentColor); stroke: none; }
+.methods-hint { font-size: var(--text-xs); color: var(--color-text-faint); margin-top: var(--space-2); }
+
+/* =============================================
+   PERSPECTIVE MODAL
+============================================= */
+.rt-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(4px); z-index: 900;
+  display: flex; align-items: center; justify-content: center; padding: var(--space-6);
+  opacity: 0; pointer-events: none; transition: opacity 0.22s var(--ease-out);
+}
+.rt-modal-overlay.visible { opacity: 1; pointer-events: all; }
+.rt-modal {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); max-width: 640px; width: 100%;
+  max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+  transform: translateY(20px) scale(0.97); transition: transform 0.22s var(--ease-out);
+}
+.rt-modal-overlay.visible .rt-modal { transform: translateY(0) scale(1); }
+.rt-modal-header {
+  padding: var(--space-6) var(--space-8) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-4); position: sticky; top: 0; background: var(--color-surface); z-index: 1;
+}
+.rt-modal-role { display: flex; align-items: center; gap: var(--space-3); }
+.rt-modal-role-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: var(--chip-bg, var(--color-accent-dim)); color: var(--chip-color, var(--color-accent));
+  border: 1px solid var(--chip-color, var(--color-border)); flex-shrink: 0;
+}
+.rt-modal-role-name { font-family: var(--font-display); font-size: var(--text-lg); color: var(--color-text); }
+.rt-modal-close {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted); flex-shrink: 0; transition: all 0.15s;
+}
+.rt-modal-close:hover { border-color: var(--color-text-muted); color: var(--color-text); background: var(--color-surface-hover); }
+.rt-modal-body { padding: var(--space-6) var(--space-8) var(--space-8); }
+.rt-modal-section { margin-bottom: var(--space-6); }
+.rt-modal-section:last-child { margin-bottom: 0; }
+.rt-modal-label {
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--color-text-faint); margin-bottom: var(--space-2);
+}
+.rt-modal-text { font-size: var(--text-sm); color: var(--color-text); line-height: 1.75; }
+.rt-modal-claim {
+  display: inline-block; font-size: var(--text-xs); padding: 3px 8px;
+  border-radius: var(--radius-sm); background: var(--chip-bg, var(--color-accent-dim));
+  color: var(--chip-color, var(--color-accent)); border: 1px solid var(--chip-color, transparent);
+  margin-bottom: var(--space-4); font-weight: 600; letter-spacing: 0.05em;
+}
+.rt-modal-evidence {
+  font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.6;
+  padding: var(--space-3) var(--space-4); background: var(--color-surface-offset);
+  border-radius: var(--radius-md); border-left: 2px solid var(--color-integration);
+}
+.rt-modal-blindspot {
+  font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.6;
+  padding: var(--space-3) var(--space-4); background: var(--color-surface-offset);
+  border-radius: var(--radius-md); border-left: 2px solid var(--color-friction);
+}
+
+/* =============================================
+   STIL-BASED COLOR THEMES
+============================================= */
+html[data-stil="philosophisch"] {
+  --color-accent: #9b7fd4; --color-accent-dim: rgba(155, 127, 212, 0.12); --color-accent-glow: rgba(155, 127, 212, 0.05);
+}
+html[data-stil="akademisch"] {
+  --color-accent: #6a9fd8; --color-accent-dim: rgba(106, 159, 216, 0.12); --color-accent-glow: rgba(106, 159, 216, 0.05);
+}
+html[data-stil="alltag"] {
+  --color-accent: #c8993a; --color-accent-dim: rgba(200, 153, 58, 0.12); --color-accent-glow: rgba(200, 153, 58, 0.05);
+}
+html[data-stil="oekonomisch"] {
+  --color-accent: #3aaa8e; --color-accent-dim: rgba(58, 170, 142, 0.12); --color-accent-glow: rgba(58, 170, 142, 0.05);
+}
+html[data-stil="kindgerecht"] {
+  --color-accent: #ff6b6b; --color-accent-dim: rgba(255, 107, 107, 0.15); --color-accent-glow: rgba(255, 107, 107, 0.07);
+  --color-text: #f0ede8;
+}
+html[data-theme="light"][data-stil="kindgerecht"] {
+  --color-accent: #e03d3d; --color-accent-dim: rgba(224, 61, 61, 0.12);
+}
+html[data-stil="therapeutisch"] {
+  --color-accent: #8cb89a; --color-accent-dim: rgba(140, 184, 154, 0.15); --color-accent-glow: rgba(140, 184, 154, 0.07);
+}
+html[data-theme="dark"][data-stil="therapeutisch"] {
+  --color-bg: #0f1210; --color-surface: #141a15; --color-surface-2: #1a2119;
+}
+html[data-theme="light"][data-stil="therapeutisch"] {
+  --color-bg: #f7faf7; --color-surface: #fbfefb; --color-accent: #5a9068;
+}
+
+.stil-btn.stil-active {
+  background: var(--color-accent) !important; color: var(--color-bg) !important; border-color: var(--color-accent) !important;
+}
+
+.question-submit, .stil-btn, .section-badge, .method-chip.chip-active {
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* =============================================
+   FOOTER
+============================================= */
+.site-footer { border-top: 1px solid var(--color-divider); padding: var(--space-8) 0; margin-top: var(--space-16); }
+.site-footer .wrapper { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); }
+.footer-text { font-size: var(--text-xs); color: var(--color-text-faint); }
+.footer-attribution { font-size: var(--text-xs); color: var(--color-text-faint); text-decoration: none; transition: color var(--duration) var(--ease-out); }
+.footer-attribution:hover { color: var(--color-text-muted); }
+
+/* UTILITY */
+.hidden { display: none !important; }
+
+/* ============ ROUND TABLE ============ */
+.table-discourse-area {
+  display: flex; justify-content: center; align-items: center;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) 0;
+}
+#tableCanvas {
+  max-width: 560px; width: 100%; height: auto;
+  display: block; overflow: visible;
+}
+.seat-group { cursor: pointer; }
+.seat-group:hover .seat-circle { filter: brightness(1.2); }
+.perspectives-list-area { margin-top: var(--space-4); }
+
+/* ============ EDGE PANEL ============ */
+.edge-panel {
+  position: fixed; right: 20px; bottom: 20px;
+  width: 340px; max-height: 70vh;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: 16px; padding: 20px; overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  z-index: 900;
+  transform: translateX(120%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.edge-panel:not(.hidden) { transform: translateX(0); }
+.edge-panel.hidden { display: block; transform: translateX(120%); }
+.edge-panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.edge-panel-roles { font-weight: 600; font-size: var(--text-sm); }
+.edge-panel-close {
+  background: none; border: none; cursor: pointer; font-size: 16px;
+  color: var(--color-text-muted); padding: 4px 8px; border-radius: 6px;
+}
+.edge-panel-close:hover { background: var(--color-surface-2); }
+.edge-valence-badge {
+  font-size: var(--text-xs); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 8px;
+}
+.edge-summary {
+  font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.5;
+  margin-bottom: 10px;
+}
+.edge-no-data { opacity: 0.5; font-style: italic; }
+.edge-panel-section { font-size: var(--text-xs); color: var(--color-text-faint); }
+
+/* ============ SUB-PERSPECTIVES (Block D) ============ */
+.sub-persp-row { margin-top: var(--space-2); }
+.sub-persp-domain { margin-bottom: var(--space-3); padding: var(--space-3); background: var(--color-surface-2); border-radius: 10px; border: 1px solid var(--color-border); }
+.sub-persp-domain-label { font-size: var(--text-xs); font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-2); }
+.sub-persp-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.sub-persp-chip {
+  padding: 4px 10px; border-radius: 14px; border: 1.5px solid var(--color-border);
+  background: transparent; color: var(--color-text-muted); font-size: var(--text-xs);
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.sub-persp-chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.sub-persp-chip.sub-active { border-color: var(--color-accent); background: var(--color-accent-dim); color: var(--color-accent); font-weight: 600; }
+
+/* ============ KIND PERSPECTIVE (Block D5) ============ */
+.kind-persp-wrap { margin-top: var(--space-3); display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.kind-persp-btn {
+  padding: 6px 14px; border-radius: 20px; border: 1.5px dashed #d4a800;
+  background: transparent; color: #d4a800; font-size: var(--text-xs); font-weight: 500;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.kind-persp-btn:hover { background: rgba(212,168,0,0.10); }
+.kind-persp-active-label { font-size: var(--text-xs); color: #d4a800; font-weight: 600; }
+
+/* ============ KIND MODAL ============ */
+.slot-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(4px); z-index: 950;
+  display: flex; align-items: center; justify-content: center; padding: var(--space-6);
+}
+.slot-modal-overlay.hidden { display: none !important; }
+.slot-modal {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl); max-width: 520px; width: 100%;
+  padding: var(--space-8); box-shadow: var(--shadow-lg);
+}
+.slot-modal-title {
+  font-family: var(--font-display); font-size: var(--text-lg);
+  color: var(--color-text); margin-bottom: var(--space-6);
+}
+.slot-modal-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);
+}
+.slot-field { display: flex; flex-direction: column; gap: var(--space-1); }
+.slot-field.full-width { grid-column: 1 / -1; }
+.slot-field label {
+  font-size: var(--text-xs); font-weight: 600; color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+}
+.slot-field input, .slot-field select {
+  padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); background: var(--color-surface-2);
+  color: var(--color-text); font-family: inherit; font-size: var(--text-sm);
+}
+.slot-field input:focus, .slot-field select:focus {
+  outline: none; border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-dim);
+}
+.slot-modal-actions {
+  display: flex; justify-content: flex-end; gap: var(--space-3);
+  margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--color-divider);
+}
+.slot-cancel-btn {
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border); background: transparent;
+  color: var(--color-text-muted); font-size: var(--text-sm); cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+.slot-cancel-btn:hover { border-color: var(--color-text-muted); color: var(--color-text); }
+.slot-save-btn {
+  padding: var(--space-2) var(--space-5); border-radius: var(--radius-lg);
+  border: none; background: var(--color-accent); color: var(--color-bg);
+  font-size: var(--text-sm); font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+.slot-save-btn:hover { background: #e0ab45; }
+@media (max-width: 520px) { .slot-modal-grid { grid-template-columns: 1fr; } }
+
+/* ============ BOTTOM SYNTHESIS (Block E) ============ */
+.synthesis-bottom {
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+}
+.synthesis-bottom-header { margin-bottom: var(--space-4); }
+.synthesis-title { font-size: var(--text-lg); font-weight: 600; margin-bottom: 6px; }
+.synthesis-sub { font-size: var(--text-sm); color: var(--color-text-muted); }
+.synthesis-text { font-size: var(--text-base); line-height: 1.7; color: var(--color-text); }
+
+/* ============ CONCEPT NODES (Block E) ============ */
+.concept-node {
+  color: var(--color-accent); border-bottom: 1.5px dotted var(--color-accent);
+  cursor: pointer; transition: opacity 0.15s;
+}
+.concept-node:hover { opacity: 0.75; }
+
+/* Concept Window */
+.concept-window {
+  position: fixed; right: 20px; top: 80px;
+  width: 320px; max-height: 75vh; overflow-y: auto;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: 16px; padding: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4); z-index: 950;
+}
+.concept-window.hidden { display: none; }
+.concept-window-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 12px;
+}
+.concept-window-term {
+  font-size: var(--text-base); font-weight: 700; color: var(--color-accent);
+}
+.concept-window-close {
+  background: none; border: none; cursor: pointer; color: var(--color-text-muted);
+  font-size: 16px; padding: 2px 6px; border-radius: 4px;
+}
+.concept-window-why {
+  font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.5;
+  margin-bottom: 12px;
+}
+.concept-persp-label { font-size: var(--text-xs); color: var(--color-text-faint); margin-bottom: 6px; }
+.concept-persp-chip {
+  display: inline-block; padding: 3px 8px; border-radius: 12px; border: 1.5px solid;
+  font-size: var(--text-xs); font-weight: 500; margin: 2px;
+}
+.concept-window-deepen { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-border); }
+.concept-deepen-label { font-size: var(--text-xs); color: var(--color-text-faint); margin-bottom: 6px; }
+.concept-deepen-btn {
+  padding: 4px 10px; border-radius: 12px; border: 1px solid var(--color-border);
+  background: transparent; color: var(--color-text-muted); font-size: var(--text-xs);
+  cursor: pointer; margin-right: 4px; margin-bottom: 4px; transition: all 0.15s; font-family: inherit;
+}
+.concept-deepen-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.concept-window-deepened {
+  margin-top: 10px; font-size: var(--text-xs); color: var(--color-text-muted);
+  line-height: 1.5; font-style: italic; padding: var(--space-2); background: var(--color-surface-2); border-radius: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="wrapper">
+    <a href="#" class="site-logo" aria-label="iNTEGRATiONS TiSCH — Zur Startseite">
+      <svg class="site-logo-mark" viewBox="0 0 260 70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="iNTEGRATiONS TiSCH">
+        <rect x="8" y="2" width="168" height="8" fill="currentColor"/>
+        <rect x="28" y="10" width="8" height="44" fill="currentColor"/>
+        <rect x="148" y="10" width="8" height="44" fill="currentColor"/>
+        <text x="40" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="400" fill="currentColor" letter-spacing="0.3">iN<tspan font-weight="700">T</tspan>EGRA<tspan font-weight="700">T</tspan>iONS</text>
+        <text x="160" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5"><tspan font-weight="700">T</tspan><tspan font-style="italic">i</tspan>SCH</text>
+      </svg>
+    </a>
+    <div class="header-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Theme wechseln">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrapper">
+      <h1 class="hero-title" aria-label="iNTEGRATiONS TiSCH">
+        <svg class="hero-logo-svg" viewBox="0 0 480 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="iNTEGRATiONS TiSCH">
+          <text x="240" y="16" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="10.5" font-weight="400" fill="var(--color-accent)" letter-spacing="0.18em" text-anchor="middle" style="text-transform:uppercase">VERSCHIEDENE STIMMEN. EINE WAHRHEIT.</text>
+          <rect x="20" y="22" width="350" height="12" fill="var(--color-accent)"/>
+          <rect x="80" y="34" width="12" height="72" fill="var(--color-accent)"/>
+          <rect x="240" y="34" width="12" height="72" fill="var(--color-accent)"/>
+          <text x="95" y="96" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="300" fill="var(--color-text)" letter-spacing="-0.3">iN<tspan font-weight="700">T</tspan>EGRA<tspan font-weight="700">T</tspan>iONS</text>
+          <text x="256" y="96" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="var(--color-text)" letter-spacing="-0.5"><tspan font-weight="700">T</tspan><tspan font-style="italic">i</tspan>SCH</text>
+        </svg>
+      </h1>
+      <p class="hero-subtitle" id="heroSubtitle">Verschiedene Stimmen. Eine ehrliche Karte — keine endgültige Antwort.</p>
+
+      <!-- PRE-SUBMIT CONTROLS -->
+      <div class="pre-controls">
+        <!-- Language selector -->
+        <div class="control-row">
+          <button class="lang-btn active" id="langBtnDe" onclick="setLang('de')" data-testid="lang-de">DE</button>
+          <button class="lang-btn" id="langBtnEn" onclick="setLang('en')" data-testid="lang-en">EN</button>
+        </div>
+        <!-- Style selector -->
+        <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
+          <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
+          <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philosophisch</button>
+          <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-spirituell">Spirituell</button>
+          <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
+          <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-einfach">Einfach</button>
+          <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindersprache">Kindersprache</button>
+        </div>
+      </div>
+
+      <!-- QUESTION FORM -->
+      <form class="question-form" id="questionForm" onsubmit="return false;">
+        <div class="question-input-wrapper">
+          <textarea
+            class="question-input"
+            id="questionInput"
+            rows="1"
+            placeholder="Welche Frage liegt auf dem Tisch?"
+            autocomplete="off"
+            data-testid="input-question"
+          ></textarea>
+          <button class="question-submit" id="submitBtn" type="submit" data-testid="button-submit">Untersuchen</button>
+        </div>
+      </form>
+
+      <!-- METHODEN-CHIPS -->
+      <div class="methods-section" style="max-width:680px;margin:var(--space-6) auto 0;">
+        <div class="methods-header-row">
+          <span class="methods-label" id="methodsLabel">Perspektiven wählen (optional)</span>
+          <div class="methods-preset-btns">
+            <button type="button" class="preset-btn auto-active" id="autoModeBtn" onclick="setAutoMode()" title="KI wählt kontextbezogen">KI Auto</button>
+            <button type="button" class="preset-btn" onclick="setAllChips(true)" title="Alle Methoden">Alle</button>
+            <button type="button" class="preset-btn" id="lastComboBtn" onclick="restoreLastCombo()" title="Zuletzt verwendete Kombination" style="display:none;">Zuletzt</button>
+          </div>
+        </div>
+        <div class="methods-chips" id="methodsChips"></div>
+        <p class="methods-hint" id="methodsHint"></p>
+        <div class="kind-persp-wrap" id="kindPerspWrap">
+          <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp">
+            ☀ Kind-Perspektive konfigurieren
+          </button>
+          <span class="kind-persp-active-label hidden" id="kindPerspActiveLabel"></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LOADING -->
+  <div class="wrapper hidden" id="loadingPanel">
+    <div class="loading-panel">
+      <div class="loading-spinner"></div>
+      <h2 class="loading-title" id="loadingTitle">Die Architektur arbeitet</h2>
+      <ul class="loading-phases">
+        <li class="loading-phase active" id="phase1">
+          <span class="phase-icon">→</span>
+          <span>Agenten denken parallel — Systemisch, Tiefenpsychologisch, Empirisch, Philosophisch, Ethisch, Abwägung, Strategisch, Risiko</span>
+        </li>
+        <li class="loading-phase" id="phase2">
+          <span class="phase-icon">⊗</span>
+          <span>Reibungs-Agent unterscheidet Übersetzungsfehler von echten Widersprüchen</span>
+        </li>
+        <li class="loading-phase" id="phase3">
+          <span class="phase-icon">◎</span>
+          <span>Kartierungs-Agent baut die Anspruchskarte und formuliert Einfach gesagt</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="wrapper hidden" id="errorPanel">
+    <div class="error-panel">
+      <h3 class="error-title" id="errorTitle">Verbindungsfehler</h3>
+      <p class="error-text" id="errorText">Der Tisch konnte nicht erreicht werden.</p>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="wrapper hidden" id="resultsPanel">
+    <!-- QUESTION HEADLINE -->
+    <div id="questionHeadline">
+      <div class="headline-meta">
+        <span class="headline-date" id="headlineDate"></span>
+      </div>
+      <p class="headline-question-text" id="headlineQuestionText"></p>
+    </div>
+
+    <!-- SELECTION TOOLBAR -->
+    <div class="selection-toolbar visible" id="selectionToolbar">
+      <div class="selection-toolbar-left">
+        <span class="sel-count" id="selCount">0 ausgewählt</span>
+        <button class="sel-btn sel-btn-ghost" id="selAllBtn" onclick="selectAll()">
+          <span id="selAllLabel">Alles auswählen</span>
+        </button>
+        <button class="sel-btn sel-btn-ghost" id="selNoneBtn" onclick="selectNone()">
+          <span id="selNoneLabel">Nichts auswählen</span>
+        </button>
+      </div>
+      <div class="selection-toolbar-right">
+        <button class="sel-btn sel-btn-primary" id="exportPdfBtn" onclick="exportToPDF()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span id="exportPdfLabel">Auswahl als PDF</span>
+        </button>
+        <button class="sel-btn sel-btn-ghost" id="exportPrintBtn" onclick="printSelection()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span id="exportPrintLabel">Auswahl drucken</span>
+        </button>
+        <button class="sel-btn sel-btn-ghost" id="exportTxtBtn" onclick="exportToTxt()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>TXT</span>
+        </button>
+        <button class="sel-btn sel-btn-ghost" id="exportMdBtn" onclick="exportToMarkdown()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+          <span>MD</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- I. PERSPEKTIVEN -->
+    <section id="perspectivesSection" class="section-selectable" data-block="perspectives">
+      <div class="section-header">
+        <div class="section-badge amber">I</div>
+        <div>
+          <h2 class="section-title" id="sec1Title">Perspektiven am Tisch</h2>
+          <p class="section-subtitle" id="sec1Sub">Parallele Analyse. Keine Absprache.</p>
+        </div>
+      </div>
+      <div class="table-discourse-area">
+        <svg id="tableCanvas" width="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="perspectives-list-area">
+        <div class="perspectives-grid" id="perspectivesGrid"></div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- II. REIBUNG -->
+    <section id="frictionSection" class="section-selectable" data-block="friction">
+      <div class="section-header">
+        <div class="section-badge red">II</div>
+        <div>
+          <h2 class="section-title" id="sec2Title" style="color: var(--color-friction);">Reibung &amp; Inkommensurabilität</h2>
+          <p class="section-subtitle" id="sec2Sub">Übersetzungsfehler von echten Widersprüchen unterscheiden.</p>
+        </div>
+      </div>
+      <div class="friction-card">
+        <div class="friction-inner">
+          <div class="friction-cols">
+            <div>
+              <p class="friction-col-title" id="frictionHardTitle">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                Echte Widersprüche
+              </p>
+              <ul class="friction-list" id="hardContradictions"></ul>
+            </div>
+            <div>
+              <p class="friction-col-title" id="frictionPseudoTitle">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                Übersetzungsfehler
+              </p>
+              <ul class="friction-list" id="pseudoConsensus"></ul>
+            </div>
+          </div>
+          <hr class="friction-divider">
+          <div class="friction-overlooked">
+            <p class="friction-overlooked-label" id="blindSpotTableLabel">Blinder Fleck des gesamten Tisches</p>
+            <p class="friction-overlooked-text" id="overlooked"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- III. INTEGRATION -->
+    <section id="integrationSection" class="section-selectable" data-block="integration">
+      <div class="section-header">
+        <div class="section-badge blue">III</div>
+        <div>
+          <h2 class="section-title" id="sec3Title">Die Kartierung</h2>
+          <p class="section-subtitle" id="sec3Sub">Nicht Synthese — ehrliche Karte der Ansprüche, Brücken und Unvereinbarkeiten.</p>
+        </div>
+      </div>
+      <div class="integration-card">
+        <div class="integration-header">
+          <p class="integration-consensus-label" id="consensusLabel">Anspruchskarte</p>
+          <p class="integration-consensus-text" id="provisionalConsensus"></p>
+        </div>
+        <div class="integration-grid">
+          <div class="integration-cell cell-differenzen">
+            <p class="integration-cell-title" id="cellDiffTitle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+              Übersetzbare Brücken
+            </p>
+            <ul class="integration-cell-list" id="fruitfulDiffs"></ul>
+          </div>
+          <div class="integration-cell cell-translate">
+            <p class="integration-cell-title" id="cellTransTitle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+              Übersetzbarkeit
+            </p>
+            <ul class="integration-cell-list" id="translatability"></ul>
+          </div>
+          <div class="integration-cell cell-incompatible">
+            <p class="integration-cell-title" id="cellIncompTitle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+              Echte Unvereinbarkeiten
+            </p>
+            <ul class="integration-cell-list" id="incompatibilities"></ul>
+          </div>
+        </div>
+        <div class="integration-bottom">
+          <div class="integration-actions">
+            <p class="integration-actions-title" id="practicalTitle">Praktische Optionen</p>
+            <ul class="action-list" id="practicalOptions"></ul>
+          </div>
+          <div class="integration-paths">
+            <p class="integration-paths-title" id="pathsTitle">Offene Prüfpfade</p>
+            <ul class="action-list" id="openPaths"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOTTOM SYNTHESIS (Block E) -->
+    <section id="synthesisBottom" class="synthesis-bottom hidden">
+      <div class="synthesis-bottom-header">
+        <h2 class="synthesis-title" id="synthesisTitleEl">Was der Tisch insgesamt zeigt</h2>
+        <p class="synthesis-sub" id="synthesisSubEl">Zugängliche Zusammenfassung — keine endgültige Antwort</p>
+      </div>
+      <div class="synthesis-content" id="synthesisContent"></div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- IV. VORLÄUFIGES FAZIT -->
+    <section id="fazitSection" class="hidden section-selectable" data-block="fazit">
+      <div class="section-header">
+        <div class="section-badge amber">IV</div>
+        <div>
+          <h2 class="section-title" id="fazitTitle">Vorläufiges Fazit</h2>
+          <p class="section-subtitle" id="fazitSubtitle">Keine Endantwort — aber eine belastbare Arbeitsorientierung.</p>
+        </div>
+      </div>
+      <div class="fazit-card">
+        <p class="fazit-text" id="vorlaeufiges_fazit"></p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- V. EINFACH GESAGT -->
+    <section id="einfachSection" class="hidden section-selectable" data-block="einfach">
+      <div class="section-header">
+        <div class="section-badge green">V</div>
+        <div>
+          <h2 class="section-title" id="einfachTitle" style="color: var(--color-einfach);">Einfach gesagt</h2>
+          <p class="section-subtitle" id="einfachSubtitle">Alles auf den Punkt — für jedes Publikum.</p>
+        </div>
+      </div>
+      <div class="einfach-card">
+        <p class="einfach-text" id="einfachText"></p>
+      </div>
+    </section>
+
+  </div><!-- /results -->
+</main>
+
+<!-- PERSPECTIVE MODAL -->
+<div class="rt-modal-overlay" id="rtModalOverlay" onclick="closeRtModal(event)" role="dialog" aria-modal="true" aria-labelledby="rtModalRoleName">
+  <div class="rt-modal" id="rtModal">
+    <div class="rt-modal-header">
+      <div class="rt-modal-role">
+        <div class="rt-modal-role-icon" id="rtModalIcon"></div>
+        <span class="rt-modal-role-name" id="rtModalRoleName"></span>
+      </div>
+      <button class="rt-modal-close" onclick="closeRtModal()" aria-label="Schließen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="rt-modal-body" id="rtModalBody"></div>
+  </div>
+</div>
+
+<!-- EDGE DETAIL PANEL -->
+<div class="edge-panel hidden" id="edgePanel">
+  <div class="edge-panel-header">
+    <span class="edge-panel-roles" id="edgePanelRoles"></span>
+    <button class="edge-panel-close" onclick="closeEdgePanel()">✕</button>
+  </div>
+  <div class="edge-panel-body" id="edgePanelBody"></div>
+</div>
+
+<!-- KIND MODAL (Block D5) -->
+<div class="slot-modal-overlay hidden" id="kindModalOverlay" onclick="closeKindModalOnOverlay(event)">
+  <div class="slot-modal" id="kindModal">
+    <div class="slot-modal-title">Kind-Perspektive konfigurieren</div>
+    <div class="slot-modal-grid">
+      <div class="slot-field">
+        <label>Alter *</label>
+        <input type="number" id="kindAlter" min="2" max="17" placeholder="z.B. 8" value="8">
+      </div>
+      <div class="slot-field">
+        <label>Geschlecht (optional)</label>
+        <select id="kindGeschlecht">
+          <option value="">nicht spezifiziert</option>
+          <option value="maedchen">Mädchen</option>
+          <option value="junge">Junge</option>
+          <option value="divers">Divers</option>
+        </select>
+      </div>
+      <div class="slot-field full-width">
+        <label>Soziales Umfeld</label>
+        <input type="text" id="kindUmfeld" placeholder="z.B. Stadtfamilie, Scheidungskind, ländlich">
+      </div>
+      <div class="slot-field full-width">
+        <label>Bildungskontext</label>
+        <input type="text" id="kindBildung" placeholder="z.B. Grundschule, Gymnasium, Förderschule">
+      </div>
+      <div class="slot-field full-width">
+        <label>Emotionaler Zustand (optional)</label>
+        <input type="text" id="kindEmotion" placeholder="z.B. ängstlich, neugierig, traurig, froh">
+      </div>
+    </div>
+    <div class="slot-modal-actions">
+      <button class="slot-cancel-btn" onclick="closeKindModal()">Abbrechen</button>
+      <button class="slot-save-btn" onclick="saveKindPersp()">Am Tisch platzieren</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT WINDOW (Block E3) -->
+<div class="concept-window hidden" id="conceptWindow">
+  <div class="concept-window-header">
+    <span class="concept-window-term" id="conceptWindowTerm"></span>
+    <button class="concept-window-close" onclick="closeConceptWindow()">✕</button>
+  </div>
+  <div class="concept-window-why" id="conceptWindowWhy"></div>
+  <div class="concept-window-perspectives" id="conceptWindowPerspectives"></div>
+  <div class="concept-window-deepen" id="conceptWindowDeepen">
+    <div class="concept-deepen-label">Vertiefen:</div>
+    <button class="concept-deepen-btn" onclick="deepenConcept('philosophisch')">Philosophisch</button>
+    <button class="concept-deepen-btn" onclick="deepenConcept('therapeutisch')">Therapeutisch</button>
+    <button class="concept-deepen-btn" onclick="deepenConcept('spirituell')">Spirituell</button>
+  </div>
+  <div class="concept-window-deepened hidden" id="conceptWindowDeepenedText"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="wrapper">
+    <div style="display:flex;align-items:center;gap:var(--space-3);">
+      <p class="footer-text" id="footerText">iNTEGRATiONS TiSCH — Epistemischer Perspektivenraum</p>
+    </div>
+    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer" class="footer-attribution">
+      Created with Perplexity Computer
+    </a>
+  </div>
+</footer>
+
+<script>
+// =============================================
+// CONFIG
+// =============================================
+const API = "";
+
+// =============================================
+// STATE
+// =============================================
+let currentLang = 'de';
+let currentStil = 'alltag';
+
+// =============================================
+// STIL LABELS + MAPPING
+// =============================================
+// Style display labels and backend value mapping
+const STIL_CONFIG = {
+  alltag:        { de: 'Alltag',        en: 'Everyday',       backendVal: 'alltag' },
+  philosophisch: { de: 'Philosophisch', en: 'Philosophical',  backendVal: 'philosophisch' },
+  akademisch:    { de: 'Spirituell',    en: 'Spiritual',      backendVal: 'akademisch' },
+  therapeutisch: { de: 'Therapeutisch', en: 'Therapeutic',     backendVal: 'therapeutisch' },
+  oekonomisch:   { de: 'Einfach',      en: 'Simple',          backendVal: 'oekonomisch' },
+  kindgerecht:   { de: 'Kindersprache', en: "Child's language", backendVal: 'kindgerecht' },
+};
+
+function setStil(btn) {
+  const stil = btn.dataset.stil;
+  if (!stil) return;
+  currentStil = stil;
+  document.documentElement.setAttribute('data-stil', stil);
+  document.querySelectorAll('.stil-btn[data-stil]').forEach(function(b) {
+    b.classList.toggle('stil-active', b.dataset.stil === stil);
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('langBtnDe').classList.toggle('active', lang === 'de');
+  document.getElementById('langBtnEn').classList.toggle('active', lang === 'en');
+  applyTranslation(lang);
+}
+
+// Init default stil
+document.documentElement.setAttribute('data-stil', 'alltag');
+
+// =============================================
+// TRANSLATIONS
+// =============================================
+const TRANSLATIONS = {
+  de: {
+    htmlLang: 'de',
+    tagline: 'Epistemischer Perspektivenraum',
+    appName: 'iNTEGRATiONS TiSCH',
+    subtitle: 'Verschiedene Stimmen. Eine ehrliche Karte \u2014 keine endg\u00fcltige Antwort.',
+    placeholder: 'Welche Frage liegt auf dem Tisch?',
+    submitBtn: 'Untersuchen',
+    submitWorking: 'Agenten arbeiten\u2026',
+    loadingTitle: 'Die Architektur arbeitet',
+    phase1: 'Agenten denken parallel \u2014 Systemisch, Tiefenpsychologisch, Empirisch, Philosophisch, Ethisch, Abw\u00e4gung, Strategisch, Risiko',
+    phase2: 'Reibungs-Agent unterscheidet \u00dcbersetzungsfehler von echten Widerspr\u00fcchen',
+    phase3: 'Kartierungs-Agent baut die Anspruchskarte und formuliert Einfach gesagt',
+    errorTitle: 'Verbindungsfehler',
+    errorDefault: 'Backend nicht erreichbar.',
+    sec1title: 'Perspektiven am Tisch',
+    sec1sub: 'Parallele Analyse. Keine Absprache.',
+    sec2title: 'Reibung & Inkommensurabili\u00e4t',
+    sec2sub: '\u00dcbersetzungsfehler von echten Widerspr\u00fcchen unterscheiden.',
+    hardContradictions: 'Echte Widerspr\u00fcche',
+    pseudoConsensus: '\u00dcbersetzungsfehler',
+    claimTypeLabel: 'Anspruchstyp:',
+    blindSpotTable: 'Blinder Fleck des gesamten Tisches',
+    sec3title: 'Die Kartierung',
+    sec3sub: 'Nicht Synthese \u2014 ehrliche Karte der Anspr\u00fcche, Br\u00fccken und Unvereinbarkeiten.',
+    provisionalConsensusLabel: 'Anspruchskarte',
+    fruitfulDiffsLabel: '\u00dcbersetzbare Br\u00fccken',
+    translatabilityLabel: '\u00dcbersetzbarkeit',
+    incompatibilitiesLabel: 'Echte Unvereinbarkeiten',
+    practicalOptionsLabel: 'Praktische Optionen',
+    openPathsLabel: 'Offene Pr\u00fcfpfade',
+    evidenceLabel: 'Evidenz & Methode',
+    blindSpotLabel: 'Blinder Fleck der Methode',
+    perspAnalysisLabel: 'Kernanalyse',
+    footerText: 'iNTEGRATiONS TiSCH \u2014 Epistemischer Perspektivenraum',
+    selAllLabel: 'Alles ausw\u00e4hlen',
+    selNoneLabel: 'Nichts ausw\u00e4hlen',
+    exportPdfLabel: 'Auswahl als PDF',
+    exportPrintLabel: 'Auswahl drucken',
+    selCountLabel: function(n, total) { return n === 0 ? 'Nichts ausgew\u00e4hlt' : n + ' von ' + total + ' ausgew\u00e4hlt'; },
+    fazitTitle: 'Vorl\u00e4ufiges Fazit',
+    fazitSub: 'Keine Endantwort \u2014 aber eine belastbare Arbeitsorientierung.',
+    einfachTitle: 'Einfach gesagt',
+    einfachSub: 'Alles auf den Punkt \u2014 f\u00fcr jedes Publikum.',
+    methodsLabelText: 'Perspektiven w\u00e4hlen (optional)',
+    methodsHintAuto: 'KI Auto-Modus \u2014 KI w\u00e4hlt kontextbezogen die passenden Methoden',
+    methodsHintNone: 'Keine Methode ausgew\u00e4hlt.',
+    methodSelected: 'Methode ausgew\u00e4hlt',
+    methodsSelected: 'Methoden ausgew\u00e4hlt',
+    methodsHintSuffix: ' \u2014 werden als zus\u00e4tzliche Tischsitzer eingeladen.',
+    autoModeActive: 'KI Auto',
+    autoModeInactive: 'Auto',
+    allChipsBtn: 'Alle',
+    lastComboBtn: 'Zuletzt',
+    stilLabels: { alltag: 'Alltag', philosophisch: 'Philosophisch', akademisch: 'Spirituell', therapeutisch: 'Therapeutisch', oekonomisch: 'Einfach', kindgerecht: 'Kindersprache' },
+  },
+  en: {
+    htmlLang: 'en',
+    tagline: 'Epistemic Perspective Space',
+    appName: 'iNTEGRATiONS TiSCH',
+    subtitle: 'Different voices. An honest map \u2014 not a final answer.',
+    placeholder: 'What question is on the table?',
+    submitBtn: 'Examine',
+    submitWorking: 'Agents working\u2026',
+    loadingTitle: 'The architecture is working',
+    phase1: 'Agents thinking in parallel \u2014 Systemic, Depth-psychological, Empirical, Philosophical, Ethical, Weighing, Strategic, Risk',
+    phase2: 'Friction agent distinguishing translation errors from genuine contradictions',
+    phase3: 'Integration agent building the claim map and formulating Simply put',
+    errorTitle: 'Connection error',
+    errorDefault: 'Backend unreachable.',
+    sec1title: 'Perspectives at the Table',
+    sec1sub: 'Parallel analysis. No coordination.',
+    sec2title: 'Friction & Incommensurability',
+    sec2sub: 'Distinguishing translation errors from genuine contradictions.',
+    hardContradictions: 'Genuine Contradictions',
+    pseudoConsensus: 'Translation Errors',
+    claimTypeLabel: 'Claim type:',
+    blindSpotTable: 'Blind spot of the entire table',
+    sec3title: 'The Mapping',
+    sec3sub: 'Not synthesis \u2014 an honest map of claims, bridges, and irreducible differences.',
+    provisionalConsensusLabel: 'Claim Map',
+    fruitfulDiffsLabel: 'Translatable Bridges',
+    translatabilityLabel: 'Translatability',
+    incompatibilitiesLabel: 'Genuine Incompatibilities',
+    practicalOptionsLabel: 'Practical Options',
+    openPathsLabel: 'Open Inquiry Paths',
+    evidenceLabel: 'Evidence & Method',
+    blindSpotLabel: 'Blind spot of the method',
+    perspAnalysisLabel: 'Core Analysis',
+    footerText: 'iNTEGRATiONS TiSCH \u2014 Epistemic Perspective Space',
+    selAllLabel: 'Select all',
+    selNoneLabel: 'Select none',
+    exportPdfLabel: 'Selection as PDF',
+    exportPrintLabel: 'Print selection',
+    selCountLabel: function(n, total) { return n === 0 ? 'Nothing selected' : n + ' of ' + total + ' selected'; },
+    fazitTitle: 'Provisional Verdict',
+    fazitSub: 'No final answer \u2014 but a reliable working orientation.',
+    einfachTitle: 'Simply put',
+    einfachSub: 'Everything to the point \u2014 for any audience.',
+    methodsLabelText: 'Select perspectives (optional)',
+    methodsHintAuto: 'AI Auto mode \u2014 AI selects contextually appropriate methods',
+    methodsHintNone: 'No method selected.',
+    methodSelected: 'method selected',
+    methodsSelected: 'methods selected',
+    methodsHintSuffix: ' \u2014 invited as additional seats at the table.',
+    autoModeActive: 'AI Auto',
+    autoModeInactive: 'Auto',
+    allChipsBtn: 'All',
+    lastComboBtn: 'Last',
+    stilLabels: { alltag: 'Everyday', philosophisch: 'Philosophical', akademisch: 'Spiritual', therapeutisch: 'Therapeutic', oekonomisch: 'Simple', kindgerecht: "Child's lang." },
+  }
+};
+
+function applyTranslation(lang) {
+  var t = TRANSLATIONS[lang];
+  document.documentElement.lang = t.htmlLang;
+  document.getElementById('heroSubtitle').textContent = t.subtitle;
+  document.getElementById('questionInput').placeholder = t.placeholder;
+  var submitBtn = document.getElementById('submitBtn');
+  if (!submitBtn.disabled) submitBtn.textContent = t.submitBtn;
+  document.getElementById('loadingTitle').textContent = t.loadingTitle;
+  document.querySelector('#phase1 span:last-child').textContent = t.phase1;
+  document.querySelector('#phase2 span:last-child').textContent = t.phase2;
+  document.querySelector('#phase3 span:last-child').textContent = t.phase3;
+  document.getElementById('errorTitle').textContent = t.errorTitle;
+  document.getElementById('sec1Title').textContent = t.sec1title;
+  document.getElementById('sec1Sub').textContent = t.sec1sub;
+  document.getElementById('sec2Title').textContent = t.sec2title;
+  document.getElementById('sec2Sub').textContent = t.sec2sub;
+  document.getElementById('sec3Title').textContent = t.sec3title;
+  document.getElementById('sec3Sub').textContent = t.sec3sub;
+  document.getElementById('blindSpotTableLabel').textContent = t.blindSpotTable;
+  document.getElementById('consensusLabel').textContent = t.provisionalConsensusLabel;
+  document.getElementById('practicalTitle').textContent = t.practicalOptionsLabel;
+  document.getElementById('pathsTitle').textContent = t.openPathsLabel;
+  document.getElementById('fazitTitle').textContent = t.fazitTitle;
+  document.getElementById('fazitSubtitle').textContent = t.fazitSub;
+  document.getElementById('einfachTitle').textContent = t.einfachTitle;
+  document.getElementById('einfachSubtitle').textContent = t.einfachSub;
+  document.getElementById('footerText').textContent = t.footerText;
+  document.getElementById('selAllLabel').textContent = t.selAllLabel;
+  document.getElementById('selNoneLabel').textContent = t.selNoneLabel;
+  document.getElementById('exportPdfLabel').textContent = t.exportPdfLabel;
+  document.getElementById('exportPrintLabel').textContent = t.exportPrintLabel;
+  updateSelectionCount();
+  // Update methods label
+  var methodsLbl = document.getElementById('methodsLabel');
+  if (methodsLbl && t.methodsLabelText) methodsLbl.textContent = t.methodsLabelText;
+  // Rebuild chips for new language
+  if (document.getElementById('methodsChips').children.length > 0) {
+    rebuildChipsForLang();
+  }
+  // Update stil button labels
+  document.querySelectorAll('.stil-btn[data-stil]').forEach(function(b) {
+    var sl = t.stilLabels && t.stilLabels[b.dataset.stil];
+    if (sl) b.textContent = sl;
+  });
+  // Update hero SVG tagline
+  var taglineEl = document.querySelector('.hero-logo-svg text:first-child');
+  if (taglineEl) {
+    taglineEl.textContent = lang === 'de' ? 'VERSCHIEDENE STIMMEN. EINE WAHRHEIT.' : 'DIFFERENT VOICES. ONE TRUTH.';
+  }
+}
+
+// =============================================
+// THEME TOGGLE
+// =============================================
+(function() {
+  var html = document.documentElement;
+  var btn = document.querySelector('[data-theme-toggle]');
+  var current = 'dark';
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    current = 'light'; html.setAttribute('data-theme', 'light');
+  }
+  function updateIcon(theme) {
+    if (!btn) return;
+    if (theme === 'dark') {
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+      btn.setAttribute('aria-label', 'Zu hellem Modus wechseln');
+    } else {
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      btn.setAttribute('aria-label', 'Zu dunklem Modus wechseln');
+    }
+  }
+  updateIcon(current);
+  if (btn) {
+    btn.addEventListener('click', function() {
+      current = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', current);
+      updateIcon(current);
+    });
+  }
+})();
+
+// =============================================
+// TEXTAREA AUTO-GROW
+// =============================================
+(function() {
+  var ta = document.getElementById('questionInput');
+  if (!ta) return;
+  function autoGrow() {
+    ta.style.height = 'auto';
+    var sh = ta.scrollHeight;
+    if (sh > 180) {
+      ta.style.height = '180px';
+      ta.style.overflowY = 'auto';
+    } else {
+      ta.style.height = sh + 'px';
+      ta.style.overflowY = 'hidden';
+    }
+  }
+  ta.addEventListener('input', autoGrow);
+  // initial
+  autoGrow();
+})();
+
+// =============================================
+// LOADING PHASE ANIMATION
+// =============================================
+var phaseTimer = null;
+
+function startPhaseAnimation() {
+  var phase = 1;
+  phaseTimer = setInterval(function() {
+    phase++;
+    if (phase > 3) { clearInterval(phaseTimer); return; }
+    document.querySelectorAll('.loading-phase').forEach(function(el) { el.classList.remove('active'); });
+    var el = document.getElementById('phase' + phase);
+    if (el) el.classList.add('active');
+  }, 8000);
+}
+
+function stopPhaseAnimation() {
+  if (phaseTimer) { clearInterval(phaseTimer); phaseTimer = null; }
+  document.querySelectorAll('.loading-phase').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('phase1').classList.add('active');
+}
+
+// =============================================
+// RENDER HELPERS
+// =============================================
+var roleConfig = {
+  'Systemisch':          { iconClass: 'role-systemisch',    icon: '\u21bb' },
+  'Tiefenpsychologisch': { iconClass: 'role-tiefenpsy',     icon: '\u03a8' },
+  'Empirisch-Rational':  { iconClass: 'role-empirisch',     icon: '\u2261' },
+  'Philosophisch':       { iconClass: 'role-philosophisch', icon: '\u03a6' },
+  'Ethisch':             { iconClass: 'role-ethisch',       icon: '\u2696' },
+  'Abw\u00e4gung':      { iconClass: 'role-abwaegung',     icon: '\u21cc' },
+  'Strategisch':         { iconClass: 'role-strategisch',   icon: '\u2316' },
+  'Risiko':              { iconClass: 'role-risiko',        icon: '\u26a1' },
+  'Systemic':            { iconClass: 'role-systemisch',    icon: '\u21bb' },
+  'Depth-psychological': { iconClass: 'role-tiefenpsy',     icon: '\u03a8' },
+  'Empirical-Rational':  { iconClass: 'role-empirisch',     icon: '\u2261' },
+  'Philosophical':       { iconClass: 'role-philosophisch', icon: '\u03a6' },
+  'Ethical':             { iconClass: 'role-ethisch',       icon: '\u2696' },
+  'Weighing':            { iconClass: 'role-abwaegung',     icon: '\u21cc' },
+  'Strategic':           { iconClass: 'role-strategisch',   icon: '\u2316' },
+  'Risk':                { iconClass: 'role-risiko',        icon: '\u26a1' },
+  'P\u00e4dagogisch':   { iconClass: 'role-paedagogisch',  icon: '\u2726' },
+  'Neurodivergent':      { iconClass: 'role-neurodivergent',icon: '\u221e' },
+  'Pedagogical':         { iconClass: 'role-paedagogisch',  icon: '\u2726' },
+  'Aus Kinderaugen':     { iconClass: 'role-kinderaugen',   icon: '\u2600' },
+  "Child's Eyes":        { iconClass: 'role-kinderaugen',   icon: '\u2600' },
+};
+
+function escapeHtml(str) {
+  var d = document.createElement('div');
+  d.appendChild(document.createTextNode(str));
+  return d.innerHTML;
+}
+
+// Method chip color lookup
+var METHOD_CHIP_COLORS = {
+  'Systemisch': '#5b9e8a', 'Systemic': '#5b9e8a',
+  'Tiefenpsychologisch': '#8e6fc4', 'Depth-psychological': '#8e6fc4',
+  'Empirisch-Rational': '#5b8ec4', 'Empirical-Rational': '#5b8ec4',
+  'Philosophisch': '#9b7fd4', 'Philosophical': '#9b7fd4',
+  'Ethisch': '#c47c5b', 'Ethical': '#c47c5b',
+  'Abw\u00e4gung': '#c4a85b', 'Weighing': '#c4a85b',
+  'Strategisch': '#4a9e6f', 'Strategic': '#4a9e6f',
+  'Risiko': '#c4585b', 'Risk': '#c4585b',
+  'P\u00e4dagogisch': '#e87d3e', 'Pedagogical': '#e87d3e',
+  'Neurodivergent': '#3eaec4',
+  'Aus Kinderaugen': '#e8854a', "Child's Eyes": '#e8854a',
+};
+
+function hexToRgba(hex, alpha) {
+  var h = hex.replace('#','');
+  var r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function getMethodColor(role) {
+  var clean = role.replace(/^\[(custom|method)\]/, '').trim();
+  return METHOD_CHIP_COLORS[clean] || '#c8993a';
+}
+
+function renderPerspectiveCard(p) {
+  var rawRole = p.rolle;
+  var sourceType = null;
+  var displayRole = rawRole;
+  if (rawRole.startsWith('[custom]')) { sourceType = 'custom'; displayRole = rawRole.slice('[custom]'.length); }
+  else if (rawRole.startsWith('[method]')) { sourceType = 'method'; displayRole = rawRole.slice('[method]'.length); }
+
+  var cfg = roleConfig[displayRole] || { iconClass: 'role-philosophisch', icon: '\u25cb' };
+  var t = TRANSLATIONS[currentLang];
+  var blockId = 'block-persp-' + rawRole.toLowerCase().replace(/[^a-z0-9]/g, '');
+  var color = getMethodColor(rawRole);
+  var colorBg = hexToRgba(color, 0.12);
+
+  var sourceBadge = '';
+  if (sourceType === 'custom') sourceBadge = '<span class="role-badge-custom">' + (currentLang === 'de' ? 'Eigene' : 'Custom') + '</span>';
+  else if (sourceType === 'method') sourceBadge = '<span class="role-badge-method">' + (currentLang === 'de' ? 'Methode' : 'Method') + '</span>';
+  var cardClass = sourceType === 'custom' ? ' is-custom-persp' : '';
+
+  return '<div class="block-selectable" data-block-id="' + blockId + '" data-block-type="perspective">' +
+    '<div class="block-checkbox-wrap"><input type="checkbox" class="block-checkbox" data-block-id="' + blockId + '" onchange="onBlockCheck(this)" aria-label="Block ausw\u00e4hlen: ' + escapeHtml(displayRole) + '"></div>' +
+    '<article class="perspective-card' + cardClass + '" onclick="openRtModalFromCard(this)" data-role="' + escapeHtml(displayRole) + '" data-color="' + color + '" data-colorbg="' + colorBg + '" data-testid="card-perspective-' + displayRole.toLowerCase().replace(/[^a-z]/g, '') + '">' +
+    '<div class="perspective-role"><div class="role-icon ' + cfg.iconClass + '">' + cfg.icon + '</div><span class="role-label">' + escapeHtml(displayRole) + sourceBadge + '</span></div>' +
+    (p.anspruchstyp ? '<div class="claim-type-badge"><span class="claim-type-label">' + t.claimTypeLabel + '</span><span class="claim-type-text">' + escapeHtml(p.anspruchstyp) + '</span></div>' : '') +
+    '<p class="perspective-analysis">' + escapeHtml(p.kernanalyse) + '</p>' +
+    '<div class="perspective-meta">' +
+    '<div class="meta-block evidence"><p class="meta-label">' + t.evidenceLabel + '</p><p class="meta-text">' + escapeHtml(p.evidenz) + '</p></div>' +
+    '<div class="meta-block blind-spot"><p class="meta-label">' + t.blindSpotLabel + '</p><p class="meta-text">' + escapeHtml(p.blinder_fleck) + '</p></div>' +
+    '</div></article></div>';
+}
+
+function renderListItems(items, type) {
+  if (!items || !items.length) return '';
+  return items.map(function(item, i) {
+    if (type === 'friction') return '<li class="friction-item"><span class="friction-bullet">' + (i + 1) + '</span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'integration-arrow') return '<li class="integration-cell-item"><span class="integration-symbol">\u2192</span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'integration-approx') return '<li class="integration-cell-item"><span class="integration-symbol">\u2248</span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'integration-cross') return '<li class="integration-cell-item"><span class="integration-symbol">\u00d7</span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'action') return '<li class="action-item"><span class="action-dot"></span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'path') return '<li class="path-item"><span class="path-q">?</span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'entscheidung') return '<li class="entscheidung-item"><span class="entscheidung-arrow">\u2192</span><span>' + escapeHtml(item) + '</span></li>';
+    if (type === 'kurzfassung') return '<li class="kurzfassung-item"><span class="kurzfassung-dot"></span><span>' + escapeHtml(item) + '</span></li>';
+    return '';
+  }).join('');
+}
+
+function renderResults(data) {
+  // Store globally for modal access
+  window._currentPerspectives = data.perspectives;
+
+  // 1. Perspectives
+  var grid = document.getElementById('perspectivesGrid');
+  grid.innerHTML = data.perspectives.map(renderPerspectiveCard).join('');
+
+  // 2. Friction
+  document.getElementById('hardContradictions').innerHTML = renderListItems(
+    data.friction.echte_widersprueche || data.friction.harte_widersprueche, 'friction'
+  );
+  document.getElementById('pseudoConsensus').innerHTML = renderListItems(
+    data.friction.uebersetzungsfehler || data.friction.scheinkonsens, 'friction'
+  );
+  document.getElementById('overlooked').textContent = data.friction.uebersehenes || '';
+
+  // 3. Integration
+  document.getElementById('provisionalConsensus').textContent =
+    data.integration.anspruchskarte || data.integration.vorlaeufiger_konsens || '';
+  document.getElementById('fruitfulDiffs').innerHTML = renderListItems(
+    data.integration.uebersetzbare_bruecken || data.integration.fruchtbare_differenzen, 'integration-arrow'
+  );
+  document.getElementById('translatability').innerHTML = renderListItems(
+    data.integration.uebersetzbarkeit || [], 'integration-approx'
+  );
+  document.getElementById('incompatibilities').innerHTML = renderListItems(
+    data.integration.echte_unvereinbarkeiten || data.integration.unvereinbarkeiten, 'integration-cross'
+  );
+  document.getElementById('practicalOptions').innerHTML = renderListItems(data.integration.praktische_optionen, 'action');
+  document.getElementById('openPaths').innerHTML = renderListItems(data.integration.offene_pruefpfade, 'path');
+
+  // 4. Fazit
+  if (data.integration.vorlaeufiges_fazit) {
+    document.getElementById('vorlaeufiges_fazit').textContent = data.integration.vorlaeufiges_fazit;
+    document.getElementById('fazitSection').classList.remove('hidden');
+  }
+
+  // 5. Einfach gesagt
+  if (data.integration.einfach_gesagt) {
+    document.getElementById('einfachText').textContent = data.integration.einfach_gesagt;
+    document.getElementById('einfachSection').classList.remove('hidden');
+  }
+
+  // 6. Round table + relationship lines (Block B+C)
+  renderTableSeats(data.perspectives);
+  var edges = buildRelationshipEdges(data.perspectives, data.friction);
+  window._currentEdges = edges;
+  renderRelationshipLines(data.perspectives, edges);
+
+  // 7. Bottom synthesis (Block E)
+  var synthText = (data.integration && data.integration.einfach_gesagt) || (data.integration && data.integration.vorlaeufiger_konsens) || '';
+  if (synthText) {
+    document.getElementById('synthesisContent').innerHTML = '';
+    renderSynthesisWithNodes(synthText, 'synthesisContent');
+    document.getElementById('synthesisBottom').classList.remove('hidden');
+  }
+
+  // 8. Enable TXT/MD export buttons (Block F)
+  var txtBtn = document.getElementById('exportTxtBtn');
+  var mdBtn = document.getElementById('exportMdBtn');
+  if (txtBtn) txtBtn.disabled = false;
+  if (mdBtn) mdBtn.disabled = false;
+}
+
+// =============================================
+// ROUND TABLE — getRoleDisplay
+// =============================================
+function getRoleDisplay(rawRole) {
+  if (rawRole.startsWith('[custom]')) return rawRole.slice(8).trim();
+  if (rawRole.startsWith('[method]')) return rawRole.slice(8).trim();
+  return rawRole.trim();
+}
+
+// =============================================
+// ROUND TABLE — Seat Rendering (Block B)
+// =============================================
+function renderTableSeats(perspectives) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('tableCanvas');
+  if (!svg) return;
+
+  // Remove old dynamic groups
+  var oldLines = svg.querySelector('#relationshipLines');
+  if (oldLines) oldLines.remove();
+  var oldSeats = svg.querySelector('#seatGroup');
+  if (oldSeats) oldSeats.remove();
+  var oldTooltip = svg.querySelector('#seatTooltip');
+  if (oldTooltip) oldTooltip.remove();
+  var oldDefs = svg.querySelector('#tableFilterDefs');
+  if (oldDefs) oldDefs.remove();
+  var oldTable = svg.querySelector('#tableBase');
+  if (oldTable) oldTable.remove();
+
+  // Detect theme
+  var theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  var tableFill = theme === 'dark' ? '#1a1917' : '#ffffff';
+  var tableStroke = theme === 'dark' ? '#2e2c29' : '#d5d3ce';
+
+  // Table base group
+  var baseG = document.createElementNS(svgNS, 'g');
+  baseG.setAttribute('id', 'tableBase');
+
+  var tableCircle = document.createElementNS(svgNS, 'circle');
+  tableCircle.setAttribute('cx', '300');
+  tableCircle.setAttribute('cy', '300');
+  tableCircle.setAttribute('r', '200');
+  tableCircle.setAttribute('fill', tableFill);
+  tableCircle.setAttribute('stroke', tableStroke);
+  tableCircle.setAttribute('stroke-width', '2');
+  baseG.appendChild(tableCircle);
+
+  var centerText = document.createElementNS(svgNS, 'text');
+  centerText.setAttribute('x', '300');
+  centerText.setAttribute('y', '305');
+  centerText.setAttribute('text-anchor', 'middle');
+  centerText.setAttribute('font-size', '11');
+  centerText.setAttribute('fill', 'currentColor');
+  centerText.setAttribute('opacity', '0.3');
+  centerText.setAttribute('font-family', "'Switzer','Helvetica Neue',sans-serif");
+  centerText.textContent = 'iNTEGRATiONS TiSCH';
+  baseG.appendChild(centerText);
+
+  svg.appendChild(baseG);
+
+  // Defs for glow filter
+  var defs = document.createElementNS(svgNS, 'defs');
+  defs.setAttribute('id', 'tableFilterDefs');
+  var filter = document.createElementNS(svgNS, 'filter');
+  filter.setAttribute('id', 'edgeGlow');
+  var feBlur = document.createElementNS(svgNS, 'feGaussianBlur');
+  feBlur.setAttribute('stdDeviation', '3');
+  feBlur.setAttribute('result', 'blur');
+  filter.appendChild(feBlur);
+  var feMerge = document.createElementNS(svgNS, 'feMerge');
+  var mn1 = document.createElementNS(svgNS, 'feMergeNode');
+  mn1.setAttribute('in', 'blur');
+  feMerge.appendChild(mn1);
+  var mn2 = document.createElementNS(svgNS, 'feMergeNode');
+  mn2.setAttribute('in', 'SourceGraphic');
+  feMerge.appendChild(mn2);
+  filter.appendChild(feMerge);
+  defs.appendChild(filter);
+  svg.appendChild(defs);
+
+  // Relationship lines group (placeholder — rendered later)
+  var linesG = document.createElementNS(svgNS, 'g');
+  linesG.setAttribute('id', 'relationshipLines');
+  svg.appendChild(linesG);
+
+  // Seats group
+  var seatsG = document.createElementNS(svgNS, 'g');
+  seatsG.setAttribute('id', 'seatGroup');
+
+  var n = Math.min(perspectives.length, 12);
+  var seatR = 240;
+  window._seatPositions = {};
+
+  for (var i = 0; i < n; i++) {
+    var p = perspectives[i];
+    var rolle = getRoleDisplay(p.rolle);
+    var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    var cx = 300 + seatR * Math.cos(angle);
+    var cy = 300 + seatR * Math.sin(angle);
+
+    window._seatPositions[rolle] = { cx: cx, cy: cy };
+
+    var color = getMethodColor(p.rolle);
+    var cfg = roleConfig[rolle] || { icon: '\u25cb' };
+
+    var g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('class', 'seat-group');
+    g.setAttribute('data-rolle', rolle);
+    g.style.cursor = 'pointer';
+
+    // Outer circle
+    var outerCircle = document.createElementNS(svgNS, 'circle');
+    outerCircle.setAttribute('class', 'seat-circle');
+    outerCircle.setAttribute('cx', cx);
+    outerCircle.setAttribute('cy', cy);
+    outerCircle.setAttribute('r', '32');
+    outerCircle.setAttribute('fill', hexToRgba(color, 0.15));
+    outerCircle.setAttribute('stroke', color);
+    outerCircle.setAttribute('stroke-width', '2');
+    g.appendChild(outerCircle);
+
+    // Icon text
+    var iconText = document.createElementNS(svgNS, 'text');
+    iconText.setAttribute('x', cx);
+    iconText.setAttribute('y', cy + 6);
+    iconText.setAttribute('text-anchor', 'middle');
+    iconText.setAttribute('font-size', '18');
+    iconText.setAttribute('fill', color);
+    iconText.setAttribute('pointer-events', 'none');
+    iconText.textContent = cfg.icon;
+    g.appendChild(iconText);
+
+    // Role label below seat
+    var labelText = document.createElementNS(svgNS, 'text');
+    labelText.setAttribute('x', cx);
+    labelText.setAttribute('y', cy + 48);
+    labelText.setAttribute('text-anchor', 'middle');
+    labelText.setAttribute('font-size', '10');
+    labelText.setAttribute('fill', 'currentColor');
+    labelText.setAttribute('pointer-events', 'none');
+    labelText.setAttribute('font-family', "'Switzer','Helvetica Neue',sans-serif");
+    var abbrev = rolle.length > 10 ? rolle.slice(0, 10) + '\u2026' : rolle;
+    labelText.textContent = abbrev;
+    g.appendChild(labelText);
+
+    // Click handler
+    (function(r) {
+      g.addEventListener('click', function() { openRtModalForRole(r); });
+    })(rolle);
+
+    // Hover tooltip handlers
+    (function(seatCx, seatCy, kernanalyse) {
+      g.addEventListener('mouseover', function() {
+        showSeatTooltip(seatCx, seatCy, kernanalyse);
+      });
+      g.addEventListener('mouseout', function() {
+        hideSeatTooltip();
+      });
+    })(cx, cy, p.kernanalyse || '');
+
+    seatsG.appendChild(g);
+  }
+
+  svg.appendChild(seatsG);
+
+  // Tooltip element (single reusable)
+  var tooltipG = document.createElementNS(svgNS, 'g');
+  tooltipG.setAttribute('id', 'seatTooltip');
+  tooltipG.setAttribute('visibility', 'hidden');
+  tooltipG.setAttribute('pointer-events', 'none');
+
+  var tooltipRect = document.createElementNS(svgNS, 'rect');
+  tooltipRect.setAttribute('rx', '6');
+  tooltipRect.setAttribute('ry', '6');
+  tooltipRect.setAttribute('fill', theme === 'dark' ? '#1a1917' : '#ffffff');
+  tooltipRect.setAttribute('stroke', theme === 'dark' ? '#2e2c29' : '#d5d3ce');
+  tooltipRect.setAttribute('stroke-width', '1');
+  tooltipG.appendChild(tooltipRect);
+
+  var tooltipText = document.createElementNS(svgNS, 'text');
+  tooltipText.setAttribute('font-size', '9');
+  tooltipText.setAttribute('fill', 'currentColor');
+  tooltipText.setAttribute('font-family', "'Switzer','Helvetica Neue',sans-serif");
+  tooltipG.appendChild(tooltipText);
+
+  svg.appendChild(tooltipG);
+}
+
+function showSeatTooltip(cx, cy, kernanalyse) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var g = document.getElementById('seatTooltip');
+  if (!g) return;
+  var snippet = kernanalyse.length > 60 ? kernanalyse.slice(0, 60) + '\u2026' : kernanalyse;
+  if (!snippet) { g.setAttribute('visibility', 'hidden'); return; }
+
+  // Position tooltip: offset from seat
+  var tx = cx;
+  var ty = cy - 52;
+  // Keep within SVG bounds
+  if (ty < 20) ty = cy + 52;
+  if (tx < 120) tx = 120;
+  if (tx > 480) tx = 480;
+
+  var rect = g.querySelector('rect');
+  var text = g.querySelector('text');
+
+  // Split into 2 lines max
+  var line1 = snippet.slice(0, 30);
+  var line2 = snippet.slice(30);
+
+  // Clear old tspans
+  while (text.firstChild) text.removeChild(text.firstChild);
+
+  var tspan1 = document.createElementNS(svgNS, 'tspan');
+  tspan1.setAttribute('x', tx);
+  tspan1.setAttribute('dy', '0');
+  tspan1.textContent = line1;
+  text.appendChild(tspan1);
+
+  if (line2) {
+    var tspan2 = document.createElementNS(svgNS, 'tspan');
+    tspan2.setAttribute('x', tx);
+    tspan2.setAttribute('dy', '12');
+    tspan2.textContent = line2;
+    text.appendChild(tspan2);
+  }
+
+  text.setAttribute('x', tx);
+  text.setAttribute('y', ty);
+  text.setAttribute('text-anchor', 'middle');
+
+  var lines = line2 ? 2 : 1;
+  var rw = 200;
+  var rh = lines * 14 + 10;
+  rect.setAttribute('x', tx - rw / 2);
+  rect.setAttribute('y', ty - 12);
+  rect.setAttribute('width', rw);
+  rect.setAttribute('height', rh);
+
+  g.setAttribute('visibility', 'visible');
+}
+
+function hideSeatTooltip() {
+  var g = document.getElementById('seatTooltip');
+  if (g) g.setAttribute('visibility', 'hidden');
+}
+
+// =============================================
+// ROUND TABLE — openRtModalForRole (Block B5)
+// =============================================
+function openRtModalForRole(rolle) {
+  var persp = (window._currentPerspectives || []).find(function(p) {
+    return getRoleDisplay(p.rolle) === rolle.trim();
+  });
+  if (!persp) return;
+  var color = getMethodColor(persp.rolle);
+  var colorBg = hexToRgba(color, 0.12);
+  var displayRole = getRoleDisplay(persp.rolle);
+  openRtModal(persp, displayRole, color, colorBg);
+}
+
+// =============================================
+// RELATIONSHIP LINES — Build Edges (Block C1)
+// =============================================
+function buildRelationshipEdges(perspectives, friction) {
+  var edges = [];
+  var n = perspectives.length;
+
+  for (var i = 0; i < n; i++) {
+    for (var j = i + 1; j < n; j++) {
+      var roleA = getRoleDisplay(perspectives[i].rolle);
+      var roleB = getRoleDisplay(perspectives[j].rolle);
+
+      var contradictionText = (friction.echte_widersprueche || []).join(' ');
+      var translationText = (friction.uebersetzungsfehler || []).join(' ');
+
+      var inContradiction = contradictionText.toLowerCase().indexOf(roleA.toLowerCase()) >= 0
+                          || contradictionText.toLowerCase().indexOf(roleB.toLowerCase()) >= 0;
+      var inTranslation   = translationText.toLowerCase().indexOf(roleA.toLowerCase()) >= 0
+                          || translationText.toLowerCase().indexOf(roleB.toLowerCase()) >= 0;
+
+      var valence = 'positive';
+      var magnitude = 0.3;
+
+      if (inContradiction) { valence = 'negative'; magnitude = 0.7 + Math.random() * 0.3; }
+      else if (inTranslation) { valence = 'ambivalent'; magnitude = 0.4 + Math.random() * 0.3; }
+      else { magnitude = 0.2 + Math.random() * 0.2; }
+
+      var summary = '';
+      if (inContradiction) {
+        summary = (friction.echte_widersprueche || []).find(function(s) {
+          return s.toLowerCase().indexOf(roleA.toLowerCase()) >= 0 || s.toLowerCase().indexOf(roleB.toLowerCase()) >= 0;
+        }) || '';
+      } else if (inTranslation) {
+        summary = (friction.uebersetzungsfehler || []).find(function(s) {
+          return s.toLowerCase().indexOf(roleA.toLowerCase()) >= 0 || s.toLowerCase().indexOf(roleB.toLowerCase()) >= 0;
+        }) || '';
+      }
+
+      edges.push({
+        i: i, j: j,
+        roleA: roleA, roleB: roleB,
+        valence: valence,
+        magnitude: magnitude,
+        summary: summary
+      });
+    }
+  }
+
+  edges.sort(function(a, b) { return a.magnitude - b.magnitude; });
+  return edges;
+}
+
+// =============================================
+// RELATIONSHIP LINES — Render (Block C2)
+// =============================================
+function renderRelationshipLines(perspectives, edges) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('tableCanvas');
+  if (!svg) return;
+  var linesG = svg.querySelector('#relationshipLines');
+  if (!linesG) return;
+
+  // Clear existing lines
+  while (linesG.firstChild) linesG.removeChild(linesG.firstChild);
+
+  var positions = window._seatPositions || {};
+  var valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
+
+  for (var k = 0; k < edges.length; k++) {
+    var edge = edges[k];
+    var posA = positions[edge.roleA];
+    var posB = positions[edge.roleB];
+    if (!posA || !posB) continue;
+
+    var color = valenceColors[edge.valence] || '#4a9e6a';
+    var mag = edge.magnitude;
+    var sw = 1.5 + mag * 2;
+
+    var dasharray = '8 12';
+    if (mag > 0.2 && mag <= 0.4) dasharray = '6 8';
+    else if (mag > 0.4 && mag <= 0.6) dasharray = '4 4';
+    else if (mag > 0.6) dasharray = 'none';
+
+    var line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', posA.cx);
+    line.setAttribute('y1', posA.cy);
+    line.setAttribute('x2', posB.cx);
+    line.setAttribute('y2', posB.cy);
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', mag > 0.8 ? '3' : String(sw));
+    line.setAttribute('stroke-opacity', '0.6');
+    if (dasharray !== 'none') line.setAttribute('stroke-dasharray', dasharray);
+    line.style.cursor = 'pointer';
+
+    if (mag > 0.65) {
+      line.setAttribute('filter', 'url(#edgeGlow)');
+    }
+
+    // Click handler for edge panel
+    (function(edgeData, edgeColor) {
+      line.addEventListener('click', function() {
+        edgeData.color = edgeColor;
+        openEdgePanel(edgeData);
+      });
+    })(edge, color);
+
+    linesG.appendChild(line);
+  }
+}
+
+// =============================================
+// EDGE PANEL (Block C3)
+// =============================================
+function openEdgePanel(edge) {
+  var panel = document.getElementById('edgePanel');
+  if (!panel) return;
+  document.getElementById('edgePanelRoles').textContent = edge.roleA + ' \u2194 ' + edge.roleB;
+  var valenceLabel = { positive: '\u2713 Br\u00fccke', ambivalent: '\u26a1 \u00dcbersetzungsfehler', negative: '\u2717 Echter Widerspruch' };
+  document.getElementById('edgePanelBody').innerHTML =
+    '<div class="edge-valence-badge" style="color:' + (edge.color || '#c8993a') + '">' + (valenceLabel[edge.valence] || edge.valence) + '</div>' +
+    (edge.summary ? '<p class="edge-summary">' + escapeHtml(edge.summary) + '</p>' : '<p class="edge-summary edge-no-data">Kein direkter Bezug in den Reibungsdaten.</p>') +
+    '<div class="edge-panel-section"><strong>Magnitude:</strong> ' + Math.round(edge.magnitude * 100) + '%</div>';
+  panel.classList.remove('hidden');
+}
+
+function closeEdgePanel() {
+  var panel = document.getElementById('edgePanel');
+  if (panel) panel.classList.add('hidden');
+}
+
+// =============================================
+// PERSPECTIVE DETAIL MODAL
+// =============================================
+function openRtModalFromCard(cardEl) {
+  // Prevent opening modal when clicking checkbox
+  if (event && event.target.closest('.block-checkbox-wrap')) return;
+  var displayRole = cardEl.dataset.role;
+  var color = cardEl.dataset.color;
+  var colorBg = cardEl.dataset.colorbg;
+  // Find the perspective data
+  var p = (window._currentPerspectives || []).find(function(pp) {
+    var r = pp.rolle.replace(/^\[(custom|method)\]/, '').trim();
+    return r === displayRole;
+  });
+  if (!p) return;
+  openRtModal(p, displayRole, color, colorBg);
+}
+
+function openRtModal(p, displayRole, color, colorBg) {
+  var overlay = document.getElementById('rtModalOverlay');
+  var icon    = document.getElementById('rtModalIcon');
+  var name    = document.getElementById('rtModalRoleName');
+  var body    = document.getElementById('rtModalBody');
+  var t       = TRANSLATIONS[currentLang];
+  var cfg     = roleConfig[displayRole] || { iconClass: 'role-philosophisch', icon: '\u25cb' };
+
+  overlay.style.setProperty('--chip-color', color);
+  overlay.style.setProperty('--chip-bg', colorBg);
+
+  icon.textContent = cfg.icon;
+  icon.style.cssText = '--chip-color:' + color + ';--chip-bg:' + colorBg + ';background:' + colorBg + ';border-color:' + hexToRgba(color, 0.4) + ';color:' + color + ';';
+  name.textContent = displayRole;
+
+  var claimBadge = p.anspruchstyp
+    ? '<div class="rt-modal-claim">' + escapeHtml(p.anspruchstyp) + '</div>' : '';
+
+  body.innerHTML =
+    claimBadge +
+    '<div class="rt-modal-section"><div class="rt-modal-label">' + (t.perspAnalysisLabel || 'Kernanalyse') + '</div><p class="rt-modal-text">' + escapeHtml(p.kernanalyse || '') + '</p></div>' +
+    '<div class="rt-modal-section"><div class="rt-modal-label">' + (t.evidenceLabel || 'Evidenz') + '</div><div class="rt-modal-evidence">' + escapeHtml(p.evidenz || '') + '</div></div>' +
+    '<div class="rt-modal-section"><div class="rt-modal-label">' + (t.blindSpotLabel || 'Blinder Fleck') + '</div><div class="rt-modal-blindspot">' + escapeHtml(p.blinder_fleck || '') + '</div></div>';
+
+  overlay.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRtModal(event) {
+  if (event && event.target !== document.getElementById('rtModalOverlay') && !event.target.closest('.rt-modal-close')) return;
+  var overlay = document.getElementById('rtModalOverlay');
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var overlay = document.getElementById('rtModalOverlay');
+    if (overlay && overlay.classList.contains('visible')) {
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+  }
+});
+
+// =============================================
+// BLOCK SELECTION SYSTEM
+// =============================================
+var _blockRegistry = {};
+var _currentData = null;
+
+function registerBlocks() {
+  _blockRegistry = {};
+  document.querySelectorAll('[data-block-id]').forEach(function(el) {
+    var id = el.dataset.blockId;
+    if (!_blockRegistry[id]) _blockRegistry[id] = { checked: false, el: el };
+  });
+}
+
+function onBlockCheck(checkbox) {
+  var id = checkbox.dataset.blockId;
+  var wrapper = document.querySelector('.block-selectable[data-block-id="' + id + '"]');
+  if (!wrapper) return;
+  _blockRegistry[id] = _blockRegistry[id] || {};
+  _blockRegistry[id].checked = checkbox.checked;
+  wrapper.classList.toggle('block-checked', checkbox.checked);
+  updateSelectionCount();
+}
+
+function onSectionCheck(checkbox) {
+  var blockKey = checkbox.dataset.blockKey;
+  var section = document.querySelector('.section-selectable[data-block="' + blockKey + '"]');
+  if (!section) return;
+  var id = 'section-' + blockKey;
+  _blockRegistry[id] = _blockRegistry[id] || {};
+  _blockRegistry[id].checked = checkbox.checked;
+  _blockRegistry[id].blockKey = blockKey;
+  section.classList.toggle('block-checked', checkbox.checked);
+  updateSelectionCount();
+}
+
+function selectAll() {
+  document.querySelectorAll('.block-checkbox:not(.section-checkbox)').forEach(function(cb) { cb.checked = true; onBlockCheck(cb); });
+  document.querySelectorAll('.section-checkbox').forEach(function(cb) { cb.checked = true; onSectionCheck(cb); });
+}
+
+function selectNone() {
+  document.querySelectorAll('.block-checkbox:not(.section-checkbox)').forEach(function(cb) { cb.checked = false; onBlockCheck(cb); });
+  document.querySelectorAll('.section-checkbox').forEach(function(cb) { cb.checked = false; onSectionCheck(cb); });
+}
+
+function getCheckedCount() {
+  return document.querySelectorAll('.block-checkbox:not(.section-checkbox):checked').length +
+         document.querySelectorAll('.section-checkbox:checked').length;
+}
+
+function getTotalCount() {
+  return document.querySelectorAll('.block-checkbox:not(.section-checkbox)').length +
+         document.querySelectorAll('.section-checkbox').length;
+}
+
+function updateSelectionCount() {
+  var n = getCheckedCount();
+  var total = getTotalCount();
+  var t = TRANSLATIONS[currentLang];
+  if (t && t.selCountLabel) document.getElementById('selCount').textContent = t.selCountLabel(n, total);
+  var hasAny = n > 0;
+  document.getElementById('exportPdfBtn').disabled = !hasAny;
+  document.getElementById('exportPrintBtn').disabled = !hasAny;
+}
+
+function addSectionCheckboxes() {
+  document.querySelectorAll('.section-selectable').forEach(function(section) {
+    if (section.querySelector('.section-checkbox-wrap')) return;
+    var blockKey = section.dataset.block;
+    var header = section.querySelector('.section-header');
+    if (!header) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'block-checkbox-wrap section-checkbox-wrap';
+    wrap.style.top = '4px'; wrap.style.right = '0';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'block-checkbox section-checkbox';
+    cb.dataset.blockKey = blockKey;
+    cb.setAttribute('aria-label', 'Abschnitt ausw\u00e4hlen');
+    cb.addEventListener('change', function() { onSectionCheck(cb); });
+    wrap.appendChild(cb);
+    section.insertBefore(wrap, section.firstChild);
+  });
+}
+
+function initBlockSelection() {
+  addSectionCheckboxes();
+  registerBlocks();
+  updateSelectionCount();
+}
+
+// =============================================
+// STATE MANAGEMENT
+// =============================================
+function showState(state) {
+  document.getElementById('loadingPanel').classList.toggle('hidden', state !== 'loading');
+  document.getElementById('errorPanel').classList.toggle('hidden', state !== 'error');
+  document.getElementById('resultsPanel').classList.toggle('hidden', state !== 'results');
+}
+
+// =============================================
+// QUESTION HEADLINE
+// =============================================
+function formatHeadlineDate(lang) {
+  var now = new Date();
+  if (lang === 'de') {
+    var months = ['Januar','Februar','M\u00e4rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    return now.getDate() + '. ' + months[now.getMonth()] + ' ' + now.getFullYear() + ', ' +
+      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  } else {
+    var dateStr = now.toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+    return dateStr + ', ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  }
+}
+
+function showQuestionHeadline(questionText) {
+  var el = document.getElementById('questionHeadline');
+  var textEl = document.getElementById('headlineQuestionText');
+  var dateEl = document.getElementById('headlineDate');
+  if (!el || !textEl || !dateEl) return;
+  textEl.textContent = questionText;
+  dateEl.textContent = formatHeadlineDate(currentLang);
+  el.classList.remove('visible');
+  void el.offsetWidth;
+  el.classList.add('visible');
+}
+
+// =============================================
+// MAIN SUBMIT LOGIC
+// =============================================
+async function submitQuestion() {
+  var input = document.getElementById('questionInput');
+  var btn = document.getElementById('submitBtn');
+  var question = input.value.trim();
+
+  if (!question || question.length < 5) { input.focus(); return; }
+
+  // Reset optional sections
+  document.getElementById('fazitSection').classList.add('hidden');
+  document.getElementById('einfachSection').classList.add('hidden');
+  document.getElementById('synthesisBottom').classList.add('hidden');
+  var hl = document.getElementById('questionHeadline');
+  if (hl) hl.classList.remove('visible');
+  selectNone();
+  btn.disabled = true;
+  btn.textContent = TRANSLATIONS[currentLang].submitWorking;
+  showState('loading');
+  stopPhaseAnimation();
+  startPhaseAnimation();
+  document.getElementById('loadingPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Build request body (Block D6: include sub-perspectives + Kind)
+  var methods = getSelectedMethods();
+  var subPerspectives = getSubPerspectives();
+  var kindPersp = _kindPerspActive ? [_kindPerspActive] : [];
+  var customPerspectives = kindPersp.slice();
+  var subPerspAsCustom = subPerspectives.map(function(s) {
+    return {
+      name: s.label,
+      position: s.description,
+      profil: s.description,
+      typ: 'fachperspektive',
+      fachgebiet: s.domain,
+      rolle: '[custom] ' + s.label,
+    };
+  });
+  var allCustom = customPerspectives.concat(subPerspAsCustom);
+
+  var body = { question: question, lang: currentLang, stil: currentStil };
+  if (methods.length > 0) body.methods = methods;
+  if (allCustom.length > 0) body.custom_perspectives = allCustom;
+
+  try {
+    var res = await fetch(API + '/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      var err = await res.json().catch(function() { return {}; });
+      throw new Error(err.detail || 'HTTP ' + res.status);
+    }
+    var data = await res.json();
+    stopPhaseAnimation();
+    window._tischCurrentData = { data: data, question: question };
+    window._lastResultData = data;
+    window._lastQuestion = question;
+    renderResults(data);
+    showState('results');
+    setTimeout(initBlockSelection, 50);
+    showQuestionHeadline(question);
+    setTimeout(function() {
+      document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  } catch (e) {
+    stopPhaseAnimation();
+    var t = TRANSLATIONS[currentLang];
+    document.getElementById('errorText').textContent =
+      (e.message.includes('fetch') || e.message.includes('Failed'))
+        ? t.errorDefault
+        : (currentLang === 'de' ? 'Fehler' : 'Error') + ': ' + e.message;
+    showState('error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = TRANSLATIONS[currentLang].submitBtn;
+}
+
+// =============================================
+// EVENT LISTENERS
+// =============================================
+document.getElementById('questionForm').addEventListener('submit', submitQuestion);
+document.getElementById('submitBtn').addEventListener('click', submitQuestion);
+document.getElementById('questionInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuestion(); }
+});
+
+// =============================================
+// CHIP ICONS
+// =============================================
+var CHIP_ICONS = {
+  'Systemisch': '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c-1.66 0-3-4.03-3-9s1.34-9 3-9m0 18c1.66 0 3-4.03 3-9s-1.34-9-3-9m-9 9a9 9 0 019-9"/></svg>',
+  'Systemic': '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c-1.66 0-3-4.03-3-9s1.34-9 3-9m0 18c1.66 0 3-4.03 3-9s-1.34-9-3-9m-9 9a9 9 0 019-9"/></svg>',
+  'Tiefenpsychologisch': '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  'Depth-psychological': '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  'Empirisch-Rational': '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>',
+  'Empirical-Rational': '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>',
+  'Philosophisch': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 12 C12 12 12 8 15 8 C18 8 18 12 15 12 C11 12 10 7 13 5 C16 3 20 6 20 10 C20 16 15 19 11 18 C7 17 4 13 5 9 C6 5 10 3 13 4"/></svg>',
+  'Philosophical': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 12 C12 12 12 8 15 8 C18 8 18 12 15 12 C11 12 10 7 13 5 C16 3 20 6 20 10 C20 16 15 19 11 18 C7 17 4 13 5 9 C6 5 10 3 13 4"/></svg>',
+  'Ethisch': '<svg viewBox="0 0 24 24"><path d="M12 3v18M4 21h16"/><path d="M5 7l-3 5h6L5 7zM19 7l-3 5h6L19 7z"/><path d="M5 7h14"/></svg>',
+  'Ethical': '<svg viewBox="0 0 24 24"><path d="M12 3v18M4 21h16"/><path d="M5 7l-3 5h6L5 7zM19 7l-3 5h6L19 7z"/><path d="M5 7h14"/></svg>',
+  'Abw\u00e4gung': '<svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>',
+  'Weighing': '<svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>',
+  'Strategisch': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
+  'Strategic': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
+  'Risiko': '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>',
+  'Risk': '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>',
+  'P\u00e4dagogisch': '<svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>',
+  'Pedagogical': '<svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>',
+  'Neurodivergent': '<svg viewBox="0 0 24 24"><path d="M12 12C10 9 7 7 5 8.5S3 14 5 15.5 10 15 12 12C14 9 17 7 19 8.5S21 14 19 15.5 14 15 12 12z"/></svg>',
+  'Aus Kinderaugen': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+  "Child's Eyes": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+};
+
+function getChipIcon(key) {
+  return CHIP_ICONS[key] || '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>';
+}
+
+// =============================================
+// SUB-PERSPECTIVES (Block D1)
+// =============================================
+const SUB_PERSPECTIVES_DE = {
+  'Philosophisch': [
+    { key: 'Analytisch', label: 'Analytische Philosophie', description: 'Sprachanalyse, logische Klarheit, Begriffspräzision' },
+    { key: 'Phänomenologisch', label: 'Phänomenologie', description: 'Husserl, Heidegger — Erfahrung und Bewusstsein' },
+    { key: 'Existentiell', label: 'Existenzphilosophie', description: 'Sartre, Camus — Freiheit, Absurdität, Authentizität' },
+    { key: 'Pragmatisch', label: 'Pragmatismus', description: 'James, Dewey — Wahrheit als nützliche Handlungsorientierung' },
+    { key: 'Kritisch', label: 'Kritische Theorie', description: 'Frankfurter Schule — Gesellschaft, Ideologie, Emanzipation' },
+    { key: 'Östlich', label: 'Östliche Philosophie', description: 'Buddhismus, Daoismus, Advaita — nicht-duale Sichtweisen' },
+  ],
+  'Tiefenpsychologisch': [
+    { key: 'Freudianisch', label: 'Freudianisch', description: 'Triebtheorie, Unbewusstes, Übertragung' },
+    { key: 'Jungianisch', label: 'Jungianisch', description: 'Archetypen, kollektives Unbewusstes, Individuation' },
+    { key: 'Systemisch-Fam', label: 'Systemische Familientherapie', description: 'Familiendynamik, Aufstellungen, zirkuläre Kausalität' },
+    { key: 'ACT', label: 'Akzeptanz & Commitment', description: 'Psychologische Flexibilität, Wertorientierung' },
+    { key: 'Schema', label: 'Schematherapie', description: 'Frühe maladaptive Schemata, innere Anteile' },
+    { key: 'Trauma', label: 'Traumaperspektive', description: 'Traumafolgestörungen, Körpergedächtnis, Regulation' },
+  ],
+  'Spirituell': [
+    { key: 'Buddhistisch', label: 'Buddhistisch', description: 'Impermanenz, Mitgefühl, Achtsamkeit, Leidensfreiheit' },
+    { key: 'Christlich-myst', label: 'Christliche Mystik', description: 'Meister Eckhart, Teresa von Ávila — innere Einheit' },
+    { key: 'Transpersonal', label: 'Transpersonale Psychologie', description: 'Grof, Wilber — Bewusstseinserweiterung, Integration' },
+    { key: 'Nicht-dual', label: 'Nicht-duales Bewusstsein', description: 'Advaita, Zen — Auflösung des Beobachters' },
+    { key: 'Schamanisch', label: 'Schamanisch / Indigene Weisheit', description: 'Natur, Geist, Heilung, Ahnen' },
+    { key: 'New-Age-krit', label: 'Kritisch-spirituell', description: 'Spiritualität ohne Esoterik-Falle — integraler Ansatz' },
+  ],
+};
+
+const SUB_PERSPECTIVES_EN = {
+  'Philosophical': [
+    { key: 'Analytical', label: 'Analytical Philosophy', description: 'Language analysis, logical clarity, conceptual precision' },
+    { key: 'Phenomenological', label: 'Phenomenology', description: 'Husserl, Heidegger — experience and consciousness' },
+    { key: 'Existential', label: 'Existential Philosophy', description: 'Sartre, Camus — freedom, absurdity, authenticity' },
+    { key: 'Pragmatic', label: 'Pragmatism', description: 'James, Dewey — truth as useful orientation for action' },
+    { key: 'Critical', label: 'Critical Theory', description: 'Frankfurt School — society, ideology, emancipation' },
+    { key: 'Eastern', label: 'Eastern Philosophy', description: 'Buddhism, Daoism, Advaita — non-dual perspectives' },
+  ],
+  'Depth-psychological': [
+    { key: 'Freudian', label: 'Freudian', description: 'Drive theory, unconscious, transference' },
+    { key: 'Jungian', label: 'Jungian', description: 'Archetypes, collective unconscious, individuation' },
+    { key: 'Systemic-Fam', label: 'Systemic Family Therapy', description: 'Family dynamics, constellations, circular causality' },
+    { key: 'ACT', label: 'Acceptance & Commitment', description: 'Psychological flexibility, values-based action' },
+    { key: 'Schema', label: 'Schema Therapy', description: 'Early maladaptive schemas, inner parts' },
+    { key: 'Trauma', label: 'Trauma Perspective', description: 'Trauma responses, body memory, regulation' },
+  ],
+  'Spiritual': [
+    { key: 'Buddhist', label: 'Buddhist', description: 'Impermanence, compassion, mindfulness, liberation from suffering' },
+    { key: 'Christian-myst', label: 'Christian Mysticism', description: 'Meister Eckhart, Teresa of Ávila — inner unity' },
+    { key: 'Transpersonal', label: 'Transpersonal Psychology', description: 'Grof, Wilber — consciousness expansion, integration' },
+    { key: 'Non-dual', label: 'Non-dual Awareness', description: 'Advaita, Zen — dissolution of the observer' },
+    { key: 'Shamanic', label: 'Shamanic / Indigenous Wisdom', description: 'Nature, spirit, healing, ancestors' },
+    { key: 'Integral', label: 'Integral / Critical-Spiritual', description: 'Spirituality without the new-age trap — integral approach' },
+  ],
+};
+
+// Active sub-perspectives: { 'Philosophisch': Set(['Analytisch', 'Existentiell']), ... }
+let _activeSubPersp = {};
+
+function updateChipVisuals() {
+  document.querySelectorAll('#methodsChips .method-chip').forEach(function(btn) {
+    btn.classList.toggle('chip-active', _activeChips.has(btn.dataset.chipKey));
+  });
+}
+
+// Consensus deactivation: if any sub-persp of a domain is selected, that domain's chip is deactivated
+function onSubPerspChange(domain, subKey, active) {
+  if (!_activeSubPersp[domain]) _activeSubPersp[domain] = new Set();
+  if (active) {
+    _activeSubPersp[domain].add(subKey);
+    // Auto-deactivate domain's consensus chip
+    _activeChips.delete(domain);
+    _activeChips.delete(getEnKey(domain)); // also remove EN key if present
+    updateChipVisuals();
+  } else {
+    _activeSubPersp[domain].delete(subKey);
+  }
+}
+
+function getEnKey(deKey) {
+  var map = { 'Philosophisch': 'Philosophical', 'Tiefenpsychologisch': 'Depth-psychological', 'Spirituell': 'Spiritual' };
+  return map[deKey] || deKey;
+}
+
+function getSubPerspectives() {
+  // Returns flat array of { domain, key, label, description } for all active sub-perspectives
+  return Object.entries(_activeSubPersp).flatMap(function(entry) {
+    var domain = entry[0];
+    var keys = entry[1];
+    return [...keys].map(function(k) {
+      var subs = (currentLang === 'en' ? SUB_PERSPECTIVES_EN : SUB_PERSPECTIVES_DE)[domain] || [];
+      var sub = subs.find(function(s) { return s.key === k; });
+      return sub ? { domain: domain, key: k, label: sub.label, description: sub.description } : null;
+    }).filter(Boolean);
+  });
+}
+
+// =============================================
+// SUB-PERSPECTIVE UI (Block D3)
+// =============================================
+function renderSubPerspExpanders() {
+  var container = document.getElementById('methodsChips');
+  // Add a sub-row below chips
+  var subRow = document.getElementById('subPerspRow');
+  if (!subRow) {
+    subRow = document.createElement('div');
+    subRow.id = 'subPerspRow';
+    subRow.className = 'sub-persp-row';
+    container.parentNode.insertBefore(subRow, container.nextSibling);
+  }
+  subRow.innerHTML = ''; // reset
+
+  var domains = currentLang === 'en'
+    ? ['Philosophical', 'Depth-psychological', 'Spiritual']
+    : ['Philosophisch', 'Tiefenpsychologisch', 'Spirituell'];
+
+  domains.forEach(function(domain) {
+    var subs = (currentLang === 'en' ? SUB_PERSPECTIVES_EN : SUB_PERSPECTIVES_DE)[domain];
+    if (!subs) return;
+
+    var wrap = document.createElement('div');
+    wrap.className = 'sub-persp-domain hidden';
+    wrap.id = 'subPerspDomain_' + domain.replace(/[^a-zA-Z]/g, '');
+    wrap.innerHTML =
+      '<div class="sub-persp-domain-label">' + escapeHtml(domain) + ' \u2014 Unterperspektiven:</div>' +
+      '<div class="sub-persp-chips">' +
+      subs.map(function(s) {
+        return '<button class="sub-persp-chip" data-domain="' + escapeHtml(domain) + '" data-key="' + escapeHtml(s.key) + '"' +
+          ' onclick="toggleSubPersp(\'' + domain.replace(/'/g, "\\'") + '\',\'' + s.key.replace(/'/g, "\\'") + '\',this)" title="' + escapeHtml(s.description) + '">' +
+          escapeHtml(s.label) +
+          '</button>';
+      }).join('') +
+      '</div>';
+    subRow.appendChild(wrap);
+  });
+}
+
+function toggleSubPerspDomain(domain) {
+  var el = document.getElementById('subPerspDomain_' + domain.replace(/[^a-zA-Z]/g, ''));
+  if (el) el.classList.toggle('hidden');
+}
+
+function toggleSubPersp(domain, key, btn) {
+  var isActive = btn.classList.contains('sub-active');
+  onSubPerspChange(domain, key, !isActive);
+  btn.classList.toggle('sub-active', !isActive);
+}
+
+// =============================================
+// KIND PERSPECTIVE (Block D5)
+// =============================================
+var _kindPerspActive = null;
+
+function openKindModal() {
+  document.getElementById('kindModalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeKindModal() {
+  document.getElementById('kindModalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function closeKindModalOnOverlay(e) {
+  if (e.target === document.getElementById('kindModalOverlay')) closeKindModal();
+}
+function saveKindPersp() {
+  var alter = document.getElementById('kindAlter').value || '8';
+  var geschlecht = document.getElementById('kindGeschlecht').value;
+  var umfeld = document.getElementById('kindUmfeld').value.trim();
+  var bildung = document.getElementById('kindBildung').value.trim();
+  var emotion = document.getElementById('kindEmotion').value.trim();
+
+  _kindPerspActive = {
+    name: 'Kind (' + alter + 'J.)',
+    position: 'Ein Kind, ' + alter + ' Jahre alt' + (geschlecht ? ', ' + geschlecht : '') + (umfeld ? ', aufgewachsen in: ' + umfeld : '') + (bildung ? ', Bildungskontext: ' + bildung : '') + (emotion ? ', emotionaler Zustand: ' + emotion : '') + '. Diese Perspektive zeigt, wie ein Kind dieses Alters die Situation wahrnimmt, fühlt und versteht — direkt, ehrlich, ohne erwachsene Filter.',
+    profil: alter + ' Jahre altes Kind. Denkt konkret, fühlt direkt. Soziales Umfeld: ' + (umfeld || 'unbekannt') + '. Bildung: ' + (bildung || 'nicht spezifiziert') + '.',
+    farbe: '#d4a800',
+    typ: 'kind',
+    rolle: '[custom] Kind (' + alter + 'J.)',
+  };
+
+  var lbl = document.getElementById('kindPerspActiveLabel');
+  lbl.textContent = '\u2600 Kind (' + alter + 'J.) aktiv';
+  lbl.classList.remove('hidden');
+  document.getElementById('kindPerspBtn').textContent = '\u2600 Kind (' + alter + 'J.) \u2014 ändern';
+
+  closeKindModal();
+}
+
+// =============================================
+// CONCEPT PATTERNS & SYNTHESIS (Block E2)
+// =============================================
+var CONCEPT_PATTERNS = [
+  // Philosophical
+  /\b(Freiheit|Autonomie|Determinismus|Existenz|Authentizität|Sinn|Absurdität|Identität)\b/g,
+  // Psychological
+  /\b(Trauma|Bindung|Projektion|Abwehr|Schema|Übertragung|Individuation|Unbewusstes)\b/g,
+  // Social/Systems
+  /\b(System|Struktur|Muster|Dynamik|Grenze|Rolle|Norm|Kontext)\b/g,
+  // Values
+  /\b(Wert|Ethik|Moral|Gerechtigkeit|Würde|Verantwortung|Fürsorge|Integrität)\b/g,
+  // Epistemic
+  /\b(Wahrheit|Erkenntnis|Perspektive|Wissen|Unsicherheit|Komplexität|Widerspruch)\b/g,
+  // Spiritual
+  /\b(Bewusstsein|Präsenz|Akzeptanz|Mitgefühl|Transformation|Heilung|Verbundenheit)\b/g,
+];
+
+var CONCEPT_PATTERNS_EN = [
+  /\b(Freedom|Autonomy|Determinism|Existence|Authenticity|Meaning|Identity)\b/g,
+  /\b(Trauma|Attachment|Projection|Defense|Schema|Transference|Individuation)\b/g,
+  /\b(System|Structure|Pattern|Dynamics|Boundary|Role|Norm|Context)\b/g,
+  /\b(Value|Ethics|Morality|Justice|Dignity|Responsibility|Care|Integrity)\b/g,
+  /\b(Truth|Knowledge|Perspective|Uncertainty|Complexity|Contradiction)\b/g,
+  /\b(Consciousness|Presence|Acceptance|Compassion|Transformation|Healing)\b/g,
+];
+
+function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function renderSynthesisWithNodes(text, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container || !text) return;
+
+  var patterns = currentLang === 'en' ? CONCEPT_PATTERNS_EN : CONCEPT_PATTERNS;
+
+  // Find all concept words (dedup)
+  var found = new Set();
+  patterns.forEach(function(p) {
+    var re = new RegExp(p.source, 'gi');
+    var m;
+    while ((m = re.exec(text)) !== null) found.add(m[0]);
+  });
+
+  // Replace found words with clickable spans
+  var html = escapeHtml(text);
+  found.forEach(function(word) {
+    var re = new RegExp('\\b' + escapeRegex(word) + '\\b', 'g');
+    html = html.replace(re, '<span class="concept-node" onclick="openConceptWindow(\'' + escapeHtml(word).replace(/'/g, "\\'") + '\')" tabindex="0" role="button">' + escapeHtml(word) + '</span>');
+  });
+
+  container.innerHTML = '<p class="synthesis-text">' + html + '</p>';
+}
+
+// =============================================
+// CONCEPT WINDOW (Block E3)
+// =============================================
+var _currentConceptTerm = '';
+
+function openConceptWindow(term) {
+  _currentConceptTerm = term;
+  document.getElementById('conceptWindowTerm').textContent = term;
+  document.getElementById('conceptWindowDeepenedText').classList.add('hidden');
+
+  // Find which perspectives mention this term
+  var perspectives = window._currentPerspectives || [];
+  var relevant = perspectives.filter(function(p) {
+    return ((p.kernanalyse || '') + ' ' + (p.evidenz || '')).toLowerCase().indexOf(term.toLowerCase()) >= 0;
+  });
+
+  var why = currentLang === 'de'
+    ? '\u201e' + term + '\u201c taucht in dieser Antwort als konzeptioneller Schl\u00fcsselbegriff auf \u2014 er verbindet mehrere Perspektiven und markiert ein zentrales Spannungsfeld.'
+    : '"' + term + '" appears as a key concept in this answer \u2014 it connects multiple perspectives and marks a central field of tension.';
+
+  document.getElementById('conceptWindowWhy').textContent = why;
+
+  document.getElementById('conceptWindowPerspectives').innerHTML = relevant.length
+    ? '<div class="concept-persp-label">' + (currentLang === 'de' ? 'Verbundene Perspektiven:' : 'Connected perspectives:') + '</div>' +
+      relevant.map(function(p) {
+        var role = getRoleDisplay(p.rolle);
+        var color = getMethodColor(p.rolle);
+        return '<span class="concept-persp-chip" style="border-color:' + color + ';color:' + color + '">' + escapeHtml(role) + '</span>';
+      }).join('')
+    : '';
+
+  var win = document.getElementById('conceptWindow');
+  win.classList.remove('hidden');
+}
+
+function closeConceptWindow() {
+  document.getElementById('conceptWindow').classList.add('hidden');
+}
+
+function deepenConcept(domain) {
+  var term = _currentConceptTerm;
+  var deepenEl = document.getElementById('conceptWindowDeepenedText');
+  deepenEl.textContent = currentLang === 'de'
+    ? 'Vertiefung von \u201e' + term + '\u201c aus ' + domain + 'er Sicht wird in einer zukünftigen Version live generiert. Derzeit: Analysiere wie die ' + domain + 'e Perspektive diesen Begriff in ihrer Kernanalyse verwendet.'
+    : 'Deepening "' + term + '" from a ' + domain + ' perspective will be generated live in a future version.';
+  deepenEl.classList.remove('hidden');
+}
+
+// =============================================
+// EXPORT TXT + MARKDOWN (Block F)
+// =============================================
+function buildExportText(format) {
+  var data = window._lastResultData;
+  if (!data) return '';
+
+  var sep = format === 'md' ? '\n---\n' : '\n' + '='.repeat(60) + '\n';
+  var h1 = format === 'md' ? '# ' : '';
+  var h2 = format === 'md' ? '## ' : '';
+  var h3 = format === 'md' ? '### ' : '';
+  var li = format === 'md' ? '- ' : '\u2022 ';
+
+  var question = window._lastQuestion || '';
+  var lang = currentLang.toUpperCase();
+  var stil = currentStil;
+
+  var out = '';
+  out += h1 + 'iNTEGRATiONS TiSCH\n\n';
+  out += h2 + 'Frage\n' + question + '\n\n';
+  out += 'Sprache: ' + lang + ' | Stil: ' + stil + '\n';
+  out += sep;
+
+  out += h2 + 'I. Perspektiven am Tisch\n\n';
+  (data.perspectives || []).forEach(function(p) {
+    var role = p.rolle.replace(/^\[custom\]|\[method\]/,'').trim();
+    out += h3 + role + '\n';
+    out += (p.kernanalyse || '') + '\n\n';
+    if (p.evidenz) out += 'Evidenz: ' + p.evidenz + '\n';
+    if (p.blinder_fleck) out += 'Blinder Fleck: ' + p.blinder_fleck + '\n';
+    out += '\n';
+  });
+  out += sep;
+
+  out += h2 + 'II. Reibung & Widersprüche\n\n';
+  if (data.friction) {
+    (data.friction.echte_widersprueche || []).forEach(function(s) { out += li + s + '\n'; });
+    out += '\nÜbersetzungsfehler:\n';
+    (data.friction.uebersetzungsfehler || []).forEach(function(s) { out += li + s + '\n'; });
+    if (data.friction.uebersehenes) out += '\nÜbersehen: ' + data.friction.uebersehenes + '\n';
+  }
+  out += sep;
+
+  out += h2 + 'III. Kartierung & Synthese\n\n';
+  if (data.integration) {
+    if (data.integration.vorlaeufiger_konsens) out += (data.integration.vorlaeufiger_konsens || '') + '\n\n';
+    if (data.integration.einfach_gesagt) out += 'Einfach gesagt: ' + data.integration.einfach_gesagt + '\n';
+  }
+
+  out += sep + 'Erstellt mit iNTEGRATiONS TiSCH \u2014 der-tisch-production.up.railway.app\n';
+  return out;
+}
+
+function exportToTxt() {
+  var text = buildExportText('txt');
+  if (!text) return;
+  var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'integrationstisch-export.txt'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportToMarkdown() {
+  var text = buildExportText('md');
+  if (!text) return;
+  var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'integrationstisch-export.md'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// =============================================
+// METHOD CHIPS
+// =============================================
+var METHOD_CHIPS_DE = [
+  { key: 'Systemisch' }, { key: 'Tiefenpsychologisch' }, { key: 'Empirisch-Rational' },
+  { key: 'Philosophisch' }, { key: 'Ethisch' }, { key: 'Abw\u00e4gung' },
+  { key: 'Strategisch' }, { key: 'Risiko' }, { key: 'P\u00e4dagogisch' },
+  { key: 'Neurodivergent' }, { key: 'Aus Kinderaugen' },
+];
+var METHOD_CHIPS_EN = [
+  { key: 'Systemic' }, { key: 'Depth-psychological' }, { key: 'Empirical-Rational' },
+  { key: 'Philosophical' }, { key: 'Ethical' }, { key: 'Weighing' },
+  { key: 'Strategic' }, { key: 'Risk' }, { key: 'Pedagogical' },
+  { key: 'Neurodivergent' }, { key: "Child's Eyes" },
+];
+
+var _activeChips = new Set();
+var _lastChipCombo = new Set();
+var _autoMode = true;
+
+function initMethodChips() {
+  var container = document.getElementById('methodsChips');
+  container.innerHTML = '';
+  _activeChips = new Set();
+  _autoMode = true;
+
+  var expandableDomains = ['Philosophisch','Tiefenpsychologisch','Spirituell','Philosophical','Depth-psychological','Spiritual'];
+  var chips = currentLang === 'en' ? METHOD_CHIPS_EN : METHOD_CHIPS_DE;
+  chips.forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'method-chip';
+    btn.dataset.chipKey = c.key;
+    btn.innerHTML = '<span class="chip-icon">' + getChipIcon(c.key) + '</span><span>' + c.key + '</span>';
+    btn.addEventListener('click', function() { toggleChip(c.key); });
+    // Sub-perspective dblclick for expandable domains
+    if (expandableDomains.indexOf(c.key) >= 0) {
+      btn.title = 'Klick: aktivieren/deaktivieren | Doppelklick: Unterperspektiven';
+      btn.addEventListener('dblclick', function(e) { e.stopPropagation(); toggleSubPerspDomain(c.key); });
+    }
+    container.appendChild(btn);
+  });
+  updateAutoModeBtn();
+  updateMethodsHint();
+  renderSubPerspExpanders();
+}
+
+function toggleChip(key) {
+  if (_activeChips.has(key)) _activeChips.delete(key);
+  else _activeChips.add(key);
+  _autoMode = (_activeChips.size === 0);
+  document.querySelectorAll('#methodsChips .method-chip').forEach(function(btn) {
+    btn.classList.toggle('chip-active', _activeChips.has(btn.dataset.chipKey));
+  });
+  updateAutoModeBtn();
+  updateMethodsHint();
+}
+
+function setAutoMode() {
+  _activeChips = new Set();
+  _autoMode = true;
+  document.querySelectorAll('#methodsChips .method-chip').forEach(function(btn) { btn.classList.remove('chip-active'); });
+  updateAutoModeBtn();
+  updateMethodsHint();
+}
+
+function setAllChips(active) {
+  var chips = currentLang === 'en' ? METHOD_CHIPS_EN : METHOD_CHIPS_DE;
+  if (active) {
+    chips.forEach(function(c) { _activeChips.add(c.key); });
+    _autoMode = false;
+  } else {
+    _activeChips = new Set();
+    _autoMode = true;
+  }
+  document.querySelectorAll('#methodsChips .method-chip').forEach(function(btn) {
+    btn.classList.toggle('chip-active', _activeChips.has(btn.dataset.chipKey));
+  });
+  updateAutoModeBtn();
+  updateMethodsHint();
+}
+
+function restoreLastCombo() {
+  if (_lastChipCombo.size === 0) return;
+  _activeChips = new Set(_lastChipCombo);
+  _autoMode = false;
+  document.querySelectorAll('#methodsChips .method-chip').forEach(function(btn) {
+    btn.classList.toggle('chip-active', _activeChips.has(btn.dataset.chipKey));
+  });
+  updateAutoModeBtn();
+  updateMethodsHint();
+}
+
+function updateAutoModeBtn() {
+  var btn = document.getElementById('autoModeBtn');
+  if (!btn) return;
+  var t = TRANSLATIONS[currentLang];
+  if (_autoMode) {
+    btn.textContent = t.autoModeActive || 'KI Auto';
+    btn.classList.add('auto-active');
+  } else {
+    btn.textContent = t.autoModeInactive || 'Auto';
+    btn.classList.remove('auto-active');
+  }
+  var lastBtn = document.getElementById('lastComboBtn');
+  if (lastBtn) lastBtn.style.display = _lastChipCombo.size > 0 ? 'inline-flex' : 'none';
+}
+
+function updateMethodsHint() {
+  var hint = document.getElementById('methodsHint');
+  if (!hint) return;
+  var t = TRANSLATIONS[currentLang];
+  var count = _activeChips.size;
+  if (count === 0) {
+    hint.innerHTML = '<span class="hint-auto">' + (t.methodsHintAuto || 'KI Auto-Modus') + '</span>';
+  } else {
+    hint.textContent = count + ' ' + (count === 1 ? (t.methodSelected || 'Methode ausgew\u00e4hlt') : (t.methodsSelected || 'Methoden ausgew\u00e4hlt')) + (t.methodsHintSuffix || '');
+  }
+}
+
+function getSelectedMethods() {
+  var result = [];
+  _activeChips.forEach(function(key) { result.push(key); });
+  return result;
+}
+
+function rebuildChipsForLang() {
+  var oldActiveIndices = new Set();
+  var oldChips = currentLang === 'en' ? METHOD_CHIPS_DE : METHOD_CHIPS_EN;
+  var newChips = currentLang === 'en' ? METHOD_CHIPS_EN : METHOD_CHIPS_DE;
+  oldChips.forEach(function(c, i) { if (_activeChips.has(c.key)) oldActiveIndices.add(i); });
+  _activeChips = new Set();
+  newChips.forEach(function(c, i) { if (oldActiveIndices.has(i)) _activeChips.add(c.key); });
+
+  var container = document.getElementById('methodsChips');
+  container.innerHTML = '';
+  newChips.forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'method-chip' + (_activeChips.has(c.key) ? ' chip-active' : '');
+    btn.dataset.chipKey = c.key;
+    btn.innerHTML = '<span class="chip-icon">' + getChipIcon(c.key) + '</span><span>' + c.key + '</span>';
+    btn.addEventListener('click', function() { toggleChip(c.key); });
+    container.appendChild(btn);
+  });
+  updateMethodsHint();
+}
+
+// =============================================
+// PRINT SELECTION
+// =============================================
+function printSelection() {
+  if (getCheckedCount() === 0) return;
+  var win = window.open('', '_blank');
+  var de = currentLang === 'de';
+  var ref = window._tischCurrentData || {};
+  var data = ref.data;
+  var question = ref.question;
+  var html = '<html><head><title>iNTEGRATiONS TiSCH \u2014 ' + (de ? 'Auswahl' : 'Selection') + '</title>' +
+    '<style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;color:#1e1c18;line-height:1.7;font-size:14px;}' +
+    'h1{font-size:20px;margin-bottom:4px;} h2{font-size:15px;margin-top:28px;margin-bottom:8px;}' +
+    'h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#888;margin:16px 0 6px;}' +
+    'p,li{margin:0 0 8px;} ul{padding-left:18px;} .q{font-size:12px;color:#888;margin-bottom:6px;}' +
+    '.card{border:1px solid #ddd;border-radius:6px;padding:14px;margin-bottom:12px;}' +
+    '.role{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px;}' +
+    '.einfach{background:#f0f8f2;border-left:3px solid #3d8a50;padding:14px;border-radius:6px;font-style:italic;}</style></head><body>' +
+    '<h1>iNTEGRATiONS TiSCH</h1><p class="q">' + (de ? 'Frage' : 'Question') + ': ' + (question || '') + '</p><hr>';
+
+  var perspCards = document.querySelectorAll('.block-selectable[data-block-type="perspective"]');
+  var perspHtml = '';
+  perspCards.forEach(function(wrapper) {
+    var cb = wrapper.querySelector('.block-checkbox');
+    if (!cb || !cb.checked) return;
+    var role = (wrapper.querySelector('.role-label') || {}).textContent || '';
+    var analysis = (wrapper.querySelector('.perspective-analysis') || {}).textContent || '';
+    var evidence = (wrapper.querySelector('.meta-block.evidence .meta-text') || {}).textContent || '';
+    var blind = (wrapper.querySelector('.meta-block.blind-spot .meta-text') || {}).textContent || '';
+    perspHtml += '<div class="card"><div class="role">' + role + '</div><p>' + analysis + '</p>' +
+      '<h3>' + (de ? 'Evidenz' : 'Evidence') + '</h3><p>' + evidence + '</p>' +
+      '<h3>' + (de ? 'Blinder Fleck' : 'Blind Spot') + '</h3><p>' + blind + '</p></div>';
+  });
+  if (perspHtml) html += '<h2>' + (de ? 'I. Perspektiven' : 'I. Perspectives') + '</h2>' + perspHtml;
+
+  var sectionMap = [
+    { key: 'friction', titleDe: 'II. Reibung', titleEn: 'II. Friction', id: 'frictionSection' },
+    { key: 'integration', titleDe: 'III. Die Kartierung', titleEn: 'III. The Mapping', id: 'integrationSection' },
+    { key: 'fazit', titleDe: 'IV. Vorl\u00e4ufiges Fazit', titleEn: 'IV. Provisional Verdict', id: 'fazitSection' },
+    { key: 'einfach', titleDe: 'V. Einfach gesagt', titleEn: 'V. Simply put', id: 'einfachSection' },
+  ];
+  sectionMap.forEach(function(s) {
+    var section = document.getElementById(s.id);
+    if (!section) return;
+    var cb = section.querySelector('.section-checkbox');
+    if (!cb || !cb.checked) return;
+    var clone = section.cloneNode(true);
+    clone.querySelectorAll('.section-checkbox-wrap, .block-checkbox-wrap').forEach(function(el) { el.remove(); });
+    html += '<h2>' + (de ? s.titleDe : s.titleEn) + '</h2>' + clone.innerHTML;
+  });
+
+  html += '</body></html>';
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(function() { win.print(); }, 400);
+}
+
+// =============================================
+// INIT
+// =============================================
+initMethodChips();
+</script>
+
+<!-- jsPDF for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+async function exportToPDF() {
+  if (!window._tischCurrentData) return;
+  if (getCheckedCount() === 0) return;
+  var ref = window._tischCurrentData;
+  var data = ref.data;
+  var question = ref.question;
+  var btn = document.getElementById('exportPdfBtn');
+  btn.disabled = true;
+  btn.textContent = currentLang === 'de' ? 'Wird erstellt...' : 'Creating...';
+
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+  var W = 210;
+  var margin = 20;
+  var contentW = W - margin * 2;
+  var y = margin;
+
+  function addText(text, size, bold, color, maxW) {
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setTextColor.apply(doc, color || [30, 30, 30]);
+    var lines = doc.splitTextToSize(String(text || ''), maxW || contentW);
+    doc.text(lines, margin, y);
+    y += lines.length * (size * 0.45) + 2;
+  }
+
+  function checkPage(needed) {
+    if (y + needed > 277) { doc.addPage(); y = margin; }
+  }
+
+  function sectionHeader(num, title, subtitle) {
+    checkPage(20); y += 4;
+    doc.setFillColor(245, 245, 243);
+    doc.roundedRect(margin, y - 4, contentW, 14, 2, 2, 'F');
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(180, 130, 40);
+    doc.text(num, margin + 3, y + 5);
+    doc.setFontSize(12); doc.setTextColor(20, 20, 20);
+    doc.text(title, margin + 14, y + 5);
+    y += 16;
+    if (subtitle) { addText(subtitle, 9, false, [100,100,100]); y += 1; }
+  }
+
+  function listItem(text, symbol) {
+    checkPage(12);
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(180, 130, 40);
+    doc.text(symbol || '\u2014', margin + 2, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
+    var lines = doc.splitTextToSize(String(text || ''), contentW - 12);
+    doc.text(lines, margin + 10, y);
+    y += lines.length * 4.5 + 2;
+  }
+
+  function blockText(text, italic) {
+    checkPage(16);
+    doc.setFillColor(252, 251, 248);
+    doc.roundedRect(margin, y - 2, contentW, Math.ceil(doc.splitTextToSize(String(text||''), contentW-8).length * 5) + 8, 2, 2, 'F');
+    doc.setFontSize(10); doc.setFont('helvetica', italic ? 'italic' : 'normal'); doc.setTextColor(40, 40, 40);
+    var lines = doc.splitTextToSize(String(text || ''), contentW - 8);
+    doc.text(lines, margin + 4, y + 4);
+    y += lines.length * 5 + 12;
+  }
+
+  function greenBlock(text) {
+    checkPage(16);
+    doc.setFillColor(240, 248, 242);
+    var lines = doc.splitTextToSize(String(text||''), contentW-8);
+    doc.roundedRect(margin, y - 2, contentW, lines.length * 5.5 + 10, 2, 2, 'F');
+    doc.setDrawColor(61, 138, 80); doc.setLineWidth(0.8);
+    doc.line(margin, y - 2, margin, y - 2 + lines.length * 5.5 + 10);
+    doc.setFontSize(10); doc.setFont('helvetica', 'italic'); doc.setTextColor(40, 40, 40);
+    doc.text(lines, margin + 4, y + 4);
+    y += lines.length * 5.5 + 14;
+  }
+
+  var de = currentLang === 'de';
+
+  // HEADER
+  doc.setFillColor(20, 20, 20);
+  doc.rect(0, 0, W, 28, 'F');
+  doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.setTextColor(196, 160, 80);
+  doc.text('iNTEGRATiONS TiSCH', margin, 13);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(160, 160, 160);
+  doc.text(de ? 'Epistemischer Perspektivenraum' : 'Epistemic Perspective Space', margin, 20);
+  var dateStr = new Date().toLocaleDateString(de ? 'de-DE' : 'en-GB', {day:'2-digit', month:'long', year:'numeric'});
+  doc.text(dateStr, W - margin - doc.getTextWidth(dateStr), 20);
+  y = 38;
+
+  addText(de ? 'Frage' : 'Question', 8, true, [150,150,150]);
+  y -= 1;
+  addText(question, 13, true, [20,20,20]);
+  y += 4;
+  doc.setDrawColor(196, 160, 80); doc.setLineWidth(0.4);
+  doc.line(margin, y, W - margin, y);
+  y += 8;
+
+  function isPerspChecked(rolle) {
+    var blockId = 'block-persp-' + rolle.toLowerCase().replace(/[^a-z0-9]/g, '');
+    var cb = document.querySelector('.block-checkbox[data-block-id="' + blockId + '"]');
+    return cb && cb.checked;
+  }
+  function isSectionChecked(key) {
+    var section = document.querySelector('.section-selectable[data-block="' + key + '"]');
+    if (!section) return false;
+    var cb = section.querySelector('.section-checkbox');
+    return cb && cb.checked;
+  }
+
+  var selectedPerspectives = data.perspectives.filter(function(p) { return isPerspChecked(p.rolle); });
+
+  if (selectedPerspectives.length > 0) {
+    sectionHeader('I', de ? 'Perspektiven am Tisch' : 'Perspectives at the Table');
+    for (var pi = 0; pi < selectedPerspectives.length; pi++) {
+      var p = selectedPerspectives[pi];
+      checkPage(28);
+      doc.setFillColor(248, 248, 246);
+      doc.roundedRect(margin, y - 2, contentW, 8, 1, 1, 'F');
+      doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(60, 60, 60);
+      doc.text(p.rolle.toUpperCase(), margin + 3, y + 4); y += 10;
+      addText(p.kernanalyse, 9.5, false, [30,30,30]); y += 1;
+      doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(100,100,100);
+      doc.text(de ? 'EVIDENZ' : 'EVIDENCE', margin + 2, y); y += 4;
+      addText(p.evidenz, 8.5, false, [80,80,80]);
+      doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(180,80,74);
+      doc.text(de ? 'BLINDER FLECK' : 'BLIND SPOT', margin + 2, y); y += 4;
+      addText(p.blinder_fleck, 8.5, false, [80,80,80]);
+      y += 4;
+    }
+  }
+
+  if (isSectionChecked('friction')) {
+    sectionHeader('II', de ? 'Reibung & Inkommensurabilit\u00e4t' : 'Friction & Incommensurability');
+    addText(de ? 'Echte Widerspr\u00fcche' : 'Genuine Contradictions', 9, true, [180,80,74]);
+    (data.friction.echte_widersprueche || []).forEach(function(w) { listItem(w, '\u00d7'); });
+    y += 2;
+    addText(de ? '\u00dcbersetzungsfehler' : 'Translation Errors', 9, true, [100,100,100]);
+    (data.friction.uebersetzungsfehler || []).forEach(function(u) { listItem(u, '~'); });
+    y += 2;
+    addText(de ? 'Blinder Fleck des gesamten Tisches' : 'Blind spot of the entire table', 9, true, [100,100,100]);
+    addText(data.friction.uebersehenes, 9, false, [60,60,60]);
+    y += 4;
+  }
+
+  if (isSectionChecked('integration')) {
+    sectionHeader('III', de ? 'Die Kartierung' : 'The Mapping');
+    addText(de ? 'Anspruchskarte' : 'Claim Map', 9, true, [60,60,60]);
+    blockText(data.integration.anspruchskarte || data.integration.vorlaeufiger_konsens);
+    addText(de ? '\u00dcbersetzbare Br\u00fccken' : 'Translatable Bridges', 9, true, [60,100,140]);
+    (data.integration.uebersetzbare_bruecken || data.integration.fruchtbare_differenzen || []).forEach(function(b) { listItem(b, '\u2192'); });
+    y += 2;
+    addText(de ? 'Echte Unvereinbarkeiten' : 'Genuine Incompatibilities', 9, true, [180,80,74]);
+    (data.integration.echte_unvereinbarkeiten || data.integration.unvereinbarkeiten || []).forEach(function(u) { listItem(u, '\u00d7'); });
+    y += 2;
+    addText(de ? 'Praktische Optionen' : 'Practical Options', 9, true, [60,60,60]);
+    (data.integration.praktische_optionen || []).forEach(function(o) { listItem(o, '\u2022'); });
+    y += 2;
+    addText(de ? 'Offene Pr\u00fcfpfade' : 'Open Inquiry Paths', 9, true, [60,60,60]);
+    (data.integration.offene_pruefpfade || []).forEach(function(p) { listItem(p, '?'); });
+    y += 4;
+  }
+
+  if (isSectionChecked('fazit') && data.integration.vorlaeufiges_fazit) {
+    sectionHeader('IV', de ? 'Vorl\u00e4ufiges Fazit' : 'Provisional Verdict');
+    blockText(data.integration.vorlaeufiges_fazit, true); y += 2;
+  }
+
+  if (isSectionChecked('einfach') && data.integration.einfach_gesagt) {
+    sectionHeader('V', de ? 'Einfach gesagt' : 'Simply put');
+    greenBlock(data.integration.einfach_gesagt); y += 2;
+  }
+
+  // FOOTER on each page
+  var pageCount = doc.internal.getNumberOfPages();
+  for (var i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(160,160,160);
+    doc.text('iNTEGRATiONS TiSCH', margin, 292);
+    doc.text(i + ' / ' + pageCount, W - margin - 8, 292);
+  }
+
+  var slug = question.slice(0, 40).replace(/[^a-z0-9\u00e4\u00f6\u00fc\u00df\s]/gi,'').trim().replace(/\s+/g,'-').toLowerCase();
+  doc.save('integrationstisch-' + (slug || 'analyse') + '.pdf');
+
+  var stillHasChecked = getCheckedCount() > 0;
+  btn.disabled = !stillHasChecked;
+  var pdfLabel = TRANSLATIONS[currentLang].exportPdfLabel || 'Auswahl als PDF';
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span id="exportPdfLabel">' + pdfLabel + '</span>';
+}
+</script>
+
+</body>
+</html>
