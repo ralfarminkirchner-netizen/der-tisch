@@ -20,6 +20,11 @@ client = anthropic.Anthropic()
 async def serve_index():
     return FileResponse(Path(__file__).parent / "index.html")
 
+# Serve iNTEGRATiONS TiSCH
+@app.get("/integrationstisch.html")
+async def serve_integrationstisch():
+    return FileResponse(Path(__file__).parent / "integrationstisch.html")
+
 # ==========================================
 # SPRACHSTIL INSTRUCTIONS
 # ==========================================
