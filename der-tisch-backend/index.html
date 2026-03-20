@@ -3247,7 +3247,7 @@ function printSelection() {
     html += `<h2>${de ? titleDe : titleEn}</h2>${clone.innerHTML}`;
   });
 
-  html += '
+  html += `
   <!-- V5.6 — TTS PLAYER BAR -->
   <div id="ttsBar" role="region" aria-label="Vorlesefunktion">
     <button class="tts-btn" id="ttsSkipBack" onclick="ttsSkip(-10)" title="-10s" aria-label="10 Sekunden zurück">
@@ -3266,7 +3266,7 @@ function printSelection() {
     <button id="ttsClose" onclick="ttsStop(true)" aria-label="Schließen">×</button>
   </div>
 
-</body></html>';
+</body></html>`;
   win.document.write(html);
   win.document.close();
   win.focus();
