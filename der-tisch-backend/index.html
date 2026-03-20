@@ -331,24 +331,16 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 }
 
 .hero-title {
-  font-family: var(--font-display);
-  font-size: var(--text-hero);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: var(--space-6);
+  line-height: 1;
 }
-.hero-title .logo-i {
-  font-style: italic;
-  font-size: 0.85em;
-  letter-spacing: 0;
-  color: var(--color-accent);
-}
-[data-theme="light"] .hero-title {
-  color: #2c2618;
-}
-[data-theme="light"] .hero-title .logo-i {
-  color: #9a6e1a;
+.hero-logo-svg {
+  width: clamp(220px, 55vw, 480px);
+  height: auto;
+  display: block;
 }
 
 .hero-subtitle {
@@ -2005,7 +1997,20 @@ html[data-stil] body {
   <section class="hero">
     <div class="wrapper">
       <p class="hero-tagline">Gemeinsam denken. Ehrlich analysieren.</p>
-      <h1 class="hero-title">TEAM T<em class="logo-i">i</em>SCH</h1>
+      <h1 class="hero-title" aria-label="TEAM TiSCH">
+        <svg class="hero-logo-svg" viewBox="0 0 420 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TEAM TiSCH">
+          <!-- Horizontal table top — accent color (gold/amber) -->
+          <rect x="2" y="4" width="416" height="12" fill="var(--color-accent)"/>
+          <!-- Left T leg — accent color -->
+          <rect x="58" y="16" width="12" height="72" fill="var(--color-accent)"/>
+          <!-- Right T leg — accent color -->
+          <rect x="228" y="16" width="12" height="72" fill="var(--color-accent)"/>
+          <!-- EAM — right of left leg -->
+          <text x="74" y="76" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="300" fill="var(--color-text)" letter-spacing="1">EAM</text>
+          <!-- iSCH — right of right leg, gap between words is the space between legs -->
+          <text x="244" y="76" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="300" fill="var(--color-text)" letter-spacing="1"><tspan font-style="italic" fill="var(--color-text)">i</tspan>SCH</text>
+        </svg>
+      </h1>
       <p class="hero-subtitle">Verschiedene Perspektiven nehmen gemeinsam am runden Tisch Platz. Jede Stimme wird gehört — dann entscheidet ihr selbst.</p>
 
       <!-- MODE TOGGLE -->
@@ -2707,15 +2712,7 @@ function applyTranslation(lang) {
   document.documentElement.lang = t.htmlLang;
 
   document.querySelector('.hero-tagline').textContent = t.tagline;
-  // Keep the styled <em class="logo-i"> for the italic i
-  const heroTitleEl = document.querySelector('.hero-title');
-  if (heroTitleEl) {
-    if (currentLang === 'en') {
-      heroTitleEl.innerHTML = 'TEAM T<em class="logo-i">i</em>SCH';
-    } else {
-      heroTitleEl.innerHTML = 'TEAM T<em class="logo-i">i</em>SCH';
-    }
-  }
+  // Hero title is now an SVG logo — do not overwrite with innerHTML
   document.querySelector('.hero-subtitle').textContent = t.subtitle;
   document.getElementById('questionInput').placeholder = t.placeholder;
   const submitBtn = document.getElementById('submitBtn');
