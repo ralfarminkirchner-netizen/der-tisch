@@ -637,6 +637,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .role-strategisch   { background: rgba(210, 130, 60, 0.15);  color: #d2823c; }
 .role-risiko        { background: rgba(220, 80, 80, 0.15);   color: #dc5050; }
 .role-paedagogisch  { background: rgba(80, 170, 100, 0.15);  color: #50aa64; }
+.role-kinderaugen   { background: rgba(232, 133, 74, 0.15);  color: #e8854a; }
 .role-neurodivergent { background: rgba(160, 90, 210, 0.15); color: #a05ad2; }
 
 /* =============================================
@@ -1295,6 +1296,11 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   --chip-color: #3eaec4;
   --chip-bg: rgba(62,174,196,0.10);
 }
+.method-chip[data-chip-key="Aus Kinderaugen"],
+.method-chip[data-chip-key="Child's Eyes"] {
+  --chip-color: #e8854a;
+  --chip-bg: rgba(232,133,74,0.10);
+}
 .method-chip[data-chip-key="Systemic"] {
   --chip-color: #5b9e8a;
   --chip-bg: rgba(91,158,138,0.10);
@@ -1330,6 +1336,11 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .method-chip[data-chip-key="Pedagogical"] {
   --chip-color: #e87d3e;
   --chip-bg: rgba(232,125,62,0.10);
+}
+.method-chip[data-chip-key="Aus Kinderaugen"],
+.method-chip[data-chip-key="Child's Eyes"] {
+  --chip-color: #e8854a;
+  --chip-bg: rgba(232,133,74,0.10);
 }
 
 /* Hover: show color as border + icon tint */
@@ -1942,16 +1953,16 @@ html[data-stil] body {
     <a href="#" class="site-logo" aria-label="TEAM TiSCH — Zur Startseite">
       <!-- TEAM TiSCH Logo: two T-table shapes, EAM and iSCH below legs -->
       <svg class="site-logo-mark" viewBox="0 0 200 70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TEAM TiSCH" aria-hidden="false">
-        <!-- Horizontal table top — full width -->
-        <rect x="2" y="2" width="196" height="8" fill="currentColor"/>
-        <!-- Left T leg -->
-        <rect x="38" y="10" width="8" height="44" fill="currentColor"/>
-        <!-- Right T leg -->
-        <rect x="118" y="10" width="8" height="44" fill="currentColor"/>
-        <!-- EAM — right of left leg, vertically centered on leg -->
-        <text x="50" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5">EAM</text>
+        <!-- Horizontal table top: short left overhang, long right overhang (like reference) -->
+        <rect x="18" y="2" width="180" height="8" fill="currentColor"/>
+        <!-- Left T leg — near left edge of plate -->
+        <rect x="28" y="10" width="8" height="44" fill="currentColor"/>
+        <!-- Right T leg — about 2/3 across plate -->
+        <rect x="108" y="10" width="8" height="44" fill="currentColor"/>
+        <!-- EAM — right of left leg -->
+        <text x="40" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5">EAM</text>
         <!-- iSCH — right of right leg, i italic -->
-        <text x="130" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5"><tspan font-style="italic">i</tspan>SCH</text>
+        <text x="120" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5"><tspan font-style="italic">i</tspan>SCH</text>
       </svg>
     </a>
     <div class="header-actions">
@@ -1999,15 +2010,15 @@ html[data-stil] body {
       <p class="hero-tagline">Gemeinsam denken. Ehrlich analysieren.</p>
       <h1 class="hero-title" aria-label="TEAM TiSCH">
         <svg class="hero-logo-svg" viewBox="0 0 420 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TEAM TiSCH">
-          <!-- Horizontal table top — accent color (gold/amber) -->
-          <rect x="2" y="4" width="416" height="12" fill="var(--color-accent)"/>
-          <!-- Left T leg — accent color -->
+          <!-- Horizontal table top: short left overhang, long right overhang -->
+          <rect x="46" y="4" width="372" height="12" fill="var(--color-accent)"/>
+          <!-- Left T leg — near left edge, small overhang left -->
           <rect x="58" y="16" width="12" height="72" fill="var(--color-accent)"/>
-          <!-- Right T leg — accent color -->
+          <!-- Right T leg — about 60% across, big right overhang -->
           <rect x="228" y="16" width="12" height="72" fill="var(--color-accent)"/>
           <!-- EAM — right of left leg -->
           <text x="74" y="76" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="300" fill="var(--color-text)" letter-spacing="1">EAM</text>
-          <!-- iSCH — right of right leg, gap between words is the space between legs -->
+          <!-- iSCH — right of right leg -->
           <text x="244" y="76" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="300" fill="var(--color-text)" letter-spacing="1"><tspan font-style="italic" fill="var(--color-text)">i</tspan>SCH</text>
         </svg>
       </h1>
@@ -2925,6 +2936,8 @@ const roleConfig = {
   'Pädagogisch':         { iconClass: 'role-paedagogisch',   icon: '✦' },
   'Neurodivergent':      { iconClass: 'role-neurodivergent', icon: '∞' },
   'Pedagogical':         { iconClass: 'role-paedagogisch',   icon: '✦' },
+  'Aus Kinderaugen':     { iconClass: 'role-kinderaugen',     icon: '☀' },
+  "Child's Eyes":        { iconClass: 'role-kinderaugen',     icon: '☀' },
 };
 
 function escapeHtml(str) {
@@ -3617,6 +3630,10 @@ const CHIP_ICONS = {
 
   // Neurodivergent: ∞ Unendlichkeit (Lemniskate als Pfad)
   'Neurodivergent': `<svg viewBox="0 0 24 24"><path d="M12 12C10 9 7 7 5 8.5S3 14 5 15.5 10 15 12 12C14 9 17 7 19 8.5S21 14 19 15.5 14 15 12 12z"/></svg>`,
+
+  // Aus Kinderaugen: Sonne mit Gesicht (Kreis + Strahlen — neugierig, offen, direkt)
+  'Aus Kinderaugen': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`,
+  "Child's Eyes": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`,
 };
 
 function getChipIcon(key) {
@@ -3634,6 +3651,7 @@ const METHOD_CHIPS_DE = [
   { key: 'Risiko'              },
   { key: 'Pädagogisch'         },
   { key: 'Neurodivergent'      },
+  { key: 'Aus Kinderaugen'     },
 ];
 const METHOD_CHIPS_EN = [
   { key: 'Systemic'            },
@@ -3646,6 +3664,7 @@ const METHOD_CHIPS_EN = [
   { key: 'Risk'                },
   { key: 'Pedagogical'         },
   { key: 'Neurodivergent'      },
+  { key: "Child's Eyes"        },
 ];
 
 // Track active chip keys (always use DE keys internally, map on send)
@@ -3696,7 +3715,8 @@ function initClarifyChips() {
     ? { 'Pedagogical': 'Pädagogisch', 'Neurodivergent': 'Neurodivergent',
         'Systemic': 'Systemisch', 'Depth-psychological': 'Tiefenpsychologisch',
         'Empirical-Rational': 'Empirisch-Rational', 'Philosophical': 'Philosophisch',
-        'Ethical': 'Ethisch', 'Weighing': 'Abwägung', 'Strategic': 'Strategisch', 'Risk': 'Risiko' }
+        'Ethical': 'Ethisch', 'Weighing': 'Abwägung', 'Strategic': 'Strategisch', 'Risk': 'Risiko',
+        "Child's Eyes": 'Aus Kinderaugen' }
     : null;
 
   chips.forEach(({ key }) => {
@@ -3932,6 +3952,7 @@ const METHOD_CHIP_COLORS = {
   'Risiko': '#c4585b', 'Risk': '#c4585b',
   'Pädagogisch': '#e87d3e', 'Pedagogical': '#e87d3e',
   'Neurodivergent': '#3eaec4',
+  'Aus Kinderaugen': '#e8854a', "Child's Eyes": '#e8854a',
 };
 
 function hexToRgba(hex, alpha) {
