@@ -2007,19 +2007,20 @@ html[data-stil] body {
   <!-- HERO -->
   <section class="hero">
     <div class="wrapper">
-      <p class="hero-tagline">Gemeinsam denken. Ehrlich analysieren.</p>
       <h1 class="hero-title" aria-label="TEAM TiSCH">
-        <svg class="hero-logo-svg" viewBox="0 0 420 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TEAM TiSCH">
-          <!-- Horizontal table top: symmetric overhang (46px each side) over both legs -->
-          <rect x="12" y="4" width="274" height="12" fill="var(--color-accent)"/>
+        <svg class="hero-logo-svg" viewBox="0 0 380 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TEAM TiSCH">
+          <!-- Tagline: floats just above the table bar, centered over plate span -->
+          <text x="155" y="14" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="10.5" font-weight="400" fill="var(--color-accent)" letter-spacing="0.18em" text-anchor="middle" text-transform="uppercase" style="text-transform:uppercase">GEMEINSAM DENKEN. EHRLICH ANALYSIEREN.</text>
+          <!-- Plate: symmetric 65px overhang each side over both legs -->
+          <rect x="30" y="20" width="250" height="11" fill="var(--color-accent)"/>
           <!-- Left T leg -->
-          <rect x="58" y="16" width="12" height="72" fill="var(--color-accent)"/>
+          <rect x="95" y="31" width="11" height="68" fill="var(--color-accent)"/>
           <!-- Right T leg -->
-          <rect x="228" y="16" width="12" height="72" fill="var(--color-accent)"/>
-          <!-- EAM — right of left leg -->
-          <text x="74" y="76" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="300" fill="var(--color-text)" letter-spacing="1">EAM</text>
-          <!-- iSCH — right of right leg -->
-          <text x="244" y="76" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="300" fill="var(--color-text)" letter-spacing="1"><tspan font-style="italic" fill="var(--color-text)">i</tspan>SCH</text>
+          <rect x="204" y="31" width="11" height="68" fill="var(--color-accent)"/>
+          <!-- EAM — tight to left leg, smaller font -->
+          <text x="109" y="83" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="38" font-weight="300" fill="var(--color-text)" letter-spacing="-0.5">EAM</text>
+          <!-- iSCH — tight to right leg, italic i -->
+          <text x="218" y="83" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="38" font-weight="300" fill="var(--color-text)" letter-spacing="-0.5"><tspan font-style="italic" fill="var(--color-text)">i</tspan>SCH</text>
         </svg>
       </h1>
       <p class="hero-subtitle">Verschiedene Perspektiven nehmen gemeinsam am runden Tisch Platz. Jede Stimme wird gehört — dann entscheidet ihr selbst.</p>
@@ -2722,7 +2723,9 @@ function applyTranslation(lang) {
   const t = TRANSLATIONS[lang];
   document.documentElement.lang = t.htmlLang;
 
-  document.querySelector('.hero-tagline').textContent = t.tagline;
+  // tagline is embedded in hero SVG — update SVG text element
+  const taglineEl = document.querySelector('.hero-logo-svg text:first-child');
+  if (taglineEl) taglineEl.textContent = t.tagline ? t.tagline.toUpperCase() : taglineEl.textContent;
   // Hero title is now an SVG logo — do not overwrite with innerHTML
   document.querySelector('.hero-subtitle').textContent = t.subtitle;
   document.getElementById('questionInput').placeholder = t.placeholder;
