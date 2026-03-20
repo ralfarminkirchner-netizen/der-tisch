@@ -1009,6 +1009,128 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   margin-top: 10px; font-size: var(--text-xs); color: var(--color-text-muted);
   line-height: 1.5; font-style: italic; padding: var(--space-2); background: var(--color-surface-2); border-radius: 8px;
 }
+
+/* =============================================
+   MODE TOGGLE
+============================================= */
+.mode-toggle-group {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.mode-btn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: var(--font-body);
+}
+.mode-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.mode-btn.mode-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+  font-weight: 600;
+}
+
+/* PARTY / TEILNEHMER ROWS */
+.party-row, .teilnehmer-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr auto;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  align-items: center;
+}
+@media (max-width: 600px) {
+  .party-row, .teilnehmer-row { grid-template-columns: 1fr; }
+}
+.party-row input, .teilnehmer-row input,
+.klaerung-panel textarea, .freier-panel textarea {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  width: 100%;
+  box-sizing: border-box;
+}
+.party-row input:focus, .teilnehmer-row input:focus,
+.klaerung-panel textarea:focus, .freier-panel textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+.add-party-btn, .add-teilnehmer-btn {
+  background: transparent;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-4);
+  transition: border-color 0.18s, color 0.18s;
+  font-family: var(--font-body);
+}
+.add-party-btn:hover, .add-teilnehmer-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.remove-party-btn, .remove-teilnehmer-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: var(--text-base);
+  padding: 0 var(--space-2);
+}
+.remove-party-btn:hover, .remove-teilnehmer-btn:hover { color: var(--color-friction); }
+.klaerung-panel, .freier-panel {
+  max-width: 680px;
+  margin: 0 auto;
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1.5px solid var(--color-border);
+}
+.klaerung-panel label, .freier-panel label {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+.input-group { margin-bottom: var(--space-4); }
+.toggle-std-persp-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  margin-top: var(--space-3);
+  font-family: var(--font-body);
+}
+.toggle-std-persp-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.std-persp-chips-wrap {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.optional-std-persp { margin-top: var(--space-4); }
+
 </style>
 </head>
 <body>
@@ -1021,8 +1143,8 @@ html[data-theme="light"][data-stil="therapeutisch"] {
         <rect x="8" y="2" width="168" height="8" fill="currentColor"/>
         <rect x="28" y="10" width="8" height="44" fill="currentColor"/>
         <rect x="148" y="10" width="8" height="44" fill="currentColor"/>
-        <text x="40" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="400" fill="currentColor" letter-spacing="0.3">iN<tspan font-weight="700">T</tspan>EGRA<tspan font-weight="700">T</tspan>iONS</text>
-        <text x="160" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5"><tspan font-weight="700">T</tspan><tspan font-style="italic">i</tspan>SCH</text>
+        <text x="40" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="400" fill="currentColor" letter-spacing="0.3"><tspan fill="var(--color-accent)">i</tspan>N<tspan font-weight="700">T</tspan>EGRA<tspan font-weight="700">T</tspan><tspan fill="var(--color-accent)">i</tspan>ONS</text>
+        <text x="160" y="42" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="400" fill="currentColor" letter-spacing="0.5"><tspan font-weight="700">T</tspan><tspan font-style="italic" fill="var(--color-accent)">i</tspan>SCH</text>
       </svg>
     </a>
     <div class="header-actions">
@@ -1046,8 +1168,8 @@ html[data-theme="light"][data-stil="therapeutisch"] {
           <rect x="20" y="22" width="350" height="12" fill="var(--color-accent)"/>
           <rect x="80" y="34" width="12" height="72" fill="var(--color-accent)"/>
           <rect x="240" y="34" width="12" height="72" fill="var(--color-accent)"/>
-          <text x="95" y="96" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="300" fill="var(--color-text)" letter-spacing="-0.3">iN<tspan font-weight="700">T</tspan>EGRA<tspan font-weight="700">T</tspan>iONS</text>
-          <text x="256" y="96" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="var(--color-text)" letter-spacing="-0.5"><tspan font-weight="700">T</tspan><tspan font-style="italic">i</tspan>SCH</text>
+          <text x="95" y="96" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="300" fill="var(--color-text)" letter-spacing="-0.3"><tspan fill="var(--color-accent)">i</tspan>N<tspan font-weight="700">T</tspan>EGRA<tspan font-weight="700">T</tspan><tspan fill="var(--color-accent)">i</tspan>ONS</text>
+          <text x="256" y="96" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="var(--color-text)" letter-spacing="-0.5"><tspan font-weight="700">T</tspan><tspan font-style="italic" fill="var(--color-accent)">i</tspan>SCH</text>
         </svg>
       </h1>
       <p class="hero-subtitle" id="heroSubtitle">Verschiedene Stimmen. Eine ehrliche Karte — keine endgültige Antwort.</p>
@@ -1070,7 +1192,15 @@ html[data-theme="light"][data-stil="therapeutisch"] {
         </div>
       </div>
 
+      <!-- MODE TOGGLE -->
+      <div class="mode-toggle-group" id="modeToggleGroup">
+        <button class="mode-btn mode-active" data-mode="perspektive" onclick="setMode(this)">🔍 Perspektivengespräch</button>
+        <button class="mode-btn" data-mode="klaerung" onclick="setMode(this)">⚖️ Klärungsgespräch</button>
+        <button class="mode-btn" data-mode="freier" onclick="setMode(this)">🪑 Freier Tisch</button>
+      </div>
+
       <!-- QUESTION FORM -->
+      <div id="perspektiveInputPanel">
       <form class="question-form" id="questionForm" onsubmit="return false;">
         <div class="question-input-wrapper">
           <textarea
@@ -1084,6 +1214,56 @@ html[data-theme="light"][data-stil="therapeutisch"] {
           <button class="question-submit" id="submitBtn" type="submit" data-testid="button-submit">Untersuchen</button>
         </div>
       </form>
+      </div>
+
+      <!-- KLÄRUNGSGESPRÄCH PANEL -->
+      <div class="klaerung-panel hidden" id="klaerungInputPanel">
+        <div class="input-group">
+          <label id="klaerungContextLabel">Worum geht es? (kurze Beschreibung des Konflikts)</label>
+          <textarea id="klaerungContext" rows="2" placeholder="z.B. Streit über Urlaubsplanung, Meinungsverschiedenheit im Team..."></textarea>
+        </div>
+        <div id="klaerungPartiesContainer">
+          <div class="party-row" data-party-id="1">
+            <input type="text" class="party-name-input" placeholder="Name / Partei A" />
+            <input type="text" class="party-role-input" placeholder="Rolle / Position" />
+            <input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" />
+          </div>
+          <div class="party-row" data-party-id="2">
+            <input type="text" class="party-name-input" placeholder="Name / Partei B" />
+            <input type="text" class="party-role-input" placeholder="Rolle / Position" />
+            <input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" />
+          </div>
+        </div>
+        <button type="button" class="add-party-btn" onclick="addParty()">+ Weitere Partei hinzufügen</button>
+        <div class="optional-std-persp">
+          <button type="button" class="toggle-std-persp-btn" onclick="toggleStdPerspInKlaerung()" id="toggleStdPerspKlaerung">
+            + Ergänzende Standardperspektiven (optional)
+          </button>
+          <div class="std-persp-chips-wrap hidden" id="stdPerspChipsKlaerung"></div>
+        </div>
+        <div style="text-align:center;margin-top:var(--space-5);">
+          <button class="question-submit" id="submitBtnKlaerung" type="button" onclick="submitQuestion()" data-testid="button-submit-klaerung">Klären</button>
+        </div>
+      </div>
+
+      <!-- FREIER TISCH PANEL -->
+      <div class="freier-panel hidden" id="freierInputPanel">
+        <div class="input-group">
+          <label id="freierContextLabel">Worum soll es gehen? (optional)</label>
+          <textarea id="freierContext" rows="2" placeholder="z.B. Teamgespräch über Strategie, Simulation eines Podiumsgesprächs..."></textarea>
+        </div>
+        <div id="freierTeilnehmerContainer"></div>
+        <button type="button" class="add-teilnehmer-btn" onclick="addFreierTeilnehmer()">+ Person / Rolle hinzufügen</button>
+        <div class="optional-std-persp">
+          <button type="button" class="toggle-std-persp-btn" onclick="toggleStdPerspInFreier()" id="toggleStdPerspFreier">
+            + App-Perspektiven an den Tisch setzen (optional)
+          </button>
+          <div class="std-persp-chips-wrap hidden" id="stdPerspChipsFreier"></div>
+        </div>
+        <div style="text-align:center;margin-top:var(--space-5);">
+          <button class="question-submit" id="submitBtnFreier" type="button" onclick="submitQuestion()" data-testid="button-submit-freier">Starten</button>
+        </div>
+      </div>
 
       <!-- METHODEN-CHIPS -->
       <div class="methods-section" style="max-width:680px;margin:var(--space-6) auto 0;">
@@ -1433,6 +1613,7 @@ const API = "";
 // =============================================
 let currentLang = 'de';
 let currentStil = 'alltag';
+let currentMode = 'perspektive'; // 'perspektive' | 'klaerung' | 'freier'
 
 // =============================================
 // STIL LABELS + MAPPING
@@ -1462,6 +1643,29 @@ function setLang(lang) {
   document.getElementById('langBtnDe').classList.toggle('active', lang === 'de');
   document.getElementById('langBtnEn').classList.toggle('active', lang === 'en');
   applyTranslation(lang);
+}
+
+function setMode(btn) {
+  currentMode = btn.dataset.mode;
+  document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('mode-active'); });
+  btn.classList.add('mode-active');
+  updateModeUI();
+}
+
+function updateModeUI() {
+  document.getElementById('perspektiveInputPanel').classList.toggle('hidden', currentMode !== 'perspektive');
+  document.getElementById('klaerungInputPanel').classList.toggle('hidden', currentMode !== 'klaerung');
+  document.getElementById('freierInputPanel').classList.toggle('hidden', currentMode !== 'freier');
+  // Submit-Button Label anpassen (Perspektive-Modus)
+  var labels = {
+    perspektive: { de: 'Untersuchen', en: 'Investigate' },
+    klaerung: { de: 'Klären', en: 'Clarify' },
+    freier: { de: 'Starten', en: 'Start' }
+  };
+  var submitBtn = document.getElementById('submitBtn');
+  if (submitBtn && !submitBtn.disabled) {
+    submitBtn.textContent = labels[currentMode][currentLang];
+  }
 }
 
 // Init default stil
@@ -1525,6 +1729,16 @@ const TRANSLATIONS = {
     allChipsBtn: 'Alle',
     lastComboBtn: 'Zuletzt',
     stilLabels: { alltag: 'Alltag', philosophisch: 'Philosophisch', akademisch: 'Spirituell', therapeutisch: 'Therapeutisch', oekonomisch: 'Einfach', kindgerecht: 'Kindersprache' },
+    modePersp: 'Perspektivengespräch',
+    modeKlaerung: 'Klärungsgespräch',
+    modeFreier: 'Freier Tisch',
+    klaerungContextLabel: 'Worum geht es?',
+    klaerungContextPlaceholder: 'z.B. Streit über Urlaubsplanung...',
+    freierContextLabel: 'Thema / Kontext (optional)',
+    freierContextPlaceholder: 'z.B. Teamgespräch über neue Strategie...',
+    submitLabelPersp: 'Untersuchen',
+    submitLabelKlaerung: 'Klären',
+    submitLabelFreier: 'Starten',
   },
   en: {
     htmlLang: 'en',
@@ -1580,6 +1794,16 @@ const TRANSLATIONS = {
     allChipsBtn: 'All',
     lastComboBtn: 'Last',
     stilLabels: { alltag: 'Everyday', philosophisch: 'Philosophical', akademisch: 'Spiritual', therapeutisch: 'Therapeutic', oekonomisch: 'Simple', kindgerecht: "Child's lang." },
+    modePersp: 'Perspective Talk',
+    modeKlaerung: 'Clarification Talk',
+    modeFreier: 'Open Table',
+    klaerungContextLabel: 'What is the conflict about?',
+    klaerungContextPlaceholder: 'e.g. Disagreement about vacation planning...',
+    freierContextLabel: 'Topic / Context (optional)',
+    freierContextPlaceholder: 'e.g. Team discussion about new strategy...',
+    submitLabelPersp: 'Investigate',
+    submitLabelKlaerung: 'Clarify',
+    submitLabelFreier: 'Start',
   }
 };
 
@@ -1631,6 +1855,32 @@ function applyTranslation(lang) {
   var taglineEl = document.querySelector('.hero-logo-svg text:first-child');
   if (taglineEl) {
     taglineEl.textContent = lang === 'de' ? 'VERSCHIEDENE STIMMEN. EINE WAHRHEIT.' : 'DIFFERENT VOICES. ONE TRUTH.';
+  }
+  // Update mode button labels
+  document.querySelectorAll('.mode-btn[data-mode]').forEach(function(b) {
+    var mode = b.dataset.mode;
+    var icons = { perspektive: '\uD83D\uDD0D ', klaerung: '\u2696\uFE0F ', freier: '\uD83E\uDEA1 ' };
+    var labels = { perspektive: t.modePersp, klaerung: t.modeKlaerung, freier: t.modeFreier };
+    if (labels[mode]) b.textContent = (icons[mode] || '') + labels[mode];
+  });
+  // Update klaerung context label and placeholder
+  var kcl = document.getElementById('klaerungContextLabel');
+  if (kcl && t.klaerungContextLabel) kcl.textContent = t.klaerungContextLabel;
+  var kca = document.getElementById('klaerungContext');
+  if (kca && t.klaerungContextPlaceholder) kca.placeholder = t.klaerungContextPlaceholder;
+  // Update freier context label and placeholder
+  var fcl = document.getElementById('freierContextLabel');
+  if (fcl && t.freierContextLabel) fcl.textContent = t.freierContextLabel;
+  var fca = document.getElementById('freierContext');
+  if (fca && t.freierContextPlaceholder) fca.placeholder = t.freierContextPlaceholder;
+  // Update mode-specific submit buttons
+  var sbk = document.getElementById('submitBtnKlaerung');
+  if (sbk && !sbk.disabled && t.submitLabelKlaerung) sbk.textContent = t.submitLabelKlaerung;
+  var sbf = document.getElementById('submitBtnFreier');
+  if (sbf && !sbf.disabled && t.submitLabelFreier) sbf.textContent = t.submitLabelFreier;
+  // Re-apply submitBtn label for perspektive mode
+  if (!submitBtn.disabled && t.submitLabelPersp && currentMode === 'perspektive') {
+    submitBtn.textContent = t.submitLabelPersp;
   }
 }
 
@@ -2464,10 +2714,54 @@ function showQuestionHeadline(questionText) {
 // =============================================
 async function submitQuestion() {
   var input = document.getElementById('questionInput');
-  var btn = document.getElementById('submitBtn');
-  var question = input.value.trim();
+  // Determine active submit button based on mode
+  var btn = document.getElementById(
+    currentMode === 'klaerung' ? 'submitBtnKlaerung' :
+    currentMode === 'freier'   ? 'submitBtnFreier' :
+    'submitBtn'
+  );
+  var question;
+  var modeCustomPerspectives = [];
 
-  if (!question || question.length < 5) { input.focus(); return; }
+  // ---- MODE-SPECIFIC INPUT GATHERING ----
+  if (currentMode === 'perspektive') {
+    question = input.value.trim();
+    if (!question || question.length < 5) { input.focus(); return; }
+  } else if (currentMode === 'klaerung') {
+    var kContext = document.getElementById('klaerungContext').value.trim();
+    var kParties = getKlaerungParties();
+    if (!kContext && kParties.length === 0) {
+      document.getElementById('klaerungContext').focus(); return;
+    }
+    question = kContext || 'Klärungsgespräch';
+    modeCustomPerspectives = kParties.map(function(p) {
+      return {
+        type: 'konflikt',
+        rolle: p.name || 'Partei',
+        profil: p.role + (p.desc ? ' — ' + p.desc : ''),
+        farbe: '#7a8fa6'
+      };
+    });
+    var kStd = getSelectedStdPerspForMode('klaerung');
+    modeCustomPerspectives = modeCustomPerspectives.concat(kStd);
+  } else if (currentMode === 'freier') {
+    var fContext = document.getElementById('freierContext').value.trim();
+    var fTeilnehmer = getFreierTeilnehmer();
+    if (!fContext && fTeilnehmer.length === 0) {
+      document.getElementById('freierContext').focus(); return;
+    }
+    question = fContext || 'Freier Tisch';
+    modeCustomPerspectives = fTeilnehmer.map(function(t) {
+      return {
+        type: 'frei',
+        rolle: t.name || 'Teilnehmer',
+        profil: t.role + (t.desc ? ' — ' + t.desc : ''),
+        farbe: '#6a8a6a'
+      };
+    });
+    var fStd = getSelectedStdPerspForMode('freier');
+    modeCustomPerspectives = modeCustomPerspectives.concat(fStd);
+  }
 
   // Reset optional sections
   document.getElementById('fazitSection').classList.add('hidden');
@@ -2498,7 +2792,8 @@ async function submitQuestion() {
       rolle: '[custom] ' + s.label,
     };
   });
-  var allCustom = customPerspectives.concat(subPerspAsCustom);
+  // Merge mode-specific perspectives with standard custom perspectives
+  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives);
 
   var body = { question: question, lang: currentLang, stil: currentStil };
   if (methods.length > 0) body.methods = methods;
@@ -2537,7 +2832,96 @@ async function submitQuestion() {
   }
 
   btn.disabled = false;
-  btn.textContent = TRANSLATIONS[currentLang].submitBtn;
+  // Restore correct label per mode
+  var modeLabels = {
+    perspektive: { de: 'Untersuchen', en: 'Investigate' },
+    klaerung: { de: 'Klären', en: 'Clarify' },
+    freier: { de: 'Starten', en: 'Start' }
+  };
+  btn.textContent = (modeLabels[currentMode] && modeLabels[currentMode][currentLang]) || TRANSLATIONS[currentLang].submitBtn;
+}
+
+// =============================================
+// MODE HELPER FUNCTIONS
+// =============================================
+var _partyCounter = 2;
+
+function addParty() {
+  _partyCounter++;
+  var container = document.getElementById('klaerungPartiesContainer');
+  var row = document.createElement('div');
+  row.className = 'party-row';
+  row.dataset.partyId = _partyCounter;
+  row.innerHTML = '<input type="text" class="party-name-input" placeholder="Name / Partei ' + String.fromCharCode(64 + _partyCounter) + '" />' +
+    '<input type="text" class="party-role-input" placeholder="Rolle / Position" />' +
+    '<input type="text" class="party-desc-input" placeholder="Standpunkt (optional)" />' +
+    '<button type="button" class="remove-party-btn" onclick="this.parentElement.remove()">\u2715</button>';
+  container.appendChild(row);
+}
+
+function getKlaerungParties() {
+  var rows = document.querySelectorAll('#klaerungPartiesContainer .party-row');
+  return Array.from(rows).map(function(row) {
+    return {
+      name: row.querySelector('.party-name-input').value.trim(),
+      role: row.querySelector('.party-role-input').value.trim(),
+      desc: row.querySelector('.party-desc-input').value.trim()
+    };
+  }).filter(function(p) { return p.name || p.role; });
+}
+
+var _teilnehmerCounter = 0;
+
+function addFreierTeilnehmer() {
+  _teilnehmerCounter++;
+  var container = document.getElementById('freierTeilnehmerContainer');
+  var row = document.createElement('div');
+  row.className = 'teilnehmer-row';
+  row.dataset.tid = _teilnehmerCounter;
+  row.innerHTML = '<input type="text" class="teilnehmer-name-input" placeholder="Name oder Rolle" />' +
+    '<input type="text" class="teilnehmer-role-input" placeholder="Funktion / Position" />' +
+    '<input type="text" class="teilnehmer-desc-input" placeholder="Kurzbeschreibung (optional)" />' +
+    '<button type="button" class="remove-teilnehmer-btn" onclick="this.parentElement.remove()">\u2715</button>';
+  container.appendChild(row);
+}
+
+function getFreierTeilnehmer() {
+  var rows = document.querySelectorAll('#freierTeilnehmerContainer .teilnehmer-row');
+  return Array.from(rows).map(function(row) {
+    return {
+      name: row.querySelector('.teilnehmer-name-input').value.trim(),
+      role: row.querySelector('.teilnehmer-role-input').value.trim(),
+      desc: row.querySelector('.teilnehmer-desc-input').value.trim()
+    };
+  }).filter(function(t) { return t.name || t.role; });
+}
+
+function toggleStdPerspInKlaerung() {
+  var wrap = document.getElementById('stdPerspChipsKlaerung');
+  wrap.classList.toggle('hidden');
+  if (!wrap.querySelector('.methods-chip') && !wrap.querySelector('.method-chip')) {
+    var mainChips = document.getElementById('methodsChips');
+    if (mainChips) { wrap.innerHTML = mainChips.innerHTML; }
+  }
+}
+
+function toggleStdPerspInFreier() {
+  var wrap = document.getElementById('stdPerspChipsFreier');
+  wrap.classList.toggle('hidden');
+  if (!wrap.querySelector('.methods-chip') && !wrap.querySelector('.method-chip')) {
+    var mainChips = document.getElementById('methodsChips');
+    if (mainChips) { wrap.innerHTML = mainChips.innerHTML; }
+  }
+}
+
+function getSelectedStdPerspForMode(mode) {
+  var wrapId = mode === 'klaerung' ? 'stdPerspChipsKlaerung' : 'stdPerspChipsFreier';
+  var wrap = document.getElementById(wrapId);
+  if (!wrap || wrap.classList.contains('hidden')) return [];
+  var active = wrap.querySelectorAll('.methods-chip.chip-active, .method-chip.chip-active');
+  return Array.from(active).map(function(chip) {
+    return { type: 'standard', rolle: chip.dataset.key || chip.textContent.trim(), profil: '' };
+  });
 }
 
 // =============================================
