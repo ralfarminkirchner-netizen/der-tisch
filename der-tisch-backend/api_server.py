@@ -659,8 +659,50 @@ def sync_call_perspective(system_prompt: str, question: str, stil: str = "philos
     )
 
 
-def sync_call_friction(context: str, question: str, lang: str = "de", stil: str = "philosophisch") -> dict:
+def sync_call_friction(context: str, question: str, lang: str = "de", stil: str = "philosophisch",
+                       reibungsintensitaet: str = "standard") -> dict:
+    """Reibungsphase.
+    reibungsintensitaet:
+      'standard'  — normale Spannungsanalyse
+      'eskaliert' — Antagonisten-Modus: keine Harmonisierung, harte Konfliktlinien
+      'maximal'   — maximale Eskalation: Positionen werden auf ihre härteste Form gebracht
+    """
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
+
+    if reibungsintensitaet == "eskaliert":
+        eskalation_de = (
+            "\n\nEINSTELLUNG REIBUNGSINTENSITÄT: ESKALIERT.\n"
+            "Du bist im Antagonisten-Modus. Weiche die Konfliktlinien NICHT ab. Benenne jede Unvereinbarkeit beim Namen. "
+            "Keine Harmonisierung. Keine diplomatisc... Formulierungen. "
+            "Je klarer die Spannung, desto besser kann die Integration echte Strukturkerne extrahieren.\n"
+            "Priorität: Harte Widerspüche vor Brücken. Benenne auch Widerspüche, die normalerweise als 'unterschiedliche Perspektiven' wegmoderiert werden."
+        )
+        eskalation_en = (
+            "\n\nFRICTION INTENSITY: ESCALATED.\n"
+            "You are in antagonist mode. Do NOT smooth down the conflict lines. Name every incompatibility directly. "
+            "No harmonization. No diplomatic softening. "
+            "The sharper the tension, the better the integration phase can extract genuine structural cores.\n"
+            "Priority: Hard contradictions over bridges. Name contradictions that would normally be waved away as 'different perspectives'."
+        )
+    elif reibungsintensitaet == "maximal":
+        eskalation_de = (
+            "\n\nEINSTELLUNG REIBUNGSINTENSITÄT: MAXIMAL.\n"
+            "Maximale Konfrontation. Jede Perspektive wird auf ihre härteste, unverhandelbarste Form zugespitzt. "
+            "Benenne, was unlösbar ist. Benenne, was sich gegenseitig ausschließt. "
+            "Keine Brücken — nur Konfliktlinien, blinde Flecken, Machtfragen. "
+            "Ziel: maximaler Druck auf die Integrationsphase, echte Strukturarbeit zu leisten statt weiche Synthesen zu produzieren."
+        )
+        eskalation_en = (
+            "\n\nFRICTION INTENSITY: MAXIMUM.\n"
+            "Maximum confrontation. Push every perspective to its hardest, non-negotiable form. "
+            "Name what is irresolvable. Name what mutually excludes. "
+            "No bridges — only conflict lines, blind spots, power questions. "
+            "Goal: maximum pressure on the integration phase to do real structural work rather than produce soft syntheses."
+        )
+    else:
+        eskalation_de = ""
+        eskalation_en = ""
+
     if lang == "en":
         user_content = (
             f"You are the friction agent. Your task: distinguish translation errors from genuine contradictions.\n\n"
@@ -668,11 +710,11 @@ def sync_call_friction(context: str, question: str, lang: str = "de", stil: str 
             f"same word, different claim-type. These dissolve once you name what each perspective actually means.\n\n"
             f"GENUINE CONTRADICTIONS: Same claim-type, same referent, incompatible answers. "
             f"These cannot be dissolved by translation.\n\n"
-            f"Also: What have ALL methods overlooked — including non-propositional truth "
+            f"Also: What have ALL perspectives collectively overlooked — including non-propositional truth "
             f"(pain, love, dying — things that are true but not propositions)?\n\n"
             f"QUESTION: {question}\n\n"
             f"PERSPECTIVES (with claim-types):\n{context}\n\n"
-            f"Be BRIEF — 1 sentence per item. Respond in English.\n\n{stil_instr}"
+            f"Be BRIEF — 1 sentence per item. Respond in English.{eskalation_en}\n\n{stil_instr}"
         )
         system = (
             "Friction agent. Distinguish translation errors (different moons) from genuine contradictions (same moon, different answer). "
@@ -685,11 +727,11 @@ def sync_call_friction(context: str, question: str, lang: str = "de", stil: str 
             f"gleiches Wort, verschiedener Anspruchstyp. Diese lösen sich auf, sobald man benennt, was jede Perspektive wirklich meint.\n\n"
             f"ECHTE WIDERSPRÜCHE: Gleicher Anspruchstyp, gleicher Referent, unvereinbare Antworten. "
             f"Diese lassen sich nicht durch Übersetzung auflösen.\n\n"
-            f"Auch: Was haben ALLE Methoden gemeinsam übersehen — einschließlich nicht-propositionaler Wahrheit "
+            f"Auch: Was haben ALLE Perspektiven gemeinsam übersehen — einschließlich nicht-propositionaler Wahrheit "
             f"(Schmerz, Liebe, Sterben — Dinge, die wahr sind, aber keine Aussagen)?\n\n"
             f"FRAGE: {question}\n\n"
             f"PERSPEKTIVEN (mit Anspruchstypen):\n{context}\n\n"
-            f"Sei KURZ — je 1 Satz pro Item.\n\n{stil_instr}"
+            f"Sei KURZ — je 1 Satz pro Item.{eskalation_de}\n\n{stil_instr}"
         )
         system = (
             "Reibungs-Agent. Unterscheide Übersetzungsfehler (verschiedene Monde) von echten Widersprüchen (gleicher Mond, verschiedene Antwort). "
@@ -813,12 +855,13 @@ async def fetch_perspective(role: str, system_prompt: str, question: str, stil: 
         data["blinder_fleck"] = "Blinder Fleck dieser Methode konnte nicht explizit benannt werden." if lang == "de" else "Blind spot of this method could not be explicitly named."
     return Perspective(**data)
 
-async def fetch_friction(perspectives: List[Perspective], question: str, lang: str = "de", stil: str = "philosophisch") -> Friction:
+async def fetch_friction(perspectives: List[Perspective], question: str, lang: str = "de", stil: str = "philosophisch",
+                         reibungsintensitaet: str = "standard") -> Friction:
     context = "\n".join([
         f"[{p.rolle}] Anspruchstyp: {p.anspruchstyp[:120]} | Analyse: {p.kernanalyse[:160]} | Blind: {p.blinder_fleck[:80]}"
         for p in perspectives
     ])
-    data = await asyncio.to_thread(sync_call_friction, context, question, lang, stil)
+    data = await asyncio.to_thread(sync_call_friction, context, question, lang, stil, reibungsintensitaet)
     data.setdefault("uebersetzungsfehler", data.get("translation_errors", data.get("scheinkonsens", [])))
     data.setdefault("echte_widersprueche", data.get("genuine_contradictions", data.get("harte_widersprueche", [])))
     data.setdefault("uebersehenes", data.get("overlooked", ""))
@@ -898,19 +941,57 @@ class QueryRequest(BaseModel):
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
 
 class CustomPerspective(BaseModel):
+    """Basisdatentyp für eine benutzerdefinierte Perspektive.
+    Wird sowohl für temporäre Tischgäste (inline) als auch für
+    gespeicherte Custom-Slots (StoredCustomPerspective) verwendet.
+    """
     name: str        # Name/Rolle der Partei, z.B. "Mein Chef" oder "Teil von mir der Sicherheit will"
     position: str    # Was diese Partei sagt/will/vertritt
+
+    # ── Erweiterte Felder für gespeicherte Custom-Perspektiven ──────────────
+    # Alle optional — temporäre Inline-Perspektiven brauchen nur name + position
+    typ: Optional[str] = None            # Person | Gruppe | Philosophie | Religion | Fachposition | Gegenposition | Schule | Leitbild
+    kurzbeschreibung: Optional[str] = None
+    profil: Optional[str] = None         # Ausführliche Beschreibung / Profil
+    fachgebiet: Optional[str] = None
+    grundhaltung: Optional[str] = None   # Zentrale Annahmen
+    argumentationsstil: Optional[str] = None
+    gegenposition: Optional[str] = None  # Wer ist der natürliche Gegenspieler?
+    prioritaeten: Optional[str] = None
+    blinde_flecken: Optional[str] = None
+    konfliktstil: Optional[str] = None
+    typische_einwaende: Optional[str] = None
+    symbol: Optional[str] = None         # Emoji oder SVG-Kürzel für das UI
+    farbe: Optional[str] = None          # Hex-Farbe für den Chip
+    # Antagonisten-Verknüpfung
+    antagonist_von: Optional[str] = None  # ID einer anderen Perspektive, deren Gegenpart diese ist
+    rang: Optional[int] = None            # 1=dominant, 2=influent, 3=marginal (für Fach-Arena)
+    fach_arena: Optional[str] = None      # z.B. "Psychologie", "Philosophie", "Ökonomie"
+
+
+class StoredCustomPerspective(CustomPerspective):
+    """Gespeicherte Perspektive mit eindeutiger ID und Zeitstempel.
+    Maximal 10 Slots je Nutzer (durch Frontend erzwungen).
+    Das Backend nimmt sie entgegen und gibt sie zurück — Persistenz liegt im Frontend (localStorage).
+    Für serverseitige Persistenz: HOOKPOINT /api/custom-perspectives/save.
+    """
+    id: str                              # UUID — vom Frontend vergeben
+    erstellt_am: Optional[str] = None   # ISO-Zeitstempel
+    zuletzt_geaendert: Optional[str] = None
+
 
 class TableRequest(BaseModel):
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
-    custom_perspectives: List[CustomPerspective] = []   # 0–4 eigene Perspektiven
+    custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
+    # Reibungsintensität: "standard" | "eskaliert" | "maximal"
+    reibungsintensitaet: str = "standard"               # eskaliert = Antagonisten-Modus, kein Weichzeichnen
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "TEAM TiSCH API", "version": "5.6"}
+    return {"status": "ok", "service": "TEAM TiSCH API", "version": "5.7"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
@@ -935,35 +1016,97 @@ async def ask_the_table(req: QueryRequest):
 
 
 def build_custom_agent_prompt(cp: CustomPerspective, lang: str) -> str:
-    """Baut einen System-Prompt für eine eigene Perspektive (Name + Position)."""
+    """Baut einen vollständigen System-Prompt für eine benutzerdefinierte Perspektive.
+    Wertet das gesamte Profil aus (name, position, profil, grundhaltung,
+    argumentationsstil, blinde_flecken, konfliktstil, typische_einwaende etc.).
+    Je ausführlicher das Profil, desto schärfer und charakteristischer die Antwort.
+    """
+    # Profilfelder sammeln
+    extra_de = []
+    extra_en = []
+    if cp.kurzbeschreibung:
+        extra_de.append(f"Kurzbeschreibung: {cp.kurzbeschreibung}")
+        extra_en.append(f"Short description: {cp.kurzbeschreibung}")
+    if cp.profil:
+        extra_de.append(f"Ausf\u00fchrliches Profil: {cp.profil}")
+        extra_en.append(f"Detailed profile: {cp.profil}")
+    if cp.grundhaltung:
+        extra_de.append(f"Grundhaltung / Kernannahmen: {cp.grundhaltung}")
+        extra_en.append(f"Core stance / key assumptions: {cp.grundhaltung}")
+    if cp.argumentationsstil:
+        extra_de.append(f"Typische Argumentationsweise: {cp.argumentationsstil}")
+        extra_en.append(f"Typical argumentation style: {cp.argumentationsstil}")
+    if cp.prioritaeten:
+        extra_de.append(f"Priorit\u00e4ten / Werte: {cp.prioritaeten}")
+        extra_en.append(f"Priorities / values: {cp.prioritaeten}")
+    if cp.blinde_flecken:
+        extra_de.append(f"Bekannte blinde Flecken: {cp.blinde_flecken}")
+        extra_en.append(f"Known blind spots: {cp.blinde_flecken}")
+    if cp.konfliktstil:
+        extra_de.append(f"Konfliktstil: {cp.konfliktstil}")
+        extra_en.append(f"Conflict style: {cp.konfliktstil}")
+    if cp.typische_einwaende:
+        extra_de.append(f"Typische Einw\u00e4nde dieser Perspektive: {cp.typische_einwaende}")
+        extra_en.append(f"Typical objections from this perspective: {cp.typische_einwaende}")
+    if cp.fachgebiet:
+        extra_de.append(f"Fachgebiet / Themenbereich: {cp.fachgebiet}")
+        extra_en.append(f"Domain / field: {cp.fachgebiet}")
+    if cp.gegenposition:
+        extra_de.append(f"Nat\u00fcrlicher Gegenspieler / Gegenposition: {cp.gegenposition} — Reibung mit dieser Position ist charakteristisch.")
+        extra_en.append(f"Natural antagonist / counter-position: {cp.gegenposition} — friction with this position is characteristic.")
+    if cp.typ:
+        extra_de.append(f"Typ dieser Perspektive: {cp.typ}")
+        extra_en.append(f"Type of this perspective: {cp.typ}")
+    if cp.rang:
+        arena_ctx_de = f"Diese Perspektive ist Rang {cp.rang} in der Fach-Arena {cp.fach_arena or 'unbekannt'} — "
+        arena_ctx_de += "dominante Hauptposition" if cp.rang == 1 else ("einflussreiche Str\u00f6mung" if cp.rang == 2 else "bedeutende Gegenposition")
+        extra_de.append(arena_ctx_de)
+        arena_ctx_en = f"This perspective holds rank {cp.rang} in the {cp.fach_arena or 'unknown'} domain arena — "
+        arena_ctx_en += "dominant mainstream" if cp.rang == 1 else ("influential stream" if cp.rang == 2 else "significant counter-position")
+        extra_en.append(arena_ctx_en)
+
+    profile_block_de = ("\n\nPROFIL-INFORMATION (muss die Antwort inhaltlich steuern):\n" + "\n".join(f"- {e}" for e in extra_de)) if extra_de else ""
+    profile_block_en = ("\n\nPROFILE DATA (must steer the content of the response):\n" + "\n".join(f"- {e}" for e in extra_en)) if extra_en else ""
+
     if lang == "en":
         return (
             f"You are speaking FROM the perspective of: '{cp.name}'.\n"
-            f"This perspective's stated position is: '{cp.position}'\n\n"
+            f"This perspective's stated position is: '{cp.position}'{profile_block_en}\n\n"
             f"Your task: Analyze the question STRICTLY from within this perspective's worldview, values, and assumptions. "
             f"Do NOT judge this perspective from outside — inhabit it fully.\n"
+            f"The profile data above (if present) is NOT background noise — it DEFINES how this perspective argues, "
+            f"what it prioritizes, what it overlooks, and how it reacts to opposition.\n"
             f"Uncover: What deep values, needs, or fears drive this position? What does this perspective assume to be true? "
             f"What would threaten it most? What can it genuinely NOT see from where it stands?\n"
+            f"If a 'Natural antagonist' is listed: name the friction-line clearly. Do not soften it.\n"
             f"Name the claim-type this perspective is making (factual, value-based, identity-based, existential, strategic).\n"
             f"Be precise. Be fair. No straw-manning. Respond in English."
         )
     else:
         return (
             f"Du sprichst AUS der Perspektive von: '{cp.name}'.\n"
-            f"Die geäußerte Position dieser Perspektive ist: '{cp.position}'\n\n"
+            f"Die ge\u00e4u\u00dferte Position dieser Perspektive ist: '{cp.position}'{profile_block_de}\n\n"
             f"Deine Aufgabe: Analysiere die Frage STRENG aus der Innenperspektive dieser Weltsicht, ihrer Werte und Annahmen. "
-            f"Urteile NICHT von außen — bewohne diese Perspektive vollständig.\n"
-            f"Decke auf: Welche tiefen Werte, Bedürfnisse oder Ängste treiben diese Position an? "
-            f"Was setzt diese Perspektive als wahr voraus? Was würde sie am meisten bedrohen? "
-            f"Was kann sie von ihrem Standpunkt aus genuinely NICHT sehen?\n"
-            f"Benenne den Anspruchstyp, den diese Perspektive macht (faktenbasiert, wertbasiert, identitätsbasiert, existenziell, strategisch).\n"
-            f"Sei präzise. Sei fair. Kein Strohmann-Argument."
+            f"Urteile NICHT von au\u00dfen — bewohne diese Perspektive vollst\u00e4ndig.\n"
+            f"Die Profilinformationen (falls vorhanden) sind KEINE Hintergrundinformation — sie DEFINIEREN, wie diese Perspektive argumentiert, "
+            f"was sie priorisiert, was sie \u00fcbersieht und wie sie auf Widerspruch reagiert.\n"
+            f"Decke auf: Welche tiefen Werte, Bed\u00fcrfnisse oder \u00c4ngste treiben diese Position an? "
+            f"Was setzt diese Perspektive als wahr voraus? Was w\u00fcrde sie am meisten bedrohen? "
+            f"Was kann sie von ihrem Standpunkt aus wirklich NICHT sehen?\n"
+            f"Falls ein 'Nat\u00fcrlicher Gegenspieler' angegeben ist: Benenne die Konfliktlinie klar. Kein Weichzeichnen.\n"
+            f"Benenne den Anspruchstyp, den diese Perspektive macht (faktenbasiert, wertbasiert, identit\u00e4tsbasiert, existenziell, strategisch).\n"
+            f"Sei pr\u00e4zise. Sei fair. Kein Strohmann-Argument."
         )
 
 
 @app.post("/api/ask-table", response_model=TableResponse)
 async def ask_the_custom_table(req: TableRequest):
-    """Eigener-Tisch-Endpunkt: eigene Perspektiven + optional gewählte Methoden."""
+    """Eigener-Tisch-Endpunkt: eigene Perspektiven + optional gewählte Methoden.
+    - Nimmt jetzt bis zu N custom_perspectives entgegen (vorher: 4).
+    - Unterstützt reibungsintensitaet: standard | eskaliert | maximal
+    - Custom-Perspektiven können vollständige Profile mit allen Feldern haben.
+    - Antagonisten werden als Custom-Perspektiven mit gegenposition/rang/fach_arena behandelt.
+    """
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
     if not req.custom_perspectives and not req.methods:
@@ -971,6 +1114,7 @@ async def ask_the_custom_table(req: TableRequest):
 
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
+    reibung = req.reibungsintensitaet if req.reibungsintensitaet in {"standard", "eskaliert", "maximal"} else "standard"
 
     all_agents_pool = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
@@ -978,10 +1122,11 @@ async def ask_the_custom_table(req: TableRequest):
         tasks = []
         role_sources = []  # "custom" oder "method"
 
-        # 1. Eigene Perspektiven (dynamisch generierte Agenten)
-        for cp in req.custom_perspectives[:4]:
+        # 1. Benutzerdefinierte Perspektiven (dynamisch generierte Agenten)
+        # Limit: max 10 Custom-Slots gemäß Spezifikation; Methoden kommen zusätzlich dazu
+        MAX_CUSTOM = 10
+        for cp in req.custom_perspectives[:MAX_CUSTOM]:
             prompt = build_custom_agent_prompt(cp, req.lang)
-            # Rolle: Name der Partei, ge-slug-t
             role_label = cp.name.strip() or ("Perspektive" if req.lang == "de" else "Perspective")
             tasks.append(fetch_perspective(role_label, prompt, req.question, stil, req.lang))
             role_sources.append("custom")
@@ -992,9 +1137,6 @@ async def ask_the_custom_table(req: TableRequest):
                 if method_name in all_agents_pool:
                     tasks.append(fetch_perspective(method_name, all_agents_pool[method_name], req.question, stil, req.lang))
                     role_sources.append("method")
-        else:
-            # Keine Methoden gewählt = keine Methoden (reine Parteien-Analyse)
-            pass
 
         if not tasks:
             raise HTTPException(status_code=400, detail="No valid perspectives to analyze.")
@@ -1003,11 +1145,11 @@ async def ask_the_custom_table(req: TableRequest):
 
         # Quellinfo in Perspektiven einschreiben (role_source-Tag für Frontend)
         for i, p in enumerate(perspectives):
-            # Wir fügen source als Präfix in die rolle, trennbar per Frontend
             src = role_sources[i] if i < len(role_sources) else "method"
             p.rolle = f"[{src}]{p.rolle}"
 
-        friction = await fetch_friction(perspectives, req.question, req.lang, stil)
+        # Reibungsphase mit konfigurierbarer Intensität
+        friction = await fetch_friction(perspectives, req.question, req.lang, stil, reibung)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
 
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
@@ -1071,6 +1213,423 @@ async def ask_clarify(req: ClarifyRequest):
     )
     return await ask_the_custom_table(table_req)
 
+
+
+# =============================================
+# V5.7 — ANTAGONISTEN-SYSTEM / FACH-ARENA
+# Datenstruktur für hierarchisch geordnete Konfrontationsmodelle
+# je Fachgebiet. Echte Perspektiv-Paare, keine Fake-KI-Automatik.
+# =============================================
+
+class ArenaPair(BaseModel):
+    """Ein Konfrontationspaar innerhalb einer Fach-Arena.
+    rang: 1=dominante Hauptposition, 2=einflussreiche Strömung, 3=wichtige Gegenposition
+    """
+    id: str
+    name: str
+    position: str
+    rang: int = 1
+    konter_id: Optional[str] = None     # ID des direkten Gegenspielers im gleichen Rang
+    kurzbeschreibung: Optional[str] = None
+    grundhaltung: Optional[str] = None
+    gegenposition: Optional[str] = None
+    argumentationsstil: Optional[str] = None
+    blinde_flecken: Optional[str] = None
+    konfliktstil: Optional[str] = None
+    typische_einwaende: Optional[str] = None
+    fachgebiet: str = ""
+    symbol: Optional[str] = None
+
+class ArenaRequest(BaseModel):
+    """Anfrage an die Fach-Arena: Wähle Perspektiven-Paare aus einem Fachgebiet."""
+    question: str
+    lang: str = "de"
+    stil: str = "philosophisch"
+    fachgebiet: str                      # z.B. "Psychologie", "Philosophie", "Ökonomie"
+    rang_filter: List[int] = []          # leer = alle Ränge; [1] = nur dominante; [1,2] = Top zwei Ränge
+    extra_methods: List[str] = []        # zusätzliche System-Methoden (z.B. ["Systemisch"])
+    reibungsintensitaet: str = "eskaliert"  # Antagonisten-Modus ist Standard in der Arena
+
+# ── FACH-ARENA BIBLIOTHEK ─────────────────────────────────────────────────────────────────────────────
+# Jedes Fachgebiet hat Rang-1-Position + Rang-1-Konter, usw.
+# Sauber gepflegte Einträge — keine pseudo-intelligente Fake-Automatik.
+FACH_ARENEN: dict = {
+    "Psychologie": [
+        ArenaPair(
+            id="psych-vt", name="Verhaltenstherapie (KVT)", fachgebiet="Psychologie", rang=1,
+            konter_id="psych-psycho",
+            position="Psychische Probleme entstehen durch erlerntes Fehlverhalten und dysfunktionale Denkmuster, die systematisch verändert werden können.",
+            grundhaltung="Menschliches Verhalten und Erleben ist veränderbar durch Techniken, Bewusstsein und Übung.",
+            argumentationsstil="Empirisch, technikorientiert, strukturiert, messbare Ziele.",
+            gegenposition="Tiefenpsychologie/Psychoanalyse",
+            blinde_flecken="Unlösbare Tiefenkonflikte, unbewusste Dynamiken, Bindungsgeschichte.",
+            kurzbeschreibung="Dominante Mainstream-Therapieschule in westlicher Psychiatrie und Psychologie"
+        ),
+        ArenaPair(
+            id="psych-psycho", name="Psychoanalyse / Tiefenpsychologie", fachgebiet="Psychologie", rang=1,
+            konter_id="psych-vt",
+            position="Psychische Probleme wurzeln in unbewussten Konflikten, frühkindlichen Erfahrungen und Abwehrmechanismen, die nicht durch Techniken allein verändert werden können.",
+            grundhaltung="Das Unbewusste steuert mehr als das Bewusste. Symptome sind Botschaften, keine Fehler.",
+            argumentationsstil="Deutend, narrativ, historisch, auf Beziehungsdynamiken fokussiert.",
+            gegenposition="Verhaltenstherapie",
+            blinde_flecken="Messbarkeit, Zeiteffizienz, neurobiologische Grundlagen.",
+            kurzbeschreibung="Historischer Gegenspieler der KVT: Freud, Jung, Adler und Nachfolger"
+        ),
+        ArenaPair(
+            id="psych-humanistisch", name="Humanistische Psychologie", fachgebiet="Psychologie", rang=2,
+            konter_id="psych-neuro",
+            position="Der Mensch strebt von Natur aus nach Wachstum, Selbstverwirklichung und Sinnhaftigkeit. Therapie ist Begleitung dieses Prozesses, nicht Korrektur.",
+            grundhaltung="Menschliche Würde, Potenzial und Selbstbestimmung stehen über Diagnose und Technik.",
+            argumentationsstil="Phänomenologisch, empathisch, auf Erleben und Bedeutung fokussiert.",
+            gegenposition="Neurobiologische Psychiatrie",
+            blinde_flecken="Strukturelle, biologische und systemische Ursachen von Leid.",
+            kurzbeschreibung="Rogers, Maslow, Existenzanalyse — Gegengewicht zu Technik und Diagnose"
+        ),
+        ArenaPair(
+            id="psych-neuro", name="Neurobiologische Psychiatrie", fachgebiet="Psychologie", rang=2,
+            konter_id="psych-humanistisch",
+            position="Psychische Störungen haben biologische Grundlagen in Hirnstruktur, Neurotransmittern und Genetik. Pharmakologie ist ein legitimes Kernwerkzeug.",
+            grundhaltung="Das Gehirn produziert Psyche. Ohne Biologie keine vollständige Psychologie.",
+            argumentationsstil="Empirisch-naturwissenschaftlich, messbar, auf Mechanismen fokussiert.",
+            gegenposition="Humanistische Psychologie",
+            blinde_flecken="Bedeutung, Biografie, Beziehung, Sinn.",
+            kurzbeschreibung="Biologisch-medizinisches Modell psychischer Erkrankungen"
+        ),
+        ArenaPair(
+            id="psych-systemisch", name="Systemische Therapie", fachgebiet="Psychologie", rang=3,
+            konter_id="psych-trauma",
+            position="Psychische Probleme entstehen und bestehen in Beziehungssystemen. Das Individuum ist nicht krank — das System ist dysfunktional.",
+            grundhaltung="Probleme sind immer Kontextprobleme. Änderung im System ändert den Menschen.",
+            argumentationsstil="Zirkulär, kontextuell, lösungs- und ressourcenorientiert.",
+            gegenposition="Traumatherapie",
+            blinde_flecken="Individuelle Traumata, biologische Faktoren.",
+            kurzbeschreibung="Familientherapie, systemische Beratung — Kontext statt Individuum"
+        ),
+        ArenaPair(
+            id="psych-trauma", name="Traumatherapie / EMDR", fachgebiet="Psychologie", rang=3,
+            konter_id="psych-systemisch",
+            position="Traumata hinterlassen neurobiologische Spuren, die spezifische Verarbeitung brauchen. Systemisches Denken allein reicht nicht für traumatisierte Individuen.",
+            grundhaltung="Das Trauma steckt im Körper und im Nervensystem, nicht nur in Beziehungen.",
+            argumentationsstil="Körperorientiert, phasenbezogen, auf Traumaverarbeitung spezialisiert.",
+            gegenposition="Systemische Therapie",
+            blinde_flecken="Systemische Ursachen, soziale Kontexte.",
+            kurzbeschreibung="EMDR, Somatic Experiencing, Traumamodelle — das Nervensystem als Ort des Leidens"
+        ),
+    ],
+    "Philosophie": [
+        ArenaPair(
+            id="phil-analyt", name="Analytische Philosophie", fachgebiet="Philosophie", rang=1,
+            konter_id="phil-kontinent",
+            position="Philosophie ist eine präzise, logisch strukturierte Analyse von Sprache, Begriffen und Argumenten. Unklarheit ist kein Zeichen von Tiefe.",
+            grundhaltung="Präzision, Logik, Sprachanalyse. Philosophische Probleme sind oft Sprachprobleme.",
+            argumentationsstil="Formal-logisch, sprachanalytisch, hypothesentestend.",
+            gegenposition="Kontinentale Philosophie",
+            blinde_flecken="Existenz, Geschichte, Macht, Verklörperung, Bedeutungstiefe jenseits von Logik.",
+            kurzbeschreibung="Angloamerikanische Mainstream-Philosophie: Frege, Russell, Wittgenstein, Quine"
+        ),
+        ArenaPair(
+            id="phil-kontinent", name="Kontinentale Philosophie", fachgebiet="Philosophie", rang=1,
+            konter_id="phil-analyt",
+            position="Philosophie muss die Totalität menschlicher Existenz, Geschichte, Macht und Bedeutung erfassen. Präzision ohne Tiefe ist Selbstbetäubung.",
+            grundhaltung="Hermeneutik, Phänomenologie, Dialektik. Sprache ist kein neutrales Werkzeug.",
+            argumentationsstil="Interpretativ, historisch, auf Tiefenstrukturen fokussiert.",
+            gegenposition="Analytische Philosophie",
+            blinde_flecken="Rigor, Falsifizierbarkeit, praktische Anwendbarkeit.",
+            kurzbeschreibung="Hegel, Husserl, Heidegger, Sartre, Derrida, Foucault"
+        ),
+        ArenaPair(
+            id="phil-pragma", name="Pragmatismus", fachgebiet="Philosophie", rang=2,
+            konter_id="phil-metaphys",
+            position="Wahrheit und Bedeutung sind das, was sich in der Praxis bewährt. Philosophie muss nützlich sein.",
+            grundhaltung="Ideen sind Werkzeuge. Wahrheit ist dynamisch, nicht absolut.",
+            argumentationsstil="Kontextbezogen, handlungsorientiert, anti-dogmatisch.",
+            gegenposition="Metaphysik",
+            blinde_flecken="Normative Grundlagen, über praktischen Nutzen hinausgehende Fragen.",
+            kurzbeschreibung="Peirce, James, Dewey, Rorty — Wahrheit als das, was funktioniert"
+        ),
+        ArenaPair(
+            id="phil-metaphys", name="Metaphysik / Ontologie", fachgebiet="Philosophie", rang=2,
+            konter_id="phil-pragma",
+            position="Die fundamentalen Fragen der Existenz, Substanz, Kausalität und Wirklichkeit lassen sich nicht auf Nützlichkeit reduzieren.",
+            grundhaltung="Es gibt echte Fragen, die nicht durch Pragmatik auflösbar sind.",
+            argumentationsstil="Spekulativ, systematisch, auf Letztbegründung ausgerichtet.",
+            gegenposition="Pragmatismus",
+            blinde_flecken="Praktische Anwendbarkeit, kulturelle Relativität.",
+            kurzbeschreibung="Aristoteles, Leibniz, Kant, zeitgenössische Metaphysik"
+        ),
+    ],
+    "Ökonomie": [
+        ArenaPair(
+            id="oek-neoklassisch", name="Neoklassische Ökonomie", fachgebiet="Ökonomie", rang=1,
+            konter_id="oek-keynes",
+            position="Märkte sind effizient, wenn sie frei sind. Preise koordinieren Angebot und Nachfrage optimal. Staatseingriffe stören mehr als sie helfen.",
+            grundhaltung="Homo economicus. Gleichgewichtsdenken. Marktmechanismus als Koordinationsprinzip.",
+            argumentationsstil="Formal-mathematisch, gleichgewichtsorientiert, auf Effizienz fokussiert.",
+            gegenposition="Keynesianismus",
+            blinde_flecken="Marktversagen, Ungleichheit, irrationales Verhalten, externe Kosten.",
+            kurzbeschreibung="Mainstream-VWL: Marshall, Arrow, Friedman, Mankiw"
+        ),
+        ArenaPair(
+            id="oek-keynes", name="Keynesianismus", fachgebiet="Ökonomie", rang=1,
+            konter_id="oek-neoklassisch",
+            position="Märkte koordinieren sich NICHT immer selbst. Staatsausgaben und Nachfragesteuerung sind notwendige Instrumente gegen Rezessionen.",
+            grundhaltung="Gesamtnachfrage bestimmt Beschäftigung. Sparen in Krisen verschärft Krisen.",
+            argumentationsstil="Makroökonomisch, historisch, auf Stabilität und Nachfrage fokussiert.",
+            gegenposition="Neoklassische Ökonomie",
+            blinde_flecken="Angebotsseitige Dynamiken, langfristige Staatsschuldenfolgen.",
+            kurzbeschreibung="Keynes, Krugman, Stiglitz — der Staat als notwendiger Akteur"
+        ),
+        ArenaPair(
+            id="oek-instit", name="Institutionenökonomik", fachgebiet="Ökonomie", rang=2,
+            konter_id="oek-marktfunda",
+            position="Wirtschaft funktioniert nicht im Vakuum. Institutionen, Eigentumsrechte, soziale Normen und Geschichte formen wirtschaftliche Ergebnisse fundamental.",
+            grundhaltung="Regeln, Normen und Geschichte zählen mehr als Marktpreise allein.",
+            argumentationsstil="Historisch-komparativ, auf Institutionendesign fokussiert.",
+            gegenposition="Marktfundamentalismus",
+            blinde_flecken="Kurzfristige Preisdynamiken, individuelle Anreize.",
+            kurzbeschreibung="Coase, North, Ostrom — Institutionen als Grundlage von Wohlstand"
+        ),
+        ArenaPair(
+            id="oek-marktfunda", name="Marktfundamentalismus / Österreichische Schule", fachgebiet="Ökonomie", rang=2,
+            konter_id="oek-instit",
+            position="Jeder Staatseingriff verzerrt den Preismechanismus und erzeugt langfristig mehr Schaden als Nutzen. Märkte brauchen Freiheit, keine Steuerung.",
+            grundhaltung="Spontane Ordnung. Wissen ist dezentral — kein Planer kann es besitzen.",
+            argumentationsstil="Deduktiv-logisch, auf Freiheit und Eigenverantwortung fokussiert.",
+            gegenposition="Institutionenökonomik",
+            blinde_flecken="Marktversagen, Macht, Monopole, externe Kosten.",
+            kurzbeschreibung="Hayek, Mises, Libertarismus — der Markt als überlegenes Koordinationssystem"
+        ),
+    ],
+    "Pädagogik": [
+        ArenaPair(
+            id="paed-reform", name="Reformpädagogik / Montessori", fachgebiet="Pädagogik", rang=1,
+            konter_id="paed-neoklassisch",
+            position="Kinder sind eigenaktive Lernende. Schule soll Raum geben, nicht Führung aufzwingen. Das Kind trägt sein Entwicklungspotenzial in sich.",
+            grundhaltung="Vertrauen ins Kind, Selbstbestimmung, intrinsische Motivation.",
+            argumentationsstil="Phänomenologisch-narrativ, auf Beobachtung und Entfaltung fokussiert.",
+            gegenposition="Neoklassische Leistungspädagogik",
+            blinde_flecken="Strukturen, Standards, soziale Ungleichheit, skalierbare Vermittlung.",
+            kurzbeschreibung="Montessori, Steiner, Dewey — das Kind im Zentrum"
+        ),
+        ArenaPair(
+            id="paed-neoklassisch", name="Neoklassische Leistungspädagogik", fachgebiet="Pädagogik", rang=1,
+            konter_id="paed-reform",
+            position="Schule hat den Auftrag, gesellschaftlich relevantes Wissen und Kompetenzen systematisch zu vermitteln. Standards sind nicht optional.",
+            grundhaltung="Leistung, Vergleichbarkeit, Kompetenzorientierung.",
+            argumentationsstil="Empirisch-messend, outputorientiert, auf Chancengerechtigkeit durch Standards fokussiert.",
+            gegenposition="Reformpädagogik",
+            blinde_flecken="Intrinsische Motivation, individuelle Entwicklungslogik, Freude am Lernen.",
+            kurzbeschreibung="PISA-Logik, Kompetenzorientierung, Bildungsstandards"
+        ),
+    ],
+    "Ethik": [
+        ArenaPair(
+            id="eth-deont", name="Deontologische Ethik / Kantianismus", fachgebiet="Ethik", rang=1,
+            konter_id="eth-util",
+            position="Handlungen sind moralisch richtig oder falsch unabhängig von ihren Folgen. Es gibt kategorische Pflichten, die nicht verhandelbar sind.",
+            grundhaltung="Der gute Wille und das Prinzip zählen, nicht das Ergebnis.",
+            argumentationsstil="Prinzipienbasiert, universalistisch, auf Pflicht und Recht fokussiert.",
+            gegenposition="Utilitarismus",
+            blinde_flecken="Folgen, Wohlfahrt, Kontextsensitivität.",
+            kurzbeschreibung="Kant, Rawls — Pflicht und Prinzip über Konsequenzen"
+        ),
+        ArenaPair(
+            id="eth-util", name="Utilitarismus", fachgebiet="Ethik", rang=1,
+            konter_id="eth-deont",
+            position="Das moralisch Richtige ist das, was das Gesamtwohl maximiert. Folgen zählen, nicht Absichten.",
+            grundhaltung="Nutzen, Wohlfahrt, Konsequenzen. Das Gute ist berechenbar.",
+            argumentationsstil="Konsequentialistisch, aggregativ, auf messbares Wohlergehen fokussiert.",
+            gegenposition="Deontologische Ethik",
+            blinde_flecken="Individuelle Rechte, Würde, Gerechtigkeit jenseits von Mehrheitswohl.",
+            kurzbeschreibung="Bentham, Mill, Singer — die Summe des Wohlergehens als Kompass"
+        ),
+        ArenaPair(
+            id="eth-tugend", name="Tugendethik / Aristotelismus", fachgebiet="Ethik", rang=2,
+            konter_id="eth-diskurs",
+            position="Moralisches Handeln entsteht aus Charakter, Gewohnheit und dem Streben nach Eudaimonia (Gelingen des Lebens), nicht aus Regeln oder Nutzenkalkulationen.",
+            grundhaltung="Wer ein tugendhafter Mensch wird, handelt gut — Charakter vor Kalkül.",
+            argumentationsstil="Narrativ, auf Habitus und Gemeinschaft fokussiert.",
+            gegenposition="Diskursethik",
+            blinde_flecken="Universelle Standards, strukturelle Ungerechtigkeiten.",
+            kurzbeschreibung="Aristoteles, MacIntyre, Nussbaum — Charakter als moralische Grundlage"
+        ),
+        ArenaPair(
+            id="eth-diskurs", name="Diskursethik / Habermas", fachgebiet="Ethik", rang=2,
+            konter_id="eth-tugend",
+            position="Moralische Normen sind nur dann gültig, wenn sie Ergebnis eines freien, gleichberechtigten Diskurses aller Betroffenen sind.",
+            grundhaltung="Legitimation durch Verfahren und Diskurs, nicht durch Charakter oder Kalkül.",
+            argumentationsstil="Diskursiv, verfahrensorientiert, auf Zustimmungsfähigkeit fokussiert.",
+            gegenposition="Tugendethik",
+            blinde_flecken="Konkrete Lebensumstände, Machtasymmetrien in Diskursen.",
+            kurzbeschreibung="Habermas, Apel — ethische Gültigkeit durch freien Diskurs"
+        ),
+    ],
+    "Spiritualität": [
+        ArenaPair(
+            id="spir-westrel", name="Westliche monotheistische Religionen", fachgebiet="Spiritualität", rang=1,
+            konter_id="spir-saekular",
+            position="Eine persönliche Gottheit ist Quelle von Moral, Sinn und Existenz. Offenbarung und heilige Texte sind normative Grundlage.",
+            grundhaltung="Transzendenz, Schöpfung, Offenbarung, Erleuchtung durch Göttliches.",
+            argumentationsstil="Schriftbasiert, dogmatisch, auf Glaubenstradition verweisend.",
+            gegenposition="Säkularer Humanismus",
+            blinde_flecken="Innerweltliche Erklärungen, wissenschaftliche Methodik.",
+            kurzbeschreibung="Christentum, Islam, Judentum — Schriftoffenbarung als Grundlage"
+        ),
+        ArenaPair(
+            id="spir-saekular", name="Säkularer Humanismus", fachgebiet="Spiritualität", rang=1,
+            konter_id="spir-westrel",
+            position="Sinn und Moral entstehen ohne Göttliches. Der Mensch ist Quelle seiner eigenen Werte und Verantwortung.",
+            grundhaltung="Rationalismus, Autonomie, Humanität ohne Transzendenz.",
+            argumentationsstil="Rational-empirisch, auf Menschenwohl und Eigenverantwortung fokussiert.",
+            gegenposition="Monotheistische Religionen",
+            blinde_flecken="Transzendenz, existenzielle Tiefe, Gemeinschaftssinn durch Ritual.",
+            kurzbeschreibung="Aufklärungshumanismus, Atheismus — Sinn ohne Transzendenz"
+        ),
+        ArenaPair(
+            id="spir-nondual", name="Non-duale Traditionen", fachgebiet="Spiritualität", rang=2,
+            konter_id="spir-westrel",
+            position="Subjekt und Objekt, Ich und Welt, Gott und Mensch sind letztlich nicht getrennt. Das Denken in Dualitäten ist selbst das Problem.",
+            grundhaltung="Einheit, Nicht-Ich, unmittelbare Erfahrung vor Konzept.",
+            argumentationsstil="Paradoxal, erfahrungsbasiert, auf direktes Erleben fokussiert.",
+            gegenposition="Westliche monotheistische Religionen",
+            blinde_flecken="Soziale Verantwortung, historische Kontexte, kollektive Gerechtigkeit.",
+            kurzbeschreibung="Advaita Vedanta, Zen, Taoismus — Einheit jenseits der Dualitäten"
+        ),
+    ],
+}
+
+
+@app.get("/api/antagonisten/fachgebiete")
+async def get_fachgebiete():
+    """Gibt alle verfügbaren Fachgebiete der Fach-Arena zurück."""
+    return {
+        "fachgebiete": list(FACH_ARENEN.keys()),
+        "total": len(FACH_ARENEN)
+    }
+
+
+@app.get("/api/antagonisten/{fachgebiet}")
+async def get_arena_perspektiven(fachgebiet: str):
+    """Gibt alle Perspektiv-Paare eines Fachgebiets zurück.
+    Diese können direkt als custom_perspectives an /api/ask-table geschickt werden.
+    """
+    paare = FACH_ARENEN.get(fachgebiet)
+    if paare is None:
+        raise HTTPException(status_code=404, detail=f"Fachgebiet '{fachgebiet}' nicht gefunden. Verfügbar: {list(FACH_ARENEN.keys())}")
+    return {
+        "fachgebiet": fachgebiet,
+        "paare": [p.dict() for p in paare],
+        "total": len(paare)
+    }
+
+
+@app.post("/api/antagonisten/arena", response_model=TableResponse)
+async def run_arena(req: ArenaRequest):
+    """Führt eine Fach-Arena-Analyse durch.
+    Wählt Perspektiv-Paare aus dem gewählten Fachgebiet aus,
+    konvertiert sie zu CustomPerspective-Objekten und leitet an ask_the_custom_table weiter.
+    Reibungsintensität ist standardmäßig 'eskaliert' für Antagonisten-Modus.
+    """
+    paare = FACH_ARENEN.get(req.fachgebiet)
+    if not paare:
+        raise HTTPException(status_code=404, detail=f"Fachgebiet '{req.fachgebiet}' nicht gefunden.")
+
+    # Filter nach Rang falls gewünscht
+    gefiltert = [p for p in paare if not req.rang_filter or p.rang in req.rang_filter]
+    if not gefiltert:
+        raise HTTPException(status_code=400, detail="Keine Perspektiven nach Rang-Filter verfügbar.")
+
+    # ArenaPaare zu CustomPerspective konvertieren
+    custom_perspectives = [
+        CustomPerspective(
+            name=p.name,
+            position=p.position,
+            kurzbeschreibung=p.kurzbeschreibung,
+            grundhaltung=p.grundhaltung,
+            argumentationsstil=p.argumentationsstil,
+            gegenposition=p.gegenposition,
+            blinde_flecken=p.blinde_flecken,
+            konfliktstil=p.konfliktstil,
+            typische_einwaende=p.typische_einwaende,
+            fachgebiet=p.fachgebiet,
+            rang=p.rang,
+            fach_arena=req.fachgebiet,
+            typ="Fachposition"
+        )
+        for p in gefiltert
+    ]
+
+    table_req = TableRequest(
+        question=req.question,
+        lang=req.lang,
+        stil=req.stil,
+        custom_perspectives=custom_perspectives,
+        methods=req.extra_methods,
+        reibungsintensitaet=req.reibungsintensitaet
+    )
+    return await ask_the_custom_table(table_req)
+
+
+# =============================================
+# V5.7 — CUSTOM-PERSPEKTIVEN HOOKPOINTS
+# Persistenz liegt aktuell im Frontend (localStorage).
+# Diese Endpunkte sind bereit für spätere serverseitige Persistenz.
+# =============================================
+
+class CustomPerspectivesPayload(BaseModel):
+    """Payload für Custom-Perspectives-CRUD-Operationen."""
+    perspectives: List[StoredCustomPerspective]
+    user_id: Optional[str] = None  # für spätere Nutzer-Authentifizierung
+
+@app.post("/api/custom-perspectives/validate")
+async def validate_custom_perspectives(payload: CustomPerspectivesPayload):
+    """Validiert benutzerdefinierte Perspektiven (max. 10, Pflichtfelder).
+    Gibt zurück, ob die Perspektiven gültig sind und ggf. Korrekturhinweise.
+    KEIN Speichern — nur Validierung.
+    """
+    errors = []
+    if len(payload.perspectives) > 10:
+        errors.append(f"Maximal 10 benutzerdefinierte Perspektiven erlaubt (eingereicht: {len(payload.perspectives)}).")
+    for i, p in enumerate(payload.perspectives):
+        if not p.name.strip():
+            errors.append(f"Perspektive {i+1}: Name ist erforderlich.")
+        if not p.position.strip():
+            errors.append(f"Perspektive {i+1}: Position ist erforderlich.")
+        if not p.id.strip():
+            errors.append(f"Perspektive {i+1}: ID ist erforderlich.")
+    return {
+        "valid": len(errors) == 0,
+        "count": len(payload.perspectives),
+        "errors": errors,
+        "max_slots": 10
+    }
+
+@app.post("/api/custom-perspectives/save")
+async def save_custom_perspectives(payload: CustomPerspectivesPayload):
+    """HOOKPOINT — serverseitige Persistenz für benutzerdefinierte Perspektiven.
+    Aktuell: keine Datenbank vorhanden. Gibt Echo-Antwort zurück.
+    Integration pending: Datenbank + Nutzer-Authentifizierung.
+    """
+    # HOOKPOINT — Persistenz pending
+    return {
+        "status": "hookpoint_ready",
+        "hook": "custom-perspectives-save",
+        "received": len(payload.perspectives),
+        "note": "Persistenz aktuell im Frontend (localStorage). Serverseitige Persistenz: integration pending."
+    }
+
+@app.get("/api/custom-perspectives/load")
+async def load_custom_perspectives(user_id: Optional[str] = None):
+    """HOOKPOINT — lädt gespeicherte Perspektiven für einen Nutzer.
+    Aktuell: keine Datenbank vorhanden.
+    """
+    # HOOKPOINT — Laden pending
+    return {
+        "status": "hookpoint_ready",
+        "hook": "custom-perspectives-load",
+        "perspectives": [],
+        "note": "Persistenz aktuell im Frontend (localStorage). Serverseitige Persistenz: integration pending."
+    }
 
 
 # =============================================
