@@ -1454,6 +1454,42 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   line-height: 1;
 }
 
+
+/* ── iT Settings Panel ─────────────────────────────── */
+.it-settings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: var(--text-xs);
+  font-family: inherit;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-bottom: var(--space-3);
+}
+.it-settings-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+.it-settings-toggle[aria-expanded="true"] {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.it-settings-panel {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  animation: itSettingsFadeIn 0.2s ease;
+}
+@keyframes itSettingsFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 </style>
 </head>
 <body>
@@ -1523,50 +1559,94 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 
       <!-- QUESTION FORM -->
       <div id="perspektiveInputPanel">
-      <div class="question-presets" id="questionPresets">
-        <span class="presets-label" id="presetsLabel">Beispielfragen:</span>
-        <div class="preset-questions-chips" id="presetQuestionsChips">
-          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Gibt es Gott?</button>
-          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Warum sollte man Steuern zahlen?</button>
-          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Wie lässt sich Krieg verhindern?</button>
-          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Ist KI eine Gefahr?</button>
-          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Was ist gerechte Strafe?</button>
-          <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Gibt es freien Willen?</button>
+        <!-- Settings toggle -->
+        <button class="it-settings-toggle" data-panel="perspektive" aria-expanded="false" onclick="toggleITSettings('perspektive')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Optionen
+        </button>
+
+        <!-- Settings panel: preset question chips + method chips -->
+        <div class="it-settings-panel" id="itSettingsPerspektive" hidden>
+          <div class="question-presets" id="questionPresets">
+            <span class="presets-label" id="presetsLabel">Beispielfragen:</span>
+            <div class="preset-questions-chips" id="presetQuestionsChips">
+              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Gibt es Gott?</button>
+              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Warum sollte man Steuern zahlen?</button>
+              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Wie lässt sich Krieg verhindern?</button>
+              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Ist KI eine Gefahr?</button>
+              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Was ist gerechte Strafe?</button>
+              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Gibt es freien Willen?</button>
+            </div>
+          </div>
+          <!-- Methoden-Chips (moved into settings panel) -->
+          <div class="methods-section" style="max-width:680px;margin:var(--space-4) auto 0;">
+            <div class="methods-header-row">
+              <span class="methods-label" id="methodsLabel">Perspektiven wählen (optional)</span>
+              <div class="methods-preset-btns">
+                <button type="button" class="preset-btn auto-active" id="autoModeBtn" onclick="setAutoMode()" title="KI wählt kontextbezogen">KI Auto</button>
+                <button type="button" class="preset-btn" onclick="setAllChips(true)" title="Alle Methoden">Alle</button>
+                <button type="button" class="preset-btn" id="lastComboBtn" onclick="restoreLastCombo()" title="Zuletzt verwendete Kombination" style="display:none;">Zuletzt</button>
+              </div>
+            </div>
+            <div class="methods-chips" id="methodsChips"></div>
+            <p class="methods-hint" id="methodsHint"></p>
+            <div class="kind-persp-wrap" id="kindPerspWrap">
+              <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp">
+                ☀ Kind-Perspektive konfigurieren
+              </button>
+              <span class="kind-persp-active-label hidden" id="kindPerspActiveLabel"></span>
+            </div>
+          </div>
         </div>
-      </div>
-      <form class="question-form" id="questionForm" onsubmit="return false;">
-        <div class="question-input-wrapper">
-          <textarea
-            class="question-input"
-            id="questionInput"
-            rows="1"
-            placeholder="Welche Frage liegt auf dem Tisch?"
-            autocomplete="off"
-            data-testid="input-question"
-          ></textarea>
-          <button class="question-submit" id="submitBtn" type="submit" data-testid="button-submit">Untersuchen</button>
-        </div>
-      </form>
+
+        <!-- Always visible: main question textarea + submit -->
+        <form class="question-form" id="questionForm" onsubmit="return false;">
+          <div class="question-input-wrapper">
+            <textarea
+              class="question-input"
+              id="questionInput"
+              rows="1"
+              placeholder="Welche Frage liegt auf dem Tisch?"
+              autocomplete="off"
+              data-testid="input-question"
+            ></textarea>
+            <button class="question-submit" id="submitBtn" type="submit" data-testid="button-submit">Untersuchen</button>
+          </div>
+        </form>
       </div>
 
       <!-- KLÄRUNGSGESPRÄCH PANEL -->
       <div class="klaerung-panel hidden" id="klaerungInputPanel">
-        <!-- Schritt 1: Konflikttyp wählen -->
-        <div class="konflikttyp-section" id="konfliktTypSection">
-          <label class="input-label" id="konfliktTypLabel">Konflikttyp wählen</label>
-          <div class="konflikttyp-grid" id="konfliktTypGrid">
-            <button class="konflikttyp-btn" data-typ="beziehung" onclick="setKonflikttyp('beziehung')">💔 Beziehungsstreit</button>
-            <button class="konflikttyp-btn" data-typ="arbeit" onclick="setKonflikttyp('arbeit')">💼 Konflikt auf Arbeit</button>
-            <button class="konflikttyp-btn" data-typ="freunde" onclick="setKonflikttyp('freunde')">🤝 Konflikt im Freundeskreis</button>
-            <button class="konflikttyp-btn" data-typ="recht" onclick="setKonflikttyp('recht')">⚖️ Rechtliche Auseinandersetzung</button>
-            <button class="konflikttyp-btn" data-typ="fachlich" onclick="setKonflikttyp('fachlich')">🧠 Fachliche Debatte</button>
-            <button class="konflikttyp-btn" data-typ="entscheidung" onclick="setKonflikttyp('entscheidung')">🔀 Entscheidungshilfe (Pro / Contra)</button>
+        <!-- Settings toggle -->
+        <button class="it-settings-toggle" data-panel="klaerung" aria-expanded="false" onclick="toggleITSettings('klaerung')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Optionen
+        </button>
+
+        <!-- Settings panel: Konflikttyp grid + Themen chips -->
+        <div class="it-settings-panel" id="itSettingsKlaerung" hidden>
+          <!-- Schritt 1: Konflikttyp wählen -->
+          <div class="konflikttyp-section" id="konfliktTypSection">
+            <label class="input-label" id="konfliktTypLabel">Konflikttyp wählen</label>
+            <div class="konflikttyp-grid" id="konfliktTypGrid">
+              <button class="konflikttyp-btn" data-typ="beziehung" onclick="setKonflikttyp('beziehung')">💔 Beziehungsstreit</button>
+              <button class="konflikttyp-btn" data-typ="arbeit" onclick="setKonflikttyp('arbeit')">💼 Konflikt auf Arbeit</button>
+              <button class="konflikttyp-btn" data-typ="freunde" onclick="setKonflikttyp('freunde')">🤝 Konflikt im Freundeskreis</button>
+              <button class="konflikttyp-btn" data-typ="recht" onclick="setKonflikttyp('recht')">⚖️ Rechtliche Auseinandersetzung</button>
+              <button class="konflikttyp-btn" data-typ="fachlich" onclick="setKonflikttyp('fachlich')">🧠 Fachliche Debatte</button>
+              <button class="konflikttyp-btn" data-typ="entscheidung" onclick="setKonflikttyp('entscheidung')">🔀 Entscheidungshilfe (Pro / Contra)</button>
+            </div>
           </div>
+          <!-- Themen chips (dynamically populated by applyKonfliktDefaults) -->
+          <div class="themen-chips-row" id="klaerungThemenChips" style="margin-bottom:var(--space-3);"></div>
         </div>
 
-        <!-- Schritt 2: Beschreibung (initial hidden bis Typ gewählt) -->
-        <div class="hidden" id="klaerungFormBody">
-          <div class="themen-chips-row" id="klaerungThemenChips" style="margin-bottom:var(--space-3);"></div>
+        <!-- Always visible: Beschreibung textarea + submit -->
+        <div id="klaerungFormBody">
           <div class="question-input-wrapper" style="margin-top:var(--space-3);">
             <textarea
               class="question-input"
@@ -1584,14 +1664,27 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 
       <!-- FREIER TISCH PANEL -->
       <div class="freier-panel hidden" id="freierInputPanel">
-        <div class="freier-rollen-chips" id="freierRollenChips" style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-3);">
-          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Moderator:in" data-role="Gesprächsleitung">Moderator:in</button>
-          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Expert:in" data-role="Fachliche Perspektive">Expert:in</button>
-          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Betroffene" data-role="Direkt involviert">Betroffene</button>
-          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Kritiker:in" data-role="Gegenperspektive">Kritiker:in</button>
-          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Vermittler:in" data-role="Brückenmacher">Vermittler:in</button>
-          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Außenstehende" data-role="Neutrale Außenperspektive">Außenstehende</button>
+        <!-- Settings toggle -->
+        <button class="it-settings-toggle" data-panel="freier" aria-expanded="false" onclick="toggleITSettings('freier')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Optionen
+        </button>
+
+        <!-- Settings panel: Rollen chips -->
+        <div class="it-settings-panel" id="itSettingsFreier" hidden>
+          <div class="freier-rollen-chips" id="freierRollenChips" style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-3);">
+            <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Moderator:in" data-role="Gesprächsleitung">Moderator:in</button>
+            <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Expert:in" data-role="Fachliche Perspektive">Expert:in</button>
+            <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Betroffene" data-role="Direkt involviert">Betroffene</button>
+            <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Kritiker:in" data-role="Gegenperspektive">Kritiker:in</button>
+            <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Vermittler:in" data-role="Brückenmacher">Vermittler:in</button>
+            <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Außenstehende" data-role="Neutrale Außenperspektive">Außenstehende</button>
+          </div>
         </div>
+
+        <!-- Always visible: context textarea + submit -->
         <div class="question-input-wrapper">
           <textarea
             class="question-input"
@@ -1604,26 +1697,6 @@ html[data-theme="light"][data-stil="therapeutisch"] {
         <div id="freierTeilnehmerContainer" style="display:none;"></div>
         <div style="text-align:center;margin-top:var(--space-4);">
           <button class="question-submit" id="submitBtnFreier" type="button" onclick="submitQuestion()" data-testid="button-submit-freier">Starten</button>
-        </div>
-      </div>
-
-      <!-- METHODEN-CHIPS -->
-      <div class="methods-section" style="max-width:680px;margin:var(--space-6) auto 0;">
-        <div class="methods-header-row">
-          <span class="methods-label" id="methodsLabel">Perspektiven wählen (optional)</span>
-          <div class="methods-preset-btns">
-            <button type="button" class="preset-btn auto-active" id="autoModeBtn" onclick="setAutoMode()" title="KI wählt kontextbezogen">KI Auto</button>
-            <button type="button" class="preset-btn" onclick="setAllChips(true)" title="Alle Methoden">Alle</button>
-            <button type="button" class="preset-btn" id="lastComboBtn" onclick="restoreLastCombo()" title="Zuletzt verwendete Kombination" style="display:none;">Zuletzt</button>
-          </div>
-        </div>
-        <div class="methods-chips" id="methodsChips"></div>
-        <p class="methods-hint" id="methodsHint"></p>
-        <div class="kind-persp-wrap" id="kindPerspWrap">
-          <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp">
-            ☀ Kind-Perspektive konfigurieren
-          </button>
-          <span class="kind-persp-active-label hidden" id="kindPerspActiveLabel"></span>
         </div>
       </div>
 
@@ -4282,6 +4355,17 @@ async function exportToPDF() {
   btn.disabled = !stillHasChecked;
   var pdfLabel = TRANSLATIONS[currentLang].exportPdfLabel || 'Auswahl als PDF';
   btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span id="exportPdfLabel">' + pdfLabel + '</span>';
+}
+
+/* ── iT Settings Toggle ────────────────────────── */
+function toggleITSettings(mode) {
+  var panelIds = { klaerung: 'itSettingsKlaerung', perspektive: 'itSettingsPerspektive', freier: 'itSettingsFreier' };
+  var panel = document.getElementById(panelIds[mode]);
+  var btn = document.querySelector('.it-settings-toggle[data-panel="' + mode + '"]');
+  if (!panel || !btn) return;
+  var isOpen = !panel.hidden;
+  panel.hidden = isOpen;
+  btn.setAttribute('aria-expanded', String(!isOpen));
 }
 </script>
 

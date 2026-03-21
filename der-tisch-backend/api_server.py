@@ -25,6 +25,10 @@ async def serve_index():
 async def serve_integrationstisch():
     return FileResponse(Path(__file__).parent / "integrationstisch.html")
 
+@app.get("/der-tisch.html")
+async def serve_der_tisch():
+    return FileResponse(Path(__file__).parent / "der-tisch.html")
+
 # ==========================================
 # SPRACHSTIL INSTRUCTIONS
 # ==========================================
