@@ -1363,7 +1363,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   font-size: 13px;
   font-weight: 400;
   color: var(--color-accent);
-  font-style: italic;
+  font-style: normal;
   display: inline-block;
   vertical-align: bottom;
   margin-bottom: 2px;
@@ -1430,7 +1430,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   font-size: clamp(1.1rem, 0.7rem + 2.5vw, 2.6rem);
   font-weight: 400;
   color: var(--color-accent);
-  font-style: italic;
+  font-style: normal;
   display: inline-block;
   vertical-align: bottom;
   margin-bottom: clamp(2px, 0.4vw, 5px);
@@ -1522,7 +1522,6 @@ html[data-theme="light"][data-stil="therapeutisch"] {
       <h1 class="hero-title" aria-label="iNTEGRATiONS TiSCH">
         <!-- Hero-Logo: vertikal zentriert, Inter, Petrol-i -->
         <span class="hero-logo" aria-hidden="true">
-          <span class="hero-logo-tagline" id="heroTagline">Verschiedene Stimmen. Eine Wahrheit.</span>
           <span class="hero-logo-mark">
             <span class="hero-logo-integrations">integrations</span>
             <span class="hero-logo-tisch"><span class="hero-logo-T">T</span><span class="hero-logo-i-small">i</span><span class="hero-logo-SCH">SCH</span></span>
@@ -2470,11 +2469,6 @@ function applyTranslation(lang) {
     var sl = t.stilLabels && t.stilLabels[b.dataset.stil];
     if (sl) b.textContent = sl;
   });
-  // Update hero tagline
-  var taglineEl = document.querySelector('.hero-logo-tagline');
-  if (taglineEl) {
-    taglineEl.textContent = lang === 'de' ? 'Verschiedene Stimmen. Eine Wahrheit.' : 'Different Voices. One Truth.';
-  }
   // Update mode button labels
   document.querySelectorAll('.mode-btn[data-mode]').forEach(function(b) {
     var mode = b.dataset.mode;
