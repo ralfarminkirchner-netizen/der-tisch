@@ -1325,107 +1325,124 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 @media (max-width: 600px) { .party-row { grid-template-columns: 1fr; } }
 
 /* =============================================
-   NAV-LOGO — vertikal, Inter
+   LOGO V1.4 — typografisches Zeichen
 ============================================= */
+
+/* NAV LOGO */
 .nav-logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: inline-block;
   line-height: 1;
-  gap: 0;
+  text-align: left;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
 }
 .nav-logo-top {
-  font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  font-weight: 500;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--color-text);
-  text-transform: uppercase;
-}
-.nav-logo-bottom {
-  font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  color: var(--color-text);
-  text-transform: uppercase;
-}
-.nav-logo-axis {
-  width: 1.5px;
-  height: 14px;
-  background: color-mix(in srgb, var(--color-text) 70%, transparent);
-  margin: 4px auto 3px;
   display: block;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: var(--color-text-muted);
+  text-transform: lowercase;
+  /* padding-left aligns with the T below */
+  padding-left: 1px;
+  margin-bottom: -2px;
 }
-.nav-logo-i {
+.nav-logo-tisch {
+  display: block;
+  line-height: 1;
+}
+.nav-logo-T {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.nav-logo-i-small {
+  font-size: 13px;
+  font-weight: 400;
   color: var(--color-accent);
-  display: inline;
+  font-style: italic;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: 2px;
+}
+.nav-logo-SCH {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.06em;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: 2px;
 }
 
-/* =============================================
-   HERO-LOGO — vertikal, Inter, groß
-============================================= */
+/* HERO LOGO */
 .hero-logo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 1;
   user-select: none;
+  line-height: 1;
 }
 .hero-logo-tagline {
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
   font-weight: 400;
-  font-size: clamp(0.55rem, 0.4rem + 0.8vw, 0.72rem);
-  letter-spacing: 0.22em;
-  color: var(--color-accent);
-  text-transform: uppercase;
-  margin-bottom: clamp(10px, 2vw, 18px);
+  font-size: clamp(0.6rem, 0.4rem + 0.6vw, 0.75rem);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: clamp(12px, 2.5vw, 24px);
   display: block;
 }
-.hero-logo-top {
-  font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  font-weight: 500;
-  font-size: clamp(1.5rem, 1.1rem + 3.5vw, 3.6rem);
-  letter-spacing: 0.08em;
-  color: var(--color-text);
-  text-transform: uppercase;
-  line-height: 1;
-}
-.hero-logo-bottom {
-  font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-  font-size: clamp(1.5rem, 1.1rem + 3.5vw, 3.6rem);
-  letter-spacing: 0.12em;
-  color: var(--color-text);
-  text-transform: uppercase;
-  line-height: 1;
-}
-.hero-logo-axis {
-  width: 1.5px;
-  height: clamp(22px, 3.5vw, 40px);
-  background: color-mix(in srgb, var(--color-text) 70%, transparent);
-  margin: clamp(8px, 1.5vw, 14px) auto clamp(6px, 1.2vw, 10px);
-  display: block;
-}
-.hero-logo-i {
-  color: var(--color-accent);
-  position: relative;
+.hero-logo-mark {
   display: inline-block;
+  text-align: left;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  position: relative;
 }
-.hero-logo-i .hero-logo-i-dot {
-  position: absolute;
-  /* Inter's i-dot is already rendered — we overlay a white dot exactly on top */
-  top: 0.1em;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0.2em;
-  height: 0.2em;
-  background: #ffffff;
-  border-radius: 50%;
-  pointer-events: none;
+.hero-logo-integrations {
+  display: block;
+  font-size: clamp(0.65rem, 0.4rem + 1.6vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: var(--color-text-muted);
+  text-transform: lowercase;
+  /* lines up with the top stroke of the T below */
+  padding-left: 2px;
+  margin-bottom: clamp(-4px, -0.5vw, -2px);
+  line-height: 1;
 }
-[data-theme="light"] .hero-logo-i .hero-logo-i-dot {
-  background: #f7f5f2;
+.hero-logo-tisch {
+  display: block;
+  line-height: 1;
+}
+.hero-logo-T {
+  font-size: clamp(3.2rem, 2rem + 7vw, 7.5rem);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  display: inline-block;
+  vertical-align: bottom;
+  line-height: 0.88;
+}
+.hero-logo-i-small {
+  font-size: clamp(1.1rem, 0.7rem + 2.5vw, 2.6rem);
+  font-weight: 400;
+  color: var(--color-accent);
+  font-style: italic;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: clamp(2px, 0.4vw, 5px);
+}
+.hero-logo-SCH {
+  font-size: clamp(1.1rem, 0.7rem + 2.5vw, 2.6rem);
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.06em;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: clamp(2px, 0.4vw, 5px);
 }
 
 /* Override hero-title for block logo */
@@ -1433,7 +1450,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   display: flex !important;
   justify-content: center;
   align-items: center;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
   line-height: 1;
 }
 
@@ -1447,9 +1464,8 @@ html[data-theme="light"][data-stil="therapeutisch"] {
     <a href="#" class="site-logo" aria-label="iNTEGRATiONS TiSCH — Zur Startseite">
       <!-- Nav-Logo: vertikal, INTEGRATiON oben / Achse / TISCH unten -->
       <span class="nav-logo" aria-hidden="true">
-        <span class="nav-logo-top">INTEGRAT<span class="nav-logo-i">i<span class="nav-logo-i-dot"></span></span>ON</span>
-        <span class="nav-logo-axis"></span>
-        <span class="nav-logo-bottom">TISCH</span>
+        <span class="nav-logo-top">integrations</span>
+        <span class="nav-logo-tisch"><span class="nav-logo-T">T</span><span class="nav-logo-i-small">i</span><span class="nav-logo-SCH">SCH</span></span>
       </span>
     </a>
     <div class="header-actions">
@@ -1470,10 +1486,11 @@ html[data-theme="light"][data-stil="therapeutisch"] {
       <h1 class="hero-title" aria-label="iNTEGRATiONS TiSCH">
         <!-- Hero-Logo: vertikal zentriert, Inter, Petrol-i -->
         <span class="hero-logo" aria-hidden="true">
-          <span class="hero-logo-tagline">VERSCHIEDENE STIMMEN. EINE WAHRHEIT.</span>
-          <span class="hero-logo-top">INTEGRAT<span class="hero-logo-i">i<span class="hero-logo-i-dot"></span></span>ON</span>
-          <span class="hero-logo-axis"></span>
-          <span class="hero-logo-bottom">TISCH</span>
+          <span class="hero-logo-tagline" id="heroTagline">Verschiedene Stimmen. Eine Wahrheit.</span>
+          <span class="hero-logo-mark">
+            <span class="hero-logo-integrations">integrations</span>
+            <span class="hero-logo-tisch"><span class="hero-logo-T">T</span><span class="hero-logo-i-small">i</span><span class="hero-logo-SCH">SCH</span></span>
+          </span>
         </span>
       </h1>
       <p class="hero-subtitle" id="heroSubtitle">Verschiedene Stimmen. Eine ehrliche Karte — keine endgültige Antwort.</p>
@@ -1485,20 +1502,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
           <button class="lang-btn active" id="langBtnDe" onclick="setLang('de')" data-testid="lang-de">DE</button>
           <button class="lang-btn" id="langBtnEn" onclick="setLang('en')" data-testid="lang-en">EN</button>
         </div>
-        <!-- V1.2: Sprachstufe -->
-        <div class="sprachstufe-group" id="sprachstufeGroup">
-          <button class="sprachstufe-btn" data-stufe="kind" onclick="setSprachstufe(this)" title="Grundschulniveau, einfache Sätze">👦 Kindgerecht</button>
-          <button class="sprachstufe-btn sprachstufe-active" data-stufe="alltag" onclick="setSprachstufe(this)" title="Normale Alltagssprache">👤 Alltagssprache</button>
-          <button class="sprachstufe-btn" data-stufe="akademisch" onclick="setSprachstufe(this)" title="Fachlich präzise, differenziert">🎓 Akademisch</button>
-        </div>
-        <!-- V1.2: Gender -->
-        <div class="gender-toggle-group" id="genderToggleGroup">
-          <span class="gender-label" id="genderLabel">Sprache:</span>
-          <button class="gender-btn gender-active" data-gender="neutral" onclick="setGender(this)">∅ Neutral</button>
-          <button class="gender-btn" data-gender="maennlich" onclick="setGender(this)">♂ Männlich</button>
-          <button class="gender-btn" data-gender="weiblich" onclick="setGender(this)">♀ Weiblich</button>
-          <button class="gender-btn" data-gender="divers" onclick="setGender(this)">⚧ Divers</button>
-        </div>
+
         <!-- Style selector -->
         <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
           <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
@@ -1560,38 +1564,19 @@ html[data-theme="light"][data-stil="therapeutisch"] {
           </div>
         </div>
 
-        <!-- Schritt 2: Form (initial hidden bis Typ gewählt) -->
+        <!-- Schritt 2: Beschreibung (initial hidden bis Typ gewählt) -->
         <div class="hidden" id="klaerungFormBody">
-          <!-- Themen-Chips -->
-          <div class="input-group">
-            <label class="input-label">Schnellauswahl Thema</label>
-            <div class="themen-chips-row" id="klaerungThemenChips"></div>
+          <div class="themen-chips-row" id="klaerungThemenChips" style="margin-bottom:var(--space-3);"></div>
+          <div class="question-input-wrapper" style="margin-top:var(--space-3);">
+            <textarea
+              class="question-input"
+              id="klaerungContext"
+              rows="2"
+              placeholder="Beschreibe den Konflikt kurz — wer, was, womit?"
+              autocomplete="off"
+            ></textarea>
           </div>
-
-          <!-- Kontext -->
-          <div class="input-group">
-            <label class="input-label" id="klaerungContextLabel">Worum geht es?</label>
-            <textarea id="klaerungContext" rows="2" placeholder="Beschreibe den Konflikt kurz…"></textarea>
-          </div>
-
-          <!-- Parteien -->
-          <div class="input-group">
-            <label class="input-label" id="klaerungPartiesLabel">Beteiligte am Tisch</label>
-            <div id="klaerungPartiesContainer"></div>
-            <button type="button" class="add-party-btn" onclick="addParty()">+ Weitere Partei hinzufügen</button>
-          </div>
-
-          <!-- Empfohlene Zusatzperspektiven -->
-          <div class="optional-std-persp">
-            <label class="input-label">Empfohlene Zusatzperspektiven</label>
-            <div id="suggestedPerspKlaerung" class="std-persp-chips-wrap"></div>
-            <button type="button" class="toggle-std-persp-btn" onclick="toggleStdPerspInKlaerung()" id="toggleStdPerspKlaerung">
-              + Weitere App-Perspektiven
-            </button>
-            <div class="std-persp-chips-wrap hidden" id="stdPerspChipsKlaerung"></div>
-          </div>
-
-          <div style="text-align:center;margin-top:var(--space-5);">
+          <div style="text-align:center;margin-top:var(--space-4);">
             <button class="question-submit" id="submitBtnKlaerung" type="button" onclick="submitQuestion()" data-testid="button-submit-klaerung">Klären</button>
           </div>
         </div>
@@ -1599,32 +1584,25 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 
       <!-- FREIER TISCH PANEL -->
       <div class="freier-panel hidden" id="freierInputPanel">
-        <div class="input-group">
-          <label id="freierContextLabel">Worum soll es gehen? (optional)</label>
-          <textarea id="freierContext" rows="2" placeholder="z.B. Teamgespräch über Strategie, Simulation eines Podiumsgesprächs..."></textarea>
+        <div class="freier-rollen-chips" id="freierRollenChips" style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-3);">
+          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Moderator:in" data-role="Gesprächsleitung">Moderator:in</button>
+          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Expert:in" data-role="Fachliche Perspektive">Expert:in</button>
+          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Betroffene" data-role="Direkt involviert">Betroffene</button>
+          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Kritiker:in" data-role="Gegenperspektive">Kritiker:in</button>
+          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Vermittler:in" data-role="Brückenmacher">Vermittler:in</button>
+          <button type="button" class="q-preset-chip" onclick="addRolleFromChip(this)" data-name="Außenstehende" data-role="Neutrale Außenperspektive">Außenstehende</button>
         </div>
-        <div class="freier-rolle-vorschlaege" id="freierRolleVorschlaege">
-          <label class="input-label" id="freierRolleLabel">Rollen-Vorschläge (klicken zum Hinzufügen)</label>
-          <div class="freier-rollen-chips" id="freierRollenChips">
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Moderator:in" data-role="Gesprächsleitung">Moderator:in</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Expert:in" data-role="Fachliche Perspektive">Expert:in</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Betroffene Person" data-role="Direkt involviert">Betroffene</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Kritiker:in" data-role="Gegenperspektive">Kritiker:in</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Vermittler:in" data-role="Brückenmacher">Vermittler:in</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Außenstehende Person" data-role="Neutrale Außenperspektive">Außenstehende</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Ethiker:in" data-role="Ethische Perspektive">Ethiker:in</button>
-            <button type="button" class="rollen-chip" onclick="addRolleFromChip(this)" data-name="Psycholog:in" data-role="Psychologische Perspektive">Psycholog:in</button>
-          </div>
+        <div class="question-input-wrapper">
+          <textarea
+            class="question-input"
+            id="freierContext"
+            rows="2"
+            placeholder="Worum geht es? Wer sitzt am Tisch?"
+            autocomplete="off"
+          ></textarea>
         </div>
-        <div id="freierTeilnehmerContainer"></div>
-        <button type="button" class="add-teilnehmer-btn" onclick="addFreierTeilnehmer()">+ Person / Rolle hinzufügen</button>
-        <div class="optional-std-persp">
-          <button type="button" class="toggle-std-persp-btn" onclick="toggleStdPerspInFreier()" id="toggleStdPerspFreier">
-            + App-Perspektiven an den Tisch setzen (optional)
-          </button>
-          <div class="std-persp-chips-wrap hidden" id="stdPerspChipsFreier"></div>
-        </div>
-        <div style="text-align:center;margin-top:var(--space-5);">
+        <div id="freierTeilnehmerContainer" style="display:none;"></div>
+        <div style="text-align:center;margin-top:var(--space-4);">
           <button class="question-submit" id="submitBtnFreier" type="button" onclick="submitQuestion()" data-testid="button-submit-freier">Starten</button>
         </div>
       </div>
@@ -2190,21 +2168,20 @@ function setQuestionPreset(btn) {
   btn.classList.add('q-preset-active');
 }
 
-// V1.2 — Rollen-Chip (Freier Tisch)
+var _freierRollenSelected = [];
+
 function addRolleFromChip(btn) {
-  _teilnehmerCounter++;
-  var container = document.getElementById('freierTeilnehmerContainer');
-  var row = document.createElement('div');
-  row.className = 'teilnehmer-row';
-  row.dataset.tid = _teilnehmerCounter;
-  row.innerHTML = '<input type="text" class="teilnehmer-name-input" placeholder="Name oder Rolle" value="' + escapeHtml(btn.dataset.name || '') + '" />' +
-    '<input type="text" class="teilnehmer-role-input" placeholder="Funktion / Position" value="' + escapeHtml(btn.dataset.role || '') + '" />' +
-    '<input type="text" class="teilnehmer-desc-input" placeholder="Kurzbeschreibung (optional)" />' +
-    '<select class="teilnehmer-gender-select"><option value="neutral">∅ neutral</option><option value="maennlich">♂ m</option><option value="weiblich">♀ w</option><option value="divers">⚧ d</option></select>' +
-    '<button type="button" class="remove-teilnehmer-btn" onclick="this.parentElement.remove()">✕</button>';
-  container.appendChild(row);
-  btn.classList.add('rollen-chip-added');
-  btn.disabled = true;
+  var name = btn.dataset.name || btn.textContent.trim();
+  var role = btn.dataset.role || '';
+  // Toggle: if already selected, deselect
+  var idx = _freierRollenSelected.findIndex(function(r) { return r.name === name; });
+  if (idx >= 0) {
+    _freierRollenSelected.splice(idx, 1);
+    btn.classList.remove('q-preset-active');
+  } else {
+    _freierRollenSelected.push({ name: name, role: role });
+    btn.classList.add('q-preset-active');
+  }
 }
 
 function setLang(lang) {
@@ -2423,7 +2400,7 @@ function applyTranslation(lang) {
   // Update hero tagline
   var taglineEl = document.querySelector('.hero-logo-tagline');
   if (taglineEl) {
-    taglineEl.textContent = lang === 'de' ? 'VERSCHIEDENE STIMMEN. EINE WAHRHEIT.' : 'DIFFERENT VOICES. ONE TRUTH.';
+    taglineEl.textContent = lang === 'de' ? 'Verschiedene Stimmen. Eine Wahrheit.' : 'Different Voices. One Truth.';
   }
   // Update mode button labels
   document.querySelectorAll('.mode-btn[data-mode]').forEach(function(b) {
@@ -3298,38 +3275,22 @@ async function submitQuestion() {
     if (!question || question.length < 5) { input.focus(); return; }
   } else if (currentMode === 'klaerung') {
     var kContext = document.getElementById('klaerungContext').value.trim();
-    var kParties = getKlaerungParties();
-    if (!kContext && kParties.length === 0) {
-      document.getElementById('klaerungContext').focus(); return;
-    }
-    question = kContext || 'Klärungsgespräch';
-    modeCustomPerspectives = kParties.map(function(p) {
-      return {
-        type: 'konflikt',
-        rolle: p.name || 'Partei',
-        profil: p.role + (p.desc ? ' — ' + p.desc : ''),
-        farbe: '#7a8fa6'
-      };
-    });
+    if (!kContext) { document.getElementById('klaerungContext').focus(); return; }
+    // Append konflikttyp as context hint
+    var kTypLabel = currentKonflikttyp && KONFLIKTTYPEN[currentKonflikttyp]
+      ? '[' + KONFLIKTTYPEN[currentKonflikttyp].label[currentLang] + '] ' : '';
+    question = kTypLabel + kContext;
+    modeCustomPerspectives = [];
     var kStd = getSelectedStdPerspForMode('klaerung');
     modeCustomPerspectives = modeCustomPerspectives.concat(kStd);
   } else if (currentMode === 'freier') {
     var fContext = document.getElementById('freierContext').value.trim();
-    var fTeilnehmer = getFreierTeilnehmer();
-    if (!fContext && fTeilnehmer.length === 0) {
-      document.getElementById('freierContext').focus(); return;
-    }
-    question = fContext || 'Freier Tisch';
-    modeCustomPerspectives = fTeilnehmer.map(function(t) {
-      return {
-        type: 'frei',
-        rolle: t.name || 'Teilnehmer',
-        profil: t.role + (t.desc ? ' — ' + t.desc : ''),
-        farbe: '#6a8a6a'
-      };
+    if (!fContext) { document.getElementById('freierContext').focus(); return; }
+    question = fContext;
+    // Collect rolle chips that were clicked (stored in _freierRollenSelected)
+    modeCustomPerspectives = (_freierRollenSelected || []).map(function(r) {
+      return { type: 'frei', rolle: r.name, profil: r.role, farbe: '#6a8a6a' };
     });
-    var fStd = getSelectedStdPerspForMode('freier');
-    modeCustomPerspectives = modeCustomPerspectives.concat(fStd);
   }
 
   // Reset optional sections
