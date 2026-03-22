@@ -4159,15 +4159,7 @@ function printSelection() {
     html += '<h2>' + (de ? s.titleDe : s.titleEn) + '</h2>' + clone.innerHTML;
   });
 
-  html += '
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
-</script>
-</body></html>';
+  html += '</body></html>';
   win.document.write(html);
   win.document.close();
   win.focus();
