@@ -1459,6 +1459,11 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   --chip-color: #d42b2b;
   --chip-bg: rgba(212,43,43,0.12);
 }
+.method-chip[data-chip-key="Marktstrategie"] { --chip-accent: #3A9E6A; --chip-color: #3A9E6A; --chip-bg: rgba(58,158,106,0.12); }
+.method-chip[data-chip-key="Investor/Shareholder"] { --chip-accent: #4A8FA8; --chip-color: #4A8FA8; --chip-bg: rgba(74,143,168,0.12); }
+.method-chip[data-chip-key="Kunde/Markt"] { --chip-accent: #D4873A; --chip-color: #D4873A; --chip-bg: rgba(212,135,58,0.12); }
+.method-chip[data-chip-key="Market Strategy"] { --chip-accent: #3A9E6A; --chip-color: #3A9E6A; --chip-bg: rgba(58,158,106,0.12); }
+.method-chip[data-chip-key="Customer/Market"] { --chip-accent: #D4873A; --chip-color: #D4873A; --chip-bg: rgba(212,135,58,0.12); }
 .method-chip[data-chip-key="Pädagogisch"] {
   --chip-color: #3a9e50;
   --chip-bg: rgba(58,158,80,0.12);
@@ -1657,6 +1662,11 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   --color-bg:              #f7faf7;
   --color-surface:         #fbfefb;
   --color-accent:          #5a9068;
+}
+html[data-stil="jugend"] {
+  --stil-label:            'Jugendsprache';
+  --stil-accent-override:  hsl(280, 60%, 55%);
+  --stil-tint:             rgba(160, 100, 220, 0.03);
 }
 
 /* Stil tint on main background for immersion */
@@ -2182,6 +2192,7 @@ html[data-stil] body {
         <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-oekonomisch">Ökon.</button>
         <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht">Kind</button>
         <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therap.</button>
+        <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend">Jugend</button>
       </div>
       <!-- Lang toggle -->
       <button class="lang-toggle" id="langToggle" aria-label="Switch language">
@@ -2207,6 +2218,7 @@ html[data-stil] body {
   <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)">Ökon.</button>
   <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)">Kind</button>
   <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)">Therap.</button>
+  <button class="stil-btn" data-stil="jugend" onclick="setStil(this)">Jugend</button>
 </div>
 
 <!-- MAIN -->
@@ -2231,7 +2243,7 @@ html[data-stil] body {
           <text x="218" y="83" font-family="'Switzer','Helvetica Neue',Arial,sans-serif" font-size="38" font-weight="300" fill="var(--color-text)" letter-spacing="-0.5"><tspan fill="var(--color-accent)">i</tspan>SCH</text>
         </svg>
       </h1>
-      <p class="hero-subtitle">Verschiedene Perspektiven nehmen gemeinsam am runden Tisch Platz. Jede Stimme wird gehört — dann entscheidet ihr selbst.</p>
+      <p class="hero-subtitle">Marktentscheidungen brauchen mehr als eine Meinung. Acht Perspektiven — strategisch, wirtschaftlich, menschlich — analysieren gemeinsam.</p>
 
       <!-- MODE TOGGLE -->
       <div class="mode-toggle-wrap" id="modeToggleWrap">
@@ -2278,6 +2290,7 @@ html[data-stil] body {
               <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-oekonomisch-p">&#214;kon.</button>
               <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht-p">Kind</button>
               <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch-p">Therap.</button>
+              <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend-p">Jugend</button>
             </div>
           </div>
         </div>
@@ -2880,6 +2893,7 @@ const STIL_LABELS = {
     oekonomisch:   'Ökonomisch',
     kindgerecht:   'Kindgerecht',
     therapeutisch: 'Therapeutisch',
+    jugend:        'Jugend',
   },
   en: {
     philosophisch: 'Philosophical',
@@ -2888,6 +2902,7 @@ const STIL_LABELS = {
     oekonomisch:   'Economic',
     kindgerecht:   'Child-friendly',
     therapeutisch: 'Therapeutic',
+    jugend:        'Youth',
   }
 };
 
@@ -2914,14 +2929,14 @@ const TRANSLATIONS = {
     htmlLang: 'de',
     tagline: 'Epistemischer Perspektivenraum',
     title: 'TEAM TiSCH',
-    subtitle: 'Keine absolute Wahrheit. Acht Methoden, die gleichzeitig denken — gefolgt von schonungsloser Reibung und ehrlicher Integration.',
-    placeholder: 'Welche Frage legen wir auf den Tisch?',
+    subtitle: 'Marktentscheidungen brauchen mehr als eine Meinung. Acht Perspektiven analysieren strategisch, wirtschaftlich und menschlich.',
+    placeholder: 'Welche Entscheidung, Strategie oder Herausforderung liegt an?',
     submitBtn: 'Untersuchen',
     submitWorking: 'Agenten arbeiten…',
     examples: [
-      'Ich liebe meine Partnerin, aber unsere intellektuellen Welten haben sich komplett entfremdet. Ist das ein Trennungsgrund?',
-      'Soll ich den sicheren Job behalten, obwohl er mich innerlich abstumpft?',
-      'Warum kann ich mich nicht entscheiden, obwohl ich alle Fakten kenne?',
+      'Sollen wir in den neuen Markt expandieren — oder Ressourcen besser intern einsetzen?',
+      'Make or Buy: Entwickeln wir die Technologie selbst oder kaufen wir zu?',
+      'Wie reagieren wir auf den neuen Wettbewerber, der unsere Kernzielgruppe angreift?',
     ],
     loadingTitle: 'Die Architektur arbeitet',
     phase1: '8 Agenten denken parallel — Systemisch, Tiefenpsychologisch, Empirisch, Philosophisch, Ethisch, Abwägung, Strategisch, Risiko',
@@ -3014,14 +3029,14 @@ const TRANSLATIONS = {
     htmlLang: 'en',
     tagline: 'Epistemic Perspective Space',
     title: 'TEAM TABLE',
-    subtitle: 'No absolute truth. Eight methods thinking simultaneously — followed by unsparing friction and honest integration.',
-    placeholder: 'What question do we put on the table?',
+    subtitle: 'Market decisions need more than one opinion. Eight perspectives — strategic, economic, human — analyze together.',
+    placeholder: 'What decision, strategy or challenge is on the table?',
     submitBtn: 'Examine',
     submitWorking: 'Agents working…',
     examples: [
-      'I love my partner, but our intellectual worlds have completely drifted apart. Is that grounds for separation?',
-      'Should I keep the secure job even though it numbs me inside?',
-      'Why can\'t I decide, even though I know all the facts?',
+      'Should we expand into the new market — or focus resources internally?',
+      'Make or buy: do we build the technology ourselves or acquire it?',
+      'How do we respond to the new competitor targeting our core audience?',
     ],
     loadingTitle: 'The architecture is working',
     phase1: '8 agents thinking in parallel — Systemic, Depth-psychological, Empirical, Philosophical, Ethical, Weighing, Strategic, Risk',
@@ -3217,7 +3232,7 @@ function applyTranslation(lang) {
   document.getElementById('langEn').className = lang === 'en' ? 'lang-active' : '';
 
   // Update stil button labels
-  const stilMap = { philosophisch: lang==='de'?'Philos.':'Philos.', akademisch: lang==='de'?'Akad.':'Acad.', alltag: lang==='de'?'Alltag':'Every.', oekonomisch: lang==='de'?'Ökon.':'Econ.', kindgerecht: lang==='de'?'Kind':'Child', therapeutisch: lang==='de'?'Therap.':'Therap.' };
+  const stilMap = { philosophisch: lang==='de'?'Philos.':'Philos.', akademisch: lang==='de'?'Akad.':'Acad.', alltag: lang==='de'?'Alltag':'Every.', oekonomisch: lang==='de'?'Ökon.':'Econ.', kindgerecht: lang==='de'?'Kind':'Child', therapeutisch: lang==='de'?'Therap.':'Therap.', jugend: lang==='de'?'Jugend':'Youth' };
   document.querySelectorAll('.stil-btn[data-stil]').forEach(b => {
     if (stilMap[b.dataset.stil]) b.textContent = stilMap[b.dataset.stil];
   });
@@ -4069,6 +4084,17 @@ const CHIP_ICONS = {
   'Risiko': `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>`,
   'Risk': `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>`,
 
+  // Marktstrategie: Liniendiagramm (Markt, Wachstum)
+  'Marktstrategie': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>`,
+  'Market Strategy': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>`,
+
+  // Investor/Shareholder: Uhr im Kreis (Zeit ist Geld)
+  'Investor/Shareholder': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
+
+  // Kunde/Markt: Personengruppe
+  'Kunde/Markt': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  'Customer/Market': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+
   // Pädagogisch: Stern mit Gesicht / Kind-Stern (offene, neugierige Form)
   'Pädagogisch': `<svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>`,
   'Pedagogical': `<svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>`,
@@ -4094,6 +4120,9 @@ const METHOD_CHIPS_DE = [
   { key: 'Abwägung'            },
   { key: 'Strategisch'         },
   { key: 'Risiko'              },
+  { key: 'Marktstrategie'      },
+  { key: 'Investor/Shareholder'},
+  { key: 'Kunde/Markt'         },
   { key: 'Pädagogisch'         },
   { key: 'Neurodivergent'      },
   { key: 'Aus Kinderaugen'     },
@@ -4107,6 +4136,9 @@ const METHOD_CHIPS_EN = [
   { key: 'Weighing'            },
   { key: 'Strategic'           },
   { key: 'Risk'                },
+  { key: 'Market Strategy'     },
+  { key: 'Investor/Shareholder'},
+  { key: 'Customer/Market'     },
   { key: 'Pedagogical'         },
   { key: 'Neurodivergent'      },
   { key: "Child's Eyes"        },
@@ -5213,7 +5245,7 @@ function sessionRenderCache() {
     const isActive = idx === _activeVariantIdx;
     const stilLabel = {
       philosophisch:'Philos.', akademisch:'Akad.', alltag:'Alltag',
-      oekonomisch:'Ökon.', kindgerecht:'Kind', therapeutisch:'Therap.'
+      oekonomisch:'Ökon.', kindgerecht:'Kind', therapeutisch:'Therap.', jugend:'Jugend'
     }[v.stil] || v.stil;
     return `<button class="session-variant-chip${isActive ? ' active-variant' : ''}"
       onclick="sessionLoadVariant(${idx})"

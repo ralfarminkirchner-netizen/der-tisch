@@ -793,6 +793,11 @@ html[data-stil="kindgerecht"] {
 html[data-theme="light"][data-stil="kindgerecht"] {
   --color-accent: #e03d3d; --color-accent-dim: rgba(224, 61, 61, 0.12);
 }
+html[data-stil="jugend"] {
+  --stil-label:            'Jugendsprache';
+  --stil-accent-override:  hsl(280, 60%, 55%);
+  --stil-tint:             rgba(160, 100, 220, 0.03);
+}
 html[data-stil="therapeutisch"] {
   --color-accent: #8cb89a; --color-accent-dim: rgba(140, 184, 154, 0.15); --color-accent-glow: rgba(140, 184, 154, 0.07);
 }
@@ -1546,6 +1551,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
           <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
           <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-einfach">Einfach</button>
           <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindersprache">Kindersprache</button>
+          <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend">Jugend</button>
         </div>
       </div>
 
@@ -2346,7 +2352,7 @@ const TRANSLATIONS = {
     autoModeInactive: 'Auto',
     allChipsBtn: 'Alle',
     lastComboBtn: 'Zuletzt',
-    stilLabels: { alltag: 'Alltag', philosophisch: 'Philosophisch', akademisch: 'Spirituell', therapeutisch: 'Therapeutisch', oekonomisch: 'Einfach', kindgerecht: 'Kindersprache' },
+    stilLabels: { alltag: 'Alltag', philosophisch: 'Philosophisch', akademisch: 'Spirituell', therapeutisch: 'Therapeutisch', oekonomisch: 'Einfach', kindgerecht: 'Kindersprache', jugend: 'Jugend' },
     modePersp: 'Perspektivengespräch',
     modeKlaerung: 'Klärungsgespräch',
     modeFreier: 'Freier Tisch',
@@ -2411,7 +2417,7 @@ const TRANSLATIONS = {
     autoModeInactive: 'Auto',
     allChipsBtn: 'All',
     lastComboBtn: 'Last',
-    stilLabels: { alltag: 'Everyday', philosophisch: 'Philosophical', akademisch: 'Spiritual', therapeutisch: 'Therapeutic', oekonomisch: 'Simple', kindgerecht: "Child's lang." },
+    stilLabels: { alltag: 'Everyday', philosophisch: 'Philosophical', akademisch: 'Spiritual', therapeutisch: 'Therapeutic', oekonomisch: 'Simple', kindgerecht: "Child's lang.", jugend: 'Youth' },
     modePersp: 'Perspective Talk',
     modeKlaerung: 'Clarification Talk',
     modeFreier: 'Open Table',
