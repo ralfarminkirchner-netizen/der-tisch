@@ -1502,6 +1502,135 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   to { opacity: 1; transform: translateY(0); }
 }
 
+
+/* ─── Global Options (Sprache + Stil) collapsed panel ─────────────────── */
+.it-global-options-wrap {
+  max-width: 680px;
+  margin: 0 auto var(--space-4);
+  text-align: left;
+}
+.it-global-options-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-offset);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+}
+.it-global-options-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+.it-global-options-btn[aria-expanded="true"] {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+.it-global-options-panel {
+  margin-top: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.it-options-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.it-options-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.it-lang-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+
+/* ─── Free Perspective Input (iNTEGRATiONS TiSCH) ─────────────────────── */
+.it-free-persp-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+.it-free-persp-input-wrap {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.it-free-persp-input {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--duration) var(--ease-out);
+}
+.it-free-persp-input:focus {
+  border-color: var(--color-accent);
+}
+.it-free-persp-input::placeholder {
+  color: var(--color-text-faint);
+  font-style: italic;
+}
+.it-free-persp-add-btn {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-accent);
+  color: #000;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--duration) var(--ease-out);
+  flex-shrink: 0;
+}
+.it-free-persp-add-btn:hover { opacity: 0.85; }
+.it-free-persp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-height: 0;
+}
+.it-free-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-accent-dim);
+  border: 1px solid rgba(200,153,58,0.25);
+  border-radius: 100px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-accent);
+}
+.it-free-tag-remove {
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--duration) var(--ease-out);
+  line-height: 1;
+  font-size: 12px;
+}
+.it-free-tag-remove:hover { color: var(--color-friction); }
+
 </style>
 </head>
 <body>
@@ -1542,23 +1671,36 @@ html[data-theme="light"][data-stil="therapeutisch"] {
       </h1>
       <p class="hero-subtitle" id="heroSubtitle">Verschiedene Stimmen. Eine ehrliche Karte — keine endgültige Antwort.</p>
 
-      <!-- PRE-SUBMIT CONTROLS -->
-      <div class="pre-controls">
-        <!-- Language selector -->
-        <div class="control-row">
-          <button class="lang-btn active" id="langBtnDe" onclick="setLang('de')" data-testid="lang-de">DE</button>
-          <button class="lang-btn" id="langBtnEn" onclick="setLang('en')" data-testid="lang-en">EN</button>
-        </div>
-
-        <!-- Style selector -->
-        <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
-          <button class="stil-btn stil-active" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
-          <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philosophisch</button>
-          <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
-          <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch">Akademisch</button>
-          <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindersprache">Kindersprache</button>
-          <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend">Jugend</button>
-          <button class="stil-btn" data-stil="achtsam" onclick="setStil(this)" data-testid="stil-achtsam">Achtsam</button>
+      <!-- GLOBAL OPTIONEN (Sprache + Stil — collapsed by default) -->
+      <div class="it-global-options-wrap">
+        <button class="it-global-options-btn" id="itGlobalOptionsBtn" aria-expanded="false" onclick="toggleITGlobalOptions()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span id="itGlobalOptionsBtnLabel">Sprache &amp; Stil</span>
+        </button>
+        <div class="it-global-options-panel" id="itGlobalOptionsPanel" hidden>
+          <!-- Sprache -->
+          <div class="it-options-row">
+            <span class="it-options-label">Sprache</span>
+            <div class="it-lang-row">
+              <button class="lang-btn active" id="langBtnDe" onclick="setLang('de')" data-testid="lang-de">DE</button>
+              <button class="lang-btn" id="langBtnEn" onclick="setLang('en')" data-testid="lang-en">EN</button>
+            </div>
+          </div>
+          <!-- Stil -->
+          <div class="it-options-row">
+            <span class="it-options-label">Stil</span>
+            <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
+              <button class="stil-btn stil-active" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
+              <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philosophisch</button>
+              <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
+              <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch">Akademisch</button>
+              <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindersprache">Kindersprache</button>
+              <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend">Jugend</button>
+              <button class="stil-btn" data-stil="achtsam" onclick="setStil(this)" data-testid="stil-achtsam">Achtsam</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1610,6 +1752,20 @@ html[data-theme="light"][data-stil="therapeutisch"] {
               </button>
               <span class="kind-persp-active-label hidden" id="kindPerspActiveLabel"></span>
             </div>
+          </div>
+
+          <!-- Freie Perspektive hinzufügen -->
+          <div class="it-free-persp-row">
+            <span class="it-options-label">Perspektive hinzufügen</span>
+            <div class="it-free-persp-input-wrap">
+              <input type="text" class="it-free-persp-input" id="itFreePerspInput"
+                placeholder="z. B. Kind · Partner · Therapeut · Astronaut · Mutter"
+                autocomplete="off" maxlength="60">
+              <button type="button" class="it-free-persp-add-btn" onclick="addITFreePersp()" title="Hinzufügen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+            </div>
+            <div class="it-free-persp-tags" id="itFreePerspTags"></div>
           </div>
         </div>
 
@@ -3403,7 +3559,11 @@ async function submitQuestion() {
     };
   });
   // Merge mode-specific perspectives with standard custom perspectives
-  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives);
+  // Add free-text perspectives from input panel
+  var itFreeAsCustom = (_itFreePersps || []).map(function(p) {
+    return { type: 'frei', rolle: p.name, profil: '', farbe: p.color };
+  });
+  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives).concat(itFreeAsCustom);
 
   var body = { question: question, lang: currentLang, stil: currentStil };
   body.sprachstufe = currentSprachstufe;
@@ -4125,7 +4285,8 @@ function printSelection() {
     'p,li{margin:0 0 8px;} ul{padding-left:18px;} .q{font-size:12px;color:#888;margin-bottom:6px;}' +
     '.card{border:1px solid #ddd;border-radius:6px;padding:14px;margin-bottom:12px;}' +
     '.role{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px;}' +
-    '.einfach{background:#f0f8f2;border-left:3px solid #3d8a50;padding:14px;border-radius:6px;font-style:italic;}</style></head><body>' +
+    '.einfach{background:#f0f8f2;border-left:3px solid #3d8a50;padding:14px;border-radius:6px;font-style:italic;}' +
+    '</style></head><body>' +
     '<h1>iNTEGRATiONS TiSCH</h1><p class="q">' + (de ? 'Frage' : 'Question') + ': ' + (question || '') + '</p><hr>';
 
   var perspCards = document.querySelectorAll('.block-selectable[data-block-type="perspective"]');
@@ -4365,6 +4526,68 @@ async function exportToPDF() {
 }
 
 /* ── iT Settings Toggle ────────────────────────── */
+// ─── Free Perspective Input ────────────────────────────────────────────────
+var _itFreePersps = [];
+var _itFreePerspColors = ['#8e6fc4','#5b9e8a','#d2823c','#5b8ec4','#c46a6a','#6a8a6a'];
+var _itFreePerspColorIdx = 0;
+
+function addITFreePersp() {
+  var input = document.getElementById('itFreePerspInput');
+  var tags = document.getElementById('itFreePerspTags');
+  if (!input || !tags) return;
+  var val = input.value.trim();
+  if (!val) return;
+  // Avoid exact duplicates
+  if (_itFreePersps.find(function(p) { return p.name.toLowerCase() === val.toLowerCase(); })) {
+    input.value = '';
+    return;
+  }
+  var color = _itFreePerspColors[_itFreePerspColorIdx % _itFreePerspColors.length];
+  _itFreePerspColorIdx++;
+  var id = 'itfp_' + Date.now();
+  _itFreePersps.push({ id: id, name: val, color: color });
+
+  var tag = document.createElement('span');
+  tag.className = 'it-free-tag';
+  tag.dataset.fpId = id;
+  tag.style.borderColor = color.replace(')', ',0.35)').replace('rgb', 'rgba');
+  tag.style.background = color.replace(')', ',0.12)').replace('rgb', 'rgba');
+  tag.style.color = color;
+  tag.innerHTML = val + ' <span class="it-free-tag-remove" onclick="removeITFreePersp(\''+id+'\')" title="Entfernen">×</span>';
+  tags.appendChild(tag);
+  input.value = '';
+}
+
+function removeITFreePersp(id) {
+  _itFreePersps = _itFreePersps.filter(function(p) { return p.id !== id; });
+  var tag = document.querySelector('.it-free-tag[data-fp-id="' + id + '"]');
+  if (tag) tag.remove();
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'itFreePerspInput') {
+    e.preventDefault();
+    addITFreePersp();
+  }
+});
+
+function toggleITGlobalOptions() {
+  var panel = document.getElementById('itGlobalOptionsPanel');
+  var btn = document.getElementById('itGlobalOptionsBtn');
+  var label = document.getElementById('itGlobalOptionsBtnLabel');
+  if (!panel) return;
+  var isOpen = panel.hasAttribute('hidden');
+  if (isOpen) {
+    panel.removeAttribute('hidden');
+    btn.setAttribute('aria-expanded', 'true');
+    if (label) label.textContent = label.textContent; // keep label
+  } else {
+    panel.setAttribute('hidden', '');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+}
+
 function toggleITSettings(mode) {
   var panelIds = { klaerung: 'itSettingsKlaerung', perspektive: 'itSettingsPerspektive', freier: 'itSettingsFreier' };
   var panel = document.getElementById(panelIds[mode]);

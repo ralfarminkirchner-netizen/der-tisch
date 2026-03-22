@@ -2172,6 +2172,43 @@ html[data-stil] body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+
+/* ─── Settings Panel: Sprache + Stil Labels ─────────────────────────────── */
+.settings-section-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+.settings-lang-row {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+.lang-toggle-inline {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+}
+.lang-toggle-inline.lang-active {
+  background: var(--color-accent);
+  color: #000;
+  border-color: var(--color-accent);
+  font-weight: 600;
+}
+.lang-toggle-inline:hover:not(.lang-active) {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
 </style>
 </head>
 <body>
@@ -2292,8 +2329,17 @@ html[data-stil] body {
           <span id="settingsToggleLabel">Einstellungen</span>
         </button>
         <div class="settings-panel" id="settingsPanel" hidden>
-          <!-- Sprachstil Toggle (settings panel) -->
+          <!-- Sprache -->
+          <div style="margin-bottom:var(--space-3);">
+            <span class="settings-section-label">Sprache</span>
+            <div class="settings-lang-row">
+              <button class="lang-toggle-inline lang-active" id="settingsLangDe" onclick="setLang('de')">DE</button>
+              <button class="lang-toggle-inline" id="settingsLangEn" onclick="setLang('en')">EN</button>
+            </div>
+          </div>
+          <!-- Sprachstil -->
           <div style="margin-bottom:var(--space-4);">
+            <span class="settings-section-label">Stil</span>
             <div class="stil-toggle-group" id="stilToggleGroupPanel" aria-label="Sprachstil wählen">
               <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business-p">Business</button>
               <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag-p">Alltag</button>
@@ -3022,9 +3068,9 @@ const TRANSLATIONS = {
     modeTable: 'Eigener Tisch',
     perspCardLabel: 'Perspektive',
     perspNameLabel: 'Name / Rolle (optional)',
-    perspNamePlaceholder: 'z.B. Mein Chef, Der Teil von mir, der Sicherheit will',
+    perspNamePlaceholder: 'z. B. Kunde · Konkurrenz · Investor · Astronaut · Regulator',
     perspPosLabel: 'Position / Haltung \u2014 Was wird vertreten?',
-    perspPosPlaceholder: 'Was sagt, denkt oder will diese Perspektive?',
+    perspPosPlaceholder: 'Standpunkt, Interesse oder Mandat dieser Perspektive (optional)',
     addPerspLabel: 'Perspektive hinzuf\u00fcgen',
     perspMaxLabel: 'Maximum 4 Perspektiven',
     methodsLabelText: 'Methoden-Agenten dazuklicken (optional)',
@@ -3130,7 +3176,7 @@ const TRANSLATIONS = {
     modeTable: 'Your Table',
     perspCardLabel: 'Perspective',
     perspNameLabel: 'Name / Role (optional)',
-    perspNamePlaceholder: 'e.g. My boss, The part of me that wants security',
+    perspNamePlaceholder: 'e.g. Customer · Competitor · Investor · Astronaut · Regulator',
     perspPosLabel: 'Position / Stance \u2014 What is being argued?',
     perspPosPlaceholder: 'What does this perspective say, think, or want?',
     addPerspLabel: 'Add perspective',
@@ -3261,6 +3307,12 @@ function applyTranslation(lang) {
   });
 
   currentLang = lang;
+
+  // Sync settings panel lang buttons
+  const sLangDe = document.getElementById('settingsLangDe');
+  const sLangEn = document.getElementById('settingsLangEn');
+  if (sLangDe) sLangDe.classList.toggle('lang-active', lang === 'de');
+  if (sLangEn) sLangEn.classList.toggle('lang-active', lang === 'en');
 
   // V5.0: update mode toggle buttons
   const modeSingleBtn = document.getElementById('modeSingle');
