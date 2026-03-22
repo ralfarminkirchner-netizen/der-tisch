@@ -19,6 +19,13 @@
 <link rel="author" href="https://www.perplexity.ai/computer">
 
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest-team-tisch.json">
+<meta name="theme-color" content="#3A6F73">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TEAM TiSCH">
+<meta name="application-name" content="TEAM TiSCH">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEAM TiSCH — Perspektivenraum</title>
 <meta name="description" content="Ein orchestrierter Raum methodischer Perspektiven, Reibung und Integration. Keine absolute Wahrheit — nur ehrliche Analyse.">
@@ -3731,6 +3738,14 @@ function printSelection() {
     <button id="ttsClose" onclick="ttsStop(true)" aria-label="Schließen">×</button>
   </div>
 
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
 </body></html>`;
   win.document.write(html);
   win.document.close();
@@ -5588,5 +5603,13 @@ async function exportToPDF() {
     <button id="ttsClose" onclick="ttsStop(true)" aria-label="Schließen">×</button>
   </div>
 
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>

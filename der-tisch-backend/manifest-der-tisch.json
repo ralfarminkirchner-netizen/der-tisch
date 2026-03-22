@@ -1,0 +1,17 @@
+{
+  "name": "DER TiSCH",
+  "short_name": "DER TiSCH",
+  "description": "Mehrere Stimmen. Ein Tisch. KI-Multiperspektive für jede Frage.",
+  "start_url": "/der-tisch.html",
+  "display": "standalone",
+  "background_color": "#FAFAF8",
+  "theme_color": "#E8614A",
+  "orientation": "portrait",
+  "lang": "de",
+  "icons": [
+    { "src": "/icons/der-tisch-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/der-tisch-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["productivity", "education", "utilities"],
+  "screenshots": []
+}

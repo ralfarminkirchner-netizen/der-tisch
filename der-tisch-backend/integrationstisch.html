@@ -19,6 +19,13 @@
 <link rel="author" href="https://www.perplexity.ai/computer">
 
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest-integrations-tisch.json">
+<meta name="theme-color" content="#3A6F73">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="iNTEGRATiONS TiSCH">
+<meta name="application-name" content="iNTEGRATiONS TiSCH">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iNTEGRATiONS TiSCH — Epistemischer Perspektivenraum</title>
 <meta name="description" content="iNTEGRATiONS TiSCH — Verschiedene Stimmen. Eine ehrliche Karte — keine endgültige Antwort.">
@@ -4152,7 +4159,15 @@ function printSelection() {
     html += '<h2>' + (de ? s.titleDe : s.titleEn) + '</h2>' + clone.innerHTML;
   });
 
-  html += '</body></html>';
+  html += '
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+</body></html>';
   win.document.write(html);
   win.document.close();
   win.focus();
@@ -4369,5 +4384,13 @@ function toggleITSettings(mode) {
 }
 </script>
 
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>

@@ -29,6 +29,32 @@ async def serve_integrationstisch():
 async def serve_der_tisch():
     return FileResponse(Path(__file__).parent / "der-tisch.html")
 
+# PWA Manifests
+@app.get("/manifest-team-tisch.json")
+async def serve_manifest_team():
+    return FileResponse(Path(__file__).parent / "manifest-team-tisch.json", media_type="application/manifest+json")
+
+@app.get("/manifest-integrations-tisch.json")
+async def serve_manifest_integrations():
+    return FileResponse(Path(__file__).parent / "manifest-integrations-tisch.json", media_type="application/manifest+json")
+
+@app.get("/manifest-der-tisch.json")
+async def serve_manifest_der_tisch():
+    return FileResponse(Path(__file__).parent / "manifest-der-tisch.json", media_type="application/manifest+json")
+
+# Service Worker
+@app.get("/sw.js")
+async def serve_sw():
+    return FileResponse(Path(__file__).parent / "sw.js", media_type="application/javascript")
+
+# Icons
+@app.get("/icons/{filename}")
+async def serve_icon(filename: str):
+    icon_path = Path(__file__).parent / "icons" / filename
+    if not icon_path.exists() or not icon_path.suffix == ".png":
+        raise HTTPException(status_code=404)
+    return FileResponse(icon_path, media_type="image/png")
+
 # ==========================================
 # SPRACHSTIL INSTRUCTIONS
 # ==========================================

@@ -19,6 +19,13 @@
 <link rel="author" href="https://www.perplexity.ai/computer">
 
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest-der-tisch.json">
+<meta name="theme-color" content="#E8614A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="DER TiSCH">
+<meta name="application-name" content="DER TiSCH">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DER TiSCH — Mehrere Stimmen. Ein Tisch.</title>
 <meta name="description" content="DER TiSCH: Stell eine Frage, und mehrere Perspektiven antworten. KI-gestützte Multiperspektiven-Analyse.">
@@ -1091,5 +1098,13 @@
 })();
 </script>
 
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>
