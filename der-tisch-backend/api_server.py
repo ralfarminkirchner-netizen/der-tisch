@@ -1076,6 +1076,95 @@ async def ask_the_table(req: QueryRequest):
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
 
 
+
+@app.post("/api/ask-simple", response_model=TableResponse)
+async def ask_simple(req: QueryRequest):
+    """DER TiSCH: KI wählt kontextbezogen genau 4 Perspektiven aus."""
+    if not req.question or len(req.question.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Question too short.")
+
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
+    stil = req.stil if req.stil in valid_stile else "alltag"
+    lang = req.lang
+    q = req.question.strip()
+
+    # Step 1: Ask KI to pick 4 contextually fitting roles
+    selector_prompt = (
+        "Du bist ein Perspektiven-Kurator. Deine Aufgabe: Wähle genau 4 Perspektiven "
+        "die für die folgende Frage am aufschlussreichsten sind. "
+        "Antworte NUR mit einer JSON-Liste von 4 Rollennamen, z.B.: "
+        "[\"Philosophisch\", \"Systemisch\", \"Empirisch-Rational\", \"Ethisch\"] "
+        "Wähle aus: Systemisch, Tiefenpsychologisch, Empirisch-Rational, Philosophisch, Ethisch, "
+        "Abwägung, Strategisch, Risiko, Pädagogisch, Therapeutisch, Achtsam, Familiär, "
+        "Biografisch, Partnerschaftlich, Kind. "
+        "Antworte NUR mit der JSON-Liste, kein Text davor oder danach."
+        if lang == "de" else
+        "You are a perspective curator. Pick exactly 4 perspectives most illuminating for the question. "
+        "Respond ONLY with a JSON list of 4 role names, e.g.: "
+        "[\"Philosophical\", \"Systemic\", \"Empirical-Rational\", \"Ethical\"] "
+        "Choose from: Systemic, Depth-psychological, Empirical-Rational, Philosophical, Ethical, "
+        "Weighing, Strategic, Risk, Pedagogical, Therapeutic, Mindful, Familial, "
+        "Biographical, Relational, Child. "
+        "Respond ONLY with the JSON list, no other text."
+    )
+
+    import json as _json
+    import re as _re
+
+    selected_roles = []
+    try:
+        sel_resp = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=80,
+            messages=[
+                {"role": "user", "content": f"{selector_prompt}\n\nFrage: {q}"}
+            ]
+        )
+        raw = sel_resp.content[0].text.strip()
+        # Extract JSON array
+        m = _re.search(r'\[.*?\]', raw, _re.DOTALL)
+        if m:
+            selected_roles = _json.loads(m.group(0))
+    except Exception:
+        pass
+
+    # Fallback: pick 4 balanced default roles
+    if not selected_roles or len(selected_roles) < 4:
+        selected_roles = (
+            ["Philosophisch", "Systemisch", "Empirisch-Rational", "Ethisch"]
+            if lang == "de" else
+            ["Philosophical", "Systemic", "Empirical-Rational", "Ethical"]
+        )
+
+    selected_roles = selected_roles[:4]
+
+    # Step 2: Build agents for selected roles
+    agents_pool = AGENTS_EN if lang == "en" else AGENTS_DE
+    selected_agents = {}
+    for role in selected_roles:
+        if role in agents_pool:
+            selected_agents[role] = agents_pool[role]
+
+    # If any role not in pool, use first available not already selected
+    while len(selected_agents) < 4:
+        for role, prompt in agents_pool.items():
+            if role not in selected_agents:
+                selected_agents[role] = prompt
+                break
+        else:
+            break
+
+    try:
+        tasks = [fetch_perspective(role, prompt, q, stil, lang) for role, prompt in selected_agents.items()]
+        perspectives = list(await asyncio.gather(*tasks))
+        friction = await fetch_friction(perspectives, q, lang, stil)
+        integration = await fetch_integration(perspectives, friction, q, lang, stil)
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
+
 def build_custom_agent_prompt(cp: CustomPerspective, lang: str) -> str:
     """Baut einen vollständigen System-Prompt für eine benutzerdefinierte Perspektive.
     Wertet das gesamte Profil aus (name, position, profil, grundhaltung,

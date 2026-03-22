@@ -3133,15 +3133,33 @@ function renderTableSeats(perspectives) {
     // Role label below seat
     var labelText = document.createElementNS(svgNS, 'text');
     labelText.setAttribute('x', cx);
-    labelText.setAttribute('y', cy + 48);
+    labelText.setAttribute('y', cy + 50);
     labelText.setAttribute('text-anchor', 'middle');
     labelText.setAttribute('font-size', '12');
-    labelText.setAttribute('fill', 'currentColor');
+    labelText.setAttribute('font-weight', '600');
+    labelText.setAttribute('fill', color);
     labelText.setAttribute('pointer-events', 'none');
     labelText.setAttribute('font-family', "'Switzer','Helvetica Neue',sans-serif");
-    var abbrev = rolle.length > 10 ? rolle.slice(0, 10) + '\u2026' : rolle;
+    var abbrev = rolle.length > 12 ? rolle.slice(0, 12) + '\u2026' : rolle;
     labelText.textContent = abbrev;
     g.appendChild(labelText);
+
+    // Thesis snippet below role label (first 40 chars of kernanalyse)
+    var thesis = (p.kernanalyse || '').replace(/\s+/g, ' ').trim();
+    if (thesis.length > 0) {
+      var snippetText = document.createElementNS(svgNS, 'text');
+      snippetText.setAttribute('x', cx);
+      snippetText.setAttribute('y', cy + 64);
+      snippetText.setAttribute('text-anchor', 'middle');
+      snippetText.setAttribute('font-size', '9');
+      snippetText.setAttribute('fill', 'currentColor');
+      snippetText.setAttribute('opacity', '0.55');
+      snippetText.setAttribute('pointer-events', 'none');
+      snippetText.setAttribute('font-family', "'Switzer','Helvetica Neue',sans-serif");
+      var snippetStr = thesis.length > 40 ? thesis.slice(0, 40) + '\u2026' : thesis;
+      snippetText.textContent = snippetStr;
+      g.appendChild(snippetText);
+    }
 
     // Click handler
     (function(r) {

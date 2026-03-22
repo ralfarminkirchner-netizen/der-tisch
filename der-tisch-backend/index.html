@@ -1804,11 +1804,11 @@ html[data-stil] body {
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 7px 10px;
+  padding: 8px 11px;
   font-size: 11px;
-  line-height: 1.45;
-  max-width: 120px;
-  min-width: 85px;
+  line-height: 1.5;
+  max-width: 130px;
+  min-width: 90px;
   text-align: center;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s var(--ease-out);
@@ -1829,13 +1829,14 @@ html[data-stil] body {
   margin-bottom: 3px;
 }
 .rt-card-snippet {
-  color: var(--color-text-muted);
+  color: var(--color-text);
   font-size: 10px;
-  line-height: 1.4;
+  line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  opacity: 0.85;
 }
 
 /* Lines from chair to card (connector) */
@@ -2861,6 +2862,14 @@ html[data-stil] body {
         <button class="sel-btn sel-btn-ghost" id="exportPrintBtn" onclick="printSelection()" disabled>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           <span id="exportPrintLabel">Auswahl drucken</span>
+        </button>
+        <button class="sel-btn sel-btn-ghost" id="exportTxtBtn" onclick="exportToTxtTeam()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>TXT</span>
+        </button>
+        <button class="sel-btn sel-btn-ghost" id="exportMdBtn" onclick="exportToMdTeam()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+          <span>MD</span>
         </button>
       </div>
     </div>
@@ -4031,6 +4040,12 @@ function renderResults(data) {
     document.getElementById('synthesisBottom').classList.remove('hidden');
   }
 
+  // 7c. Enable TXT/MD export
+  const txtBtnTeam = document.getElementById('exportTxtBtn');
+  const mdBtnTeam  = document.getElementById('exportMdBtn');
+  if (txtBtnTeam) txtBtnTeam.disabled = false;
+  if (mdBtnTeam)  mdBtnTeam.disabled  = false;
+
   // 8. Vier Grundperspektiven — immer anzeigen wenn vorhanden
   const herz     = data.integration.herzmensch;
   const kopf     = data.integration.kopfmensch;
@@ -4962,6 +4977,69 @@ function getMethodIcon(role) {
   return icons[clean] || null;
 }
 
+// ─── Block I: TXT + MD export for TEAM TiSCH ───────────────────────────────
+function exportToTxtTeam() {
+  if (!window._tischCurrentData) return;
+  var d = window._tischCurrentData.data;
+  var q = window._tischCurrentData.question || '';
+  var lines = [];
+  lines.push('TEAM TiSCH — Analyse');
+  lines.push('Frage: ' + q);
+  lines.push('');
+  (d.perspectives || []).forEach(function(p) {
+    var role = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
+    lines.push('=== ' + role.toUpperCase() + ' ===');
+    lines.push(p.kernanalyse || '');
+    if (p.evidenz) lines.push('Evidenz: ' + p.evidenz);
+    if (p.blinder_fleck) lines.push('Blinder Fleck: ' + p.blinder_fleck);
+    lines.push('');
+  });
+  if (d.integration) {
+    lines.push('=== KARTIERUNG ===');
+    if (d.integration.anspruchskarte) lines.push(d.integration.anspruchskarte);
+    if (d.integration.einfach_gesagt) { lines.push(''); lines.push('Einfach gesagt: ' + d.integration.einfach_gesagt); }
+  }
+  var blob = new Blob([lines.join('\n')], {type: 'text/plain;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'team-tisch-analyse.txt'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportToMdTeam() {
+  if (!window._tischCurrentData) return;
+  var d = window._tischCurrentData.data;
+  var q = window._tischCurrentData.question || '';
+  var lines = [];
+  lines.push('# TEAM TiSCH — Analyse');
+  lines.push('');
+  lines.push('**Frage:** ' + q);
+  lines.push('');
+  lines.push('## Perspektiven');
+  lines.push('');
+  (d.perspectives || []).forEach(function(p) {
+    var role = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
+    lines.push('### ' + role);
+    lines.push('');
+    lines.push(p.kernanalyse || '');
+    if (p.evidenz) { lines.push(''); lines.push('**Evidenz:** ' + p.evidenz); }
+    if (p.blinder_fleck) { lines.push(''); lines.push('**Blinder Fleck:** ' + p.blinder_fleck); }
+    lines.push('');
+  });
+  if (d.integration) {
+    lines.push('## Kartierung');
+    lines.push('');
+    if (d.integration.anspruchskarte) lines.push(d.integration.anspruchskarte);
+    lines.push('');
+    if (d.integration.einfach_gesagt) { lines.push('### Einfach gesagt'); lines.push(''); lines.push(d.integration.einfach_gesagt); }
+  }
+  var blob = new Blob([lines.join('\n')], {type: 'text/markdown;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'team-tisch-analyse.md'; a.click();
+  URL.revokeObjectURL(url);
+}
+
 function renderRoundTable(perspectives) {
   const section = document.getElementById('roundTableSection');
   const canvas  = document.getElementById('roundTableCanvas');
@@ -4994,7 +5072,14 @@ function renderRoundTable(perspectives) {
     // Snippet: first ~60 chars of kernanalyse
     // Use einfach_gesagt as table card text (concise summary on the table surface)
   const tableText = p.einfach_gesagt || p.kernanalyse || '';
-  const snippet = tableText.slice(0, 80).trim() + (tableText.length > 80 ? '…' : '');
+  // Extract first sentence or first 90 chars as thesis card text
+  const firstSentEnd = Math.min(
+    tableText.indexOf('.') > 10 ? tableText.indexOf('.') + 1 : 999,
+    tableText.indexOf('!') > 10 ? tableText.indexOf('!') + 1 : 999,
+    tableText.indexOf('?') > 10 ? tableText.indexOf('?') + 1 : 999,
+    90
+  );
+  const snippet = tableText.slice(0, Math.min(firstSentEnd, 90)).trim() + (tableText.length > 90 ? '…' : '');
 
     // Build icon HTML
     let iconHTML = svgIcon
@@ -5009,6 +5094,7 @@ function renderRoundTable(perspectives) {
       transform: translate(-50%, -50%);
       --chip-color: ${color};
       --chip-bg: ${colorBg};
+      gap: 8px;
     `;
     seat.setAttribute('title', displayRole);
     seat.setAttribute('role', 'button');
