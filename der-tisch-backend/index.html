@@ -2302,6 +2302,141 @@ html[data-stil] body {
   border-left: 2px solid var(--color-accent);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
+
+/* ─── Synthesis Area — Block H ─────────────────────────────────────────── */
+.synthesis-bottom {
+  margin-top: var(--space-10);
+  padding: var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  border-left: 3px solid var(--color-integration);
+}
+.synthesis-bottom-header { margin-bottom: var(--space-5); }
+.synthesis-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+.synthesis-sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.synthesis-text {
+  font-size: var(--text-base);
+  line-height: 1.85;
+  color: var(--color-text);
+}
+.concept-node {
+  cursor: pointer;
+  color: var(--color-integration);
+  border-bottom: 1px dotted var(--color-integration);
+  transition: color var(--duration) var(--ease-out), background var(--duration) var(--ease-out);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.concept-node:hover {
+  background: var(--color-integration-dim);
+}
+
+/* ─── Concept Detail Window ─────────────────────────────────────────────── */
+.concept-window {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: min(380px, 90vw);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5) var(--space-6);
+  z-index: 500;
+  animation: slide-up-in 0.22s var(--ease-out) both;
+}
+@keyframes slide-up-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.concept-window.hidden { display: none; }
+.concept-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.concept-window-term {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+  font-family: var(--font-display);
+}
+.concept-window-close {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background var(--duration) var(--ease-out);
+}
+.concept-window-close:hover { background: var(--color-surface-offset); }
+.concept-window-why {
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+.concept-persp-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  margin-bottom: 6px;
+}
+.concept-persp-chip {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: 100px;
+  border: 1px solid;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  margin: 2px;
+}
+.concept-window-deepen {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+.concept-deepen-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  margin-bottom: 6px;
+}
+.concept-deepen-btn {
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-offset);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  margin: 2px;
+  transition: all var(--duration) var(--ease-out);
+}
+.concept-deepen-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+.concept-window-deepened {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--color-text);
+  background: var(--color-surface-offset);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+}
 </style>
 </head>
 <body>
@@ -2932,7 +3067,16 @@ html[data-stil] body {
 
 
 
-    <!-- VIII. VIER GRUNDPERSPEKTIVEN -->
+    <!-- H. SYNTHESIS — Was der Tisch insgesamt zeigt -->
+    <section id="synthesisBottom" class="synthesis-bottom hidden section-selectable" data-block="synthesis">
+      <div class="synthesis-bottom-header">
+        <h2 class="synthesis-title" id="synthesisTitleEl">Was der Tisch insgesamt zeigt</h2>
+        <p class="synthesis-sub" id="synthesisSubEl">Zugängliche Zusammenfassung — Schlüsselbegriffe sind anklickbar</p>
+      </div>
+      <div class="synthesis-content" id="synthesisContent"></div>
+    </section>
+
+        <!-- VIII. VIER GRUNDPERSPEKTIVEN -->
     <section id="herzkopfSection" class="hidden section-selectable" data-block="herzkopf">
       <div class="section-header">
         <div class="section-badge" style="background:linear-gradient(135deg,rgba(220,80,100,0.25),rgba(80,140,220,0.25),rgba(100,180,100,0.25),rgba(200,150,60,0.25));color:var(--color-text);">VIII</div>
@@ -2982,6 +3126,24 @@ html[data-stil] body {
   </div><!-- /results -->
 
 </main>
+
+<!-- Concept Detail Window (Block H) -->
+<div class="concept-window hidden" id="conceptWindowTeam">
+  <div class="concept-window-header">
+    <span class="concept-window-term" id="conceptWindowTermTeam"></span>
+    <button class="concept-window-close" onclick="closeConceptWindowTeam()">✕</button>
+  </div>
+  <div class="concept-window-why" id="conceptWindowWhyTeam"></div>
+  <div id="conceptWindowPerspectsTeam"></div>
+  <div class="concept-window-deepen">
+    <div class="concept-deepen-label">Vertiefen:</div>
+    <button class="concept-deepen-btn" onclick="deepenConceptTeam('oekonomisch')">Business</button>
+    <button class="concept-deepen-btn" onclick="deepenConceptTeam('philosophisch')">Philosophisch</button>
+    <button class="concept-deepen-btn" onclick="deepenConceptTeam('therapeutisch')">Therapeutisch</button>
+    <button class="concept-deepen-btn" onclick="deepenConceptTeam('akademisch')">Akademisch</button>
+  </div>
+  <div class="concept-window-deepened hidden" id="conceptWindowDeepenedTeam"></div>
+</div>
 
 <!-- FOOTER -->
 <footer class="site-footer">
@@ -3094,6 +3256,95 @@ function onPerspNeuroChange(sel, perspIdx) {
 
 function toggleNeuroChip(chip) {
   chip.classList.toggle('active');
+}
+
+// ─── Block H: Synthesis + Concept Nodes ────────────────────────────────────
+const CONCEPT_PATTERNS_TEAM_DE = [
+  /\b(Strategie|Markt|Wettbewerb|Positionierung|Differenzierung|Skalierung)\b/g,
+  /\b(Führung|Entscheidung|Verantwortung|Mandat|Delegation|Autorität)\b/g,
+  /\b(Risiko|Chance|Investition|Rendite|Effizienz|Wachstum|Verlust)\b/g,
+  /\b(Kommunikation|Vertrauen|Konflikt|Kooperation|Stakeholder|Konsens)\b/g,
+  /\b(Innovation|Disruption|Transformation|Wandel|Komplexität|Unsicherheit)\b/g,
+  /\b(Wert|Kultur|Norm|Rolle|Struktur|Prozess|System|Dynamik)\b/g,
+];
+const CONCEPT_PATTERNS_TEAM_EN = [
+  /\b(Strategy|Market|Competition|Positioning|Differentiation|Scaling)\b/g,
+  /\b(Leadership|Decision|Responsibility|Mandate|Delegation|Authority)\b/g,
+  /\b(Risk|Opportunity|Investment|Return|Efficiency|Growth|Loss)\b/g,
+  /\b(Communication|Trust|Conflict|Cooperation|Stakeholder|Consensus)\b/g,
+  /\b(Innovation|Disruption|Transformation|Change|Complexity|Uncertainty)\b/g,
+  /\b(Value|Culture|Norm|Role|Structure|Process|System|Dynamics)\b/g,
+];
+
+function escapeRegexTeam(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function renderSynthesisWithNodesTeam(text, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container || !text) return;
+  const patterns = currentLang === 'en' ? CONCEPT_PATTERNS_TEAM_EN : CONCEPT_PATTERNS_TEAM_DE;
+  const found = new Set();
+  patterns.forEach(p => {
+    const re = new RegExp(p.source, 'gi');
+    let m;
+    while ((m = re.exec(text)) !== null) found.add(m[0]);
+  });
+  let html = escapeHtml(text);
+  found.forEach(word => {
+    const re = new RegExp('\\b' + escapeRegexTeam(word) + '\\b', 'g');
+    html = html.replace(re, `<span class="concept-node" onclick="openConceptWindowTeam('${escapeHtml(word).replace(/'/g, "\\'")}') " tabindex="0" role="button">${escapeHtml(word)}</span>`);
+  });
+  container.innerHTML = `<p class="synthesis-text">${html}</p>`;
+}
+
+let _currentConceptTermTeam = '';
+function openConceptWindowTeam(term) {
+  _currentConceptTermTeam = term;
+  document.getElementById('conceptWindowTermTeam').textContent = term;
+  const deepened = document.getElementById('conceptWindowDeepenedTeam');
+  if (deepened) deepened.classList.add('hidden');
+  const perspectives = window._currentData && window._currentData.perspectives || [];
+  const relevant = perspectives.filter(p =>
+    ((p.kernanalyse || '') + ' ' + (p.evidenz || '')).toLowerCase().includes(term.toLowerCase())
+  );
+  const why = currentLang === 'de'
+    ? `„${term}" ist ein zentraler Begriff in dieser Analyse — er verbindet mehrere Perspektiven und markiert ein relevantes Spannungsfeld.`
+    : `"${term}" is a key concept in this analysis — it connects multiple perspectives and marks a relevant field of tension.`;
+  document.getElementById('conceptWindowWhyTeam').textContent = why;
+  const perspectsEl = document.getElementById('conceptWindowPerspectsTeam');
+  if (perspectsEl) {
+    perspectsEl.innerHTML = relevant.length
+      ? `<div class="concept-persp-label">${currentLang==='de'?'Verbundene Perspektiven:':'Connected perspectives:'}</div>`
+        + relevant.map(p => {
+            const role = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
+            const color = getMethodColor(p.rolle);
+            return `<span class="concept-persp-chip" style="border-color:${color};color:${color}">${escapeHtml(role)}</span>`;
+          }).join('')
+      : '';
+  }
+  document.getElementById('conceptWindowTeam').classList.remove('hidden');
+}
+function closeConceptWindowTeam() {
+  document.getElementById('conceptWindowTeam').classList.add('hidden');
+}
+async function deepenConceptTeam(stil) {
+  const term = _currentConceptTermTeam;
+  if (!term) return;
+  const deepened = document.getElementById('conceptWindowDeepenedTeam');
+  if (!deepened) return;
+  deepened.textContent = currentLang === 'de' ? 'Einen Moment …' : 'One moment …';
+  deepened.classList.remove('hidden');
+  try {
+    const res = await fetch(`${API}/api/ask`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ question: term, lang: currentLang, stil: stil }),
+    });
+    const data = await res.json();
+    const text = (data.perspectives && data.perspectives[0] && data.perspectives[0].kernanalyse) || '';
+    deepened.textContent = text || (currentLang === 'de' ? 'Keine Antwort.' : 'No response.');
+  } catch(e) {
+    deepened.textContent = currentLang === 'de' ? 'Fehler beim Laden.' : 'Failed to load.';
+  }
 }
 
 // ─── Auto-grow textareas ────────────────────────────────────────────────
@@ -3769,6 +4020,15 @@ function renderResults(data) {
   if (data.integration.einfach_gesagt) {
     document.getElementById('einfachText').textContent = data.integration.einfach_gesagt;
     document.getElementById('einfachSection').classList.remove('hidden');
+  }
+
+  // 7b. Synthesis with concept nodes
+  const synthText = data.integration.einfach_gesagt || data.integration.anspruchskarte || '';
+  if (synthText) {
+    window._currentData = data;
+    document.getElementById('synthesisContent').innerHTML = '';
+    renderSynthesisWithNodesTeam(synthText, 'synthesisContent');
+    document.getElementById('synthesisBottom').classList.remove('hidden');
   }
 
   // 8. Vier Grundperspektiven — immer anzeigen wenn vorhanden

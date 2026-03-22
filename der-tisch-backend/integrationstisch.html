@@ -2121,7 +2121,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
     <section id="synthesisBottom" class="synthesis-bottom hidden">
       <div class="synthesis-bottom-header">
         <h2 class="synthesis-title" id="synthesisTitleEl">Was der Tisch insgesamt zeigt</h2>
-        <p class="synthesis-sub" id="synthesisSubEl">Zugängliche Zusammenfassung — keine endgültige Antwort</p>
+        <p class="synthesis-sub" id="synthesisSubEl">Zugängliche Zusammenfassung — Schlüsselbegriffe sind anklickbar</p>
       </div>
       <div class="synthesis-content" id="synthesisContent"></div>
     </section>
@@ -2234,9 +2234,10 @@ html[data-theme="light"][data-stil="therapeutisch"] {
   <div class="concept-window-perspectives" id="conceptWindowPerspectives"></div>
   <div class="concept-window-deepen" id="conceptWindowDeepen">
     <div class="concept-deepen-label">Vertiefen:</div>
-    <button class="concept-deepen-btn" onclick="deepenConcept('philosophisch')">Philosophisch</button>
     <button class="concept-deepen-btn" onclick="deepenConcept('therapeutisch')">Therapeutisch</button>
-    <button class="concept-deepen-btn" onclick="deepenConcept('spirituell')">Spirituell</button>
+    <button class="concept-deepen-btn" onclick="deepenConcept('philosophisch')">Philosophisch</button>
+    <button class="concept-deepen-btn" onclick="deepenConcept('achtsam')">Achtsam</button>
+    <button class="concept-deepen-btn" onclick="deepenConcept('akademisch')">Systemisch</button>
   </div>
   <div class="concept-window-deepened hidden" id="conceptWindowDeepenedText"></div>
 </div>
@@ -4098,16 +4099,18 @@ function saveKindPersp() {
 var CONCEPT_PATTERNS = [
   // Philosophical
   /\b(Freiheit|Autonomie|Determinismus|Existenz|Authentizität|Sinn|Absurdität|Identität)\b/g,
-  // Psychological
-  /\b(Trauma|Bindung|Projektion|Abwehr|Schema|Übertragung|Individuation|Unbewusstes)\b/g,
+  // Psychological / relational
+  /\b(Trauma|Bindung|Projektion|Abwehr|Schema|Übertragung|Individuation|Unbewusstes|Attachment|Regulation)\b/g,
   // Social/Systems
-  /\b(System|Struktur|Muster|Dynamik|Grenze|Rolle|Norm|Kontext)\b/g,
+  /\b(System|Struktur|Muster|Dynamik|Grenze|Rolle|Norm|Kontext|Beziehung|Interaktion)\b/g,
   // Values
-  /\b(Wert|Ethik|Moral|Gerechtigkeit|Würde|Verantwortung|Fürsorge|Integrität)\b/g,
+  /\b(Wert|Ethik|Moral|Gerechtigkeit|Würde|Verantwortung|Fürsorge|Integrität|Loyalität)\b/g,
   // Epistemic
-  /\b(Wahrheit|Erkenntnis|Perspektive|Wissen|Unsicherheit|Komplexität|Widerspruch)\b/g,
-  // Spiritual
-  /\b(Bewusstsein|Präsenz|Akzeptanz|Mitgefühl|Transformation|Heilung|Verbundenheit)\b/g,
+  /\b(Wahrheit|Erkenntnis|Perspektive|Wissen|Unsicherheit|Komplexität|Widerspruch|Ambiguität)\b/g,
+  // Mindful / healing
+  /\b(Bewusstsein|Präsenz|Akzeptanz|Mitgefühl|Transformation|Heilung|Verbundenheit|Resilienz|Vertrauen)\b/g,
+  // Biographical / developmental
+  /\b(Entwicklung|Biografie|Geschichte|Verlust|Trauer|Wachstum|Reife|Entscheidung|Veränderung)\b/g,
 ];
 
 var CONCEPT_PATTERNS_EN = [
