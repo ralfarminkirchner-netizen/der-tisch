@@ -241,8 +241,9 @@
     background: var(--surface);
     resize: none;
     outline: none;
-    min-height: 80px;
-    max-height: 200px;
+    min-height: 68px;
+    max-height: 260px;
+    overflow-y: auto;
     line-height: 1.6;
     box-shadow: var(--shadow-card);
     transition: border-color var(--transition), box-shadow var(--transition);
@@ -641,12 +642,22 @@
 
 <!-- ─── Navigation ──────────────────────────────────────────── -->
 <nav>
-  <div class="nav-logo" aria-label="DER TiSCH">
-    <span class="nav-logo-der">DER</span>
-    <span class="nav-logo-tisch">
-      <span class="nav-logo-T">T</span><span class="nav-logo-i">i</span><span class="nav-logo-sch">SCH</span>
-    </span>
-  </div>
+  <a class="nav-logo" aria-label="DER TiSCH" href="/" style="text-decoration:none;">
+    <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:40px;width:auto;" aria-label="DER TiSCH">
+      <!-- Table surface -->
+      <rect x="10" y="18" width="120" height="9" fill="#E8614A"/>
+      <!-- Left leg -->
+      <rect x="32" y="27" width="9" height="38" fill="#E8614A"/>
+      <!-- Right leg -->
+      <rect x="89" y="27" width="9" height="38" fill="#E8614A"/>
+      <!-- DER small -->
+      <text x="10" y="13" font-family="'Inter',sans-serif" font-size="9" font-weight="500" fill="#6B6B6B" letter-spacing="0.12em">DER</text>
+      <!-- EAM after left leg -->
+      <text x="44" y="56" font-family="'Inter',sans-serif" font-size="24" font-weight="300" fill="#1A1A1A" letter-spacing="-0.5">EAM</text>
+      <!-- iSCH after right leg -->
+      <text x="101" y="56" font-family="'Inter',sans-serif" font-size="24" font-weight="300" fill="#1A1A1A" letter-spacing="-0.5"><tspan fill="#E8614A">i</tspan>SCH</text>
+    </svg>
+  </a>
 
   <div class="lang-toggle" role="group" aria-label="Sprache wählen">
     <button class="lang-btn active" id="btn-de" onclick="setLang('de')" aria-pressed="true">DE</button>
@@ -769,6 +780,14 @@
     position: absolute; width: 1px; height: 1px;
     padding: 0; margin: -1px; overflow: hidden;
     clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+  }
+
+  @media print {
+    nav, .chip-row, .cta-btn, .export-btns, footer,
+    .hero-eyebrow, .hero-sub, .results-header { display: none !important; }
+    .perspective-card::before { display: none !important; }
+    .card-role-badge { background: transparent !important; border: 1px solid #ccc; }
+    .card-quote-mark { display: none !important; }
   }
 </style>
 
@@ -974,6 +993,45 @@
   };
 
   // ─── Render perspective cards ───────────────────────────────
+  
+  // ─── Connection lines between perspective cards ──────────────────────────
+  function drawDTConnections() {
+    var cards = document.querySelectorAll('#perspective-cards .perspective-card');
+    var svg = document.getElementById('dt-conn-svg');
+    if (!svg) {
+      svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('id','dt-conn-svg');
+      svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;pointer-events:none;overflow:visible;z-index:0;';
+      var connEl = document.getElementById('dt-connections');
+      if (connEl) connEl.appendChild(svg);
+    }
+    svg.innerHTML = '';
+    if (cards.length < 2) return;
+
+    var ACCENTS_CONN = ['#E8614A','#5B9E7A','#8B7EC8','#D4873A'];
+    var rects = Array.from(cards).map(function(card) {
+      var r = card.getBoundingClientRect();
+      var pr = card.parentElement.getBoundingClientRect();
+      return { x: r.left - pr.left + r.width/2, y: r.top - pr.top, h: r.height, card: card };
+    });
+
+    // Draw curved lines between adjacent cards (vertical list)
+    for (var i = 0; i < rects.length - 1; i++) {
+      var a = rects[i], b = rects[i+1];
+      var x1 = a.x - 20, y1 = a.y + a.h - 10;
+      var x2 = b.x - 20, y2 = b.y + 10;
+      var mx = x1, my = (y1 + y2) / 2;
+      var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d','M '+x1+' '+y1+' C '+mx+' '+(my-20)+' '+mx+' '+(my+20)+' '+x2+' '+y2);
+      path.setAttribute('stroke', ACCENTS_CONN[i % ACCENTS_CONN.length]);
+      path.setAttribute('stroke-width','2');
+      path.setAttribute('stroke-opacity','0.35');
+      path.setAttribute('stroke-dasharray','5 6');
+      path.setAttribute('fill','none');
+      svg.appendChild(path);
+    }
+  }
+
   function renderResults(data) {
     var container = document.getElementById('perspective-cards');
     container.innerHTML = '';
@@ -1006,6 +1064,16 @@
     }
 
     lastResults = perspectives;
+
+    // SVG connection lines container
+    var connCanvas = document.getElementById('dt-connections');
+    if (!connCanvas) {
+      connCanvas = document.createElement('div');
+      connCanvas.id = 'dt-connections';
+      connCanvas.style.cssText = 'position:relative;width:100%;height:0;overflow:visible;';
+      var cardsEl = document.getElementById('perspective-cards');
+      if (cardsEl && cardsEl.parentNode) cardsEl.parentNode.insertBefore(connCanvas, cardsEl.nextSibling);
+    }
 
     perspectives.forEach(function (p, idx) {
       var accent = ACCENTS[idx % ACCENTS.length];
@@ -1042,6 +1110,7 @@
 
     // Show export buttons
     document.getElementById('export-btns').style.display = 'flex';
+    setTimeout(drawDTConnections, 120);
   }
 
   // ─── Export: PDF ─────────────────────────────────────────────
@@ -1103,6 +1172,13 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
+    // Auto-grow textarea
+    var inp = document.getElementById('question-input');
+    if (inp && inp.tagName === 'TEXTAREA') {
+      function growDT() { inp.style.height='auto'; inp.style.height = Math.min(inp.scrollHeight, 260) + 'px'; }
+      inp.addEventListener('input', growDT);
+      growDT();
+    }
   });
 }
 </script>

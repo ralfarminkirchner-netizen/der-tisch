@@ -578,7 +578,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 
 .claim-type-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-amber); white-space: nowrap; flex-shrink: 0; }
 .claim-type-text { font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
-.perspective-analysis { font-size: var(--text-base); line-height: 1.85; color: var(--color-text); flex: 1; }
+.perspective-analysis { font-size: var(--text-base); line-height: 1.85; color: var(--color-text); flex: 1; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
 .perspective-meta { display: flex; flex-direction: column; gap: var(--space-3); }
 
 .meta-block { padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg); }
@@ -588,7 +588,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .meta-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2); }
 .meta-block.evidence .meta-label  { color: var(--color-text-faint); }
 .meta-block.blind-spot .meta-label { color: var(--color-friction); }
-.meta-text { font-size: var(--text-sm); line-height: 1.75; color: var(--color-text-muted); }
+.meta-text { font-size: var(--text-sm); line-height: 1.65; color: var(--color-text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .meta-block.blind-spot .meta-text { color: var(--color-text); opacity: 0.8; }
 
 /* Klärungsgespräch Parteien */
@@ -761,14 +761,14 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
    FAZIT, ENTSCHEIDUNGSHILFE, KURZFASSUNG
 ============================================= */
 .fazit-card {
-  background: var(--color-surface-raised, var(--color-surface));
-  border: 1px solid var(--color-divider);
-  border-left: 3px solid var(--color-accent);
+  background: var(--color-accent-dim);
+  border: 1px solid rgba(200,153,58,0.3);
+  border-left: 4px solid var(--color-accent);
   border-radius: var(--radius-xl);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8) var(--space-8);
 }
 
-.fazit-text { font-size: var(--text-base); line-height: 1.8; color: var(--color-text); font-style: italic; }
+.fazit-text { font-size: var(--text-lg); line-height: 1.7; color: var(--color-text); font-weight: 600; letter-spacing: -0.01em; }
 
 .entscheidung-list,
 .kurzfassung-list {
@@ -778,10 +778,12 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 
 .entscheidung-item {
   display: flex; gap: var(--space-3); align-items: baseline;
-  font-size: var(--text-sm); line-height: 1.65; color: var(--color-text);
-  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-base); line-height: 1.65; color: var(--color-text);
+  font-weight: 500;
+  padding: var(--space-4) var(--space-5);
   background: var(--color-surface-raised, var(--color-surface));
-  border: 1px solid var(--color-divider); border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  border-left: 3px solid var(--color-accent);
 }
 .entscheidung-arrow { font-weight: 700; color: var(--color-accent); flex-shrink: 0; font-size: var(--text-sm); }
 
@@ -2438,6 +2440,57 @@ html[data-stil] body {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
 }
+
+/* ─── Print: keine Icons, keine Symbole ────────────────────────────────── */
+@media print {
+  .role-icon, .rt-chair, .rt-card, .rt-table-circle, .rt-modal-overlay,
+  .settings-toggle-btn, .settings-panel, .selection-toolbar, .export-bar,
+  .add-persp-btn, .method-chip, .methods-section, .tts-bar,
+  #ttsBar, .hero, .mode-toggle-wrap, nav, header, footer,
+  .persp-gear-btn, .persp-options-panel, .concept-window {
+    display: none !important;
+  }
+  svg.hero-logo-svg { display: none !important; }
+  .perspective-analysis {
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  .meta-text {
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  .perspective-card { break-inside: avoid; border: 1px solid #ddd !important; box-shadow: none !important; }
+  .fazit-card, .synthesis-bottom { break-inside: avoid; }
+  .role-label::before { content: attr(data-role); }
+}
+
+/* ─── Result Summary Bar (Fazit oben) ──────────────────────────────────── */
+.result-summary-bar {
+  margin-bottom: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+  background: var(--color-accent-dim);
+  border: 1px solid rgba(200,153,58,0.3);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-xl);
+}
+.result-summary-bar.hidden { display: none; }
+.result-summary-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-3);
+}
+.result-summary-text {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
 </style>
 </head>
 <body>
@@ -2570,12 +2623,12 @@ html[data-stil] body {
           <div style="margin-bottom:var(--space-4);">
             <span class="settings-section-label">Stil</span>
             <div class="stil-toggle-group" id="stilToggleGroupPanel" aria-label="Sprachstil wählen">
-              <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business-p">Business</button>
+              <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business-p">Businesssprache</button>
               <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag-p">Alltag</button>
               <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch-p">Philosophisch</button>
               <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch-p">Akademisch</button>
               <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch-p">Therapeutisch</button>
-              <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend-p">Jugend</button>
+              <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend-p">Jugendsprache</button>
               <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht-p">Kindersprache</button>
             </div>
           </div>
@@ -2839,6 +2892,12 @@ html[data-stil] body {
         <span class="headline-date" id="headlineDate"></span>
       </div>
       <p class="headline-question-text" id="headlineQuestionText"></p>
+    </div>
+
+    <!-- RESULT SUMMARY BAR — Fazit prominent oben -->
+    <div class="result-summary-bar hidden" id="resultSummaryBar">
+      <div class="result-summary-label">Fazit</div>
+      <p class="result-summary-text" id="resultSummaryText"></p>
     </div>
 
     <!-- SELECTION TOOLBAR -->
@@ -3682,7 +3741,7 @@ function applyTranslation(lang) {
   document.getElementById('langEn').className = lang === 'en' ? 'lang-active' : '';
 
   // Update stil button labels
-  const stilMap = { oekonomisch: lang==='de'?'Business':'Business', alltag: lang==='de'?'Alltag':'Everyday', philosophisch: lang==='de'?'Philosophisch':'Philosophical', akademisch: lang==='de'?'Akademisch':'Academic', therapeutisch: lang==='de'?'Therapeutisch':'Therapeutic', jugend: lang==='de'?'Jugend':'Youth', kindgerecht: lang==='de'?'Kindersprache':'Child\'s lang.' };
+  const stilMap = { oekonomisch: lang==='de'?'Businesssprache':'Business', alltag: lang==='de'?'Alltag':'Everyday', philosophisch: lang==='de'?'Philosophisch':'Philosophical', akademisch: lang==='de'?'Akademisch':'Academic', therapeutisch: lang==='de'?'Therapeutisch':'Therapeutic', jugend: lang==='de'?'Jugendsprache':'Youth', kindgerecht: lang==='de'?'Kindersprache':'Child\'s lang.' };
   document.querySelectorAll('.stil-btn[data-stil]').forEach(b => {
     if (stilMap[b.dataset.stil]) b.textContent = stilMap[b.dataset.stil];
   });
@@ -3932,7 +3991,6 @@ function renderPerspectiveCard(p) {
           </div>
           <p class="persp-diagnostic-note">${currentLang==='de'?'Diese Angaben modifizieren die Perspektive kontextuell. Die App stellt keine Diagnosen — sie kann lediglich kompatible Muster benennen und zur fachlichen Abklärung empfehlen.':'These settings modify the perspective contextually. The app does not diagnose — it can only name compatible patterns and recommend professional evaluation.'}</p>
         </div>
-        ${p.anspruchstyp ? `<div class="claim-type-badge"><span class="claim-type-label">${t.claimTypeLabel}</span><span class="claim-type-text">${escapeHtml(p.anspruchstyp)}</span></div>` : ''}
         <p class="perspective-analysis">${escapeHtml(p.kernanalyse)}</p>
         <div class="perspective-meta">
           <div class="meta-block evidence">
@@ -4007,10 +4065,17 @@ function renderResults(data) {
   document.getElementById('practicalOptions').innerHTML = renderListItems(data.integration.praktische_optionen, 'action');
   document.getElementById('openPaths').innerHTML = renderListItems(data.integration.offene_pruefpfade, 'path');
 
-  // 4. Fazit
+  // 4. Fazit — show prominently
   if (data.integration.vorlaeufiges_fazit) {
     document.getElementById('vorlaeufiges_fazit').textContent = data.integration.vorlaeufiges_fazit;
     document.getElementById('fazitSection').classList.remove('hidden');
+    // Also show in the top summary bar
+    const summaryBar = document.getElementById('resultSummaryBar');
+    const summaryText = document.getElementById('resultSummaryText');
+    if (summaryBar && summaryText) {
+      summaryText.textContent = data.integration.vorlaeufiges_fazit;
+      summaryBar.classList.remove('hidden');
+    }
   }
 
   // 5. Entscheidungshilfe
@@ -4267,6 +4332,8 @@ async function submitQuestion() {
 
   document.getElementById('exampleQuestions').classList.add('hidden');
   document.getElementById('fazitSection').classList.add('hidden');
+  const sb = document.getElementById('resultSummaryBar');
+  if (sb) sb.classList.add('hidden');
   document.getElementById('entscheidungSection').classList.add('hidden');
   document.getElementById('kurzfassungSection').classList.add('hidden');
   document.getElementById('einfachSection').classList.add('hidden');
@@ -4620,19 +4687,21 @@ function getChipIcon(key) {
 }
 
 const METHOD_CHIPS_DE = [
-  { key: 'Systemisch'          },
-  { key: 'Tiefenpsychologisch' },
-  { key: 'Empirisch-Rational'  },
-  { key: 'Philosophisch'       },
-  { key: 'Ethisch'             },
-  { key: 'Abwägung'            },
-  { key: 'Strategisch'         },
+  { key: 'Strategie'           },
+  { key: 'Markt/Kunde'         },
+  { key: 'Wettbewerb'          },
+  { key: 'Finanzen/Investor'   },
+  { key: 'Führung/HR'          },
+  { key: 'Recht/Compliance'    },
   { key: 'Risiko'              },
+  { key: 'Innovation'          },
+  { key: 'Stakeholder'         },
+  { key: 'Mediation'           },
+  { key: 'Systemisch'          },
+  { key: 'Ethisch'             },
   { key: 'Marktstrategie'      },
   { key: 'Investor/Shareholder'},
   { key: 'Kunde/Markt'         },
-  { key: 'Pädagogisch'         },
-  { key: 'Neurodivergent'      },
   { key: 'Aus Kinderaugen'     },
 ];
 const METHOD_CHIPS_EN = [
