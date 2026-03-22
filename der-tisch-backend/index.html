@@ -390,6 +390,10 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   border-radius: var(--radius-xl);
   resize: none;
   line-height: 1.6;
+  min-height: 58px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: block;
 }
 
 .question-input::placeholder { color: var(--color-text-faint); }
@@ -2193,13 +2197,13 @@ html[data-stil] body {
     <div class="header-actions">
       <!-- Sprachstil Toggle (desktop) — moved to settings panel -->
       <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen" hidden>
-        <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philos.</button>
-        <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch">Akad.</button>
-        <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
-        <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-oekonomisch">Ökon.</button>
-        <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht">Kind</button>
-        <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therap.</button>
+        <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business">Business</button>
+        <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
+        <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philosophisch</button>
+        <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch">Akademisch</button>
+        <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
         <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend">Jugend</button>
+        <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht">Kindersprache</button>
       </div>
       <!-- Lang toggle -->
       <button class="lang-toggle" id="langToggle" aria-label="Switch language">
@@ -2219,13 +2223,13 @@ html[data-stil] body {
 
 <!-- Sprachstil Toggle (mobile) — moved to settings panel -->
 <div class="stil-indicator-mobile" id="stilMobile" hidden>
-  <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)">Philos.</button>
-  <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)">Akad.</button>
-  <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)">Alltag</button>
-  <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)">Ökon.</button>
-  <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)">Kind</button>
-  <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)">Therap.</button>
+  <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)">Business</button>
+  <button class="stil-btn" data-stil="alltag" onclick="setStil(this)">Alltag</button>
+  <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)">Philosophisch</button>
+  <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)">Akademisch</button>
+  <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)">Therapeutisch</button>
   <button class="stil-btn" data-stil="jugend" onclick="setStil(this)">Jugend</button>
+  <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)">Kindersprache</button>
 </div>
 
 <!-- MAIN -->
@@ -2262,20 +2266,20 @@ html[data-stil] body {
       <!-- EINZELFRAGE-FORM -->
       <form class="question-form" id="questionForm" onsubmit="return false;">
         <div class="question-input-wrapper">
-          <input
-            type="text"
+          <textarea
             class="question-input"
             id="questionInput"
+            rows="2"
             placeholder="Welche Frage legen wir auf den Tisch?"
             autocomplete="off"
             data-testid="input-question"
-          />
+          ></textarea>
           <button class="question-submit" id="submitBtn" type="submit" data-testid="button-submit">Untersuchen</button>
         </div>
         <div class="example-questions" id="exampleQuestions">
-          <button class="example-btn" data-testid="example-1" onclick="setExample(this)">Ich liebe meine Partnerin, aber unsere intellektuellen Welten haben sich komplett entfremdet. Ist das ein Trennungsgrund?</button>
-          <button class="example-btn" data-testid="example-2" onclick="setExample(this)">Soll ich den sicheren Job behalten, obwohl er mich innerlich abstumpft?</button>
-          <button class="example-btn" data-testid="example-3" onclick="setExample(this)">Warum kann ich mich nicht entscheiden, obwohl ich alle Fakten kenne?</button>
+          <button class="example-btn" data-testid="example-1" onclick="setExample(this)">Sollen wir in einen neuen Markt expandieren oder die bestehende Position stärken?</button>
+          <button class="example-btn" data-testid="example-2" onclick="setExample(this)">Unser Team ist gespalten: zwei Lager, keine Einigung. Wie weiter?</button>
+          <button class="example-btn" data-testid="example-3" onclick="setExample(this)">Lohnt sich die Investition wirklich — oder übersehen wir etwas Kritisches?</button>
         </div>
       </form>
 
@@ -2290,14 +2294,14 @@ html[data-stil] body {
         <div class="settings-panel" id="settingsPanel" hidden>
           <!-- Sprachstil Toggle (settings panel) -->
           <div style="margin-bottom:var(--space-4);">
-            <div class="stil-toggle-group" id="stilToggleGroupPanel" aria-label="Sprachstil w&#228;hlen">
-              <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch-p">Philos.</button>
-              <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch-p">Akad.</button>
-              <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag-p">Alltag</button>
-              <button class="stil-btn" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-oekonomisch-p">&#214;kon.</button>
-              <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht-p">Kind</button>
-              <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch-p">Therap.</button>
+            <div class="stil-toggle-group" id="stilToggleGroupPanel" aria-label="Sprachstil wählen">
+              <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business-p">Business</button>
+              <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag-p">Alltag</button>
+              <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch-p">Philosophisch</button>
+              <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch-p">Akademisch</button>
+              <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch-p">Therapeutisch</button>
               <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend-p">Jugend</button>
+              <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht-p">Kindersprache</button>
             </div>
           </div>
         </div>
@@ -2309,8 +2313,8 @@ html[data-stil] body {
         <!-- Frage -->
         <div class="question-form" style="margin-bottom:var(--space-6);">
           <div class="question-input-wrapper">
-            <input type="text" class="question-input" id="tableQuestionInput"
-              placeholder="Welche Frage liegt auf dem Tisch?" autocomplete="off" data-testid="input-table-question"/>
+            <textarea class="question-input" id="tableQuestionInput"
+              rows="2" placeholder="Welche Frage liegt auf dem Tisch?" autocomplete="off" data-testid="input-table-question"></textarea>
             <button class="question-submit" id="tableSubmitBtn" type="button"
               onclick="submitTable()" data-testid="button-table-submit">Untersuchen</button>
           </div>
@@ -2890,7 +2894,7 @@ const API = "";
 // =============================================
 // SPRACHSTIL
 // =============================================
-let currentStil = 'philosophisch';
+let currentStil = 'oekonomisch';
 
 const STIL_LABELS = {
   de: {
@@ -2924,6 +2928,18 @@ function setStil(btn) {
     b.classList.toggle('stil-active', b.dataset.stil === stil);
   });
 }
+
+// ─── Auto-grow textareas ────────────────────────────────────────────────
+function initAutoGrow(el) {
+  if (!el || el.tagName !== 'TEXTAREA') return;
+  function grow() {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+  }
+  el.addEventListener('input', grow);
+  grow();
+}
+
 
 // Init on load — set default stil theme
 document.documentElement.setAttribute('data-stil', 'alltag');
@@ -3239,7 +3255,7 @@ function applyTranslation(lang) {
   document.getElementById('langEn').className = lang === 'en' ? 'lang-active' : '';
 
   // Update stil button labels
-  const stilMap = { philosophisch: lang==='de'?'Philos.':'Philos.', akademisch: lang==='de'?'Akad.':'Acad.', alltag: lang==='de'?'Alltag':'Every.', oekonomisch: lang==='de'?'Ökon.':'Econ.', kindgerecht: lang==='de'?'Kind':'Child', therapeutisch: lang==='de'?'Therap.':'Therap.', jugend: lang==='de'?'Jugend':'Youth' };
+  const stilMap = { oekonomisch: lang==='de'?'Business':'Business', alltag: lang==='de'?'Alltag':'Everyday', philosophisch: lang==='de'?'Philosophisch':'Philosophical', akademisch: lang==='de'?'Akademisch':'Academic', therapeutisch: lang==='de'?'Therapeutisch':'Therapeutic', jugend: lang==='de'?'Jugend':'Youth', kindgerecht: lang==='de'?'Kindersprache':'Child\'s lang.' };
   document.querySelectorAll('.stil-btn[data-stil]').forEach(b => {
     if (stilMap[b.dataset.stil]) b.textContent = stilMap[b.dataset.stil];
   });
@@ -5600,6 +5616,8 @@ async function exportToPDF() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
+    initAutoGrow(document.getElementById('questionInput'));
+    initAutoGrow(document.getElementById('tableQuestionInput'));
   });
 }
 </script>

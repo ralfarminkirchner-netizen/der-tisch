@@ -150,6 +150,18 @@ STIL_INSTRUCTIONS = {
             "Complex ideas are still explained precisely, just not stiffly."
         ),
     },
+    "achtsam": {
+        "de": (
+            "SPRACHSTIL: Achtsam-präsenzorientiert. Langsam, ruhig, mit Raum für das Unausgesprochene. "
+            "Vermeide Bewertungen und Vorschnelligkeit. Lade ein, hinzuschauen — ohne zu drängen. "
+            "Sprache darf halten, was noch nicht in Worte gefasst ist."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Mindful-presence-oriented. Slow, calm, with space for the unspoken. "
+            "Avoid judgments and rushing. Invite looking closer — without pushing. "
+            "Language may hold what has not yet been put into words."
+        ),
+    },
 }
 
 # ==========================================
@@ -1048,7 +1060,7 @@ async def ask_the_table(req: QueryRequest):
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
@@ -1161,7 +1173,7 @@ async def ask_the_custom_table(req: TableRequest):
     if not req.custom_perspectives and not req.methods:
         raise HTTPException(status_code=400, detail="At least one perspective or method required.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     reibung = req.reibungsintensitaet if req.reibungsintensitaet in {"standard", "eskaliert", "maximal"} else "standard"
 
@@ -1237,7 +1249,7 @@ async def ask_clarify(req: ClarifyRequest):
     if not req.party_b.position.strip():
         raise HTTPException(status_code=400, detail="Party B position required.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
 
     # Parteien als CustomPerspective-Objekte aufbauen
