@@ -40,9 +40,9 @@
    BASE TOKENS
 ============================================= */
 :root {
-  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
-  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
-  --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --text-xs:   clamp(0.8125rem, 0.75rem + 0.25vw, 0.9375rem);
+  --text-sm:   clamp(0.9375rem, 0.875rem + 0.35vw, 1.0625rem);
+  --text-base: clamp(1.0625rem, 1rem    + 0.25vw, 1.1875rem);
   --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
   --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
   --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
@@ -1631,6 +1631,74 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 }
 .it-free-tag-remove:hover { color: var(--color-friction); }
 
+
+/* ─── Per-perspective gear icon (Block B) ─────────────────────────────── */
+.persp-gear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+  flex-shrink: 0;
+}
+.persp-gear-btn:hover {
+  background: var(--color-surface-offset);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+.persp-options-panel {
+  display: none;
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.persp-options-panel.open { display: flex; }
+.persp-options-row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.persp-options-label {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-text-muted);
+  min-width: 90px; flex-shrink: 0;
+}
+.persp-options-select {
+  flex: 1; min-width: 120px;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: var(--text-sm);
+  color: var(--color-text); outline: none; cursor: pointer;
+}
+.persp-options-select:focus { border-color: var(--color-accent); }
+.persp-neuro-detail { display: none; width: 100%; flex-wrap: wrap; gap: var(--space-2); }
+.persp-neuro-detail.visible { display: flex; }
+.persp-neuro-chip {
+  padding: 3px 10px; border-radius: 100px; font-size: var(--text-xs);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface); color: var(--color-text-muted);
+  cursor: pointer; transition: all var(--duration) var(--ease-out);
+}
+.persp-neuro-chip.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim); color: var(--color-accent);
+}
+.persp-diagnostic-note {
+  font-size: var(--text-xs); color: var(--color-text-muted);
+  font-style: italic; line-height: 1.5;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border-left: 2px solid var(--color-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
 </style>
 </head>
 <body>
@@ -2796,7 +2864,27 @@ function hexToRgba(hex, alpha) {
 
 function getMethodColor(role) {
   var clean = role.replace(/^\[(custom|method)\]/, '').trim();
-  return METHOD_CHIP_COLORS[clean] || '#c8993a';
+  var IT_COLORS = {
+    'Systemisch':'#5b9e8a','Systemic':'#5b9e8a',
+    'Tiefenpsychologisch':'#8e6fc4','Depth-psychological':'#8e6fc4',
+    'Empirisch-Rational':'#5b8ec4','Empirical-Rational':'#5b8ec4',
+    'Philosophisch':'#6a3db5','Philosophical':'#6a3db5',
+    'Ethisch':'#d97020','Ethical':'#d97020',
+    'Abwägung':'#c4a85b','Weighing':'#c4a85b',
+    'Strategisch':'#3a9e6a','Strategic':'#3a9e6a',
+    'Risiko':'#d42b2b','Risk':'#d42b2b',
+    'Pädagogisch':'#e87d3e','Pedagogical':'#e87d3e',
+    'Neurodivergent':'#d45aa0',
+    'Aus Kinderaugen':'#d4a800',"Child's Eyes":'#d4a800',
+    'Therapeutisch':'#5b9e8a','Therapeutic':'#5b9e8a',
+    'Achtsam':'#7ab5a0','Mindful':'#7ab5a0',
+    'Familiär':'#d4a800','Familial':'#d4a800',
+    'Biografisch':'#9b7fd4','Biographical':'#9b7fd4',
+    'Partnerschaftlich':'#c47c5b','Relational':'#c47c5b',
+    'Kind':'#d4a800','Child':'#d4a800',
+    'Spirituell':'#8e6fc4','Spiritual':'#8e6fc4',
+  };
+  return IT_COLORS[clean] || '#c8993a';
 }
 
 function renderPerspectiveCard(p) {
@@ -2820,7 +2908,7 @@ function renderPerspectiveCard(p) {
   return '<div class="block-selectable" data-block-id="' + blockId + '" data-block-type="perspective">' +
     '<div class="block-checkbox-wrap"><input type="checkbox" class="block-checkbox" data-block-id="' + blockId + '" onchange="onBlockCheck(this)" aria-label="Block ausw\u00e4hlen: ' + escapeHtml(displayRole) + '"></div>' +
     '<article class="perspective-card' + cardClass + '" onclick="openRtModalFromCard(this)" data-role="' + escapeHtml(displayRole) + '" data-color="' + color + '" data-colorbg="' + colorBg + '" data-testid="card-perspective-' + displayRole.toLowerCase().replace(/[^a-z]/g, '') + '">' +
-    '<div class="perspective-role"><div class="role-icon ' + cfg.iconClass + '">' + cfg.icon + '</div><span class="role-label">' + escapeHtml(displayRole) + sourceBadge + '</span></div>' +
+    '<div class="perspective-role"><div class="role-icon ' + cfg.iconClass + '">' + cfg.icon + '</div>' +'<span class="role-label">' + escapeHtml(displayRole) + sourceBadge + '</span>' +'<button class="persp-gear-btn" onclick="event.stopPropagation();togglePerspOptions(this)" aria-expanded="false" title="Kontext" style="margin-left:auto;"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg></button>' +'</div>' +'<div class="persp-options-panel" id="pop-' + blockId + '">' +'<div class="persp-options-row"><span class="persp-options-label">Geschlecht</span>' +'<select class="persp-options-select"><option value="neutral">∅ Neutral</option><option value="maennlich">♂ Männlich</option><option value="weiblich">♀ Weiblich</option><option value="divers">⚧ Divers</option></select></div>' +'<div class="persp-options-row"><span class="persp-options-label">Bildung</span>' +'<select class="persp-options-select"><option value="">— offen —</option><option>Grundschule</option><option>Mittlere Reife</option><option>Abitur</option><option>Bachelor</option><option>Master</option><option>Promotion</option></select></div>' +'<div class="persp-options-row"><span class="persp-options-label">Neurotyp</span>' +'<select class="persp-options-select" onchange="onPerspNeuroChange(this,\'' + blockId + '\')">' +'<option value="neurotypisch">Neurotypisch</option><option value="neurodivergent">Neurodivergent</option></select></div>' +'<div class="persp-neuro-detail" id="persp-neuro-detail-' + blockId + '">' + ['ADHS','Autismus','Legasthenie','Dyskalkulie','Tourette','DCD'].map(function(x){return '<button type="button" class="persp-neuro-chip" onclick="toggleNeuroChip(this)">'+x+'</button>';}).join('') + '</div>' +'<p class="persp-diagnostic-note">Diese Angaben modifizieren die Perspektive kontextuell. Die App stellt keine Diagnosen — sie kann lediglich kompatible Muster benennen und zur fachlichen Abklärung empfehlen.</p>' +'</div>' +
     (p.anspruchstyp ? '<div class="claim-type-badge"><span class="claim-type-label">' + t.claimTypeLabel + '</span><span class="claim-type-text">' + escapeHtml(p.anspruchstyp) + '</span></div>' : '') +
     '<p class="perspective-analysis">' + escapeHtml(p.kernanalyse) + '</p>' +
     '<div class="perspective-meta">' +
@@ -3046,7 +3134,7 @@ function renderTableSeats(perspectives) {
     labelText.setAttribute('x', cx);
     labelText.setAttribute('y', cy + 48);
     labelText.setAttribute('text-anchor', 'middle');
-    labelText.setAttribute('font-size', '10');
+    labelText.setAttribute('font-size', '12');
     labelText.setAttribute('fill', 'currentColor');
     labelText.setAttribute('pointer-events', 'none');
     labelText.setAttribute('font-family', "'Switzer','Helvetica Neue',sans-serif");
@@ -3232,11 +3320,20 @@ function renderRelationshipLines(perspectives, edges) {
   var linesG = svg.querySelector('#relationshipLines');
   if (!linesG) return;
 
-  // Clear existing lines
   while (linesG.firstChild) linesG.removeChild(linesG.firstChild);
 
   var positions = window._seatPositions || {};
   var valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
+  var n = perspectives ? perspectives.length : 0;
+
+  // Track how many edges exist per pair for parallel offset
+  var pairCount = {};
+  var pairIdx   = {};
+  for (var k = 0; k < edges.length; k++) {
+    var key = edges[k].roleA + '|' + edges[k].roleB;
+    pairCount[key] = (pairCount[key] || 0) + 1;
+    pairIdx[key]   = 0;
+  }
 
   for (var k = 0; k < edges.length; k++) {
     var edge = edges[k];
@@ -3245,38 +3342,87 @@ function renderRelationshipLines(perspectives, edges) {
     if (!posA || !posB) continue;
 
     var color = valenceColors[edge.valence] || '#4a9e6a';
-    var mag = edge.magnitude;
-    var sw = 1.5 + mag * 2;
+    var mag   = edge.magnitude;
 
-    var dasharray = '8 12';
-    if (mag > 0.2 && mag <= 0.4) dasharray = '6 8';
-    else if (mag > 0.4 && mag <= 0.6) dasharray = '4 4';
-    else if (mag > 0.6) dasharray = 'none';
+    // Stroke width: weak → 1.5, medium → 2.5, strong → 3.5, very strong → 5
+    var sw;
+    if (mag <= 0.3)       sw = 1.5;
+    else if (mag <= 0.5)  sw = 2.5;
+    else if (mag <= 0.75) sw = 3.5;
+    else                  sw = 5;
 
-    var line = document.createElementNS(svgNS, 'line');
-    line.setAttribute('x1', posA.cx);
-    line.setAttribute('y1', posA.cy);
-    line.setAttribute('x2', posB.cx);
-    line.setAttribute('y2', posB.cy);
-    line.setAttribute('stroke', color);
-    line.setAttribute('stroke-width', mag > 0.8 ? '3' : String(sw));
-    line.setAttribute('stroke-opacity', '0.6');
-    if (dasharray !== 'none') line.setAttribute('stroke-dasharray', dasharray);
-    line.style.cursor = 'pointer';
+    // Dash: widely dashed (weak) → tighter → near-solid → solid
+    var dasharray;
+    if (mag <= 0.25)      dasharray = '10 14';
+    else if (mag <= 0.45) dasharray = '6 8';
+    else if (mag <= 0.65) dasharray = '3 4';
+    else                  dasharray = 'none';
 
-    if (mag > 0.65) {
-      line.setAttribute('filter', 'url(#edgeGlow)');
+    // Parallel offset for multiple edges on same pair
+    var pairKey = edge.roleA + '|' + edge.roleB;
+    var totalForPair = pairCount[pairKey] || 1;
+    var idxForPair   = pairIdx[pairKey] || 0;
+    pairIdx[pairKey] = idxForPair + 1;
+
+    var offsetPx = 0;
+    if (totalForPair > 1) {
+      var offsetStep = 5;
+      offsetPx = (idxForPair - (totalForPair - 1) / 2) * offsetStep;
     }
 
-    // Click handler for edge panel
+    // Compute perpendicular offset vector
+    var dx = posB.cx - posA.cx;
+    var dy = posB.cy - posA.cy;
+    var len = Math.sqrt(dx * dx + dy * dy) || 1;
+    var nx = -dy / len * offsetPx;
+    var ny =  dx / len * offsetPx;
+
+    var x1 = posA.cx + nx, y1 = posA.cy + ny;
+    var x2 = posB.cx + nx, y2 = posB.cy + ny;
+
+    // For 2 seats: straight line. For arcs with >2 seats and high magnitude:
+    // use a slight quadratic arc
+    var useArc = n > 2 && mag > 0.6 && totalForPair === 1;
+    var pathData;
+
+    if (useArc) {
+      // Control point: midpoint offset perpendicular by 15px for visual richness
+      var mx = (x1 + x2) / 2 + (-dy / len * 18);
+      var my = (y1 + y2) / 2 + (dx  / len * 18);
+      pathData = 'M ' + x1 + ' ' + y1 + ' Q ' + mx + ' ' + my + ' ' + x2 + ' ' + y2;
+    } else {
+      pathData = 'M ' + x1 + ' ' + y1 + ' L ' + x2 + ' ' + y2;
+    }
+
+    // ── Visible line ──────────────────────────────────────────────────────
+    var visLine = document.createElementNS(svgNS, 'path');
+    visLine.setAttribute('d', pathData);
+    visLine.setAttribute('stroke', color);
+    visLine.setAttribute('stroke-width', String(sw));
+    visLine.setAttribute('stroke-opacity', mag > 0.6 ? '0.85' : '0.6');
+    visLine.setAttribute('fill', 'none');
+    if (dasharray !== 'none') visLine.setAttribute('stroke-dasharray', dasharray);
+    if (mag > 0.65) visLine.setAttribute('filter', 'url(#edgeGlow)');
+    visLine.style.pointerEvents = 'none';
+
+    // ── Invisible thick hit area ──────────────────────────────────────────
+    var hitLine = document.createElementNS(svgNS, 'path');
+    hitLine.setAttribute('d', pathData);
+    hitLine.setAttribute('stroke', 'transparent');
+    hitLine.setAttribute('stroke-width', '18');
+    hitLine.setAttribute('fill', 'none');
+    hitLine.style.cursor = 'pointer';
+
     (function(edgeData, edgeColor) {
-      line.addEventListener('click', function() {
+      hitLine.addEventListener('click', function(ev) {
+        ev.stopPropagation();
         edgeData.color = edgeColor;
         openEdgePanel(edgeData);
       });
     })(edge, color);
 
-    linesG.appendChild(line);
+    linesG.appendChild(visLine);
+    linesG.appendChild(hitLine);
   }
 }
 
@@ -4571,6 +4717,22 @@ document.addEventListener('keydown', function(e) {
     addITFreePersp();
   }
 });
+
+
+function togglePerspOptions(btn) {
+  var card = btn.parentElement;
+  while (card && !card.classList.contains('perspective-card')) card = card.parentElement;
+  if (!card) return;
+  var panel = card.querySelector('.persp-options-panel');
+  if (!panel) return;
+  panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', panel.classList.contains('open') ? 'true' : 'false');
+}
+function onPerspNeuroChange(sel, id) {
+  var detail = document.getElementById('persp-neuro-detail-' + id);
+  if (detail) detail.classList.toggle('visible', sel.value === 'neurodivergent');
+}
+function toggleNeuroChip(chip) { chip.classList.toggle('active'); }
 
 function toggleITGlobalOptions() {
   var panel = document.getElementById('itGlobalOptionsPanel');
