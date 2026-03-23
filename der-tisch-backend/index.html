@@ -2492,9 +2492,9 @@ html[data-stil] body {
   letter-spacing: -0.01em;
 }
 
-/* Jugendsprache stil button — neon green */
-.stil-btn[data-stil="jugend"] { color: #39D353 !important; border-color: rgba(57,211,83,0.35) !important; }
-.stil-btn[data-stil="jugend"].stil-active { background: rgba(57,211,83,0.15) !important; color: #39D353 !important; border-color: #39D353 !important; }
+/* Jugendsprache stil button — neon green only when active/hovered */
+.stil-btn[data-stil="jugend"]:hover { color: #39D353; border-color: rgba(57,211,83,0.4); }
+.stil-btn[data-stil="jugend"].stil-active { background: rgba(57,211,83,0.12); color: #39D353; border-color: #39D353; font-weight: 600; }
 </style>
 </head>
 <body>
