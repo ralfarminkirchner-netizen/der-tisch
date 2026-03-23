@@ -5211,8 +5211,8 @@ function itRenderCustomSlots() {
     chip.style.cssText = 'border-color:' + color + ';color:' + color + ';background:' + color + '18;';
     chip.innerHTML =
       '<span class="slot-name">' + escapeHtml(slot.name || 'Ohne Namen') + '</span>' +
-      '<span class="slot-edit-icon" onclick="itEditSlot('' + slot.id + '')" title="Bearbeiten">✎</span>' +
-      '<span class="slot-del-icon" onclick="itDeleteSlot('' + slot.id + '')" title="Löschen">×</span>';
+      '<span class="slot-edit-icon" onclick="itEditSlot(" + JSON.stringify(slot.id) + ")" title="Bearbeiten">✎</span>' +
+      '<span class="slot-del-icon" onclick="itDeleteSlot(" + JSON.stringify(slot.id) + ")" title="Löschen">×</span>';
     chip.addEventListener('click', function(e) {
       if (e.target.classList.contains('slot-edit-icon') || e.target.classList.contains('slot-del-icon')) return;
       itToggleSlot(slot.id);
