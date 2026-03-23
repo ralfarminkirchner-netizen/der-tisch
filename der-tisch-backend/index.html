@@ -2495,6 +2495,34 @@ html[data-stil] body {
 /* Jugendsprache stil button — neon green only when active/hovered */
 .stil-btn[data-stil="jugend"]:hover { color: #39D353; border-color: rgba(57,211,83,0.4); }
 .stil-btn[data-stil="jugend"].stil-active { background: rgba(57,211,83,0.12); color: #39D353; border-color: #39D353; font-weight: 600; }
+
+/* ─── Edge Panel (TEAM) ─────────────────────────────────────────────────── */
+.edge-panel {
+  position: fixed; bottom: var(--space-6); right: var(--space-6);
+  width: min(340px, 90vw);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5) var(--space-6);
+  z-index: 600;
+  animation: slide-up-in 0.22s var(--ease-out) both;
+}
+.edge-panel.hidden { display: none; }
+.edge-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.edge-panel-roles { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+.edge-panel-close {
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm); color: var(--color-text-muted); cursor: pointer; font-size: 14px;
+}
+.edge-panel-close:hover { background: var(--color-surface-offset); }
+.edge-panel-body { font-size: var(--text-sm); line-height: 1.65; color: var(--color-text); }
+.edge-valence-badge { font-weight: 700; margin-bottom: var(--space-2); }
+.edge-summary { color: var(--color-text-muted); }
+.edge-no-data { font-style: italic; color: var(--color-text-faint); }
 </style>
 </head>
 <body>
@@ -3197,6 +3225,16 @@ html[data-stil] body {
 
   </div><!-- /results -->
 
+
+<!-- Edge Panel (card connections) -->
+<div class="edge-panel hidden" id="edgePanelTeam">
+  <div class="edge-panel-header">
+    <span class="edge-panel-roles" id="edgePanelRolesTeam"></span>
+    <button class="edge-panel-close" onclick="closeEdgePanelTeam()">✕</button>
+  </div>
+  <div class="edge-panel-body" id="edgePanelBodyTeam"></div>
+</div>
+
 </main>
 
 <!-- Concept Detail Window (Block H) -->
@@ -3417,6 +3455,21 @@ async function deepenConceptTeam(stil) {
   } catch(e) {
     deepened.textContent = currentLang === 'de' ? 'Fehler beim Laden.' : 'Failed to load.';
   }
+}
+
+function openEdgePanelTeam(roleA, roleB, valence, summary, color) {
+  var panel = document.getElementById('edgePanelTeam');
+  if (!panel) return;
+  document.getElementById('edgePanelRolesTeam').textContent = roleA + ' ↔ ' + roleB;
+  var valenceLabel = { positive: '✓ Brücke', ambivalent: '⚡ Übersetzungsfehler', negative: '✗ Echter Widerspruch' };
+  document.getElementById('edgePanelBodyTeam').innerHTML =
+    '<div class="edge-valence-badge" style="color:' + (color||'#c8993a') + '">' + (valenceLabel[valence]||valence) + '</div>' +
+    (summary ? '<p class="edge-summary">' + summary + '</p>' : '<p class="edge-summary edge-no-data">Kein direkter Bezug in den Reibungsdaten.</p>');
+  panel.classList.remove('hidden');
+}
+function closeEdgePanelTeam() {
+  var p = document.getElementById('edgePanelTeam');
+  if (p) p.classList.add('hidden');
 }
 
 // ─── Auto-grow textareas ────────────────────────────────────────────────
@@ -4100,6 +4153,13 @@ function renderResults(data) {
     document.getElementById('einfachSection').classList.remove('hidden');
   }
 
+
+  // Draw card-to-card connections if we have friction data
+  if (data && data.perspectives && data.friction) {
+    const teamEdges = buildTeamEdges(data.perspectives, data.friction);
+    setTimeout(() => renderCardConnectionsTeam(data.perspectives, teamEdges), 80);
+  }
+
   // 7b. Synthesis with concept nodes
   const synthText = data.integration.einfach_gesagt || data.integration.anspruchskarte || '';
   if (synthText) {
@@ -4701,6 +4761,10 @@ const METHOD_CHIPS_DE = [
   { key: 'Innovation'          },
   { key: 'Stakeholder'         },
   { key: 'Mediation'           },
+  { key: 'Psychologisch'       },
+  { key: 'Kommunikation'       },
+  { key: 'Operations'          },
+  { key: 'Nachhaltigkeit/ESG'  },
   { key: 'Systemisch'          },
   { key: 'Ethisch'             },
   { key: 'Marktstrategie'      },
@@ -5018,11 +5082,17 @@ const METHOD_CHIP_COLORS = {
   'Kunde/Markt':          '#d4873a', 'Customer/Market':       '#d4873a',
   'Markt':                '#3eaec4', 'Market':                '#3eaec4',
   'Führung':              '#4a8fa8', 'Leadership':            '#4a8fa8',
+  'Führung/HR':           '#4a8fa8', 'Leadership/HR':         '#4a8fa8',
+  'Kommunikation':        '#5b9e8a', 'Communication':         '#5b9e8a',
+  'Operations':           '#6a7a8a', 'Operations':            '#6a7a8a',
+  'Nachhaltigkeit/ESG':   '#3a9e6a', 'Sustainability/ESG':    '#3a9e6a',
+  'Psychologisch':        '#8e6fc4', 'Psychological':         '#8e6fc4',
   'Konkurrenz':           '#d42b2b', 'Competition':           '#d42b2b',
   'Stakeholder':          '#5b8ec4', 'Stakeholder':           '#5b8ec4',
   'Mediation':            '#5b9e8a', 'Mediation':             '#5b9e8a',
   'Juristisch':           '#8e3060', 'Legal':                 '#8e3060',
   // ── iNTEGRATiONS TiSCH spezifisch ──────────────────────────────────────
+  'Psychologisch':        '#8e6fc4', 'Psychological':         '#8e6fc4',
   'Therapeutisch':        '#5b9e8a', 'Therapeutic':           '#5b9e8a',
   'Achtsam':              '#5b8ec4', 'Mindful':               '#5b8ec4',
   'Familiär':             '#d4a800', 'Familial':              '#d4a800',
@@ -5111,6 +5181,96 @@ function exportToMdTeam() {
   var a = document.createElement('a');
   a.href = url; a.download = 'team-tisch-analyse.md'; a.click();
   URL.revokeObjectURL(url);
+}
+
+// ─── TEAM: Card-to-Card Connection Lines ──────────────────────────────────
+function buildTeamEdges(perspectives, friction) {
+  const edges = [];
+  const n = perspectives.length;
+  const contradictionText = (friction.echte_widersprueche || []).join(' ');
+  const translationText   = (friction.uebersetzungsfehler  || []).join(' ');
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const roleA = perspectives[i].rolle.replace(/^\[(custom|method)\]/, '').trim();
+      const roleB = perspectives[j].rolle.replace(/^\[(custom|method)\]/, '').trim();
+      const inContra = contradictionText.toLowerCase().includes(roleA.toLowerCase()) || contradictionText.toLowerCase().includes(roleB.toLowerCase());
+      const inTrans  = translationText.toLowerCase().includes(roleA.toLowerCase())  || translationText.toLowerCase().includes(roleB.toLowerCase());
+      let valence = 'positive', magnitude = 0.25;
+      if (inContra) { valence = 'negative';    magnitude = 0.7 + Math.random() * 0.3; }
+      else if (inTrans) { valence = 'ambivalent'; magnitude = 0.4 + Math.random() * 0.3; }
+      const summary = inContra
+        ? (friction.echte_widersprueche || []).find(s => s.toLowerCase().includes(roleA.toLowerCase()) || s.toLowerCase().includes(roleB.toLowerCase())) || ''
+        : inTrans
+        ? (friction.uebersetzungsfehler || []).find(s => s.toLowerCase().includes(roleA.toLowerCase()) || s.toLowerCase().includes(roleB.toLowerCase())) || ''
+        : '';
+      edges.push({ roleA, roleB, valence, magnitude, summary });
+    }
+  }
+  return edges.sort((a,b) => a.magnitude - b.magnitude);
+}
+
+function renderCardConnectionsTeam(perspectives, edges) {
+  const grid = document.getElementById('perspectivesGrid');
+  if (!grid) return;
+  const old = document.getElementById('teamCardConnSvg');
+  if (old) old.remove();
+  const cards = grid.querySelectorAll('.block-selectable[data-block-type="perspective"]');
+  if (cards.length < 2 || !edges.length) return;
+
+  const roleToCard = {};
+  perspectives.forEach((p, i) => {
+    const role = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
+    if (cards[i]) roleToCard[role] = cards[i];
+  });
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('id','teamCardConnSvg');
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2;';
+  const valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
+  const gridRect = grid.getBoundingClientRect();
+
+  const notable = edges.filter(e => e.magnitude > 0.4 || e.valence !== 'positive').slice(0, 12);
+
+  notable.forEach(edge => {
+    const cardA = roleToCard[edge.roleA];
+    const cardB = roleToCard[edge.roleB];
+    if (!cardA || !cardB) return;
+    const rA = cardA.getBoundingClientRect();
+    const rB = cardB.getBoundingClientRect();
+    const x1 = rA.left - gridRect.left + rA.width/2;
+    const y1 = rA.top  - gridRect.top  + rA.height/2;
+    const x2 = rB.left - gridRect.left + rB.width/2;
+    const y2 = rB.top  - gridRect.top  + rB.height/2;
+    const color = valenceColors[edge.valence] || '#4a9e6a';
+    const mag = edge.magnitude;
+    const sw = mag > 0.7 ? 2.5 : (mag > 0.4 ? 1.8 : 1.2);
+    const dash = mag > 0.65 ? 'none' : (mag > 0.4 ? '5 6' : '3 8');
+
+    const vis = document.createElementNS('http://www.w3.org/2000/svg','line');
+    vis.setAttribute('x1',x1); vis.setAttribute('y1',y1);
+    vis.setAttribute('x2',x2); vis.setAttribute('y2',y2);
+    vis.setAttribute('stroke',color); vis.setAttribute('stroke-width',sw);
+    vis.setAttribute('stroke-opacity', mag > 0.6 ? '0.7' : '0.45');
+    if (dash !== 'none') vis.setAttribute('stroke-dasharray', dash);
+    vis.style.pointerEvents = 'none';
+
+    const hit = document.createElementNS('http://www.w3.org/2000/svg','line');
+    hit.setAttribute('x1',x1); hit.setAttribute('y1',y1);
+    hit.setAttribute('x2',x2); hit.setAttribute('y2',y2);
+    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','20');
+    hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
+
+    const edgeCopy = { ...edge, color };
+    hit.addEventListener('click', ev => {
+      ev.stopPropagation();
+      openEdgePanelTeam(edge.roleA, edge.roleB, edge.valence, edge.summary, valenceColors[edge.valence]);
+    });
+
+    svg.appendChild(vis); svg.appendChild(hit);
+  });
+
+  grid.style.position = 'relative';
+  grid.appendChild(svg);
 }
 
 function renderRoundTable(perspectives) {

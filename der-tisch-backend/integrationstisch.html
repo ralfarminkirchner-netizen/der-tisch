@@ -1738,6 +1738,45 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 .stil-btn[data-stil="jugend"]:hover { color: #39D353; border-color: rgba(57,211,83,0.4); }
 .stil-btn[data-stil="jugend"].stil-active { background: rgba(57,211,83,0.12); color: #39D353; border-color: #39D353; font-weight: 600; }
 
+
+/* ─── IT Custom Person Slots ────────────────────────────────────────────── */
+.it-custom-persons-section { margin-top: var(--space-3); }
+.it-custom-persons-list { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-2); }
+.it-person-row {
+  display: grid; grid-template-columns: 14px 1fr 1fr auto;
+  gap: var(--space-2); align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--person-color, var(--color-accent));
+}
+.it-person-color-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--person-color, var(--color-accent)); flex-shrink: 0; }
+.it-person-input {
+  background: transparent; border: none; outline: none;
+  font-family: var(--font-body); font-size: var(--text-sm);
+  color: var(--color-text); padding: 2px 0;
+}
+.it-person-input::placeholder { color: var(--color-text-faint); }
+.it-person-remove {
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: var(--radius-sm);
+  color: var(--color-text-faint); cursor: pointer; flex-shrink: 0;
+  transition: color var(--duration);
+}
+.it-person-remove:hover { color: var(--color-friction); }
+.it-add-person-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  font-size: var(--text-sm); color: var(--color-text-muted);
+  cursor: pointer; transition: all var(--duration) var(--ease-out);
+}
+.it-add-person-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.it-add-person-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 </style>
 </head>
 <body>
@@ -1858,6 +1897,16 @@ html[data-theme="light"][data-stil="therapeutisch"] {
               </button>
             </div>
             <div class="it-free-persp-tags" id="itFreePerspTags"></div>
+
+          <!-- Eigene Personen am Tisch (max. 4) -->
+          <div class="it-custom-persons-section">
+            <div class="settings-sub-label" style="margin-top:var(--space-4);">Eigene Personen am Tisch <span style="font-weight:400;text-transform:none;letter-spacing:0;">(max. 4)</span></div>
+            <div id="itCustomPersonsList" class="it-custom-persons-list"></div>
+            <button type="button" class="it-add-person-btn" id="itAddPersonBtn" onclick="itAddPersonSlot()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Person hinzufügen
+            </button>
+          </div>
           </div>
         </div>
 
@@ -2913,6 +2962,7 @@ function getMethodColor(role) {
   var IT_COLORS = {
     'Systemisch':'#5b9e8a','Systemic':'#5b9e8a',
     'Tiefenpsychologisch':'#8e6fc4','Depth-psychological':'#8e6fc4',
+    'Psychologisch':'#8e6fc4','Psychological':'#8e6fc4',
     'Empirisch-Rational':'#5b8ec4','Empirical-Rational':'#5b8ec4',
     'Philosophisch':'#6a3db5','Philosophical':'#6a3db5',
     'Ethisch':'#d97020','Ethical':'#d97020',
@@ -2929,6 +2979,13 @@ function getMethodColor(role) {
     'Partnerschaftlich':'#c47c5b','Relational':'#c47c5b',
     'Kind':'#d4a800','Child':'#d4a800',
     'Spirituell':'#8e6fc4','Spiritual':'#8e6fc4',
+    'Familiensystemisch':'#5b9e8a','Family-systemic':'#5b9e8a',
+    'Soziologisch':'#5b8ec4','Sociological':'#5b8ec4',
+    'Kulturell':'#c47c5b','Cultural':'#c47c5b',
+    'Narrativ':'#9b7fd4','Narrative':'#9b7fd4',
+    'Körperorientiert':'#e87d3e','Body-oriented':'#e87d3e',
+    'Phänomenologisch':'#6a3db5','Phenomenological':'#6a3db5',
+    'Psychologisch':'#8e6fc4','Psychological':'#8e6fc4',
   };
   return IT_COLORS[clean] || '#c8993a';
 }
@@ -3026,6 +3083,11 @@ function renderResults(data) {
   var edges = buildRelationshipEdges(data.perspectives, data.friction);
   window._currentEdges = edges;
   renderRelationshipLines(data.perspectives, edges);
+
+  // Draw card-to-card connections in text area
+  setTimeout(function() {
+    renderCardConnections(data.perspectives, edges);
+  }, 80);
 
   // 6b. Summary bar — Fazit prominent oben
   if (data.integration && data.integration.vorlaeufiges_fazit) {
@@ -3784,7 +3846,8 @@ async function submitQuestion() {
   var itFreeAsCustom = (_itFreePersps || []).map(function(p) {
     return { type: 'frei', rolle: p.name, profil: '', farbe: p.color };
   });
-  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives).concat(itFreeAsCustom);
+  var itPersonAsCustom = itGetPersonSlots();
+  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives).concat(itFreeAsCustom).concat(itPersonAsCustom);
 
   var body = { question: question, lang: currentLang, stil: currentStil };
   body.sprachstufe = currentSprachstufe;
@@ -4347,16 +4410,28 @@ function exportToMarkdown() {
 // METHOD CHIPS
 // =============================================
 var METHOD_CHIPS_DE = [
-  { key: 'Systemisch' }, { key: 'Tiefenpsychologisch' }, { key: 'Empirisch-Rational' },
-  { key: 'Philosophisch' }, { key: 'Ethisch' }, { key: 'Abw\u00e4gung' },
-  { key: 'Strategisch' }, { key: 'Risiko' }, { key: 'P\u00e4dagogisch' },
-  { key: 'Neurodivergent' }, { key: 'Aus Kinderaugen' },
+  // Epistemische Kern-Methoden
+  { key: 'Systemisch' }, { key: 'Tiefenpsychologisch' }, { key: 'Psychologisch' },
+  { key: 'Empirisch-Rational' }, { key: 'Philosophisch' }, { key: 'Ethisch' },
+  { key: 'Abwägung' }, { key: 'Phänomenologisch' }, { key: 'Narrativ' },
+  // Personen & Entwicklung
+  { key: 'Pädagogisch' }, { key: 'Biografisch' }, { key: 'Körperorientiert' },
+  { key: 'Neurodivergent' }, { key: 'Aus Kinderaugen' }, { key: 'Achtsam' },
+  // Systemisch & Sozial
+  { key: 'Familiensystemisch' }, { key: 'Soziologisch' }, { key: 'Kulturell' },
+  { key: 'Spirituell' }, { key: 'Therapeutisch' },
+  // Strukturell
+  { key: 'Strategisch' }, { key: 'Risiko' },
 ];
 var METHOD_CHIPS_EN = [
-  { key: 'Systemic' }, { key: 'Depth-psychological' }, { key: 'Empirical-Rational' },
-  { key: 'Philosophical' }, { key: 'Ethical' }, { key: 'Weighing' },
-  { key: 'Strategic' }, { key: 'Risk' }, { key: 'Pedagogical' },
-  { key: 'Neurodivergent' }, { key: "Child's Eyes" },
+  { key: 'Systemic' }, { key: 'Depth-psychological' }, { key: 'Psychological' },
+  { key: 'Empirical-Rational' }, { key: 'Philosophical' }, { key: 'Ethical' },
+  { key: 'Weighing' }, { key: 'Phenomenological' }, { key: 'Narrative' },
+  { key: 'Pedagogical' }, { key: 'Biographical' }, { key: 'Body-oriented' },
+  { key: 'Neurodivergent' }, { key: "Child's Eyes" }, { key: 'Mindful' },
+  { key: 'Family-systemic' }, { key: 'Sociological' }, { key: 'Cultural' },
+  { key: 'Spiritual' }, { key: 'Therapeutic' },
+  { key: 'Strategic' }, { key: 'Risk' },
 ];
 
 var _activeChips = new Set();
@@ -4810,6 +4885,152 @@ function onPerspNeuroChange(sel, id) {
   if (detail) detail.classList.toggle('visible', sel.value === 'neurodivergent');
 }
 function toggleNeuroChip(chip) { chip.classList.toggle('active'); }
+
+
+// ─── IT Custom Person Slots ────────────────────────────────────────────────
+var IT_PERSON_COLORS = ['#E8614A','#5B9E7A','#8B7EC8','#D4873A'];
+var _itPersonSlots = [];
+
+function itAddPersonSlot() {
+  if (_itPersonSlots.length >= 4) return;
+  var color = IT_PERSON_COLORS[_itPersonSlots.length];
+  var id = 'itp_' + Date.now();
+  _itPersonSlots.push({ id: id, color: color });
+
+  var list = document.getElementById('itCustomPersonsList');
+  var btn = document.getElementById('itAddPersonBtn');
+  if (!list) return;
+
+  var row = document.createElement('div');
+  row.className = 'it-person-row';
+  row.dataset.pid = id;
+  row.style.setProperty('--person-color', color);
+  row.innerHTML =
+    '<span class="it-person-color-dot"></span>' +
+    '<input class="it-person-input" type="text" placeholder="Name / Rolle" maxlength="40" data-pid-name="' + id + '">' +
+    '<input class="it-person-input" type="text" placeholder="Position / Standpunkt (optional)" maxlength="80" data-pid-pos="' + id + '">' +
+    '<button class="it-person-remove" onclick="itRemovePersonSlot(" + JSON.stringify(id) + ")" title="Entfernen">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+    '</button>';
+  list.appendChild(row);
+
+  if (_itPersonSlots.length >= 4 && btn) btn.disabled = true;
+}
+
+function itRemovePersonSlot(id) {
+  _itPersonSlots = _itPersonSlots.filter(function(p) { return p.id !== id; });
+  var row = document.querySelector('.it-person-row[data-pid="' + id + '"]');
+  if (row) row.remove();
+  var btn = document.getElementById('itAddPersonBtn');
+  if (btn) btn.disabled = false;
+}
+
+function itGetPersonSlots() {
+  return _itPersonSlots.map(function(slot) {
+    var nameEl = document.querySelector('[data-pid-name="' + slot.id + '"]');
+    var posEl  = document.querySelector('[data-pid-pos="' + slot.id + '"]');
+    var name = nameEl ? nameEl.value.trim() : '';
+    var pos  = posEl  ? posEl.value.trim()  : '';
+    if (!name) return null;
+    return {
+      type: 'frei',
+      rolle: name,
+      profil: pos || name + ' — eigene Perspektive',
+      farbe: slot.color,
+      name: name,
+      position: pos || name
+    };
+  }).filter(Boolean);
+}
+
+
+// ─── Card-to-Card Connection Lines ────────────────────────────────────────
+function renderCardConnections(perspectives, edges) {
+  var grid = document.getElementById('perspectivesGrid');
+  if (!grid) return;
+
+  // Remove old overlay
+  var old = document.getElementById('cardConnSvg');
+  if (old) old.remove();
+
+  var cards = grid.querySelectorAll('.block-selectable[data-block-type="perspective"]');
+  if (cards.length < 2 || !edges || edges.length === 0) return;
+
+  // Build role → card element map
+  var roleToCard = {};
+  perspectives.forEach(function(p, i) {
+    var role = getRoleDisplay(p.rolle);
+    if (cards[i]) roleToCard[role] = cards[i];
+  });
+
+  // Create SVG overlay
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('id', 'cardConnSvg');
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2;';
+
+  var valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
+  var gridRect = grid.getBoundingClientRect();
+
+  // Only draw edges with significant magnitude or non-positive valence
+  var notable = edges.filter(function(e) { return e.magnitude > 0.4 || e.valence !== 'positive'; });
+  notable = notable.slice(0, 12); // max 12 lines
+
+  notable.forEach(function(edge) {
+    var cardA = roleToCard[edge.roleA];
+    var cardB = roleToCard[edge.roleB];
+    if (!cardA || !cardB) return;
+
+    var rA = cardA.getBoundingClientRect();
+    var rB = cardB.getBoundingClientRect();
+
+    // Center-bottom of A to center-top of B (or center-center)
+    var x1 = rA.left - gridRect.left + rA.width / 2;
+    var y1 = rA.top  - gridRect.top  + rA.height / 2;
+    var x2 = rB.left - gridRect.left + rB.width / 2;
+    var y2 = rB.top  - gridRect.top  + rB.height / 2;
+
+    var color = valenceColors[edge.valence] || '#4a9e6a';
+    var mag   = edge.magnitude;
+    var sw    = mag > 0.7 ? 2.5 : (mag > 0.4 ? 1.8 : 1.2);
+    var dash  = mag > 0.65 ? 'none' : (mag > 0.4 ? '5 6' : '3 8');
+
+    // Visible line
+    var vis = document.createElementNS('http://www.w3.org/2000/svg','line');
+    vis.setAttribute('x1', x1); vis.setAttribute('y1', y1);
+    vis.setAttribute('x2', x2); vis.setAttribute('y2', y2);
+    vis.setAttribute('stroke', color);
+    vis.setAttribute('stroke-width', sw);
+    vis.setAttribute('stroke-opacity', mag > 0.6 ? '0.7' : '0.45');
+    vis.setAttribute('fill', 'none');
+    if (dash !== 'none') vis.setAttribute('stroke-dasharray', dash);
+    if (mag > 0.7) vis.setAttribute('filter', 'url(#edgeGlow)');
+    vis.style.pointerEvents = 'none';
+
+    // Invisible hit area
+    var hit = document.createElementNS('http://www.w3.org/2000/svg','line');
+    hit.setAttribute('x1', x1); hit.setAttribute('y1', y1);
+    hit.setAttribute('x2', x2); hit.setAttribute('y2', y2);
+    hit.setAttribute('stroke', 'transparent');
+    hit.setAttribute('stroke-width', '20');
+    hit.style.cursor = 'pointer';
+    hit.style.pointerEvents = 'stroke';
+
+    (function(edgeData, edgeColor) {
+      hit.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        edgeData.color = edgeColor;
+        openEdgePanel(edgeData);
+      });
+    })(edge, color);
+
+    svg.appendChild(vis);
+    svg.appendChild(hit);
+  });
+
+  // Make grid relative for positioning
+  grid.style.position = 'relative';
+  grid.appendChild(svg);
+}
 
 function toggleITGlobalOptions() {
   var panel = document.getElementById('itGlobalOptionsPanel');
