@@ -1854,6 +1854,8 @@ html[data-theme="light"][data-stil="therapeutisch"] {
               <button class="stil-btn" data-stil="achtsam" onclick="setStil(this)" data-testid="stil-achtsam">Achtsam</button>
             </div>
           </div>
+
+          <!-- Beispielfragen -->
           <div class="question-presets" id="questionPresets">
             <span class="presets-label" id="presetsLabel">Beispielfragen:</span>
             <div class="preset-questions-chips" id="presetQuestionsChips">
@@ -1861,33 +1863,39 @@ html[data-theme="light"][data-stil="therapeutisch"] {
               <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Mein Kind zieht sich zurück — was passiert da wirklich?</button>
               <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Ich funktioniere. Aber fühle mich innerlich leer.</button>
               <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Warum wiederhole ich immer wieder dasselbe Muster?</button>
-              <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Ich weiß nicht, ob meine Reaktion damals richtig war.</button>
               <button type="button" class="q-preset-chip" onclick="setQuestionPreset(this)">Was brauche ich wirklich — und was halte ich nur aus?</button>
             </div>
           </div>
-          <!-- Methoden-Chips (moved into settings panel) -->
-          <div class="methods-section" style="max-width:680px;margin:var(--space-4) auto 0;">
+
+          <!-- Perspektiven-Builder (Plätze A–D) -->
+          <div class="settings-sub-label" style="margin-top:var(--space-5);">Eigene Plätze am Tisch</div>
+          <div class="perspectives-builder" id="itPerspBuilder"></div>
+          <button class="add-persp-btn" id="itAddPerspBtn" onclick="itAddPerspective()" data-testid="it-button-add-persp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Platz hinzufügen
+          </button>
+
+          <!-- Methoden-Chips -->
+          <div class="methods-section" style="margin-top:var(--space-6);">
             <div class="methods-header-row">
               <span class="methods-label" id="methodsLabel">Perspektiven wählen (optional)</span>
               <div class="methods-preset-btns">
                 <button type="button" class="preset-btn auto-active" id="autoModeBtn" onclick="setAutoMode()" title="KI wählt kontextbezogen">KI Auto</button>
-                <button type="button" class="preset-btn" onclick="setAllChips(true)" title="Alle Methoden">Alle</button>
-                <button type="button" class="preset-btn" id="lastComboBtn" onclick="restoreLastCombo()" title="Zuletzt verwendete Kombination" style="display:none;">Zuletzt</button>
+                <button type="button" class="preset-btn" onclick="setAllChips(true)" title="Alle">Alle</button>
+                <button type="button" class="preset-btn" id="lastComboBtn" onclick="restoreLastCombo()" style="display:none;">Zuletzt</button>
               </div>
             </div>
             <div class="methods-chips" id="methodsChips"></div>
             <p class="methods-hint" id="methodsHint"></p>
             <div class="kind-persp-wrap" id="kindPerspWrap">
-              <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp">
-                ☀ Kind-Perspektive konfigurieren
-              </button>
+              <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp">☀ Kind-Perspektive konfigurieren</button>
               <span class="kind-persp-active-label hidden" id="kindPerspActiveLabel"></span>
             </div>
           </div>
 
-          <!-- Freie Perspektive hinzufügen -->
+          <!-- Freie Perspektive (Freitext) -->
           <div class="it-free-persp-row">
-            <span class="it-options-label">Perspektive hinzufügen</span>
+            <span class="it-options-label">Freie Perspektive hinzufügen</span>
             <div class="it-free-persp-input-wrap">
               <input type="text" class="it-free-persp-input" id="itFreePerspInput"
                 placeholder="z. B. Kind · Partner · Therapeut · Astronaut · Mutter"
@@ -1897,20 +1905,30 @@ html[data-theme="light"][data-stil="therapeutisch"] {
               </button>
             </div>
             <div class="it-free-persp-tags" id="itFreePerspTags"></div>
+          </div>
 
-          <!-- Eigene Personen am Tisch (max. 4) -->
-          <div class="it-custom-persons-section">
-            <div class="settings-sub-label" style="margin-top:var(--space-4);">Eigene Personen am Tisch <span style="font-weight:400;text-transform:none;letter-spacing:0;">(max. 4)</span></div>
-            <div id="itCustomPersonsList" class="it-custom-persons-list"></div>
-            <button type="button" class="it-add-person-btn" id="itAddPersonBtn" onclick="itAddPersonSlot()">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              Person hinzufügen
+          <!-- Gespeicherte Perspektiven -->
+          <div class="custom-slots-section" id="itCustomSlotsSection">
+            <div class="custom-slots-header">
+              <span class="custom-slots-label" id="itCustomSlotsLabel">Gespeicherte Perspektiven</span>
+              <span class="custom-slots-count" id="itCustomSlotsCount">0 / 10</span>
+            </div>
+            <div class="custom-slots-list" id="itCustomSlotsList"></div>
+            <button class="add-slot-btn" id="itAddSlotBtn" onclick="itOpenSlotModal()" data-testid="it-button-add-slot">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Neue Perspektive anlegen
             </button>
           </div>
-          </div>
-        </div>
 
-        <!-- Always visible: main question textarea + submit -->
+          <!-- Reibungsintensität -->
+          <div class="reibung-section" id="itReibungSection">
+            <span class="reibung-label">Reibungsintensität:</span>
+            <button class="reibung-btn r-active" data-reibung="standard" onclick="itSetReibung('standard')">Standard</button>
+            <button class="reibung-btn" data-reibung="eskaliert" onclick="itSetReibung('eskaliert')">Eskaliert</button>
+            <button class="reibung-btn" data-reibung="maximal" onclick="itSetReibung('maximal')">Maximal</button>
+          </div>
+
+<!-- Always visible: main question textarea + submit -->
         <form class="question-form" id="questionForm" onsubmit="return false;">
           <div class="question-input-wrapper">
             <textarea
@@ -2278,6 +2296,32 @@ html[data-theme="light"][data-stil="therapeutisch"] {
     <button class="edge-panel-close" onclick="closeEdgePanel()">✕</button>
   </div>
   <div class="edge-panel-body" id="edgePanelBody"></div>
+</div>
+
+
+<!-- IT: Gespeicherte Perspektiven Modal -->
+<div class="slot-modal-overlay hidden" id="itSlotModalOverlay" onclick="if(event.target===this)itCloseSlotModal()">
+  <div class="slot-modal">
+    <div class="slot-modal-title" id="itSlotModalTitle">Perspektive anlegen</div>
+    <div class="slot-modal-grid">
+      <div class="slot-field">
+        <label>Name *</label>
+        <input type="text" id="itSlotFieldName" placeholder="z.B. Mein inneres Kind, Therapeutische Perspektive">
+      </div>
+      <div class="slot-field">
+        <label>Rolle / Typ</label>
+        <input type="text" id="itSlotFieldRolle" placeholder="z.B. Kind, Therapeut, Beobachter">
+      </div>
+      <div class="slot-field" style="grid-column:1/-1;">
+        <label>Profil / Haltung</label>
+        <textarea id="itSlotFieldProfil" rows="3" placeholder="Wie denkt, fühlt und wertet diese Perspektive?"></textarea>
+      </div>
+    </div>
+    <div class="slot-modal-actions">
+      <button class="slot-modal-save" onclick="itSaveSlotModal()">Speichern</button>
+      <button class="slot-modal-cancel" onclick="itCloseSlotModal()">Abbrechen</button>
+    </div>
+  </div>
 </div>
 
 <!-- KIND MODAL (Block D5) -->
@@ -3843,13 +3887,17 @@ async function submitQuestion() {
   });
   // Merge mode-specific perspectives with standard custom perspectives
   // Add free-text perspectives from input panel
+  // IT Eigene Plätze (Builder A-D)
+  var itBuilderPersps = itGetPerspectives();
+  // IT Gespeicherte Perspektiven (active slots)
+  var itSlotPersps = itGetActiveCustomPerspectives();
   var itFreeAsCustom = (_itFreePersps || []).map(function(p) {
     return { type: 'frei', rolle: p.name, profil: '', farbe: p.color };
   });
   var itPersonAsCustom = itGetPersonSlots();
-  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives).concat(itFreeAsCustom).concat(itPersonAsCustom);
+  var allCustom = customPerspectives.concat(subPerspAsCustom).concat(modeCustomPerspectives).concat(itFreeAsCustom).concat(itPersonAsCustom).concat(itBuilderPersps).concat(itSlotPersps);
 
-  var body = { question: question, lang: currentLang, stil: currentStil };
+  var body = { question: question, lang: currentLang, stil: currentStil, reibungsintensitaet: _itReibungsintensitaet };
   body.sprachstufe = currentSprachstufe;
   body.gender = currentGender;
   if (currentKonflikttyp) body.konflikttyp = currentKonflikttyp;
@@ -5031,6 +5079,229 @@ function renderCardConnections(perspectives, edges) {
   grid.style.position = 'relative';
   grid.appendChild(svg);
 }
+
+
+// ─── IT: Eigener Tisch Perspektiven-Builder ────────────────────────────────
+var _itPerspIdCounter = 0;
+var _itReibungsintensitaet = 'standard';
+var IT_BADGE_LETTERS = ['A','B','C','D'];
+var IT_PERSP_COLORS  = ['#E8614A','#5B9E7A','#8B7EC8','#D4873A'];
+
+function itAddPerspective() {
+  var builder = document.getElementById('itPerspBuilder');
+  if (!builder) return;
+  var count = builder.children.length;
+  if (count >= 4) return;
+
+  var id     = ++_itPerspIdCounter;
+  var letter = IT_BADGE_LETTERS[count];
+  var color  = IT_PERSP_COLORS[count];
+
+  var card = document.createElement('div');
+  card.className = 'persp-card';
+  card.dataset.perspId = id;
+  card.style.borderLeft = '3px solid ' + color;
+  card.innerHTML =
+    '<div class="persp-card-header">' +
+      '<span class="persp-badge" style="background:' + color + '20;color:' + color + ';border-color:' + color + '40;">' + letter + '</span>' +
+      '<span class="persp-label">Platz ' + letter + '</span>' +
+      '<button class="persp-remove" onclick="itRemovePerspective(' + id + ')" title="Entfernen">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+      '</button>' +
+    '</div>' +
+    '<div class="persp-field">' +
+      '<label class="persp-field-label">Name / Rolle (optional)</label>' +
+      '<input class="persp-input" type="text" id="it-persp-name-' + id + '" ' +
+        'placeholder="z. B. Kind · Partner · Therapeut · Astronaut · Mutter" ' +
+        'data-it-persp-name="' + id + '" autocomplete="off">' +
+    '</div>' +
+    '<div class="persp-field">' +
+      '<label class="persp-field-label">Position / Haltung (optional)</label>' +
+      '<textarea class="persp-textarea" id="it-persp-pos-' + id + '" ' +
+        'placeholder="Was sagt, denkt oder fühlt diese Perspektive?" ' +
+        'rows="2" data-it-persp-pos="' + id + '"></textarea>' +
+    '</div>';
+  builder.appendChild(card);
+  itUpdateAddPerspBtn();
+  itRenumberBadges();
+}
+
+function itRemovePerspective(id) {
+  var card = document.querySelector('.persp-card[data-persp-id="' + id + '"]');
+  // also search in itPerspBuilder
+  if (!card) {
+    var all = document.querySelectorAll('#itPerspBuilder .persp-card');
+    all.forEach(function(c2) { if (c2.dataset.perspId == id) card = c2; });
+  }
+  if (card) card.remove();
+  itUpdateAddPerspBtn();
+  itRenumberBadges();
+}
+
+function itRenumberBadges() {
+  var builder = document.getElementById('itPerspBuilder');
+  if (!builder) return;
+  Array.from(builder.children).forEach(function(card, i) {
+    var badge = card.querySelector('.persp-badge');
+    var label = card.querySelector('.persp-label');
+    var letter = IT_BADGE_LETTERS[i] || String(i + 1);
+    var color  = IT_PERSP_COLORS[i] || '#c8993a';
+    if (badge) {
+      badge.textContent = letter;
+      badge.style.background = color + '20';
+      badge.style.color = color;
+      badge.style.borderColor = color + '40';
+    }
+    if (label) label.textContent = 'Platz ' + letter;
+    card.style.borderLeft = '3px solid ' + color;
+  });
+}
+
+function itUpdateAddPerspBtn() {
+  var builder = document.getElementById('itPerspBuilder');
+  var btn = document.getElementById('itAddPerspBtn');
+  if (!builder || !btn) return;
+  btn.disabled = builder.children.length >= 4;
+}
+
+function itGetPerspectives() {
+  var builder = document.getElementById('itPerspBuilder');
+  if (!builder) return [];
+  var result = [];
+  Array.from(builder.children).forEach(function(card) {
+    var id = card.dataset.perspId;
+    var nameEl = card.querySelector('[data-it-persp-name="' + id + '"]');
+    var posEl  = card.querySelector('[data-it-persp-pos="'  + id + '"]');
+    var name = nameEl ? nameEl.value.trim() : '';
+    var pos  = posEl  ? posEl.value.trim()  : '';
+    var idx  = Array.from(builder.children).indexOf(card);
+    var color = IT_PERSP_COLORS[idx] || '#c8993a';
+    if (pos || name) {
+      result.push({ type: 'frei', rolle: name || 'Eigene Perspektive', profil: pos || '', farbe: color, name: name || '', position: pos || '' });
+    }
+  });
+  return result;
+}
+
+function itSetReibung(val) {
+  _itReibungsintensitaet = val;
+  document.querySelectorAll('#itReibungSection .reibung-btn').forEach(function(b) {
+    b.classList.toggle('r-active', b.dataset.reibung === val);
+  });
+}
+
+// ─── IT: Gespeicherte Perspektiven (Custom Slots) ─────────────────────────
+var _itCustomSlots = JSON.parse(localStorage.getItem('it_custom_slots') || '[]');
+
+function itSaveSlots() {
+  try { localStorage.setItem('it_custom_slots', JSON.stringify(_itCustomSlots)); } catch(e) {}
+}
+
+function itRenderCustomSlots() {
+  var list = document.getElementById('itCustomSlotsList');
+  var count = document.getElementById('itCustomSlotsCount');
+  if (!list) return;
+  if (count) count.textContent = _itCustomSlots.length + ' / 10';
+  list.innerHTML = '';
+  _itCustomSlots.forEach(function(slot) {
+    var color = slot.farbe || '#c8993a';
+    var chip = document.createElement('div');
+    chip.className = 'custom-slot-chip';
+    chip.dataset.slotId = slot.id;
+    chip.style.cssText = 'border-color:' + color + ';color:' + color + ';background:' + color + '18;';
+    chip.innerHTML =
+      '<span class="slot-name">' + escapeHtml(slot.name || 'Ohne Namen') + '</span>' +
+      '<span class="slot-edit-icon" onclick="itEditSlot('' + slot.id + '')" title="Bearbeiten">✎</span>' +
+      '<span class="slot-del-icon" onclick="itDeleteSlot('' + slot.id + '')" title="Löschen">×</span>';
+    chip.addEventListener('click', function(e) {
+      if (e.target.classList.contains('slot-edit-icon') || e.target.classList.contains('slot-del-icon')) return;
+      itToggleSlot(slot.id);
+    });
+    list.appendChild(chip);
+  });
+}
+
+var _itActiveSlotIds = new Set();
+
+function itToggleSlot(id) {
+  var chip = document.querySelector('#itCustomSlotsList [data-slot-id="' + id + '"]');
+  if (_itActiveSlotIds.has(id)) {
+    _itActiveSlotIds.delete(id);
+    if (chip) chip.classList.remove('slot-active');
+  } else {
+    _itActiveSlotIds.add(id);
+    if (chip) chip.classList.add('slot-active');
+  }
+}
+
+function itDeleteSlot(id) {
+  _itCustomSlots = _itCustomSlots.filter(function(s) { return s.id !== id; });
+  _itActiveSlotIds.delete(id);
+  itSaveSlots();
+  itRenderCustomSlots();
+}
+
+function itEditSlot(id) {
+  var slot = _itCustomSlots.find(function(s) { return s.id === id; });
+  if (!slot) return;
+  _itCurrentEditSlotId = id;
+  document.getElementById('itSlotFieldName').value = slot.name || '';
+  document.getElementById('itSlotFieldRolle').value = slot.rolle || '';
+  document.getElementById('itSlotFieldProfil').value = slot.profil || '';
+  document.getElementById('itSlotModalTitle').textContent = 'Perspektive bearbeiten';
+  document.getElementById('itSlotModalOverlay').classList.remove('hidden');
+}
+
+var _itCurrentEditSlotId = null;
+
+function itOpenSlotModal() {
+  if (_itCustomSlots.length >= 10) return;
+  _itCurrentEditSlotId = null;
+  document.getElementById('itSlotFieldName').value = '';
+  document.getElementById('itSlotFieldRolle').value = '';
+  document.getElementById('itSlotFieldProfil').value = '';
+  document.getElementById('itSlotModalTitle').textContent = 'Perspektive anlegen';
+  document.getElementById('itSlotModalOverlay').classList.remove('hidden');
+}
+
+function itCloseSlotModal() {
+  document.getElementById('itSlotModalOverlay').classList.add('hidden');
+}
+
+function itSaveSlotModal() {
+  var name  = document.getElementById('itSlotFieldName').value.trim();
+  var rolle = document.getElementById('itSlotFieldRolle').value.trim();
+  var profil = document.getElementById('itSlotFieldProfil').value.trim();
+  if (!name && !rolle) return;
+  var SLOT_COLORS = ['#E8614A','#5B9E7A','#8B7EC8','#D4873A','#5b9e8a','#6a3db5','#d97020','#5b8ec4','#d4a800','#d45aa0'];
+  if (_itCurrentEditSlotId) {
+    var slot = _itCustomSlots.find(function(s) { return s.id === _itCurrentEditSlotId; });
+    if (slot) { slot.name = name || rolle; slot.rolle = rolle || name; slot.profil = profil; }
+  } else {
+    var newSlot = {
+      id: 'its_' + Date.now(),
+      name: name || rolle,
+      rolle: rolle || name,
+      profil: profil,
+      farbe: SLOT_COLORS[_itCustomSlots.length % SLOT_COLORS.length]
+    };
+    _itCustomSlots.push(newSlot);
+  }
+  itSaveSlots();
+  itRenderCustomSlots();
+  itCloseSlotModal();
+}
+
+function itGetActiveCustomPerspectives() {
+  return _itCustomSlots.filter(function(s) { return _itActiveSlotIds.has(s.id); }).map(function(s) {
+    return { type: 'standard', rolle: s.rolle || s.name, profil: s.profil || '', name: s.name, position: s.profil || '' };
+  });
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function() {
+  itRenderCustomSlots();
+});
 
 function toggleITGlobalOptions() {
   var panel = document.getElementById('itGlobalOptionsPanel');
