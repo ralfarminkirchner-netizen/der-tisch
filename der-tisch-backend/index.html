@@ -2523,6 +2523,35 @@ html[data-stil] body {
 .edge-valence-badge { font-weight: 700; margin-bottom: var(--space-2); }
 .edge-summary { color: var(--color-text-muted); }
 .edge-no-data { font-style: italic; color: var(--color-text-faint); }
+
+/* ─── Register-Schalter (Fachsprache / Einfache Sprache) ────────────────── */
+.register-toggle-group {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.register-btn {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-offset);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+}
+.register-btn:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+.register-btn.register-active {
+  background: var(--color-surface);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
 </style>
 </head>
 <body>
@@ -2654,14 +2683,19 @@ html[data-stil] body {
           <!-- Sprachstil -->
           <div style="margin-bottom:var(--space-4);">
             <span class="settings-section-label">Stil</span>
-            <div class="stil-toggle-group" id="stilToggleGroupPanel" aria-label="Sprachstil wählen">
-              <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business-p">Businesssprache</button>
-              <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag-p">Alltag</button>
-              <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch-p">Philosophisch</button>
-              <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch-p">Akademisch</button>
+            <!-- Fachrichtung -->
+            <div class="settings-section-label" style="margin-bottom:var(--space-2);">Fachrichtung</div>
+            <div class="stil-toggle-group" id="stilToggleGroupPanel" aria-label="Fachrichtung wählen">
+              <button class="stil-btn stil-active" data-stil="oekonomisch" onclick="setStil(this)" data-testid="stil-business-p">Business</button>
+              <button class="stil-btn" data-stil="paedagogisch" onclick="setStil(this)" data-testid="stil-paedagogisch-p">Pädagogisch</button>
+              <button class="stil-btn" data-stil="juristisch" onclick="setStil(this)" data-testid="stil-juristisch-p">Juristisch</button>
               <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch-p">Therapeutisch</button>
-              <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend-p">Jugendsprache</button>
-              <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindgerecht-p">Kindersprache</button>
+            </div>
+            <!-- Sprachebene -->
+            <div class="settings-section-label" style="margin-top:var(--space-4);margin-bottom:var(--space-2);">Sprachebene</div>
+            <div class="register-toggle-group" id="registerToggleGroup" aria-label="Sprachebene wählen">
+              <button class="register-btn register-active" data-register="fachsprache" onclick="setRegister(this)">Fachsprache</button>
+              <button class="register-btn" data-register="einfach" onclick="setRegister(this)">Einfache Sprache</button>
             </div>
           </div>
         </div>
@@ -3298,6 +3332,13 @@ const API = "";
 // SPRACHSTIL
 // =============================================
 let currentStil = 'oekonomisch';
+let currentRegister = 'fachsprache'; // 'fachsprache' | 'einfach'
+
+function setRegister(btn) {
+  currentRegister = btn.dataset.register;
+  document.querySelectorAll('.register-btn').forEach(b => b.classList.remove('register-active'));
+  btn.classList.add('register-active');
+}
 
 const STIL_LABELS = {
   de: {
@@ -3790,7 +3831,7 @@ function applyTranslation(lang) {
   document.getElementById('langEn').className = lang === 'en' ? 'lang-active' : '';
 
   // Update stil button labels
-  const stilMap = { oekonomisch: lang==='de'?'Businesssprache':'Business', alltag: lang==='de'?'Alltag':'Everyday', philosophisch: lang==='de'?'Philosophisch':'Philosophical', akademisch: lang==='de'?'Akademisch':'Academic', therapeutisch: lang==='de'?'Therapeutisch':'Therapeutic', jugend: lang==='de'?'Jugendsprache':'Youth', kindgerecht: lang==='de'?'Kindersprache':'Child\'s lang.' };
+  const stilMap = { oekonomisch: lang==='de'?'Business':'Business', paedagogisch: lang==='de'?'Pädagogisch':'Pedagogical', juristisch: lang==='de'?'Juristisch':'Legal', therapeutisch: lang==='de'?'Therapeutisch':'Therapeutic', kindgerecht: lang==='de'?'Kindersprache':'Child\'s lang.', jugend: lang==='de'?'Jugendsprache':'Youth', philosophisch: lang==='de'?'Philosophisch':'Philosophical', akademisch: lang==='de'?'Akademisch':'Academic' };
   document.querySelectorAll('.stil-btn[data-stil]').forEach(b => {
     if (stilMap[b.dataset.stil]) b.textContent = stilMap[b.dataset.stil];
   });
@@ -4410,7 +4451,7 @@ async function submitQuestion() {
     const res = await fetch(`${API}/api/ask`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, lang: currentLang, stil: currentStil }),
+      body: JSON.stringify({ question, lang: currentLang, stil: currentStil, register: currentRegister }),
     });
 
     if (!res.ok) {
@@ -4891,6 +4932,7 @@ async function submitClarify() {
         question,
         lang: currentLang,
         stil: currentStil,
+        register: currentRegister,
         party_a: { name: partyAName, position: partyAPos },
         party_b: { name: partyBName, position: partyBPos },
         methods: clarifyMethods,
@@ -5798,6 +5840,7 @@ async function submitTable() {
         question,
         lang: currentLang,
         stil: currentStil,
+        register: currentRegister,
         custom_perspectives: allPerspectives,  // V5.7: includes slots + arena
         methods: methods,
         reibungsintensitaet: _reibungsintensitaet, // V5.7

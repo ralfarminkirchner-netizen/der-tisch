@@ -136,6 +136,59 @@ STIL_INSTRUCTIONS = {
             "Language is warm, precise, and never judgmental."
         ),
     },
+    "paedagogisch": {
+        "de": (
+            "SPRACHSTIL: Pädagogisch. Sprich wie eine erfahrene Lehrperson oder pädagogische Fachkraft: "
+            "strukturiert, ermutigend, entwicklungsorientiert. Erkläre Zusammenhänge klar und anschaulich, "
+            "nutze Beispiele aus Lern- und Bildungskontexten. Formuliere so, dass Verstehen gefördert wird — "
+            "nicht Belehrung, sondern Begleitung."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Pedagogical. Speak like an experienced teacher or educational professional: "
+            "structured, encouraging, development-oriented. Explain connections clearly and vividly, "
+            "use examples from learning and educational contexts."
+        ),
+    },
+    "juristisch": {
+        "de": (
+            "SPRACHSTIL: Juristisch-präzise. Verwende rechtliche Fachterminologie korrekt und präzise. "
+            "Unterscheide klar zwischen Tatbestand, Rechtsfolge und Ermessen. "
+            "Benenne relevante Rechtsbereiche, Normen und Haftungsfragen. "
+            "Formuliere wie ein erfahrener Rechtsanwalt oder Richter — sachlich, präzise, ohne unnötige Wertung."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Legal-precise. Use legal terminology correctly and precisely. "
+            "Distinguish clearly between facts, legal consequences, and discretion. "
+            "Name relevant legal areas, norms, and liability issues. "
+            "Formulate like an experienced lawyer or judge — factual, precise, without unnecessary evaluation."
+        ),
+    },
+    "einfach": {
+        "de": (
+            "SPRACHSTIL: Einfache Sprache. Verwende kurze Sätze, einfache Wörter und klare Struktur. "
+            "Kein Fachjargon, keine langen Schachtelsätze. Eine Idee pro Satz. "
+            "Erkläre wie zu jemandem der das Thema zum ersten Mal hört — verständlich, direkt, konkret."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Plain language. Use short sentences, simple words, and clear structure. "
+            "No jargon, no complex sentences. One idea per sentence. "
+            "Explain as if to someone hearing the topic for the first time — understandable, direct, concrete."
+        ),
+    },
+    "spirituell": {
+        "de": (
+            "SPRACHSTIL: Spirituell-kontemplativ. Sprich mit Würde und innerer Ruhe. "
+            "Nutze Bilder, Metaphern und kontemplative Fragen statt analytischer Behauptungen. "
+            "Lasse Raum für das Unaussprechliche. Vermeide religiöse Dogmen — bleibe offen, einladend, erfahrungsbezogen. "
+            "Sprache soll berühren, nicht erklären."
+        ),
+        "en": (
+            "LANGUAGE STYLE: Spiritual-contemplative. Speak with dignity and inner calm. "
+            "Use images, metaphors, and contemplative questions rather than analytical claims. "
+            "Leave space for the inexpressible. Avoid religious dogma — remain open, inviting, experiential. "
+            "Language should touch, not explain."
+        ),
+    },
     "jugend": {
         "de": (
             "SPRACHSTIL: Jugendsprache. Schreib locker, direkt und authentisch — wie eine kluge Person, "
@@ -766,8 +819,21 @@ def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: 
     raise RuntimeError(f"No tool_use block (tool={tool_name}, stop_reason={stop}). Check max_tokens.")
 
 
-def sync_call_perspective(system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de") -> dict:
+REGISTER_INSTRUCTIONS = {
+    "fachsprache": {
+        "de": "SPRACHNIVEAU: Professionelle Fachsprache. Verwende fachspezifische Terminologie präzise und vollständig.",
+        "en": "LANGUAGE LEVEL: Professional technical language. Use field-specific terminology precisely and completely.",
+    },
+    "einfach": {
+        "de": "SPRACHNIVEAU: Vereinfachte Sprache. Übersetze Fachbegriffe sofort in allgemein verständliche Formulierungen. Vermeide Jargon.",
+        "en": "LANGUAGE LEVEL: Simplified language. Immediately translate technical terms into generally understandable formulations. Avoid jargon.",
+    },
+}
+
+def sync_call_perspective(system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de", register: str = "") -> dict:
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
+    if register and register in REGISTER_INSTRUCTIONS:
+        stil_instr = stil_instr + " " + REGISTER_INSTRUCTIONS[register][lang]
     return _call_api(
         model="claude-sonnet-4-6",
         max_tokens=900,
@@ -962,7 +1028,7 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
 # ==========================================
 # ASYNC WRAPPERS
 # ==========================================
-async def fetch_perspective(role: str, system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de") -> Perspective:
+async def fetch_perspective(role: str, system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de", register: str = "") -> Perspective:
     data = await asyncio.to_thread(sync_call_perspective, system_prompt, question, stil, lang)
     data["rolle"] = role
     # Ensure all required fields exist (defensive fallbacks)
@@ -1066,6 +1132,7 @@ class QueryRequest(BaseModel):
     question: str
     lang: str = "de"   # "de" or "en"
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
+    register: str = ""  # "" | "fachsprache" | "einfach"
 
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
@@ -1111,6 +1178,7 @@ class TableRequest(BaseModel):
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
+    register: str = ""  # "" | "fachsprache" | "einfach"
     custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
     # Reibungsintensität: "standard" | "eskaliert" | "maximal"
@@ -1126,12 +1194,12 @@ async def ask_the_table(req: QueryRequest):
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
     try:
-        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang) for role, prompt in agents.items()]
+        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.register) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
@@ -1149,7 +1217,7 @@ async def ask_simple(req: QueryRequest):
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "alltag"
     lang = req.lang
     q = req.question.strip()
@@ -1328,7 +1396,7 @@ async def ask_the_custom_table(req: TableRequest):
     if not req.custom_perspectives and not req.methods:
         raise HTTPException(status_code=400, detail="At least one perspective or method required.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     reibung = req.reibungsintensitaet if req.reibungsintensitaet in {"standard", "eskaliert", "maximal"} else "standard"
 
@@ -1404,7 +1472,7 @@ async def ask_clarify(req: ClarifyRequest):
     if not req.party_b.position.strip():
         raise HTTPException(status_code=400, detail="Party B position required.")
 
-    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam"}
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
 
     # Parteien als CustomPerspective-Objekte aufbauen

@@ -1845,13 +1845,13 @@ html[data-theme="light"][data-stil="therapeutisch"] {
             </div>
             <div class="settings-sub-label">Stil</div>
             <div class="stil-toggle-group" id="stilToggleGroup" aria-label="Sprachstil wählen">
-              <button class="stil-btn stil-active" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
+              <button class="stil-btn stil-active" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltagssprache</button>
+              <button class="stil-btn" data-stil="therapeutisch" onclick="setStil(this)" data-testid="stil-therapeutisch">Therapeutisch</button>
               <button class="stil-btn" data-stil="philosophisch" onclick="setStil(this)" data-testid="stil-philosophisch">Philosophisch</button>
-              <button class="stil-btn" data-stil="alltag" onclick="setStil(this)" data-testid="stil-alltag">Alltag</button>
-              <button class="stil-btn" data-stil="akademisch" onclick="setStil(this)" data-testid="stil-akademisch">Akademisch</button>
-              <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindersprache">Kindersprache</button>
-              <button class="stil-btn" data-stil="jugend" onclick="setStil(this)" data-testid="stil-jugend">Jugendsprache</button>
               <button class="stil-btn" data-stil="achtsam" onclick="setStil(this)" data-testid="stil-achtsam">Achtsam</button>
+              <button class="stil-btn" data-stil="einfach" onclick="setStil(this)" data-testid="stil-einfach">Einfach</button>
+              <button class="stil-btn" data-stil="kindgerecht" onclick="setStil(this)" data-testid="stil-kindersprache">Kindersprache</button>
+              <button class="stil-btn" data-stil="spirituell" onclick="setStil(this)" data-testid="stil-spirituell">Spirituell</button>
             </div>
           </div>
 
@@ -2402,7 +2402,7 @@ const API = "";
 // STATE
 // =============================================
 let currentLang = 'de';
-let currentStil = 'therapeutisch';
+let currentStil = 'alltag';
 let currentMode = 'perspektive'; // 'perspektive' | 'klaerung' | 'freier'
 let currentKonflikttyp = null; // 'beziehung' | 'arbeit' | 'freunde' | 'recht' | 'fachlich' | 'entscheidung'
 let currentSprachstufe = 'alltag'; // 'kind' | 'alltag' | 'akademisch'
@@ -2722,7 +2722,7 @@ const TRANSLATIONS = {
     autoModeInactive: 'Auto',
     allChipsBtn: 'Alle',
     lastComboBtn: 'Zuletzt',
-    stilLabels: { therapeutisch: 'Therapeutisch', philosophisch: 'Philosophisch', alltag: 'Alltag', akademisch: 'Akademisch', kindgerecht: 'Kindersprache', jugend: 'Jugendsprache', achtsam: 'Achtsam' },
+    stilLabels: { alltag: 'Alltagssprache', therapeutisch: 'Therapeutisch', philosophisch: 'Philosophisch', achtsam: 'Achtsam', einfach: 'Einfach', kindgerecht: 'Kindersprache', spirituell: 'Spirituell' },
     modePersp: 'Perspektivengespräch',
     modeKlaerung: 'Klärungsgespräch',
     modeFreier: 'Freier Tisch',
@@ -2787,7 +2787,7 @@ const TRANSLATIONS = {
     autoModeInactive: 'Auto',
     allChipsBtn: 'All',
     lastComboBtn: 'Last',
-    stilLabels: { therapeutisch: 'Therapeutic', philosophisch: 'Philosophical', alltag: 'Everyday', akademisch: 'Academic', kindgerecht: "Child's lang.", jugend: 'Youth', achtsam: 'Mindful' },
+    stilLabels: { alltag: 'Everyday', therapeutisch: 'Therapeutic', philosophisch: 'Philosophical', achtsam: 'Mindful', einfach: 'Simple', kindgerecht: "Child's lang.", spirituell: 'Spiritual' },
     modePersp: 'Perspective Talk',
     modeKlaerung: 'Clarification Talk',
     modeFreier: 'Open Table',
@@ -3018,6 +3018,8 @@ function getMethodColor(role) {
     'Aus Kinderaugen':'#d4a800',"Child's Eyes":'#d4a800',
     'Therapeutisch':'#5b9e8a','Therapeutic':'#5b9e8a',
     'Achtsam':'#5b8ec4','Mindful':'#5b8ec4',
+    'Spirituell':'#8e6fc4','Spiritual':'#8e6fc4',
+    'Einfach':'#6bab7e','Simple':'#6bab7e',
     'Familiär':'#d4a800','Familial':'#d4a800',
     'Biografisch':'#9b7fd4','Biographical':'#9b7fd4',
     'Partnerschaftlich':'#c47c5b','Relational':'#c47c5b',
