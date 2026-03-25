@@ -2058,19 +2058,21 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
           <div class="konflikttyp-section" id="konfliktTypSection">
             <label class="input-label" id="konfliktTypLabel">Konflikttyp wählen</label>
             <div class="konflikttyp-grid" id="konfliktTypGrid">
-              <button class="konflikttyp-btn" data-typ="beziehung" onclick="setKonflikttyp('beziehung')">💔 Beziehungsstreit</button>
-              <button class="konflikttyp-btn" data-typ="arbeit" onclick="setKonflikttyp('arbeit')">💼 Konflikt auf Arbeit</button>
-              <button class="konflikttyp-btn" data-typ="freunde" onclick="setKonflikttyp('freunde')">🤝 Konflikt im Freundeskreis</button>
-              <button class="konflikttyp-btn" data-typ="recht" onclick="setKonflikttyp('recht')">⚖️ Rechtliche Auseinandersetzung</button>
-              <button class="konflikttyp-btn" data-typ="fachlich" onclick="setKonflikttyp('fachlich')">🧠 Fachliche Debatte</button>
-              <button class="konflikttyp-btn" data-typ="entscheidung" onclick="setKonflikttyp('entscheidung')">🔀 Entscheidungshilfe (Pro / Contra)</button>
+              <button class="konflikttyp-btn" data-typ="beziehung" onclick="setKonflikttyp('beziehung')">Beziehungsstreit</button>
+              <button class="konflikttyp-btn" data-typ="arbeit" onclick="setKonflikttyp('arbeit')">Konflikt auf Arbeit</button>
+              <button class="konflikttyp-btn" data-typ="familie" onclick="setKonflikttyp('familie')">Familienkonflikt</button>
+              <button class="konflikttyp-btn" data-typ="freunde" onclick="setKonflikttyp('freunde')">Freundeskreis</button>
+              <button class="konflikttyp-btn" data-typ="recht" onclick="setKonflikttyp('recht')">Rechtliche Frage</button>
+              <button class="konflikttyp-btn" data-typ="fachlich" onclick="setKonflikttyp('fachlich')">Fachliche Debatte</button>
+              <button class="konflikttyp-btn" data-typ="entscheidung" onclick="setKonflikttyp('entscheidung')">Entscheidungshilfe</button>
+              <button class="konflikttyp-btn" data-typ="innerlich" onclick="setKonflikttyp('innerlich')">Innerer Konflikt</button>
             </div>
           </div>
           <!-- Themen chips (dynamically populated by applyKonfliktDefaults) -->
           <div class="themen-chips-row" id="klaerungThemenChips" style="margin-bottom:var(--space-3);"></div>
         </div>
 
-        <!-- Always visible: Beschreibung textarea + submit -->
+        <!-- Always visible: Beschreibung + Parteien + submit -->
         <div id="klaerungFormBody">
           <div class="question-input-wrapper" style="margin-top:var(--space-3);">
             <textarea
@@ -2081,6 +2083,36 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
               autocomplete="off"
             ></textarea>
             <button class="question-submit" id="submitBtnKlaerung" type="button" onclick="submitQuestion()" data-testid="button-submit-klaerung">Klären</button>
+          </div>
+          <!-- Parteien -->
+          <div style="margin-top:var(--space-4);">
+            <div class="settings-sub-label" style="margin-bottom:var(--space-2);">Beteiligte Personen <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></div>
+            <div id="klaerungPartiesContainer">
+              <div class="party-row" data-party-id="1">
+                <input class="party-name-input persp-input" type="text" placeholder="Person A — Name oder Rolle" autocomplete="off">
+                <input class="party-role-input persp-input" type="text" placeholder="Position / Standpunkt" autocomplete="off">
+                <select class="party-gender-select persp-input" style="max-width:100px;">
+                  <option value="neutral">∅</option>
+                  <option value="maennlich">♂</option>
+                  <option value="weiblich">♀</option>
+                  <option value="divers">⚧</option>
+                </select>
+              </div>
+              <div class="party-row" data-party-id="2">
+                <input class="party-name-input persp-input" type="text" placeholder="Person B — Name oder Rolle" autocomplete="off">
+                <input class="party-role-input persp-input" type="text" placeholder="Position / Standpunkt" autocomplete="off">
+                <select class="party-gender-select persp-input" style="max-width:100px;">
+                  <option value="neutral">∅</option>
+                  <option value="maennlich">♂</option>
+                  <option value="weiblich">♀</option>
+                  <option value="divers">⚧</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="it-add-person-btn" onclick="addKlaerungParty()" style="margin-top:var(--space-2);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Person hinzufügen
+            </button>
           </div>
         </div>
       </div>
@@ -2126,16 +2158,34 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
           </div>
         </div>
 
-        <!-- Always visible: context textarea + submit -->
-        <div class="question-input-wrapper">
-          <textarea
-            class="question-input"
-            id="freierContext"
-            rows="2"
-            placeholder="Worum geht es? Wer sitzt am Tisch?"
-            autocomplete="off"
-          ></textarea>
-          <button class="question-submit" id="submitBtnFreier" type="button" onclick="submitQuestion()" data-testid="button-submit-freier">Starten</button>
+        <!-- Always visible: Thema + Teilnehmer + submit -->
+        <div style="margin-top:var(--space-3);">
+          <!-- Thema -->
+          <div class="question-input-wrapper" style="margin-bottom:var(--space-4);">
+            <textarea
+              class="question-input"
+              id="freierContext"
+              rows="2"
+              placeholder="Thema oder Frage: Worum soll es gehen?"
+              autocomplete="off"
+            ></textarea>
+            <button class="question-submit" id="submitBtnFreier" type="button" onclick="submitQuestion()" data-testid="button-submit-freier">Starten</button>
+          </div>
+
+          <!-- Teilnehmer-Builder -->
+          <div class="settings-sub-label" style="margin-bottom:var(--space-2);">Personen am Tisch <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional — bis 8)</span></div>
+          <div id="freierTeilnehmerBuilder" class="it-custom-persons-list"></div>
+          <button type="button" class="it-add-person-btn" id="freierAddTeilnehmerBtn" onclick="addFreierTeilnehmerRow()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Person / Rolle hinzufügen
+          </button>
+
+          <!-- Kontext-Beschreibung -->
+          <div style="margin-top:var(--space-4);">
+            <div class="settings-sub-label" style="margin-bottom:var(--space-2);">Kontext & Hintergrund <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></div>
+            <textarea class="persp-textarea" id="freierHintergrund" rows="2"
+              placeholder="Zusätzlicher Kontext: Was ist die Geschichte? Was wurde schon versucht? Was ist das Ziel?"></textarea>
+          </div>
         </div>
         <div id="freierTeilnehmerContainer" style="display:none;"></div>
       </div>
@@ -3918,6 +3968,86 @@ function showQuestionHeadline(questionText) {
 // =============================================
 // MAIN SUBMIT LOGIC
 // =============================================
+// =============================================
+// KONFLIKTTYPEN
+// =============================================
+var KONFLIKTTYPEN = {
+  beziehung: {
+    label: { de: 'Beziehungsstreit', en: 'Relationship Conflict' },
+    suggestedPerspectives: ['Therapeutisch', 'Systemisch', 'Tiefenpsychologisch', 'Familiensystemisch', 'Achtsam'],
+    themen: { de: ['Kommunikation', 'Vertrauen', 'Nähe & Distanz', 'Erwartungen', 'Verletzungen'], en: ['Communication', 'Trust', 'Closeness & Distance', 'Expectations', 'Hurt'] }
+  },
+  arbeit: {
+    label: { de: 'Konflikt auf Arbeit', en: 'Work Conflict' },
+    suggestedPerspectives: ['Systemisch', 'Psychologisch', 'Soziologisch', 'Ethisch', 'Therapeutisch'],
+    themen: { de: ['Führung', 'Kommunikation', 'Grenzen', 'Macht', 'Fairness'], en: ['Leadership', 'Communication', 'Boundaries', 'Power', 'Fairness'] }
+  },
+  familie: {
+    label: { de: 'Familienkonflikt', en: 'Family Conflict' },
+    suggestedPerspectives: ['Familiensystemisch', 'Therapeutisch', 'Biografisch', 'Tiefenpsychologisch', 'Achtsam'],
+    themen: { de: ['Rollen', 'Loyalitäten', 'Grenzen', 'Geschichte', 'Erziehung'], en: ['Roles', 'Loyalties', 'Boundaries', 'History', 'Parenting'] }
+  },
+  freunde: {
+    label: { de: 'Konflikt im Freundeskreis', en: 'Friend Group Conflict' },
+    suggestedPerspectives: ['Systemisch', 'Psychologisch', 'Ethisch', 'Narrativ', 'Achtsam'],
+    themen: { de: ['Vertrauen', 'Loyalität', 'Erwartungen', 'Veränderung', 'Verlust'], en: ['Trust', 'Loyalty', 'Expectations', 'Change', 'Loss'] }
+  },
+  recht: {
+    label: { de: 'Rechtliche Frage', en: 'Legal Question' },
+    suggestedPerspectives: ['Juristisch', 'Ethisch', 'Systemisch', 'Soziologisch', 'Philosophisch'],
+    themen: { de: ['Rechte', 'Pflichten', 'Haftung', 'Fairness', 'Konsequenzen'], en: ['Rights', 'Duties', 'Liability', 'Fairness', 'Consequences'] }
+  },
+  fachlich: {
+    label: { de: 'Fachliche Debatte', en: 'Expert Debate' },
+    suggestedPerspectives: ['Empirisch-Rational', 'Philosophisch', 'Systemisch', 'Ethisch', 'Soziologisch'],
+    themen: { de: ['Evidenz', 'Methode', 'Werte', 'Interpretation', 'Komplexität'], en: ['Evidence', 'Method', 'Values', 'Interpretation', 'Complexity'] }
+  },
+  entscheidung: {
+    label: { de: 'Entscheidungshilfe', en: 'Decision Help' },
+    suggestedPerspectives: ['Systemisch', 'Empirisch-Rational', 'Psychologisch', 'Ethisch', 'Achtsam'],
+    themen: { de: ['Pro & Contra', 'Werte', 'Risiko', 'Folgen', 'Inneres Erleben'], en: ['Pros & Cons', 'Values', 'Risk', 'Consequences', 'Inner Experience'] }
+  },
+  innerlich: {
+    label: { de: 'Innerer Konflikt', en: 'Inner Conflict' },
+    suggestedPerspectives: ['Tiefenpsychologisch', 'Therapeutisch', 'Biografisch', 'Achtsam', 'Narrativ'],
+    themen: { de: ['Ambivalenz', 'Innere Stimmen', 'Werte', 'Identität', 'Angst'], en: ['Ambivalence', 'Inner Voices', 'Values', 'Identity', 'Fear'] }
+  },
+};
+
+var currentKonflikttyp = null;
+
+function setKonflikttyp(typ) {
+  currentKonflikttyp = typ;
+  document.querySelectorAll('.konflikttyp-btn').forEach(function(b) {
+    b.classList.toggle('konflikttyp-active', b.dataset.typ === typ);
+  });
+  applyKonfliktDefaults(typ);
+}
+
+function applyKonfliktDefaults(typ) {
+  var cfg = KONFLIKTTYPEN[typ];
+  if (!cfg) return;
+  var lang = currentLang;
+  // Render themen chips
+  var chipsEl = document.getElementById('klaerungThemenChips');
+  if (chipsEl) {
+    chipsEl.innerHTML = '';
+    (cfg.themen[lang] || []).forEach(function(thema) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'q-preset-chip';
+      chip.textContent = thema;
+      chip.onclick = function() {
+        var ctx = document.getElementById('klaerungContext');
+        if (ctx) ctx.value = (ctx.value ? ctx.value + ', ' : '') + thema;
+        chip.classList.add('q-preset-active');
+      };
+      chipsEl.appendChild(chip);
+    });
+  }
+}
+
+
 async function submitQuestion() {
   var input = document.getElementById('questionInput');
   // Determine active submit button based on mode
@@ -3936,22 +4066,30 @@ async function submitQuestion() {
   } else if (currentMode === 'klaerung') {
     var kContext = document.getElementById('klaerungContext').value.trim();
     if (!kContext) { document.getElementById('klaerungContext').focus(); return; }
-    // Append konflikttyp as context hint
     var kTypLabel = currentKonflikttyp && KONFLIKTTYPEN[currentKonflikttyp]
       ? '[' + KONFLIKTTYPEN[currentKonflikttyp].label[currentLang] + '] ' : '';
     question = kTypLabel + kContext;
-    modeCustomPerspectives = [];
+    // Add parties as custom perspectives
+    var parties = getKlaerungParties();
+    modeCustomPerspectives = parties.map(function(p) {
+      return { type: 'frei', rolle: p.name || p.role || 'Partei', profil: p.role || '', name: p.name, position: p.role };
+    });
     var kStd = getSelectedStdPerspForMode('klaerung');
     modeCustomPerspectives = modeCustomPerspectives.concat(kStd);
-  } else if (currentMode === 'freier') {
+    } else if (currentMode === 'freier') {
     var fContext = document.getElementById('freierContext').value.trim();
     if (!fContext) { document.getElementById('freierContext').focus(); return; }
-    question = fContext;
-    // Collect rolle chips that were clicked (stored in _freierRollenSelected)
-    modeCustomPerspectives = (_freierRollenSelected || []).map(function(r) {
+    var fHintergrund = (document.getElementById('freierHintergrund') || {}).value || '';
+    question = fContext + (fHintergrund ? ' — Kontext: ' + fHintergrund : '');
+    // Collect teilnehmer from builder
+    var freierTeilnehmer = getFreierTeilnehmer();
+    modeCustomPerspectives = freierTeilnehmer;
+    // Also include rolle chips
+    var rolleChips = (_freierRollenSelected || []).map(function(r) {
       return { type: 'frei', rolle: r.name, profil: r.role, farbe: '#6a8a6a' };
     });
-  }
+    modeCustomPerspectives = modeCustomPerspectives.concat(rolleChips);
+  
 
   // Reset optional sections
   document.getElementById('fazitSection').classList.add('hidden');
@@ -5033,6 +5171,90 @@ function onPerspNeuroChange(sel, id) {
 }
 function toggleNeuroChip(chip) { chip.classList.toggle('active'); }
 
+
+
+// ─── Klärungsgespräch Parteien ─────────────────────────────────────────────
+var _klaerungPartyCounter = 2;
+
+function addKlaerungParty() {
+  var container = document.getElementById('klaerungPartiesContainer');
+  if (!container) return;
+  var existing = container.querySelectorAll('.party-row').length;
+  if (existing >= 6) return;
+  _klaerungPartyCounter++;
+  var row = document.createElement('div');
+  row.className = 'party-row';
+  row.dataset.partyId = _klaerungPartyCounter;
+  var letter = String.fromCharCode(64 + _klaerungPartyCounter);
+  row.innerHTML =
+    '<input class="party-name-input persp-input" type="text" placeholder="Person ' + letter + ' — Name oder Rolle" autocomplete="off">' +
+    '<input class="party-role-input persp-input" type="text" placeholder="Position / Standpunkt" autocomplete="off">' +
+    '<select class="party-gender-select persp-input" style="max-width:100px;"><option value="neutral">∅</option><option value="maennlich">♂</option><option value="weiblich">♀</option><option value="divers">⚧</option></select>' +
+    '<button type="button" class="it-person-remove" onclick="this.parentElement.remove()" title="Entfernen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+  container.appendChild(row);
+}
+
+function getKlaerungParties() {
+  var rows = document.querySelectorAll('#klaerungPartiesContainer .party-row');
+  var result = [];
+  rows.forEach(function(row) {
+    var name = (row.querySelector('.party-name-input') || {}).value || '';
+    var role = (row.querySelector('.party-role-input') || {}).value || '';
+    var gender = (row.querySelector('.party-gender-select') || {}).value || 'neutral';
+    if (name.trim() || role.trim()) {
+      result.push({ name: name.trim(), role: role.trim(), desc: '', gender: gender });
+    }
+  });
+  return result;
+}
+
+// ─── Freier Tisch Teilnehmer ────────────────────────────────────────────────
+var _freierTeilnehmerCounter = 0;
+var IT_TEILNEHMER_COLORS = ['#E8614A','#5B9E7A','#8B7EC8','#D4873A','#5b9e8a','#6a3db5','#d97020','#d4a800'];
+
+function addFreierTeilnehmerRow() {
+  var builder = document.getElementById('freierTeilnehmerBuilder');
+  var btn = document.getElementById('freierAddTeilnehmerBtn');
+  if (!builder) return;
+  var existing = builder.querySelectorAll('.it-person-row').length;
+  if (existing >= 8) { if (btn) btn.disabled = true; return; }
+  var color = IT_TEILNEHMER_COLORS[existing % IT_TEILNEHMER_COLORS.length];
+  _freierTeilnehmerCounter++;
+  var row = document.createElement('div');
+  row.className = 'it-person-row';
+  row.style.setProperty('--person-color', color);
+  row.innerHTML =
+    '<span class="it-person-color-dot"></span>' +
+    '<input class="it-person-input" type="text" placeholder="Name oder Rolle" maxlength="50" autocomplete="off">' +
+    '<input class="it-person-input" type="text" placeholder="Position / Standpunkt (optional)" maxlength="100" autocomplete="off">' +
+    '<select class="it-person-input" style="max-width:80px;font-size:var(--text-xs);padding:2px 4px;">' +
+      '<option value="neutral">∅</option><option value="maennlich">♂</option><option value="weiblich">♀</option><option value="divers">⚧</option>' +
+    '</select>' +
+    '<button type="button" class="it-person-remove" onclick="this.parentElement.remove();document.getElementById('freierAddTeilnehmerBtn').disabled=false;" title="Entfernen">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+    '</button>';
+  builder.appendChild(row);
+  if (builder.querySelectorAll('.it-person-row').length >= 8 && btn) btn.disabled = true;
+}
+
+function getFreierTeilnehmer() {
+  var rows = document.querySelectorAll('#freierTeilnehmerBuilder .it-person-row');
+  var result = [];
+  rows.forEach(function(row, idx) {
+    var inputs = row.querySelectorAll('input');
+    var name = inputs[0] ? inputs[0].value.trim() : '';
+    var pos  = inputs[1] ? inputs[1].value.trim() : '';
+    var color = IT_TEILNEHMER_COLORS[idx % IT_TEILNEHMER_COLORS.length];
+    if (name || pos) {
+      result.push({
+        type: 'frei', rolle: name || 'Tischgast',
+        profil: pos || '', farbe: color,
+        name: name, position: pos
+      });
+    }
+  });
+  return result;
+}
 
 // ─── IT Custom Person Slots ────────────────────────────────────────────────
 var IT_PERSON_COLORS = ['#E8614A','#5B9E7A','#8B7EC8','#D4873A'];
