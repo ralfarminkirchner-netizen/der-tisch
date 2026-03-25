@@ -2582,155 +2582,6 @@ function setStil(btn) {
 // =============================================
 // V1.2 — KONFLIKTTYPEN DATA
 // =============================================
-const KONFLIKTTYPEN = {
-  beziehung: {
-    label: { de: 'Beziehungsstreit', en: 'Relationship Conflict' },
-    icon: '💔',
-    defaultParties: [
-      { de: { name: 'Partner A', role: 'Beteiligte Person', desc: '' }, en: { name: 'Partner A', role: 'Person involved', desc: '' } },
-      { de: { name: 'Partner B', role: 'Beteiligte Person', desc: '' }, en: { name: 'Partner B', role: 'Person involved', desc: '' } }
-    ],
-    contextPlaceholder: { de: 'z.B. Streit über Urlaubsplanung, mangelnde Wertschätzung, Eifersucht…', en: 'e.g. Argument about vacation plans, lack of appreciation, jealousy…' },
-    suggestedPerspectives: ['Tiefenpsychologisch', 'Systemisch', 'Empirisch-Rational'],
-    themenChips: {
-      de: ['Gefühle nicht gehört', 'Missverständnis', 'Verletzung', 'Kommunikationsproblem', 'Eifersucht', 'Distanz', 'Erwartungen unerfüllt'],
-      en: ['Feelings ignored', 'Misunderstanding', 'Hurt', 'Communication issue', 'Jealousy', 'Distance', 'Unmet expectations']
-    }
-  },
-  arbeit: {
-    label: { de: 'Konflikt auf Arbeit', en: 'Workplace Conflict' },
-    icon: '💼',
-    defaultParties: [
-      { de: { name: 'Mitarbeiter:in', role: 'Angestellte Person', desc: '' }, en: { name: 'Employee', role: 'Staff member', desc: '' } },
-      { de: { name: 'Vorgesetzte Person', role: 'Führungskraft', desc: '' }, en: { name: 'Manager', role: 'Leadership', desc: '' } }
-    ],
-    contextPlaceholder: { de: 'z.B. Streit über Zuständigkeiten, Mobbing, unfaire Behandlung…', en: 'e.g. Dispute over responsibilities, bullying, unfair treatment…' },
-    suggestedPerspectives: ['Systemisch', 'Tiefenpsychologisch', 'Empirisch-Rational'],
-    themenChips: {
-      de: ['Zuständigkeit unklar', 'Unfaire Behandlung', 'Kommunikationsproblem', 'Mobbing', 'Überlastung', 'Grenzüberschreitung', 'Anerkennung fehlt'],
-      en: ['Unclear responsibilities', 'Unfair treatment', 'Communication breakdown', 'Bullying', 'Overload', 'Boundary violation', 'Lack of recognition']
-    }
-  },
-  freunde: {
-    label: { de: 'Konflikt im Freundeskreis', en: 'Friendship Conflict' },
-    icon: '🤝',
-    defaultParties: [
-      { de: { name: 'Freund A', role: 'Beteiligte Person', desc: '' }, en: { name: 'Friend A', role: 'Person involved', desc: '' } },
-      { de: { name: 'Freund B', role: 'Beteiligte Person', desc: '' }, en: { name: 'Friend B', role: 'Person involved', desc: '' } }
-    ],
-    contextPlaceholder: { de: 'z.B. Vertrauensbruch, Gruppenstreit, Ausgrenzung…', en: 'e.g. Breach of trust, group conflict, exclusion…' },
-    suggestedPerspectives: ['Tiefenpsychologisch', 'Systemisch', 'Philosophisch'],
-    themenChips: {
-      de: ['Vertrauensbruch', 'Ausgrenzung', 'Loyalitätskonflikt', 'Missverständnis', 'Neid', 'Gruppenstreit', 'Schweigen'],
-      en: ['Breach of trust', 'Exclusion', 'Loyalty conflict', 'Misunderstanding', 'Envy', 'Group conflict', 'Silence']
-    }
-  },
-  recht: {
-    label: { de: 'Rechtliche Auseinandersetzung', en: 'Legal Dispute' },
-    icon: '⚖️',
-    defaultParties: [
-      { de: { name: 'Partei A', role: 'Kläger / Antragsteller', desc: '' }, en: { name: 'Party A', role: 'Claimant', desc: '' } },
-      { de: { name: 'Partei B', role: 'Beklagte / Gegenseite', desc: '' }, en: { name: 'Party B', role: 'Respondent', desc: '' } }
-    ],
-    contextPlaceholder: { de: 'z.B. Mietstreit, Arbeitsrechtklage, Erbschaftskonflikt…', en: 'e.g. Rental dispute, employment law, inheritance conflict…' },
-    suggestedPerspectives: ['Empirisch-Rational', 'Systemisch', 'Ethisch'],
-    themenChips: {
-      de: ['Kernforderung', 'Gegenforderung', 'Sachverhalt', 'Streitpunkt', 'Beweislage', 'Vertragsbruch', 'Schadensersatz'],
-      en: ['Main claim', 'Counter-claim', 'Facts', 'Point of contention', 'Evidence', 'Breach of contract', 'Damages']
-    }
-  },
-  fachlich: {
-    label: { de: 'Fachliche Debatte', en: 'Expert Debate' },
-    icon: '🧠',
-    defaultParties: [
-      { de: { name: 'Position A', role: 'Fachliche Perspektive', desc: '' }, en: { name: 'Position A', role: 'Expert perspective', desc: '' } },
-      { de: { name: 'Position B', role: 'Gegenperspektive', desc: '' }, en: { name: 'Position B', role: 'Counter perspective', desc: '' } }
-    ],
-    contextPlaceholder: { de: 'z.B. Wissenschaftliche Kontroverse, Methodenstreit, Theorienkonflikt…', en: 'e.g. Scientific controversy, methodological dispute, theoretical conflict…' },
-    suggestedPerspectives: ['Empirisch-Rational', 'Philosophisch', 'Systemisch'],
-    themenChips: {
-      de: ['These', 'Gegenthese', 'Evidenz', 'Gegenargument', 'Methodik', 'Begriffspräzision', 'Falsifizierbarkeit'],
-      en: ['Thesis', 'Counter-thesis', 'Evidence', 'Counter-argument', 'Methodology', 'Conceptual precision', 'Falsifiability']
-    }
-  },
-  entscheidung: {
-    label: { de: 'Entscheidungshilfe (Pro / Contra)', en: 'Decision Help (Pro / Con)' },
-    icon: '🔀',
-    defaultParties: [
-      { de: { name: 'Pro', role: 'Argumente dafür', desc: '' }, en: { name: 'Pro', role: 'Arguments for', desc: '' } },
-      { de: { name: 'Contra', role: 'Argumente dagegen', desc: '' }, en: { name: 'Contra', role: 'Arguments against', desc: '' } }
-    ],
-    contextPlaceholder: { de: 'z.B. Jobwechsel, Umzug, Investition, Beziehungsentscheidung…', en: 'e.g. Job change, relocation, investment, relationship decision…' },
-    suggestedPerspectives: ['Systemisch', 'Empirisch-Rational', 'Tiefenpsychologisch'],
-    themenChips: {
-      de: ['Chancen', 'Risiken', 'Kurzfristig', 'Langfristig', 'Bauchgefühl', 'Werte', 'Konsequenzen'],
-      en: ['Opportunities', 'Risks', 'Short-term', 'Long-term', 'Gut feeling', 'Values', 'Consequences']
-    }
-  }
-};
-
-// V1.2 — Konflikttyp-Funktionen
-function setKonflikttyp(typ) {
-  currentKonflikttyp = typ;
-  document.querySelectorAll('.konflikttyp-btn').forEach(function(b) {
-    b.classList.toggle('konflikttyp-active', b.dataset.typ === typ);
-  });
-  document.getElementById('klaerungFormBody').classList.remove('hidden');
-  applyKonfliktDefaults(typ);
-}
-
-function applyKonfliktDefaults(typ) {
-  var cfg = KONFLIKTTYPEN[typ];
-  if (!cfg) return;
-  var lang = currentLang;
-
-  // Set context placeholder
-  var ctxEl = document.getElementById('klaerungContext');
-  ctxEl.placeholder = cfg.contextPlaceholder[lang];
-
-  // Render themen-chips
-  var chipsContainer = document.getElementById('klaerungThemenChips');
-  chipsContainer.innerHTML = '';
-  (cfg.themenChips[lang] || []).forEach(function(chip) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'themen-chip';
-    btn.textContent = chip;
-    btn.onclick = function() {
-      var cur = ctxEl.value.trim();
-      ctxEl.value = cur ? cur + ', ' + chip : chip;
-      btn.classList.add('chip-used');
-    };
-    chipsContainer.appendChild(btn);
-  });
-
-  // Reset and rebuild party rows with defaults
-  var container = document.getElementById('klaerungPartiesContainer');
-  container.innerHTML = '';
-  _partyCounter = 0;
-  cfg.defaultParties.forEach(function(party) {
-    _partyCounter++;
-    var p = party[lang] || party.de;
-    var row = document.createElement('div');
-    row.className = 'party-row';
-    row.dataset.partyId = _partyCounter;
-    row.innerHTML = buildPartyRowHTML(p.name, p.role, p.desc, _partyCounter > 2);
-    container.appendChild(row);
-  });
-
-  // Pre-select suggested perspectives
-  var suggestedWrap = document.getElementById('suggestedPerspKlaerung');
-  suggestedWrap.innerHTML = '';
-  (cfg.suggestedPerspectives || []).forEach(function(perspName) {
-    var chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'methods-chip chip-active suggested-persp-chip';
-    chip.dataset.key = perspName;
-    chip.textContent = perspName;
-    chip.onclick = function() { chip.classList.toggle('chip-active'); };
-    suggestedWrap.appendChild(chip);
-  });
-}
 
 function buildPartyRowHTML(name, role, desc, removable) {
   return '<input type="text" class="party-name-input" placeholder="Name" value="' + escapeHtml(name) + '" />' +
@@ -4014,7 +3865,6 @@ var KONFLIKTTYPEN = {
   },
 };
 
-var currentKonflikttyp = null;
 
 function setKonflikttyp(typ) {
   currentKonflikttyp = typ;
@@ -4076,20 +3926,19 @@ async function submitQuestion() {
     });
     var kStd = getSelectedStdPerspForMode('klaerung');
     modeCustomPerspectives = modeCustomPerspectives.concat(kStd);
-    } else if (currentMode === 'freier') {
+  } else if (currentMode === 'freier') {
     var fContext = document.getElementById('freierContext').value.trim();
     if (!fContext) { document.getElementById('freierContext').focus(); return; }
     var fHintergrund = (document.getElementById('freierHintergrund') || {}).value || '';
     question = fContext + (fHintergrund ? ' — Kontext: ' + fHintergrund : '');
-    // Collect teilnehmer from builder
     var freierTeilnehmer = getFreierTeilnehmer();
     modeCustomPerspectives = freierTeilnehmer;
-    // Also include rolle chips
     var rolleChips = (_freierRollenSelected || []).map(function(r) {
       return { type: 'frei', rolle: r.name, profil: r.role, farbe: '#6a8a6a' };
     });
     modeCustomPerspectives = modeCustomPerspectives.concat(rolleChips);
-  
+  }
+
 
   // Reset optional sections
   document.getElementById('fazitSection').classList.add('hidden');
@@ -5230,7 +5079,7 @@ function addFreierTeilnehmerRow() {
     '<select class="it-person-input" style="max-width:80px;font-size:var(--text-xs);padding:2px 4px;">' +
       '<option value="neutral">∅</option><option value="maennlich">♂</option><option value="weiblich">♀</option><option value="divers">⚧</option>' +
     '</select>' +
-    '<button type="button" class="it-person-remove" onclick="this.parentElement.remove();document.getElementById('freierAddTeilnehmerBtn').disabled=false;" title="Entfernen">' +
+    '<button type="button" class="it-person-remove" onclick="this.parentElement.remove();var ab=document.getElementById(\"freierAddTeilnehmerBtn\");if(ab)ab.disabled=false;" title="Entfernen">' +
       '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
     '</button>';
   builder.appendChild(row);
