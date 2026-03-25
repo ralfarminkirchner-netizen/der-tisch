@@ -1777,6 +1777,106 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 .it-add-person-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .it-add-person-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+
+/* ─── Stil-Button: eigene Farbe bleibt immer, Glow nur bei aktiv ─────────── */
+/* Inaktiv: immer neutral ausgegraut */
+.stil-btn[data-stil] {
+  color: var(--color-text-muted) !important;
+  background: transparent !important;
+  border-color: var(--color-border) !important;
+  box-shadow: none !important;
+}
+.stil-btn[data-stil]:hover {
+  color: var(--color-text) !important;
+  background: var(--color-surface-hover) !important;
+  border-color: var(--color-text-muted) !important;
+  box-shadow: none !important;
+}
+
+.stil-btn[data-stil="oekonomisch"].stil-active {
+  color: #3a9e6a !important;
+  background: rgba(58,158,106,0.18) !important;
+  border-color: #3a9e6a !important;
+  box-shadow: 0 0 0 3px rgba(58,158,106,0.18), 0 0 16px rgba(58,158,106,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="paedagogisch"].stil-active {
+  color: #e87d3e !important;
+  background: rgba(232,125,62,0.18) !important;
+  border-color: #e87d3e !important;
+  box-shadow: 0 0 0 3px rgba(232,125,62,0.18), 0 0 16px rgba(232,125,62,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="juristisch"].stil-active {
+  color: #8e3060 !important;
+  background: rgba(142,48,96,0.18) !important;
+  border-color: #8e3060 !important;
+  box-shadow: 0 0 0 3px rgba(142,48,96,0.18), 0 0 16px rgba(142,48,96,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="therapeutisch"].stil-active {
+  color: #5b9e8a !important;
+  background: rgba(91,158,138,0.18) !important;
+  border-color: #5b9e8a !important;
+  box-shadow: 0 0 0 3px rgba(91,158,138,0.18), 0 0 16px rgba(91,158,138,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="philosophisch"].stil-active {
+  color: #6a3db5 !important;
+  background: rgba(106,61,181,0.18) !important;
+  border-color: #6a3db5 !important;
+  box-shadow: 0 0 0 3px rgba(106,61,181,0.18), 0 0 16px rgba(106,61,181,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="akademisch"].stil-active {
+  color: #5b8ec4 !important;
+  background: rgba(91,142,196,0.18) !important;
+  border-color: #5b8ec4 !important;
+  box-shadow: 0 0 0 3px rgba(91,142,196,0.18), 0 0 16px rgba(91,142,196,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="alltag"].stil-active {
+  color: #c4a85b !important;
+  background: rgba(196,168,91,0.18) !important;
+  border-color: #c4a85b !important;
+  box-shadow: 0 0 0 3px rgba(196,168,91,0.18), 0 0 16px rgba(196,168,91,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="achtsam"].stil-active {
+  color: #5b8ec4 !important;
+  background: rgba(91,142,196,0.18) !important;
+  border-color: #5b8ec4 !important;
+  box-shadow: 0 0 0 3px rgba(91,142,196,0.18), 0 0 16px rgba(91,142,196,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="einfach"].stil-active {
+  color: #6bab7e !important;
+  background: rgba(107,171,126,0.18) !important;
+  border-color: #6bab7e !important;
+  box-shadow: 0 0 0 3px rgba(107,171,126,0.18), 0 0 16px rgba(107,171,126,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="kindgerecht"].stil-active {
+  color: #d4a800 !important;
+  background: rgba(212,168,0,0.18) !important;
+  border-color: #d4a800 !important;
+  box-shadow: 0 0 0 3px rgba(212,168,0,0.18), 0 0 16px rgba(212,168,0,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="spirituell"].stil-active {
+  color: #8e6fc4 !important;
+  background: rgba(142,111,196,0.18) !important;
+  border-color: #8e6fc4 !important;
+  box-shadow: 0 0 0 3px rgba(142,111,196,0.18), 0 0 16px rgba(142,111,196,0.18) !important;
+  font-weight: 600 !important;
+}
+.stil-btn[data-stil="jugend"].stil-active {
+  color: #39D353 !important;
+  background: rgba(57,211,83,0.12) !important;
+  border-color: #39D353 !important;
+  box-shadow: 0 0 0 3px rgba(57,211,83,0.12), 0 0 16px rgba(57,211,83,0.12) !important;
+  font-weight: 600 !important;
+}
 </style>
 </head>
 <body>
