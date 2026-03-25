@@ -546,11 +546,13 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
    PERSPECTIVE CARDS
 ============================================= */
 .perspectives-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5);
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-8);
+  position: relative; z-index: 0;
 }
 @media (max-width: 720px) { .perspectives-grid { grid-template-columns: 1fr; } }
 
 .perspective-card {
+  position: relative; z-index: 1;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
@@ -2652,6 +2654,53 @@ html[data-stil] body {
   box-shadow: 0 0 0 3px rgba(57,211,83,0.12), 0 0 16px rgba(57,211,83,0.12) !important;
   font-weight: 600 !important;
 }
+
+/* ─── Translation Button (Global Feature) ──────────────────────────────── */
+.translate-btn-wrap {
+  margin-top: var(--space-8);
+  text-align: center;
+}
+.translate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-offset);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+}
+.translate-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+.translate-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.translate-btn svg {
+  flex-shrink: 0;
+}
+.translated-section {
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-divider);
+}
+.translated-section-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -3303,6 +3352,21 @@ html[data-stil] body {
     </section>
 
         <!-- VIII. VIER GRUNDPERSPEKTIVEN -->
+    <!-- Translation button + translated output -->
+    <div class="translate-btn-wrap" id="translateBtnWrap" style="display:none;">
+      <button class="translate-btn" id="translateBtn" onclick="runTranslation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M5 8l6 6"/><path d="M4 14l6-6 2-2"/><path d="M2 5h12"/><path d="M7 2h1"/>
+          <path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/>
+        </svg>
+        <span id="translateBtnLabel">In Alltagssprache übersetzen</span>
+      </button>
+    </div>
+    <div class="translated-section" id="translatedSection" style="display:none;">
+      <div class="translated-section-label" id="translatedSectionLabel">Übersetzt: Alltagssprache</div>
+      <div id="translatedContent"></div>
+    </div>
+
     <section id="herzkopfSection" class="hidden section-selectable" data-block="herzkopf">
       <div class="section-header">
         <div class="section-badge" style="background:linear-gradient(135deg,rgba(220,80,100,0.25),rgba(80,140,220,0.25),rgba(100,180,100,0.25),rgba(200,150,60,0.25));color:var(--color-text);">VIII</div>
@@ -3603,6 +3667,75 @@ function openEdgePanelTeam(roleA, roleB, valence, summary, color) {
 function closeEdgePanelTeam() {
   var p = document.getElementById('edgePanelTeam');
   if (p) p.classList.add('hidden');
+}
+
+// ─── Translation Feature (Global) ────────────────────────────────────────
+let _primaryResult   = null;
+let _translatedResult = null;
+let _currentRegisterOutput = 'fachsprache'; // tracks what's currently shown
+
+function showTranslateButton(data) {
+  _primaryResult = data;
+  _translatedResult = null;
+  _currentRegisterOutput = currentRegister || 'fachsprache';
+  const wrap = document.getElementById('translateBtnWrap');
+  const btn  = document.getElementById('translateBtn');
+  const lbl  = document.getElementById('translateBtnLabel');
+  if (!wrap || !btn || !lbl) return;
+  // Label: toggle direction
+  lbl.textContent = _currentRegisterOutput === 'fachsprache'
+    ? 'In Alltagssprache übersetzen'
+    : 'In Fachsprache übersetzen';
+  wrap.style.display = 'block';
+  document.getElementById('translatedSection').style.display = 'none';
+}
+
+async function runTranslation() {
+  const btn = document.getElementById('translateBtn');
+  const lbl = document.getElementById('translateBtnLabel');
+  const section = document.getElementById('translatedSection');
+  const content = document.getElementById('translatedContent');
+  const sectionLbl = document.getElementById('translatedSectionLabel');
+  if (!btn || !_primaryResult) return;
+
+  const targetRegister = _currentRegisterOutput === 'fachsprache' ? 'alltag' : 'fachsprache';
+  btn.disabled = true;
+  const origText = lbl.textContent;
+  lbl.textContent = 'Wird übersetzt…';
+
+  try {
+    const question = window._tischCurrentData && window._tischCurrentData.question || '';
+    const res = await fetch(`${API}/api/translate`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        question,
+        lang: currentLang,
+        stil: currentStil,
+        register: targetRegister,
+        methods: getSelectedMethods(),
+      }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    _translatedResult = data;
+
+    // Render translated output into translatedContent
+    content.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'perspectives-grid';
+    grid.innerHTML = data.perspectives.map(renderPerspectiveCard).join('');
+    content.appendChild(grid);
+
+    sectionLbl.textContent = targetRegister === 'alltag' ? 'Übersetzt: Alltagssprache' : 'Übersetzt: Fachsprache';
+    section.style.display = 'block';
+    // Hide translate button (both versions now available)
+    document.getElementById('translateBtnWrap').style.display = 'none';
+
+  } catch(e) {
+    lbl.textContent = origText;
+    btn.disabled = false;
+  }
 }
 
 // ─── Auto-grow textareas ────────────────────────────────────────────────
@@ -4307,6 +4440,8 @@ function renderResults(data) {
   const mdBtnTeam  = document.getElementById('exportMdBtn');
   if (txtBtnTeam) txtBtnTeam.disabled = false;
   if (mdBtnTeam)  mdBtnTeam.disabled  = false;
+  // Show translation button
+  showTranslateButton(data);
 
   // 8. Vier Grundperspektiven — immer anzeigen wenn vorhanden
   const herz     = data.integration.herzmensch;
@@ -5359,7 +5494,7 @@ function renderCardConnectionsTeam(perspectives, edges) {
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('id','teamCardConnSvg');
-  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2;';
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
   const valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
   const gridRect = grid.getBoundingClientRect();
 
@@ -5385,6 +5520,7 @@ function renderCardConnectionsTeam(perspectives, edges) {
     vis.setAttribute('x2',x2); vis.setAttribute('y2',y2);
     vis.setAttribute('stroke',color); vis.setAttribute('stroke-width',sw);
     vis.setAttribute('stroke-opacity', mag > 0.6 ? '0.7' : '0.45');
+    vis.setAttribute('fill','none');
     if (dash !== 'none') vis.setAttribute('stroke-dasharray', dash);
     vis.style.pointerEvents = 'none';
 
@@ -5392,6 +5528,7 @@ function renderCardConnectionsTeam(perspectives, edges) {
     hit.setAttribute('x1',x1); hit.setAttribute('y1',y1);
     hit.setAttribute('x2',x2); hit.setAttribute('y2',y2);
     hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','20');
+    hit.setAttribute('fill','none');
     hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
 
     const edgeCopy = { ...edge, color };
@@ -5404,7 +5541,7 @@ function renderCardConnectionsTeam(perspectives, edges) {
   });
 
   grid.style.position = 'relative';
-  grid.appendChild(svg);
+  grid.insertBefore(svg, grid.firstChild);
 }
 
 function renderRoundTable(perspectives) {

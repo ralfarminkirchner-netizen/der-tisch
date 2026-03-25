@@ -362,9 +362,10 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 /* =============================================
    PERSPECTIVE CARDS
 ============================================= */
-.perspectives-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
+.perspectives-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-8); position: relative; z-index: 0; }
 @media (max-width: 720px) { .perspectives-grid { grid-template-columns: 1fr; } }
 .perspective-card {
+  position: relative; z-index: 1;
   background: var(--color-surface); border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl); padding: var(--space-8);
   display: flex; flex-direction: column; gap: var(--space-5);
@@ -1875,6 +1876,110 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
   box-shadow: 0 0 0 3px rgba(57,211,83,0.12), 0 0 16px rgba(57,211,83,0.12) !important;
   font-weight: 600 !important;
 }
+
+/* ─── Translation Button ────────────────────────────────────────────────── */
+.translate-btn-wrap { margin-top: var(--space-8); text-align: center; }
+.translate-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-offset);
+  font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500;
+  color: var(--color-text-muted); cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+}
+.translate-btn:hover { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
+.translate-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.translated-section { margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--color-divider); }
+.translated-section-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-faint); margin-bottom: var(--space-6); text-align: center; }
+
+/* =============================================
+   TTS PLAYER (Block D)
+============================================= */
+#ttsBar {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  z-index: 800;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s var(--ease-out), opacity 0.3s;
+  opacity: 0;
+  white-space: nowrap;
+  min-width: 280px;
+  max-width: 92vw;
+}
+#ttsBar.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.tts-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.tts-btn:hover { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-dim); }
+.tts-btn.tts-active { background: var(--color-accent); color: #000; border-color: var(--color-accent); }
+.tts-btn svg { width: 13px; height: 13px; pointer-events: none; }
+.tts-progress-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tts-label {
+  font-size: 10px;
+  color: var(--color-text-faint);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 140px;
+}
+.tts-progress {
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.tts-progress-bar {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 9999px;
+  width: 0%;
+  transition: width 0.5s linear;
+}
+#ttsClose {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-faint);
+  font-size: 14px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+#ttsClose:hover { color: var(--color-text); }
+@media print {
+  #ttsBar { display: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -2389,6 +2494,18 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
     <hr class="section-divider">
 
     <!-- IV. VORLÄUFIGES FAZIT -->
+    <!-- Translation button -->
+    <div class="translate-btn-wrap" id="translateBtnWrap" style="display:none;">
+      <button class="translate-btn" id="translateBtn" onclick="runTranslation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-2"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+        <span id="translateBtnLabel">In Fachsprache übersetzen</span>
+      </button>
+    </div>
+    <div class="translated-section" id="translatedSection" style="display:none;">
+      <div class="translated-section-label" id="translatedSectionLabel">Übersetzt</div>
+      <div id="translatedContent"></div>
+    </div>
+
     <section id="fazitSection" class="hidden section-selectable" data-block="fazit">
       <div class="section-header">
         <div class="section-badge amber">IV</div>
@@ -3143,6 +3260,9 @@ function renderResults(data) {
     }
   }
 
+  // Show translation button
+  showTranslateButton(data);
+
   // 7. Bottom synthesis (Block E)
   var synthText = (data.integration && data.integration.einfach_gesagt) || (data.integration && data.integration.vorlaeufiger_konsens) || '';
   if (synthText) {
@@ -3156,6 +3276,9 @@ function renderResults(data) {
   var mdBtn = document.getElementById('exportMdBtn');
   if (txtBtn) txtBtn.disabled = false;
   if (mdBtn) mdBtn.disabled = false;
+
+  // 9. Show TTS bar (Block D)
+  setTimeout(ttsShowBar, 300);
 }
 
 // =============================================
@@ -5184,7 +5307,7 @@ function renderCardConnections(perspectives, edges) {
   // Create SVG overlay
   var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('id', 'cardConnSvg');
-  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2;';
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
 
   var valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
   var gridRect = grid.getBoundingClientRect();
@@ -5245,9 +5368,9 @@ function renderCardConnections(perspectives, edges) {
     svg.appendChild(hit);
   });
 
-  // Make grid relative for positioning
+  // Make grid relative for positioning — SVG inserted first so cards render above it
   grid.style.position = 'relative';
-  grid.appendChild(svg);
+  grid.insertBefore(svg, grid.firstChild);
 }
 
 
@@ -5473,6 +5596,66 @@ document.addEventListener('DOMContentLoaded', function() {
   itRenderCustomSlots();
 });
 
+
+// ─── Translation Feature ──────────────────────────────────────────────────
+var _itPrimaryResult = null;
+var _itCurrentRegisterOutput = 'alltag'; // IT default is alltag
+
+function showTranslateButton(data) {
+  _itPrimaryResult = data;
+  _itCurrentRegisterOutput = currentStil === 'alltag' ? 'alltag' : 'therapeutisch';
+  var wrap = document.getElementById('translateBtnWrap');
+  var lbl  = document.getElementById('translateBtnLabel');
+  if (!wrap || !lbl) return;
+  // For IT: toggle between Alltagssprache and Fachsprache
+  lbl.textContent = 'In Fachsprache übersetzen';
+  wrap.style.display = 'block';
+  document.getElementById('translatedSection').style.display = 'none';
+}
+
+async function runTranslation() {
+  var btn = document.getElementById('translateBtn');
+  var lbl = document.getElementById('translateBtnLabel');
+  var section = document.getElementById('translatedSection');
+  var content = document.getElementById('translatedContent');
+  var sectionLbl = document.getElementById('translatedSectionLabel');
+  if (!btn) return;
+
+  var currentLabel = lbl.textContent;
+  var targetRegister = currentLabel.indexOf('Fachsprache') > -1 ? 'fachsprache' : 'alltag';
+  btn.disabled = true;
+  lbl.textContent = 'Wird übersetzt…';
+
+  try {
+    var question = window._lastQuestion || '';
+    var res = await fetch(API + '/api/translate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        question: question,
+        lang: currentLang,
+        stil: currentStil,
+        register: targetRegister,
+      }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+
+    content.innerHTML = '';
+    var grid = document.createElement('div');
+    grid.className = 'perspectives-grid';
+    grid.innerHTML = data.perspectives.map(renderPerspectiveCard).join('');
+    content.appendChild(grid);
+
+    sectionLbl.textContent = targetRegister === 'fachsprache' ? 'Übersetzt: Fachsprache' : 'Übersetzt: Alltagssprache';
+    section.style.display = 'block';
+    document.getElementById('translateBtnWrap').style.display = 'none';
+  } catch(e) {
+    lbl.textContent = currentLabel;
+    btn.disabled = false;
+  }
+}
+
 function toggleITGlobalOptions() {
   var panel = document.getElementById('itGlobalOptionsPanel');
   var btn = document.getElementById('itGlobalOptionsBtn');
@@ -5498,8 +5681,196 @@ function toggleITSettings(mode) {
   panel.hidden = isOpen;
   btn.setAttribute('aria-expanded', String(!isOpen));
 }
+
+// =============================================
+// TTS ENGINE (Block D — ported from TEAM TiSCH)
+// =============================================
+var _tts = {
+  utterance: null,
+  sentences: [],
+  currentIdx: 0,
+  isPlaying: false,
+  lang: 'de-DE',
+  charOffset: 0,
+  totalChars: 0,
+};
+
+function ttsGetText() {
+  var main = document.querySelector('main');
+  if (!main) return '';
+  var textNodes = [];
+  var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+    acceptNode: function(node) {
+      var p = node.parentElement;
+      if (!p) return NodeFilter.FILTER_REJECT;
+      if (p.closest('.block-checkbox-wrap,.section-actions,script,style,.tts-bar,.hidden')) return NodeFilter.FILTER_REJECT;
+      var txt = node.textContent.trim();
+      return txt.length > 2 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  var node;
+  while ((node = walker.nextNode())) {
+    textNodes.push(node.textContent.trim());
+  }
+  return textNodes.join(' ');
+}
+
+function ttsSentenceSplit(text) {
+  var raw = text.match(/[^.!?]+[.!?]+/g) || [text];
+  var chunks = [];
+  var cur = '';
+  for (var i = 0; i < raw.length; i++) {
+    var s = raw[i];
+    if ((cur + s).length > 220 && cur.length > 0) {
+      chunks.push(cur.trim());
+      cur = s;
+    } else {
+      cur += ' ' + s;
+    }
+  }
+  if (cur.trim()) chunks.push(cur.trim());
+  return chunks;
+}
+
+function ttsStart(fromIdx) {
+  if (!('speechSynthesis' in window)) {
+    alert('Vorlesefunktion wird von diesem Browser nicht unterstützt.');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  _tts.isPlaying = true;
+  _tts.currentIdx = fromIdx || 0;
+  ttsUpdateUI();
+  ttsPlayChunk();
+}
+
+function ttsPlayChunk() {
+  if (_tts.currentIdx >= _tts.sentences.length) {
+    ttsStop(false);
+    return;
+  }
+  var text = _tts.sentences[_tts.currentIdx];
+  var utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'de-DE';
+  utt.rate = 0.95;
+  utt.onend = function() {
+    if (_tts.isPlaying) {
+      _tts.currentIdx++;
+      ttsPlayChunk();
+    }
+  };
+  utt.onboundary = function() {
+    var pct = (_tts.currentIdx / Math.max(1, _tts.sentences.length)) * 100;
+    var bar = document.getElementById('ttsProgressBar');
+    if (bar) bar.style.width = pct + '%';
+  };
+  _tts.utterance = utt;
+  window.speechSynthesis.speak(utt);
+}
+
+function ttsToggle() {
+  var bar = document.getElementById('ttsBar');
+  if (!bar.classList.contains('visible')) {
+    var fullText = ttsGetText();
+    _tts.sentences = ttsSentenceSplit(fullText);
+    _tts.currentIdx = 0;
+    bar.classList.add('visible');
+    ttsStart(0);
+    return;
+  }
+  if (_tts.isPlaying) {
+    window.speechSynthesis.pause();
+    _tts.isPlaying = false;
+  } else {
+    _tts.isPlaying = true;
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    } else {
+      ttsPlayChunk();
+    }
+  }
+  ttsUpdateUI();
+}
+
+function ttsSkip(seconds) {
+  var sentPerSec = 1 / 3;
+  var delta = Math.round(Math.abs(seconds) * sentPerSec) || 1;
+  if (seconds < 0) {
+    _tts.currentIdx = Math.max(0, _tts.currentIdx - delta);
+  } else {
+    _tts.currentIdx = Math.min(_tts.sentences.length - 1, _tts.currentIdx + delta);
+  }
+  if (_tts.isPlaying) {
+    window.speechSynthesis.cancel();
+    ttsPlayChunk();
+  }
+  ttsUpdateUI();
+}
+
+function ttsStop(hide) {
+  window.speechSynthesis.cancel();
+  _tts.isPlaying = false;
+  _tts.currentIdx = 0;
+  var bar = document.getElementById('ttsProgressBar');
+  if (bar) bar.style.width = '0%';
+  if (hide) {
+    var tbar = document.getElementById('ttsBar');
+    if (tbar) tbar.classList.remove('visible');
+  }
+  ttsUpdateUI();
+}
+
+function ttsUpdateUI() {
+  var playIcon = document.getElementById('ttsPlayIcon');
+  var label = document.getElementById('ttsLabel');
+  var pct = _tts.sentences.length > 0
+    ? Math.round((_tts.currentIdx / _tts.sentences.length) * 100)
+    : 0;
+  var bar = document.getElementById('ttsProgressBar');
+  if (bar) bar.style.width = pct + '%';
+  if (playIcon) {
+    if (_tts.isPlaying) {
+      playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>';
+    } else {
+      playIcon.innerHTML = '<polygon points="5,3 19,12 5,21" fill="currentColor"/>';
+    }
+  }
+  if (label) {
+    label.textContent = _tts.isPlaying ? 'Liest vor…' : 'Vorlesen';
+  }
+}
+
+function ttsShowBar() {
+  var bar = document.getElementById('ttsBar');
+  if (bar) {
+    bar.classList.add('visible');
+    var fullText = ttsGetText();
+    _tts.sentences = ttsSentenceSplit(fullText);
+    _tts.currentIdx = 0;
+    _tts.isPlaying = false;
+    ttsUpdateUI();
+  }
+}
 </script>
 
+
+<!-- TTS PLAYER BAR (Block D) -->
+<div id="ttsBar" role="region" aria-label="Vorlesefunktion">
+  <button class="tts-btn" id="ttsSkipBack" onclick="ttsSkip(-10)" title="-10s" aria-label="10 Sekunden zurück">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 17l-5-5 5-5"/><path d="M18 17l-5-5 5-5"/></svg>
+  </button>
+  <button class="tts-btn" id="ttsPlayBtn" onclick="ttsToggle()" title="Wiedergabe / Pause" aria-label="Wiedergabe starten">
+    <svg id="ttsPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+  </button>
+  <button class="tts-btn" id="ttsSkipFwd" onclick="ttsSkip(10)" title="+10s" aria-label="10 Sekunden vor">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 17l5-5-5-5"/><path d="M6 17l5-5-5-5"/></svg>
+  </button>
+  <div class="tts-progress-wrap">
+    <span class="tts-label" id="ttsLabel">Vorlesen</span>
+    <div class="tts-progress"><div class="tts-progress-bar" id="ttsProgressBar"></div></div>
+  </div>
+  <button id="ttsClose" onclick="ttsStop(true)" aria-label="Schließen">×</button>
+</div>
 
 <script>
 if ('serviceWorker' in navigator) {

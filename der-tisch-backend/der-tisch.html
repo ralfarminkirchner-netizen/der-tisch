@@ -636,6 +636,44 @@
 
     body { background: #fff; }
   }
+
+  /* Register switch */
+  .register-row {
+    display: flex; gap: 6px; justify-content: center;
+    margin-bottom: 24px;
+  }
+  .reg-btn {
+    padding: 6px 16px; border-radius: 100px;
+    font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--surface-off); color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+    font-family: inherit;
+  }
+  .reg-btn.active {
+    background: var(--accent-1); color: #fff;
+    border-color: var(--accent-1);
+    font-weight: 600;
+  }
+  .reg-btn:hover:not(.active) { border-color: var(--accent-1); color: var(--accent-1); }
+  /* Translation */
+  .dt-translate-wrap { margin-top: 32px; text-align: center; }
+  .dt-translate-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 24px; border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: var(--surface-off); color: var(--muted);
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .dt-translate-btn:hover { border-color: var(--accent-1); color: var(--accent-1); }
+  .dt-translate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .dt-translated { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); }
+  .dt-translated-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: center; margin-bottom: 24px;
+  }
 </style>
 </head>
 <body>
@@ -696,6 +734,12 @@
           aria-describedby="input-help"
           maxlength="1000"
         ></textarea>
+      </div>
+
+      <!-- Register switch: Alltagssprache / Fachsprache -->
+      <div class="register-row" id="dt-register-row">
+        <button class="reg-btn active" data-reg="alltag" onclick="setDTRegister(this)" id="reg-alltag">Alltagssprache</button>
+        <button class="reg-btn" data-reg="fachsprache" onclick="setDTRegister(this)" id="reg-fachsprache">Fachsprache</button>
       </div>
 
       <div class="chip-row" id="chip-row" role="list" aria-label="Beispielfragen">
@@ -765,6 +809,17 @@
         <span id="txt-btn-text" data-de="TXT exportieren" data-en="Export TXT">TXT exportieren</span>
       </button>
     </div>
+  <!-- Translation -->
+  <div class="dt-translate-wrap" id="dt-translate-wrap" style="display:none;">
+    <button class="dt-translate-btn" id="dt-translate-btn" onclick="dtRunTranslation()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-2"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+      <span id="dt-translate-lbl">In Fachsprache übersetzen</span>
+    </button>
+  </div>
+  <div class="dt-translated" id="dt-translated" style="display:none;">
+    <div class="dt-translated-label" id="dt-translated-lbl">Übersetzt: Fachsprache</div>
+    <div class="perspective-cards" id="dt-translated-cards"></div>
+  </div>
   </section>
 
 </main>
@@ -932,6 +987,65 @@
   }
 
   // ─── Main ask function ──────────────────────────────────────
+
+  // ── Register (Alltagssprache / Fachsprache) ──────────────────────────────
+  var dtRegister = 'alltag';
+  var dtLastQuestion = '';
+  var dtLastData = null;
+
+  function setDTRegister(btn) {
+    dtRegister = btn.dataset.reg;
+    document.querySelectorAll('.reg-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+
+  async function dtRunTranslation() {
+    var btn = document.getElementById('dt-translate-btn');
+    var lbl = document.getElementById('dt-translate-lbl');
+    if (!btn || !dtLastQuestion) return;
+    var orig = lbl.textContent;
+    var targetReg = orig.indexOf('Fachsprache') > -1 ? 'fachsprache' : 'alltag';
+    btn.disabled = true;
+    lbl.textContent = 'Wird übersetzt…';
+    try {
+      var res = await fetch(API + '/api/translate', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ question: dtLastQuestion, lang: currentLang, stil: 'alltag', register: targetReg }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var data = await res.json();
+      var persps = Array.isArray(data.perspectives) ? data.perspectives : [];
+      var container = document.getElementById('dt-translated-cards');
+      container.innerHTML = '';
+      persps.slice(0, 4).forEach(function(p, idx) {
+        var role = p.rolle ? p.rolle.replace(/^\[(custom|method)\]/, '').trim() : ('Perspektive ' + (idx+1));
+        var text = p.kernanalyse || p.text || '';
+        var accent = ACCENTS[idx % ACCENTS.length];
+        var card = document.createElement('div');
+        card.className = 'perspective-card';
+        card.style.setProperty('--card-accent', accent);
+        var badge = document.createElement('div');
+        badge.className = 'card-role-badge';
+        badge.textContent = role;
+        badge.style.background = hexToRgba(accent, 0.10);
+        badge.style.color = accent;
+        var textEl = document.createElement('p');
+        textEl.className = 'card-text';
+        textEl.textContent = text;
+        card.appendChild(badge);
+        card.appendChild(textEl);
+        container.appendChild(card);
+      });
+      document.getElementById('dt-translated-lbl').textContent =
+        targetReg === 'fachsprache' ? 'Übersetzt: Fachsprache' : 'Übersetzt: Alltagssprache';
+      document.getElementById('dt-translated').style.display = 'block';
+      document.getElementById('dt-translate-wrap').style.display = 'none';
+    } catch(e) {
+      lbl.textContent = orig;
+      btn.disabled = false;
+    }
+  }
+
   window.askQuestion = function () {
     var input = document.getElementById('question-input');
     var question = input.value.trim();
@@ -956,6 +1070,7 @@
       question: question,
       lang: currentLang,
       stil: 'alltag',
+      register: dtRegister,
       custom_perspectives: []
     };
 
@@ -1065,15 +1180,18 @@
 
     lastResults = perspectives;
 
-    // SVG connection lines container
-    var connCanvas = document.getElementById('dt-connections');
-    if (!connCanvas) {
-      connCanvas = document.createElement('div');
-      connCanvas.id = 'dt-connections';
-      connCanvas.style.cssText = 'position:relative;width:100%;height:0;overflow:visible;';
-      var cardsEl = document.getElementById('perspective-cards');
-      if (cardsEl && cardsEl.parentNode) cardsEl.parentNode.insertBefore(connCanvas, cardsEl.nextSibling);
+    // SVG connection lines container — must live inside #perspective-cards
+    // so that getBoundingClientRect offsets in drawDTConnections align
+    var cardsEl = document.getElementById('perspective-cards');
+    if (cardsEl) {
+      cardsEl.style.position = 'relative';
+      var old = document.getElementById('dt-connections');
+      if (old) old.remove();
     }
+    var connCanvas = document.createElement('div');
+    connCanvas.id = 'dt-connections';
+    connCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
+    if (cardsEl) cardsEl.insertBefore(connCanvas, cardsEl.firstChild);
 
     perspectives.forEach(function (p, idx) {
       var accent = ACCENTS[idx % ACCENTS.length];
@@ -1111,6 +1229,13 @@
     // Show export buttons
     document.getElementById('export-btns').style.display = 'flex';
     setTimeout(drawDTConnections, 120);
+    // Show translation button
+    dtLastQuestion = question || '';
+    dtLastData = data;
+    var transLbl = document.getElementById('dt-translate-lbl');
+    if (transLbl) transLbl.textContent = dtRegister === 'alltag' ? 'In Fachsprache übersetzen' : 'In Alltagssprache übersetzen';
+    document.getElementById('dt-translate-wrap').style.display = 'block';
+    document.getElementById('dt-translated').style.display = 'none';
   }
 
   // ─── Export: PDF ─────────────────────────────────────────────
