@@ -830,10 +830,23 @@ REGISTER_INSTRUCTIONS = {
     },
 }
 
-def sync_call_perspective(system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de", register: str = "") -> dict:
+TONE_INSTRUCTIONS = {
+    "achtsam": {
+        "de": "TON: Behutsam und einfühlsam. Formuliere Schwieriges sanft und mit Respekt vor dem Gegenüber. Wahre die Würde aller Beteiligten.",
+        "en": "TONE: Gentle and empathetic. Phrase difficult things softly and with respect for the other. Preserve the dignity of all involved.",
+    },
+    "direkt": {
+        "de": "TON: Direkt und ungeschönt. Keine Beschönigungen, keine Umschweife. Klare Aussagen, auch wenn sie unbequem sind. Die unverblümte Wahrheit, sachlich und ohne Samthandschuhe.",
+        "en": "TON: Direct and unvarnished. No euphemisms, no beating around the bush. Clear statements even when uncomfortable. The plain truth, factual and without kid gloves.",
+    },
+}
+
+def sync_call_perspective(system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de", register: str = "", tone: str = "") -> dict:
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
     if register and register in REGISTER_INSTRUCTIONS:
         stil_instr = stil_instr + " " + REGISTER_INSTRUCTIONS[register][lang]
+    if tone and tone in TONE_INSTRUCTIONS:
+        stil_instr = stil_instr + " " + TONE_INSTRUCTIONS[tone][lang]
     return _call_api(
         model="claude-sonnet-4-6",
         max_tokens=900,
@@ -853,7 +866,7 @@ def sync_call_perspective(system_prompt: str, question: str, stil: str = "philos
 
 
 def sync_call_friction(context: str, question: str, lang: str = "de", stil: str = "philosophisch",
-                       reibungsintensitaet: str = "standard") -> dict:
+                       reibungsintensitaet: str = "standard", tone: str = "") -> dict:
     """Reibungsphase.
     reibungsintensitaet:
       'standard'  — normale Spannungsanalyse
@@ -861,6 +874,8 @@ def sync_call_friction(context: str, question: str, lang: str = "de", stil: str 
       'maximal'   — maximale Eskalation: Positionen werden auf ihre härteste Form gebracht
     """
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
+    if tone and tone in TONE_INSTRUCTIONS:
+        stil_instr = stil_instr + " " + TONE_INSTRUCTIONS[tone][lang]
 
     if reibungsintensitaet == "eskaliert":
         eskalation_de = (
@@ -940,8 +955,10 @@ def sync_call_friction(context: str, question: str, lang: str = "de", stil: str 
     )
 
 
-def sync_call_integration(perspectives_text: str, friction_text: str, question: str, lang: str = "de", stil: str = "philosophisch") -> dict:
+def sync_call_integration(perspectives_text: str, friction_text: str, question: str, lang: str = "de", stil: str = "philosophisch", tone: str = "") -> dict:
     stil_instr = STIL_INSTRUCTIONS.get(stil, STIL_INSTRUCTIONS["philosophisch"])[lang]
+    if tone and tone in TONE_INSTRUCTIONS:
+        stil_instr = stil_instr + " " + TONE_INSTRUCTIONS[tone][lang]
     if lang == "en":
         user_content = (
             f"You are the mapping and verdict agent. Your task has ten parts:\n\n"
@@ -1028,8 +1045,8 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
 # ==========================================
 # ASYNC WRAPPERS
 # ==========================================
-async def fetch_perspective(role: str, system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de", register: str = "") -> Perspective:
-    data = await asyncio.to_thread(sync_call_perspective, system_prompt, question, stil, lang)
+async def fetch_perspective(role: str, system_prompt: str, question: str, stil: str = "philosophisch", lang: str = "de", register: str = "", tone: str = "") -> Perspective:
+    data = await asyncio.to_thread(sync_call_perspective, system_prompt, question, stil, lang, register, tone)
     data["rolle"] = role
     # Ensure all required fields exist (defensive fallbacks)
     data.setdefault("kernanalyse", data.get("analyse", data.get("core_analysis", "—")))
@@ -1049,12 +1066,12 @@ async def fetch_perspective(role: str, system_prompt: str, question: str, stil: 
     return Perspective(**data)
 
 async def fetch_friction(perspectives: List[Perspective], question: str, lang: str = "de", stil: str = "philosophisch",
-                         reibungsintensitaet: str = "standard") -> Friction:
+                         reibungsintensitaet: str = "standard", tone: str = "") -> Friction:
     context = "\n".join([
         f"[{p.rolle}] Anspruchstyp: {p.anspruchstyp[:120]} | Analyse: {p.kernanalyse[:160]} | Blind: {p.blinder_fleck[:80]}"
         for p in perspectives
     ])
-    data = await asyncio.to_thread(sync_call_friction, context, question, lang, stil, reibungsintensitaet)
+    data = await asyncio.to_thread(sync_call_friction, context, question, lang, stil, reibungsintensitaet, tone)
     data.setdefault("uebersetzungsfehler", data.get("translation_errors", data.get("scheinkonsens", [])))
     data.setdefault("echte_widersprueche", data.get("genuine_contradictions", data.get("harte_widersprueche", [])))
     data.setdefault("uebersehenes", data.get("overlooked", ""))
@@ -1068,7 +1085,7 @@ async def fetch_friction(perspectives: List[Perspective], question: str, lang: s
         data["uebersehenes"] = fb["uebersehenes"]
     return Friction(**data)
 
-async def fetch_integration(perspectives: List[Perspective], friction: Friction, question: str, lang: str = "de", stil: str = "philosophisch") -> Integration:
+async def fetch_integration(perspectives: List[Perspective], friction: Friction, question: str, lang: str = "de", stil: str = "philosophisch", tone: str = "") -> Integration:
     perspectives_text = "\n".join([
         f"[{p.rolle}] ({p.anspruchstyp[:80]}): {p.kernanalyse[:150]}"
         for p in perspectives
@@ -1078,7 +1095,7 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         f"Echte Widersprüche: {'; '.join(friction.echte_widersprueche[:2])}\n"
         f"Übersehen: {friction.uebersehenes[:150]}"
     )
-    data = await asyncio.to_thread(sync_call_integration, perspectives_text, friction_text, question, lang, stil)
+    data = await asyncio.to_thread(sync_call_integration, perspectives_text, friction_text, question, lang, stil, tone)
     # Defensive fallbacks for all required fields
     data.setdefault("anspruchskarte", data.get("claim_map", ""))
     data.setdefault("uebersetzbare_bruecken", data.get("translatable_bridges", data.get("fruchtbare_differenzen", [])))
@@ -1133,6 +1150,7 @@ class QueryRequest(BaseModel):
     lang: str = "de"   # "de" or "en"
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
     register: str = ""  # "" | "fachsprache" | "einfach"
+    tone: str = ""  # "" | "achtsam" | "direkt"
 
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
@@ -1179,6 +1197,7 @@ class TableRequest(BaseModel):
     lang: str = "de"
     stil: str = "philosophisch"
     register: str = ""  # "" | "fachsprache" | "einfach"
+    tone: str = ""  # "" | "achtsam" | "direkt"
     custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
     # Reibungsintensität: "standard" | "eskaliert" | "maximal"
@@ -1199,10 +1218,11 @@ async def ask_the_table(req: QueryRequest):
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
     try:
-        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.register) for role, prompt in agents.items()]
+        tone = req.tone if req.tone in ("achtsam", "direkt") else ""
+        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.register, tone) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
-        friction = await fetch_friction(perspectives, req.question, req.lang, stil)
-        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
+        friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
+        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
     except Exception as e:
         import traceback
@@ -1289,15 +1309,66 @@ async def ask_simple(req: QueryRequest):
             break
 
     try:
-        tasks = [fetch_perspective(role, prompt, q, stil, lang) for role, prompt in selected_agents.items()]
+        tone = req.tone if req.tone in ("achtsam", "direkt") else ""
+        tasks = [fetch_perspective(role, prompt, q, stil, lang, "", tone) for role, prompt in selected_agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
-        friction = await fetch_friction(perspectives, q, lang, stil)
-        integration = await fetch_integration(perspectives, friction, q, lang, stil)
+        friction = await fetch_friction(perspectives, q, lang, stil, "standard", tone)
+        integration = await fetch_integration(perspectives, friction, q, lang, stil, tone)
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
+
+class TranslateRequest(BaseModel):
+    question: str
+    lang: str = "de"
+    stil: str = "philosophisch"
+    register: str = "fachsprache"  # target register: "fachsprache" | "alltag"
+    tone: str = ""  # "" | "achtsam" | "direkt"
+    custom_perspectives: List[CustomPerspective] = []
+    methods: List[str] = []
+
+@app.post("/api/translate", response_model=TableResponse)
+async def translate_answer(req: TranslateRequest):
+    """Translates the same question to a different language register (Fachsprache <-> Alltagssprache)."""
+    if not req.question or len(req.question.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Question too short.")
+
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht",
+                   "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
+    stil = req.stil if req.stil in valid_stile else "alltag"
+    register = req.register if req.register in ("fachsprache", "alltag") else "alltag"
+
+    # Use alltag for Alltagssprache target, keep stil for Fachsprache
+    effective_stil = "alltag" if register == "alltag" else stil
+    effective_register = "" if register == "alltag" else "fachsprache"
+
+    agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
+
+    # Use only methods that were originally selected, or default agents
+    selected_agents = {}
+    if req.methods:
+        for m in req.methods:
+            if m in agents:
+                selected_agents[m] = agents[m]
+    if not selected_agents:
+        # Use first 4 standard agents as default
+        for i, (k, v) in enumerate(agents.items()):
+            if i >= 4: break
+            selected_agents[k] = v
+
+    try:
+        tone = req.tone if req.tone in ("achtsam", "direkt") else ""
+        tasks = [fetch_perspective(role, prompt, req.question, effective_stil, req.lang, effective_register, tone)
+                 for role, prompt in selected_agents.items()]
+        perspectives = list(await asyncio.gather(*tasks))
+        friction = await fetch_friction(perspectives, req.question, req.lang, effective_stil, "standard", tone)
+        integration = await fetch_integration(perspectives, friction, req.question, req.lang, effective_stil, tone)
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{traceback.format_exc()}")
 
 def build_custom_agent_prompt(cp: CustomPerspective, lang: str) -> str:
     """Baut einen vollständigen System-Prompt für eine benutzerdefinierte Perspektive.
@@ -1399,6 +1470,7 @@ async def ask_the_custom_table(req: TableRequest):
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     reibung = req.reibungsintensitaet if req.reibungsintensitaet in {"standard", "eskaliert", "maximal"} else "standard"
+    tone = req.tone if req.tone in ("achtsam", "direkt") else ""
 
     all_agents_pool = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
@@ -1412,14 +1484,14 @@ async def ask_the_custom_table(req: TableRequest):
         for cp in req.custom_perspectives[:MAX_CUSTOM]:
             prompt = build_custom_agent_prompt(cp, req.lang)
             role_label = cp.name.strip() or ("Perspektive" if req.lang == "de" else "Perspective")
-            tasks.append(fetch_perspective(role_label, prompt, req.question, stil, req.lang))
+            tasks.append(fetch_perspective(role_label, prompt, req.question, stil, req.lang, "", tone))
             role_sources.append("custom")
 
         # 2. Gewählte Methoden-Agenten
         if req.methods:
             for method_name in req.methods:
                 if method_name in all_agents_pool:
-                    tasks.append(fetch_perspective(method_name, all_agents_pool[method_name], req.question, stil, req.lang))
+                    tasks.append(fetch_perspective(method_name, all_agents_pool[method_name], req.question, stil, req.lang, "", tone))
                     role_sources.append("method")
 
         if not tasks:
@@ -1433,8 +1505,8 @@ async def ask_the_custom_table(req: TableRequest):
             p.rolle = f"[{src}]{p.rolle}"
 
         # Reibungsphase mit konfigurierbarer Intensität
-        friction = await fetch_friction(perspectives, req.question, req.lang, stil, reibung)
-        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil)
+        friction = await fetch_friction(perspectives, req.question, req.lang, stil, reibung, tone)
+        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
 
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
 
@@ -1458,6 +1530,7 @@ class ClarifyRequest(BaseModel):
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
+    tone: str = ""  # "" | "achtsam" | "direkt"
     party_a: ClarifyParty
     party_b: ClarifyParty
     methods: List[str] = []  # Wenn leer → Standard: Pädagogisch + Neurodivergent
@@ -1492,6 +1565,7 @@ async def ask_clarify(req: ClarifyRequest):
         question=req.question,
         lang=req.lang,
         stil=stil,
+        tone=req.tone,
         custom_perspectives=[party_a_cp, party_b_cp],
         methods=methods,
     )

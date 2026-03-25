@@ -297,6 +297,29 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .lang-toggle .lang-active { color: var(--color-accent); }
 .lang-toggle .lang-sep { color: var(--color-border); margin: 0 1px; }
 
+/* Tone toggle (achtsam / direkt) */
+.tone-toggle {
+  height: 36px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.tone-toggle:hover { color: var(--color-text); background: var(--color-surface-offset); }
+.tone-toggle .tone-active { color: var(--color-accent); }
+.tone-toggle .tone-sep { color: var(--color-border); margin: 0 1px; }
+
 /* Stil indicator in mobile — show under header */
 .stil-indicator-mobile {
   display: none;
@@ -2740,6 +2763,12 @@ html[data-stil] body {
         <span class="lang-sep">/</span>
         <span id="langEn">EN</span>
       </button>
+      <!-- Tone toggle -->
+      <button class="tone-toggle" id="toneToggle" onclick="toggleTone()" aria-label="Ton wechseln: achtsam oder direkt">
+        <span id="toneAchtsam" class="tone-active">achtsam</span>
+        <span class="tone-sep">/</span>
+        <span id="toneDirekt">direkt</span>
+      </button>
       <!-- Theme toggle -->
       <button class="theme-toggle" data-theme-toggle aria-label="Theme wechseln">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3497,6 +3526,13 @@ const API = "";
 // =============================================
 let currentStil = 'oekonomisch';
 let currentRegister = 'fachsprache'; // 'fachsprache' | 'einfach'
+let currentTone = 'achtsam'; // 'achtsam' | 'direkt'
+
+function toggleTone() {
+  currentTone = currentTone === 'achtsam' ? 'direkt' : 'achtsam';
+  document.getElementById('toneAchtsam').className = currentTone === 'achtsam' ? 'tone-active' : '';
+  document.getElementById('toneDirekt').className = currentTone === 'direkt' ? 'tone-active' : '';
+}
 
 function setRegister(btn) {
   currentRegister = btn.dataset.register;
@@ -3713,6 +3749,7 @@ async function runTranslation() {
         lang: currentLang,
         stil: currentStil,
         register: targetRegister,
+        tone: currentTone,
         methods: getSelectedMethods(),
       }),
     });
@@ -4686,7 +4723,7 @@ async function submitQuestion() {
     const res = await fetch(`${API}/api/ask`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, lang: currentLang, stil: currentStil, register: currentRegister }),
+      body: JSON.stringify({ question, lang: currentLang, stil: currentStil, register: currentRegister, tone: currentTone }),
     });
 
     if (!res.ok) {
@@ -5168,6 +5205,7 @@ async function submitClarify() {
         lang: currentLang,
         stil: currentStil,
         register: currentRegister,
+        tone: currentTone,
         party_a: { name: partyAName, position: partyAPos },
         party_b: { name: partyBName, position: partyBPos },
         methods: clarifyMethods,
@@ -6078,6 +6116,7 @@ async function submitTable() {
         lang: currentLang,
         stil: currentStil,
         register: currentRegister,
+        tone: currentTone,
         custom_perspectives: allPerspectives,  // V5.7: includes slots + arena
         methods: methods,
         reibungsintensitaet: _reibungsintensitaet, // V5.7

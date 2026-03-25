@@ -162,6 +162,28 @@
     color: var(--text);
   }
 
+  /* ─── Tone Toggle ───────────────────────────────────── */
+  .tone-toggle-dt {
+    display: flex; gap: 2px;
+    background: var(--surface-off);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .tone-btn {
+    border: none; background: transparent;
+    padding: 5px 10px; border-radius: 7px;
+    font-family: inherit; font-size: 12px; font-weight: 500;
+    color: var(--muted); cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .tone-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 3px rgba(26,26,26,0.1);
+  }
+  .tone-btn:hover:not(.active) { color: var(--text); }
+
   /* ─── Main Content ──────────────────────────────────────── */
   main {
     flex: 1;
@@ -701,6 +723,11 @@
     <button class="lang-btn active" id="btn-de" onclick="setLang('de')" aria-pressed="true">DE</button>
     <button class="lang-btn" id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
   </div>
+  <!-- Tone toggle -->
+  <div class="tone-toggle-dt" role="group" aria-label="Ton wählen">
+    <button class="tone-btn active" id="dt-tone-achtsam" onclick="setDtTone('achtsam')" aria-pressed="true">achtsam</button>
+    <button class="tone-btn" id="dt-tone-direkt" onclick="setDtTone('direkt')" aria-pressed="false">direkt</button>
+  </div>
 </nav>
 
 <!-- ─── Main ─────────────────────────────────────────────────── -->
@@ -855,8 +882,17 @@
   const API = '';
   const ACCENTS = ['#E8614A', '#5B9E7A', '#8B7EC8', '#D4873A'];
   let currentLang = 'de';
+  let currentTone = 'achtsam'; // 'achtsam' | 'direkt'
   let lastResults = null;
   let lastQuestion = '';
+
+  window.setDtTone = function(tone) {
+    currentTone = tone;
+    document.querySelectorAll('.tone-btn').forEach(function(b) {
+      b.classList.toggle('active', b.id === 'dt-tone-' + tone);
+      b.setAttribute('aria-pressed', String(b.id === 'dt-tone-' + tone));
+    });
+  };
 
   // ─── i18n strings ──────────────────────────────────────────
   const i18n = {
@@ -1010,7 +1046,7 @@
     try {
       var res = await fetch(API + '/api/translate', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ question: dtLastQuestion, lang: currentLang, stil: 'alltag', register: targetReg }),
+        body: JSON.stringify({ question: dtLastQuestion, lang: currentLang, stil: 'alltag', register: targetReg, tone: currentTone }),
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       var data = await res.json();
@@ -1071,6 +1107,7 @@
       lang: currentLang,
       stil: 'alltag',
       register: dtRegister,
+      tone: currentTone,
       custom_perspectives: []
     };
 
