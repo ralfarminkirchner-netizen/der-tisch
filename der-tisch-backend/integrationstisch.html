@@ -811,9 +811,7 @@ html[data-stil="therapeutisch"] {
 html[data-theme="dark"][data-stil="therapeutisch"] {
   --color-bg: #0f1210; --color-surface: #141a15; --color-surface-2: #1a2119;
 }
-html[data-theme="light"][data-stil="therapeutisch"] {
-  --color-bg: #f7faf7; --color-surface: #fbfefb; --color-accent: #5a9068;
-}
+
 
 .stil-btn.stil-active {
   background: var(--color-accent) !important; color: var(--color-bg) !important; border-color: var(--color-accent) !important;
@@ -1919,7 +1917,7 @@ html[data-theme="light"][data-stil="therapeutisch"] {
 
       <!-- MODE TOGGLE -->
       <div class="mode-toggle-group" id="modeToggleGroup">
-        <button class="mode-btn mode-active" data-mode="perspektive" onclick="setMode(this)">Perspektivengespräch</button>
+        <button class="mode-btn mode-active" data-mode="perspektive" onclick="setMode(this)">Einzelfrage</button>
         <button class="mode-btn" data-mode="klaerung" onclick="setMode(this)">Klärungsgespräch</button>
         <button class="mode-btn" data-mode="freier" onclick="setMode(this)">Freier Tisch</button>
       </div>
@@ -2823,7 +2821,7 @@ const TRANSLATIONS = {
     allChipsBtn: 'Alle',
     lastComboBtn: 'Zuletzt',
     stilLabels: { alltag: 'Alltagssprache', therapeutisch: 'Therapeutisch', philosophisch: 'Philosophisch', achtsam: 'Achtsam', einfach: 'Einfach', kindgerecht: 'Kindersprache', spirituell: 'Spirituell' },
-    modePersp: 'Perspektivengespräch',
+    modePersp: 'Einzelfrage',
     modeKlaerung: 'Klärungsgespräch',
     modeFreier: 'Freier Tisch',
     klaerungContextLabel: 'Worum geht es?',
@@ -2980,9 +2978,8 @@ function applyTranslation(lang) {
   var html = document.documentElement;
   var btn = document.querySelector('[data-theme-toggle]');
   var current = 'dark';
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    current = 'light'; html.setAttribute('data-theme', 'light');
-  }
+  // Always start in dark mode — user can toggle manually
+  html.setAttribute('data-theme', 'dark');
   function updateIcon(theme) {
     if (!btn) return;
     if (theme === 'dark') {
