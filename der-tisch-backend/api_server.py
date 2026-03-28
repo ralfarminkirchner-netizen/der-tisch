@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import anthropic
 
-app = FastAPI(title="TEAM TiSCH API")
+app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = anthropic.Anthropic()
 
@@ -1205,7 +1205,7 @@ class TableRequest(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "TEAM TiSCH API", "version": "5.7"}
+    return {"status": "ok", "service": "TiSCH API", "version": "6.0", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"]}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):

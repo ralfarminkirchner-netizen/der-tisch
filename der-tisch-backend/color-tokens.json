@@ -1,0 +1,70 @@
+{
+  "_comment": "TiSCH Farb-Token-System v1.0 — Cross-App, Cross-Product",
+  "_rule": "Perspektiv-Farben sind semantisch fest. Immer gleich, egal welche App.",
+  "_future": "KUGELTiSCH, Octosphere, Plasmasphere erben diese Tokens",
+  "_maturity": "validated",
+  "_validated_at": "2026-03-28",
+
+  "perspective_colors": {
+    "_comment": "Semantische Zuordnung: Perspektive-Typ → Farbe",
+    "psychologie":   { "hex": "#E8614A", "name": "Coral",   "use": "Emotionale, psychologische Perspektiven. Hauptakzent DER TiSCH." },
+    "natur":         { "hex": "#5B9E7A", "name": "Grün",    "use": "Ökologische, biologische, systemische Perspektiven." },
+    "philosophie":   { "hex": "#8B7EC8", "name": "Lila",    "use": "IMMER LILA. Philosophisch, ethisch, ontologisch. Cross-app fest." },
+    "oekonomie":     { "hex": "#D4873A", "name": "Amber",   "use": "Wirtschaftlich, strategisch, ressourcenbezogen." },
+    "technik":       { "hex": "#4A90C4", "name": "Blau",    "use": "Technisch, wissenschaftlich, strukturell." },
+    "sozial":        { "hex": "#5B9E7A", "name": "Grün",    "use": "Soziale, relationale, kommunikative Perspektiven." },
+    "spirituell":    { "hex": "#9B6BC4", "name": "Violett", "use": "Spirituell, transpersonal, religiös." },
+    "paedagogisch":  { "hex": "#44A09C", "name": "Teal",    "use": "Pädagogisch, entwicklungsbezogen, lernorientiert." }
+  },
+
+  "perspective_slots": {
+    "_comment": "Position 1-4 in DER TiSCH (4er-Ansicht). Fallback-Reihenfolge.",
+    "slot_1": "#E8614A",
+    "slot_2": "#5B9E7A",
+    "slot_3": "#8B7EC8",
+    "slot_4": "#D4873A"
+  },
+
+  "product_accents": {
+    "der_tisch":         { "primary": "#E8614A", "bg": "#FAFAF8", "surface": "#FFFFFF", "mode": "light" },
+    "team_tisch":        { "primary": "#C8993A", "bg": "#0E0D0B", "surface": "#1A1917", "mode": "dark"  },
+    "integrations_tisch":{ "primary": "#7A9EC8", "bg": "#0C0D10", "surface": "#141518", "mode": "dark"  }
+  },
+
+  "future_apps": {
+    "_comment": "3D-Raum-Apps erben perspective_colors und perspective_slots",
+    "kugelTisch": {
+      "concept": "8 Stühle im Kreis. 3D-Kugelraum. Gleiche Farbzuordnung.",
+      "max_perspectives": 8,
+      "accent": "#C8993A",
+      "spatial": "sphere"
+    },
+    "octosphere": {
+      "concept": "Bis zu 8 Tentakeln. Oktopus-Metapher. Radiale Anordnung.",
+      "max_perspectives": 8,
+      "accent": "#5B9E7A",
+      "spatial": "radial-3d"
+    },
+    "plasmasphere": {
+      "concept": "Glaskuppel auf Tischplatte. Bis zu 4 Finger = 4 Perspektiven. Plasmakugel-Ästhetik.",
+      "max_perspectives": 4,
+      "accent": "#8B7EC8",
+      "spatial": "dome"
+    }
+  },
+
+  "css_variables": {
+    "_comment": "Standard CSS-Variablen-Namen für alle TiSCH-Apps",
+    "--dt-color-philosophie": "#8B7EC8",
+    "--dt-color-psychologie": "#E8614A",
+    "--dt-color-natur":       "#5B9E7A",
+    "--dt-color-oekonomie":   "#D4873A",
+    "--dt-color-technik":     "#4A90C4",
+    "--dt-color-spirituell":  "#9B6BC4",
+    "--dt-color-paedagogisch":"#44A09C",
+    "--dt-p1": "#E8614A",
+    "--dt-p2": "#5B9E7A",
+    "--dt-p3": "#8B7EC8",
+    "--dt-p4": "#D4873A"
+  }
+}

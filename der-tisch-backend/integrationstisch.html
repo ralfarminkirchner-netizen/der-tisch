@@ -2020,9 +2020,23 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       </button>
+      <!-- MODULE: SESSION VERLAUF — iNTEGRATiONS TiSCH -->
+      <button class="it-history-btn" id="it-histBtn" onclick="itHistToggle()" aria-label="Verlauf" title="Verlauf">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        <span class="it-hist-count" id="it-histCount"></span>
+      </button>
     </div>
   </div>
 </header>
+
+<!-- MODULE: SESSION VERLAUF PANEL — iNTEGRATiONS TiSCH -->
+<div id="it-historyPanel" role="dialog" aria-label="Verlauf" style="display:none;position:fixed;top:70px;right:16px;background:var(--color-surface-2,var(--color-surface));border:1px solid var(--color-border);border-radius:16px;width:320px;max-width:calc(100vw - 32px);box-shadow:0 8px 32px rgba(0,0,0,0.2);z-index:500;">
+  <div style="padding:16px 20px 12px;border-bottom:1px solid var(--color-border);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);display:flex;justify-content:space-between;align-items:center;">
+    <span>Verlauf</span>
+    <button onclick="itHistClear()" style="font-size:11px;color:var(--color-text-muted);cursor:pointer;border:none;background:none;font-family:inherit;">Alle löschen</button>
+  </div>
+  <div id="it-histList" style="padding:8px;max-height:360px;overflow-y:auto;"></div>
+</div>
 
 <!-- MAIN -->
 <main>
@@ -4156,6 +4170,8 @@ async function submitQuestion() {
     window._lastResultData = data;
     window._lastQuestion = question;
     renderResults(data);
+    // MODULE HOOK: Session persistieren
+    if (typeof itHistAddSession === 'function') itHistAddSession(question, data);
     showState('results');
     setTimeout(initBlockSelection, 50);
     showQuestionHeadline(question);
@@ -5906,6 +5922,129 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
+</script>
+
+<style>
+/* MODULE: SESSION VERLAUF — iNTEGRATiONS TiSCH */
+.it-history-btn {
+  display:flex;align-items:center;gap:6px;
+  background:var(--color-surface-offset,rgba(255,255,255,0.06));
+  border:1px solid var(--color-border);border-radius:9999px;padding:5px 10px;
+  font-family:inherit;font-size:13px;font-weight:500;
+  color:var(--color-text-muted);cursor:pointer;transition:all 0.15s;
+}
+.it-history-btn:hover { border-color:var(--color-accent);color:var(--color-accent); }
+.it-hist-count {
+  background:var(--color-accent);color:var(--color-bg);
+  border-radius:9999px;font-size:10px;font-weight:700;
+  padding:1px 6px;display:none;
+}
+.it-hist-count.visible { display:inline-block; }
+.it-hist-item { padding:10px 12px;border-radius:10px;cursor:pointer;transition:background 0.15s; }
+.it-hist-item:hover { background:var(--color-surface-offset); }
+.it-hist-item-q { font-size:13px;font-weight:500;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px; }
+.it-hist-item-meta { font-size:11px;color:var(--color-text-muted);display:flex;gap:8px; }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODULE: SESSION VERLAUF — iNTEGRATiONS TiSCH
+     localStorage key: 'it_sessions_v1'
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+  var HIST_KEY = 'it_sessions_v1';
+  var HIST_MAX = 10;
+
+  function itHistLoad() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function itHistSave(arr) {
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, HIST_MAX))); } catch(e) {}
+  }
+
+  window.itHistAddSession = function(question, data) {
+    var arr = itHistLoad();
+    arr.unshift({
+      q: question, ts: Date.now(),
+      perspectives: (data && data.perspectives ? data.perspectives : []).slice(0, 8).map(function(p) {
+        return { role: p.role || p.name || '', text: p.kernanalyse || p.text || '' };
+      })
+    });
+    itHistSave(arr);
+    itHistUpdateCount();
+  };
+
+  window.itHistToggle = function() {
+    var panel = document.getElementById('it-historyPanel');
+    if (!panel) return;
+    var isOpen = panel.style.display !== 'none';
+    if (isOpen) { panel.style.display = 'none'; return; }
+    itHistRender();
+    panel.style.display = 'block';
+    setTimeout(function() { document.addEventListener('click', itHistOutside); }, 10);
+  };
+
+  function itHistOutside(e) {
+    var panel = document.getElementById('it-historyPanel');
+    var btn = document.getElementById('it-histBtn');
+    if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+      panel.style.display = 'none';
+      document.removeEventListener('click', itHistOutside);
+    }
+  }
+
+  function itHistRender() {
+    var list = document.getElementById('it-histList');
+    if (!list) return;
+    var arr = itHistLoad();
+    if (arr.length === 0) {
+      list.innerHTML = '<div style="padding:24px;text-align:center;font-size:13px;color:var(--color-text-muted);">Noch keine Sessions gespeichert.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    arr.forEach(function(s, i) {
+      var item = document.createElement('div');
+      item.className = 'it-hist-item';
+      var d = new Date(s.ts);
+      var dateStr = d.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+      item.innerHTML = '<div class="it-hist-item-q">' + escIT(s.q) + '</div>' +
+        '<div class="it-hist-item-meta"><span>' + dateStr + '</span><span>' + (s.perspectives||[]).length + ' Stimmen</span></div>';
+      item.addEventListener('click', function() { itHistRestore(i); });
+      list.appendChild(item);
+    });
+  }
+
+  window.itHistClear = function() {
+    localStorage.removeItem(HIST_KEY);
+    itHistUpdateCount();
+    itHistRender();
+  };
+
+  window.itHistRestore = function(idx) {
+    var arr = itHistLoad();
+    var s = arr[idx];
+    if (!s) return;
+    var panel = document.getElementById('it-historyPanel');
+    if (panel) panel.style.display = 'none';
+    var inp = document.getElementById('questionInput') || document.querySelector('textarea');
+    if (inp) inp.value = s.q;
+  };
+
+  function itHistUpdateCount() {
+    var arr = itHistLoad();
+    var el = document.getElementById('it-histCount');
+    if (!el) return;
+    if (arr.length > 0) { el.textContent = arr.length; el.classList.add('visible'); }
+    else { el.classList.remove('visible'); }
+  }
+
+  function escIT(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.addEventListener('DOMContentLoaded', itHistUpdateCount);
+})();
 </script>
 </body>
 </html>

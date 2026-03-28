@@ -696,6 +696,160 @@
     text-transform: uppercase; color: var(--muted);
     text-align: center; margin-bottom: 24px;
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     MODULE: TTS PLAYER — DER TiSCH (light theme)
+     Adapted from TEAM TiSCH v5.6. Accent: --accent-1 (#E8614A)
+     ═══════════════════════════════════════════════════════════ */
+  #dt-ttsBar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    z-index: 800;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(26,26,26,0.14), 0 2px 8px rgba(26,26,26,0.08);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+    opacity: 0;
+    white-space: nowrap;
+    min-width: 280px;
+    max-width: 92vw;
+  }
+  #dt-ttsBar.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .dt-tts-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface-off);
+    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dt-tts-btn:hover { border-color: var(--accent-1); color: var(--accent-1); background: rgba(232,97,74,0.08); }
+  .dt-tts-btn.tts-active { background: var(--accent-1); color: #fff; border-color: var(--accent-1); }
+  .dt-tts-btn svg { width: 13px; height: 13px; pointer-events: none; }
+  .dt-tts-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .dt-tts-label {
+    font-size: 10px; color: var(--muted); letter-spacing: 0.05em;
+    text-transform: uppercase; overflow: hidden; white-space: nowrap; max-width: 140px;
+    font-family: inherit;
+  }
+  .dt-tts-progress {
+    height: 3px; background: var(--border); border-radius: 9999px; overflow: hidden;
+  }
+  .dt-tts-progress-bar {
+    height: 100%; background: var(--accent-1); border-radius: 9999px;
+    width: 0%; transition: width 0.5s linear;
+  }
+  #dt-ttsClose {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: none; background: transparent; color: var(--muted);
+    font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; cursor: pointer; transition: color 0.15s;
+  }
+  #dt-ttsClose:hover { color: var(--text); }
+
+  /* ═══════════════════════════════════════════════════════════
+     MODULE: SESSION VERLAUF — DER TiSCH
+     localStorage-basiert, max. 10 Sessions, modular erweiterbar
+     ═══════════════════════════════════════════════════════════ */
+  .dt-history-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface-off); border: 1px solid var(--border);
+    border-radius: 10px; padding: 5px 12px;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--muted); cursor: pointer; transition: all var(--transition);
+  }
+  .dt-history-btn:hover { border-color: var(--accent-1); color: var(--accent-1); }
+  .dt-history-btn .dt-hist-count {
+    background: var(--accent-1); color: #fff;
+    border-radius: 9999px; font-size: 10px; font-weight: 700;
+    padding: 1px 6px; display: none;
+  }
+  .dt-history-btn .dt-hist-count.visible { display: inline-block; }
+
+  #dt-historyPanel {
+    position: fixed; top: 70px; right: 16px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; width: 320px; max-width: calc(100vw - 32px);
+    box-shadow: 0 8px 32px rgba(26,26,26,0.14), 0 2px 8px rgba(26,26,26,0.06);
+    z-index: 500; display: none;
+    animation: dt-panel-in 0.2s ease both;
+  }
+  #dt-historyPanel.open { display: block; }
+  @keyframes dt-panel-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .dt-hist-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .dt-hist-clear-btn {
+    font-size: 11px; color: var(--muted); cursor: pointer;
+    border: none; background: none; font-family: inherit;
+    transition: color 0.15s;
+  }
+  .dt-hist-clear-btn:hover { color: #C0432C; }
+  .dt-hist-list { padding: 8px; max-height: 360px; overflow-y: auto; }
+  .dt-hist-item {
+    padding: 10px 12px; border-radius: 10px; cursor: pointer;
+    transition: background var(--transition);
+  }
+  .dt-hist-item:hover { background: var(--surface-off); }
+  .dt-hist-item-q {
+    font-size: 13px; font-weight: 500; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .dt-hist-item-meta {
+    font-size: 11px; color: var(--muted);
+    display: flex; gap: 8px;
+  }
+  .dt-hist-empty {
+    padding: 24px; text-align: center;
+    font-size: 13px; color: var(--muted);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     MODULE: FARB-TOKEN-SYSTEM
+     Alle Perspektiv-Farben: semantisch zugeordnet
+     Wird in allen TiSCH-Apps konsistent verwendet:
+       --color-psychologie:   #E8614A  (coral, Hauptakzent DER TiSCH)
+       --color-oekonomie:     #D4873A  (amber)
+       --color-natur:         #5B9E7A  (grün)
+       --color-philosophie:   #8B7EC8  (lila — IMMER lila, cross-app)
+       --color-sozial:        #5B9E7A  (grün)
+       --color-technik:       #5B9E7A  (grün-blau)
+     KUGELTiSCH / Octosphere / Plasmasphere erben diese Tokens.
+     ═══════════════════════════════════════════════════════════ */
+  :root {
+    --dt-color-psychologie:  #E8614A;
+    --dt-color-oekonomie:    #D4873A;
+    --dt-color-natur:        #5B9E7A;
+    --dt-color-philosophie:  #8B7EC8;
+    --dt-color-technik:      #4A90C4;
+    --dt-color-sozial:       #5B9E7A;
+    /* Perspective slots — by position (fallback order): */
+    --dt-p1: var(--dt-color-psychologie);
+    --dt-p2: var(--dt-color-natur);
+    --dt-p3: var(--dt-color-philosophie);
+    --dt-p4: var(--dt-color-oekonomie);
+  }
 </style>
 </head>
 <body>
@@ -728,7 +882,40 @@
     <button class="tone-btn active" id="dt-tone-achtsam" onclick="setDtTone('achtsam')" aria-pressed="true">achtsam</button>
     <button class="tone-btn" id="dt-tone-direkt" onclick="setDtTone('direkt')" aria-pressed="false">direkt</button>
   </div>
+  <!-- MODULE: SESSION VERLAUF -->
+  <button class="dt-history-btn" id="dt-histBtn" onclick="dtHistToggle()" aria-label="Verlauf" title="Verlauf">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+    <span>Verlauf</span>
+    <span class="dt-hist-count" id="dt-histCount"></span>
+  </button>
 </nav>
+
+<!-- MODULE: SESSION VERLAUF PANEL -->
+<div id="dt-historyPanel" role="dialog" aria-label="Verlauf">
+  <div class="dt-hist-header">
+    <span>Verlauf</span>
+    <button class="dt-hist-clear-btn" onclick="dtHistClear()">Alle löschen</button>
+  </div>
+  <div class="dt-hist-list" id="dt-histList"></div>
+</div>
+
+<!-- MODULE: TTS PLAYER BAR — DER TiSCH -->
+<div id="dt-ttsBar" role="region" aria-label="Vorlesefunktion">
+  <button class="dt-tts-btn" id="dt-ttsSkipBack" onclick="dtTtsSkip(-10)" title="-10s" aria-label="10 Sekunden zurück">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 1 0 .49-3.28"/></svg>
+  </button>
+  <button class="dt-tts-btn" id="dt-ttsPlayBtn" onclick="dtTtsToggle()" title="Wiedergabe / Pause" aria-label="Wiedergabe">
+    <svg id="dt-ttsPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+  </button>
+  <button class="dt-tts-btn" id="dt-ttsSkipFwd" onclick="dtTtsSkip(10)" title="+10s" aria-label="10 Sekunden vor">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 1 1-.49-3.28"/></svg>
+  </button>
+  <div class="dt-tts-progress-wrap">
+    <span class="dt-tts-label" id="dt-ttsLabel">Vorlesen</span>
+    <div class="dt-tts-progress"><div class="dt-tts-progress-bar" id="dt-ttsProgressBar"></div></div>
+  </div>
+  <button id="dt-ttsClose" onclick="dtTtsStop(true)" aria-label="Schließen">×</button>
+</div>
 
 <!-- ─── Main ─────────────────────────────────────────────────── -->
 <main>
@@ -1265,7 +1452,15 @@
 
     // Show export buttons
     document.getElementById('export-btns').style.display = 'flex';
-    setTimeout(drawDTConnections, 120);
+    // Block 4 fix: robust timing — wait for layout paint, then verify cards have height
+    (function waitForCards() {
+      requestAnimationFrame(function() {
+        var cards = document.querySelectorAll('#perspective-cards .perspective-card');
+        var ready = cards.length > 1 && cards[0].getBoundingClientRect().height > 10;
+        if (ready) { drawDTConnections(); }
+        else { setTimeout(waitForCards, 60); }
+      });
+    })();
     // Show translation button
     dtLastQuestion = question || '';
     dtLastData = data;
@@ -1273,11 +1468,167 @@
     if (transLbl) transLbl.textContent = dtRegister === 'alltag' ? 'In Fachsprache übersetzen' : 'In Alltagssprache übersetzen';
     document.getElementById('dt-translate-wrap').style.display = 'block';
     document.getElementById('dt-translated').style.display = 'none';
+
+    // MODULE HOOKS — modular, erweiterbar
+    // TTS: Refresh text corpus, show bar (non-autoplay)
+    if (typeof dtTtsStop === 'function') dtTtsStop(false);
+    if (typeof dtTtsShowBar === 'function') setTimeout(dtTtsShowBar, 400);
+    // Session: Save to localStorage
+    if (typeof dtHistAddSession === 'function') dtHistAddSession(lastQuestion, currentLang, perspectives);
   }
 
-  // ─── Export: PDF ─────────────────────────────────────────────
+  // ─── renderResultsDirect: Restore session without API call ────
+  window.renderResultsDirect = function(question, perspectives) {
+    lastQuestion = question;
+    lastResults = perspectives;
+    var preview = document.getElementById('results-question-preview');
+    if (preview) preview.textContent = '\u201E' + question + '\u201C';
+    var section = document.getElementById('results-section');
+    if (section) section.classList.add('visible');
+    var container = document.getElementById('perspective-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    var old = document.getElementById('dt-connections');
+    if (old) old.remove();
+    var connCanvas = document.createElement('div');
+    connCanvas.id = 'dt-connections';
+    connCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
+    container.style.position = 'relative';
+    container.insertBefore(connCanvas, container.firstChild);
+    perspectives.forEach(function(p, idx) {
+      var accent = ACCENTS[idx % ACCENTS.length];
+      var role = p.role || p.name || ('Perspektive ' + (idx+1));
+      var text = p.text || p.content || '';
+      var card = document.createElement('div');
+      card.className = 'perspective-card';
+      card.style.setProperty('--card-accent', accent);
+      var badge = document.createElement('div');
+      badge.className = 'card-role-badge';
+      badge.textContent = role;
+      badge.style.background = hexToRgba(accent, 0.10);
+      badge.style.color = accent;
+      var quote = document.createElement('div');
+      quote.className = 'card-quote-mark';
+      quote.setAttribute('aria-hidden','true');
+      quote.textContent = '\u201C';
+      quote.style.color = accent;
+      var textEl = document.createElement('p');
+      textEl.className = 'card-text';
+      textEl.textContent = text;
+      card.appendChild(badge); card.appendChild(quote); card.appendChild(textEl);
+      container.appendChild(card);
+    });
+    document.getElementById('export-btns').style.display = 'flex';
+    (function waitForCards() {
+      requestAnimationFrame(function() {
+        var cards = document.querySelectorAll('#perspective-cards .perspective-card');
+        var ready = cards.length > 1 && cards[0].getBoundingClientRect().height > 10;
+        if (ready) { drawDTConnections(); } else { setTimeout(waitForCards, 60); }
+      });
+    })();
+    if (typeof dtTtsStop === 'function') dtTtsStop(false);
+    if (typeof dtTtsShowBar === 'function') setTimeout(dtTtsShowBar, 400);
+    setTimeout(function() { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+  };
+
+  // ─── Export: PDF (Block 2 — jsPDF via CDN) ──────────────────
   window.exportPDF = function () {
-    window.print();
+    if (!lastResults || lastResults.length === 0) return;
+    // Load jsPDF on demand (CDN), then generate
+    var btn = document.getElementById('export-pdf');
+    var origText = btn ? btn.querySelector('span').textContent : '';
+    if (btn) btn.querySelector('span').textContent = 'Wird erstellt…';
+
+    function doGenerate() {
+      try {
+        var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        var pageW = 210, margin = 18, contentW = pageW - margin * 2;
+        var y = margin;
+
+        // Header
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(107, 107, 107);
+        doc.text('DER TiSCH — Mehrere Stimmen. Ein Tisch.', margin, y);
+        doc.text(new Date().toLocaleDateString('de-DE'), pageW - margin, y, { align: 'right' });
+        y += 6;
+        doc.setDrawColor(232, 97, 74);
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, pageW - margin, y);
+        y += 10;
+
+        // Question
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(15);
+        doc.setTextColor(26, 26, 26);
+        var qLines = doc.splitTextToSize(lastQuestion, contentW);
+        doc.text(qLines, margin, y);
+        y += qLines.length * 7 + 10;
+
+        // Accent colors matching the app
+        var accentRGB = [[232,97,74],[91,158,122],[139,126,200],[212,135,58]];
+
+        // Perspective cards
+        lastResults.forEach(function(p, idx) {
+          var role = p.role || p.name || p.perspective || p.stimme || ('Perspektive ' + (idx+1));
+          var text = p.text || p.content || p.antwort || p.response || '';
+          var ac = accentRGB[idx % accentRGB.length];
+
+          // Role badge background
+          doc.setFillColor(ac[0], ac[1], ac[2]);
+          doc.setDrawColor(ac[0], ac[1], ac[2]);
+          doc.roundedRect(margin, y, contentW, 7, 2, 2, 'F');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(8);
+          doc.setTextColor(255,255,255);
+          doc.text(role.toUpperCase(), margin + 4, y + 4.8);
+          y += 10;
+
+          // Left accent stripe
+          doc.setFillColor(ac[0], ac[1], ac[2]);
+          var textLines = doc.splitTextToSize(text, contentW - 8);
+          var blockH = textLines.length * 5.2 + 6;
+          doc.rect(margin, y, 2, blockH, 'F');
+
+          // Card text
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          doc.setTextColor(40, 40, 40);
+          doc.text(textLines, margin + 7, y + 5);
+          y += blockH + 10;
+
+          // Page break check
+          if (y > 265 && idx < lastResults.length - 1) {
+            doc.addPage();
+            y = margin;
+          }
+        });
+
+        // Footer
+        y = Math.max(y, 275);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Erstellt mit DER TiSCH · der-tisch-production.up.railway.app', margin, 285);
+
+        var filename = i18n[currentLang].exportFilename + '.pdf';
+        doc.save(filename);
+      } catch(e) {
+        console.error('[DER TiSCH] PDF error:', e);
+        window.print(); // Graceful fallback
+      }
+      if (btn) btn.querySelector('span').textContent = origText;
+    }
+
+    if (window.jspdf) {
+      doGenerate();
+    } else {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = doGenerate;
+      s.onerror = function() { window.print(); if (btn) btn.querySelector('span').textContent = origText; };
+      document.head.appendChild(s);
+    }
   };
 
   // ─── Export: TXT ─────────────────────────────────────────────
@@ -1326,6 +1677,265 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
   }
 
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODULE: TTS ENGINE — DER TiSCH
+     Portiert von TEAM TiSCH v5.6. Angepasst für Light-Theme.
+     Erweiterbar: dtTtsGetText() kann beliebige Container lesen.
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+  var _tts = {
+    sentences: [], currentIdx: 0, isPlaying: false,
+    utterance: null, lang: 'de-DE'
+  };
+
+  function dtTtsGetText() {
+    var container = document.getElementById('perspective-cards');
+    if (!container) return '';
+    var nodes = [];
+    var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        var p = node.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        if (p.closest('.card-quote-mark, .card-role-badge, script, style')) return NodeFilter.FILTER_REJECT;
+        var txt = node.textContent.trim();
+        return txt.length > 3 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var node;
+    while (node = walker.nextNode()) nodes.push(node.textContent.trim());
+    return nodes.join(' ');
+  }
+
+  function dtTtsSplit(text) {
+    var raw = text.match(/[^.!?]+[.!?]+/g) || [text];
+    var chunks = [], cur = '';
+    for (var i = 0; i < raw.length; i++) {
+      var s = raw[i];
+      if ((cur + s).length > 220 && cur.length > 0) { chunks.push(cur.trim()); cur = s; }
+      else { cur += ' ' + s; }
+    }
+    if (cur.trim()) chunks.push(cur.trim());
+    return chunks;
+  }
+
+  function dtTtsUpdateUI() {
+    var playBtn = document.getElementById('dt-ttsPlayBtn');
+    var icon = document.getElementById('dt-ttsPlayIcon');
+    var label = document.getElementById('dt-ttsLabel');
+    if (!playBtn) return;
+    if (_tts.isPlaying) {
+      playBtn.classList.add('tts-active');
+      if (icon) icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      if (label) label.textContent = 'Liest vor…';
+    } else {
+      playBtn.classList.remove('tts-active');
+      if (icon) icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+      if (label) label.textContent = 'Vorlesen';
+    }
+  }
+
+  function dtTtsPlayChunk() {
+    if (_tts.currentIdx >= _tts.sentences.length) { dtTtsStop(false); return; }
+    var text = _tts.sentences[_tts.currentIdx];
+    var utt = new SpeechSynthesisUtterance(text);
+    // Use currentLang from outer scope if available
+    utt.lang = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'en-GB' : 'de-DE';
+    utt.rate = 0.95;
+    utt.onend = function() {
+      if (_tts.isPlaying) { _tts.currentIdx++; dtTtsPlayChunk(); }
+    };
+    utt.onboundary = function() {
+      var pct = (_tts.currentIdx / Math.max(1, _tts.sentences.length)) * 100;
+      var bar = document.getElementById('dt-ttsProgressBar');
+      if (bar) bar.style.width = pct + '%';
+    };
+    _tts.utterance = utt;
+    window.speechSynthesis.speak(utt);
+  }
+
+  window.dtTtsToggle = function() {
+    if (!('speechSynthesis' in window)) {
+      alert('Vorlesefunktion wird von diesem Browser nicht unterstützt.');
+      return;
+    }
+    var bar = document.getElementById('dt-ttsBar');
+    if (!bar) return;
+    if (!bar.classList.contains('visible')) {
+      var fullText = dtTtsGetText();
+      if (!fullText) return;
+      _tts.sentences = dtTtsSplit(fullText);
+      _tts.currentIdx = 0;
+      bar.classList.add('visible');
+      _tts.isPlaying = true;
+      window.speechSynthesis.cancel();
+      dtTtsPlayChunk();
+      dtTtsUpdateUI();
+      return;
+    }
+    if (_tts.isPlaying) {
+      window.speechSynthesis.pause();
+      _tts.isPlaying = false;
+    } else {
+      _tts.isPlaying = true;
+      if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); }
+      else { dtTtsPlayChunk(); }
+    }
+    dtTtsUpdateUI();
+  };
+
+  window.dtTtsSkip = function(seconds) {
+    var delta = Math.max(1, Math.round(Math.abs(seconds) / 3));
+    if (seconds < 0) { _tts.currentIdx = Math.max(0, _tts.currentIdx - delta); }
+    else { _tts.currentIdx = Math.min(_tts.sentences.length - 1, _tts.currentIdx + delta); }
+    if (_tts.isPlaying) { window.speechSynthesis.cancel(); dtTtsPlayChunk(); }
+    dtTtsUpdateUI();
+  };
+
+  window.dtTtsStop = function(hide) {
+    window.speechSynthesis.cancel();
+    _tts.isPlaying = false;
+    _tts.currentIdx = 0;
+    var bar = document.getElementById('dt-ttsProgressBar');
+    if (bar) bar.style.width = '0%';
+    if (hide) {
+      var tbar = document.getElementById('dt-ttsBar');
+      if (tbar) tbar.classList.remove('visible');
+    }
+    dtTtsUpdateUI();
+  };
+
+  // Show TTS bar after results render (called from renderResults via event)
+  window.dtTtsShowBar = function() {
+    var bar = document.getElementById('dt-ttsBar');
+    if (bar) { bar.classList.add('visible'); dtTtsStop(false); }
+  };
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODULE: SESSION VERLAUF — DER TiSCH
+     localStorage key: 'dt_sessions_v1'
+     Format: [{q, ts, lang, perspectives:[{role,text}]}]
+     Max: 10 einträge. Modular: andere Apps können gleiches
+     Format verwenden mit anderem key (tt_sessions_v1, it_sessions_v1)
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+  var HIST_KEY = 'dt_sessions_v1';
+  var HIST_MAX = 10;
+
+  function dtHistLoad() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+    catch(e) { return []; }
+  }
+
+  function dtHistSave(arr) {
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, HIST_MAX))); } catch(e) {}
+  }
+
+  // Called from renderResults() after successful API response
+  window.dtHistAddSession = function(question, lang, perspectives) {
+    var arr = dtHistLoad();
+    arr.unshift({
+      q: question,
+      ts: Date.now(),
+      lang: lang,
+      perspectives: (perspectives || []).slice(0, 4).map(function(p) {
+        return { role: p.role || p.name || p.stimme || '', text: p.text || p.content || p.antwort || '' };
+      })
+    });
+    dtHistSave(arr);
+    dtHistUpdateCount();
+  };
+
+  window.dtHistToggle = function() {
+    var panel = document.getElementById('dt-historyPanel');
+    if (!panel) return;
+    var isOpen = panel.classList.contains('open');
+    if (isOpen) { panel.classList.remove('open'); return; }
+    dtHistRender();
+    panel.classList.add('open');
+    // Close on outside click
+    setTimeout(function() {
+      document.addEventListener('click', dtHistOutside);
+    }, 10);
+  };
+
+  function dtHistOutside(e) {
+    var panel = document.getElementById('dt-historyPanel');
+    var btn = document.getElementById('dt-histBtn');
+    if (panel && !panel.contains(e.target) && !btn.contains(e.target)) {
+      panel.classList.remove('open');
+      document.removeEventListener('click', dtHistOutside);
+    }
+  }
+
+  function dtHistRender() {
+    var list = document.getElementById('dt-histList');
+    if (!list) return;
+    var arr = dtHistLoad();
+    if (arr.length === 0) {
+      list.innerHTML = '<div class="dt-hist-empty">Noch keine Sessions gespeichert.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    arr.forEach(function(s, i) {
+      var item = document.createElement('div');
+      item.className = 'dt-hist-item';
+      var d = new Date(s.ts);
+      var dateStr = d.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+      item.innerHTML =
+        '<div class="dt-hist-item-q">' + escapeHtml(s.q) + '</div>' +
+        '<div class="dt-hist-item-meta"><span>' + dateStr + '</span><span>' + (s.perspectives||[]).length + ' Stimmen</span></div>';
+      item.addEventListener('click', function() { dtHistRestore(i); });
+      list.appendChild(item);
+    });
+  }
+
+  window.dtHistClear = function() {
+    localStorage.removeItem(HIST_KEY);
+    dtHistUpdateCount();
+    dtHistRender();
+  };
+
+  window.dtHistRestore = function(idx) {
+    var arr = dtHistLoad();
+    var s = arr[idx];
+    if (!s) return;
+    // Close panel
+    var panel = document.getElementById('dt-historyPanel');
+    if (panel) panel.classList.remove('open');
+    // Fill input
+    var input = document.getElementById('question-input');
+    if (input) { input.value = s.q; input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 260) + 'px'; }
+    // Restore results directly (no new API call)
+    if (typeof renderResultsDirect === 'function') {
+      renderResultsDirect(s.q, s.perspectives);
+    }
+  };
+
+  function dtHistUpdateCount() {
+    var arr = dtHistLoad();
+    var el = document.getElementById('dt-histCount');
+    if (!el) return;
+    if (arr.length > 0) { el.textContent = arr.length; el.classList.add('visible'); }
+    else { el.classList.remove('visible'); }
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Init on load
+  document.addEventListener('DOMContentLoaded', dtHistUpdateCount);
 })();
 </script>
 

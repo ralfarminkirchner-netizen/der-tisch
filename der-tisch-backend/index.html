@@ -2775,9 +2775,23 @@ html[data-stil] body {
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       </button>
+      <!-- MODULE: SESSION VERLAUF — TEAM TiSCH -->
+      <button class="tt-history-btn" id="tt-histBtn" onclick="ttHistToggle()" aria-label="Verlauf" title="Verlauf">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        <span class="tt-hist-count" id="tt-histCount"></span>
+      </button>
     </div>
   </div>
 </header>
+
+<!-- MODULE: SESSION VERLAUF PANEL — TEAM TiSCH -->
+<div id="tt-historyPanel" role="dialog" aria-label="Verlauf" style="display:none;position:fixed;top:70px;right:16px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:16px;width:320px;max-width:calc(100vw - 32px);box-shadow:var(--shadow-lg);z-index:500;">
+  <div style="padding:16px 20px 12px;border-bottom:1px solid var(--color-border);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);display:flex;justify-content:space-between;align-items:center;">
+    <span>Verlauf</span>
+    <button onclick="ttHistClear()" style="font-size:11px;color:var(--color-text-muted);cursor:pointer;border:none;background:none;font-family:inherit;">Alle löschen</button>
+  </div>
+  <div id="tt-histList" style="padding:8px;max-height:360px;overflow-y:auto;"></div>
+</div>
 
 <!-- Sprachstil Toggle (mobile) — moved to settings panel -->
 <div class="stil-indicator-mobile" id="stilMobile" hidden>
@@ -6739,6 +6753,138 @@ if ('serviceWorker' in navigator) {
     initAutoGrow(document.getElementById('tableQuestionInput'));
   });
 }
+</script>
+
+<style>
+/* MODULE: SESSION VERLAUF — TEAM TiSCH */
+.tt-history-btn {
+  display:flex;align-items:center;gap:6px;
+  background:var(--color-surface-offset);border:1px solid var(--color-border);
+  border-radius:9999px;padding:5px 10px;
+  font-family:inherit;font-size:13px;font-weight:500;
+  color:var(--color-text-muted);cursor:pointer;transition:all 0.15s;
+}
+.tt-history-btn:hover { border-color:var(--color-accent);color:var(--color-accent); }
+.tt-hist-count {
+  background:var(--color-accent);color:#000;
+  border-radius:9999px;font-size:10px;font-weight:700;
+  padding:1px 6px;display:none;
+}
+.tt-hist-count.visible { display:inline-block; }
+.tt-hist-item {
+  padding:10px 12px;border-radius:10px;cursor:pointer;
+  transition:background 0.15s;
+}
+.tt-hist-item:hover { background:var(--color-surface-offset); }
+.tt-hist-item-q { font-size:13px;font-weight:500;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px; }
+.tt-hist-item-meta { font-size:11px;color:var(--color-text-muted);display:flex;gap:8px; }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODULE: SESSION VERLAUF — TEAM TiSCH
+     localStorage key: 'tt_sessions_v1'
+     Hooks into existing sessionSaveVariant()
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+  var HIST_KEY = 'tt_sessions_v1';
+  var HIST_MAX = 10;
+
+  function ttHistLoad() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function ttHistSave(arr) {
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, HIST_MAX))); } catch(e) {}
+  }
+
+  // Patch sessionSaveVariant to also persist to localStorage
+  var _origSessionSaveVariant = window.sessionSaveVariant;
+  window.sessionSaveVariant = function(question, stil, lang, data, reibung) {
+    if (_origSessionSaveVariant) _origSessionSaveVariant.call(this, question, stil, lang, data, reibung);
+    var arr = ttHistLoad();
+    arr.unshift({
+      q: question, stil: stil, lang: lang, reibung: reibung || 'standard',
+      ts: Date.now(),
+      perspectives: (data && data.perspectives ? data.perspectives : []).slice(0, 8).map(function(p) {
+        return { role: p.role || p.name || '', kernanalyse: p.kernanalyse || p.text || '' };
+      })
+    });
+    ttHistSave(arr);
+    ttHistUpdateCount();
+  };
+
+  window.ttHistToggle = function() {
+    var panel = document.getElementById('tt-historyPanel');
+    if (!panel) return;
+    var isOpen = panel.style.display !== 'none';
+    if (isOpen) { panel.style.display = 'none'; return; }
+    ttHistRender();
+    panel.style.display = 'block';
+    setTimeout(function() { document.addEventListener('click', ttHistOutside); }, 10);
+  };
+
+  function ttHistOutside(e) {
+    var panel = document.getElementById('tt-historyPanel');
+    var btn = document.getElementById('tt-histBtn');
+    if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+      panel.style.display = 'none';
+      document.removeEventListener('click', ttHistOutside);
+    }
+  }
+
+  function ttHistRender() {
+    var list = document.getElementById('tt-histList');
+    if (!list) return;
+    var arr = ttHistLoad();
+    if (arr.length === 0) {
+      list.innerHTML = '<div style="padding:24px;text-align:center;font-size:13px;color:var(--color-text-muted);">Noch keine Sessions gespeichert.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    arr.forEach(function(s, i) {
+      var item = document.createElement('div');
+      item.className = 'tt-hist-item';
+      var d = new Date(s.ts);
+      var dateStr = d.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+      item.innerHTML = '<div class="tt-hist-item-q">' + escTT(s.q) + '</div>' +
+        '<div class="tt-hist-item-meta"><span>' + dateStr + '</span><span>' + (s.stil || '') + '</span><span>' + (s.lang||'').toUpperCase() + '</span></div>';
+      item.addEventListener('click', function() { ttHistRestore(i); });
+      list.appendChild(item);
+    });
+  }
+
+  window.ttHistClear = function() {
+    localStorage.removeItem(HIST_KEY);
+    ttHistUpdateCount();
+    ttHistRender();
+  };
+
+  window.ttHistRestore = function(idx) {
+    var arr = ttHistLoad();
+    var s = arr[idx];
+    if (!s) return;
+    var panel = document.getElementById('tt-historyPanel');
+    if (panel) panel.style.display = 'none';
+    // Fill question input
+    var inp = document.getElementById('questionInput') || document.getElementById('tableQuestionInput');
+    if (inp) inp.value = s.q;
+  };
+
+  function ttHistUpdateCount() {
+    var arr = ttHistLoad();
+    var el = document.getElementById('tt-histCount');
+    if (!el) return;
+    if (arr.length > 0) { el.textContent = arr.length; el.classList.add('visible'); }
+    else { el.classList.remove('visible'); }
+  }
+
+  function escTT(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.addEventListener('DOMContentLoaded', ttHistUpdateCount);
+})();
 </script>
 </body>
 </html>
