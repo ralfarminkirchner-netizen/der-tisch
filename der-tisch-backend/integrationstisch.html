@@ -1748,7 +1748,13 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
 
 /* Jugendsprache stil button — neon green only when active/hovered */
 .stil-btn[data-stil="jugend"]:hover { color: #39D353; border-color: rgba(57,211,83,0.4); }
-.stil-btn[data-stil="jugend"].stil-active { background: rgba(57,211,83,0.12); color: #39D353; border-color: #39D353; font-weight: 600; }
+.stil-btn[data-stil="jugend"].stil-active {
+  color: #39D353 !important;
+  background: rgba(57,211,83,0.12) !important;
+  border-color: #39D353 !important;
+  box-shadow: 0 0 0 3px rgba(57,211,83,0.12), 0 0 16px rgba(57,211,83,0.12) !important;
+  font-weight: 600 !important;
+}
 
 
 /* ─── IT Custom Person Slots ────────────────────────────────────────────── */
@@ -1841,10 +1847,10 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="akademisch"].stil-active {
-  color: #5b8ec4 !important;
-  background: rgba(91,142,196,0.18) !important;
-  border-color: #5b8ec4 !important;
-  box-shadow: 0 0 0 3px rgba(91,142,196,0.18), 0 0 16px rgba(91,142,196,0.18) !important;
+  color: #4a90c4 !important;
+  background: rgba(74,144,196,0.18) !important;
+  border-color: #4a90c4 !important;
+  box-shadow: 0 0 0 3px rgba(74,144,196,0.18), 0 0 16px rgba(74,144,196,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="alltag"].stil-active {
@@ -1855,17 +1861,17 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="achtsam"].stil-active {
-  color: #5b8ec4 !important;
-  background: rgba(91,142,196,0.18) !important;
-  border-color: #5b8ec4 !important;
-  box-shadow: 0 0 0 3px rgba(91,142,196,0.18), 0 0 16px rgba(91,142,196,0.18) !important;
+  color: #2a9db0 !important;
+  background: rgba(42,157,176,0.18) !important;
+  border-color: #2a9db0 !important;
+  box-shadow: 0 0 0 3px rgba(42,157,176,0.18), 0 0 16px rgba(42,157,176,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="einfach"].stil-active {
-  color: #6bab7e !important;
-  background: rgba(107,171,126,0.18) !important;
-  border-color: #6bab7e !important;
-  box-shadow: 0 0 0 3px rgba(107,171,126,0.18), 0 0 16px rgba(107,171,126,0.18) !important;
+  color: #a0c44a !important;
+  background: rgba(160,196,74,0.18) !important;
+  border-color: #a0c44a !important;
+  box-shadow: 0 0 0 3px rgba(160,196,74,0.18), 0 0 16px rgba(160,196,74,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="kindgerecht"].stil-active {
@@ -1876,10 +1882,10 @@ html[data-theme="dark"][data-stil="therapeutisch"] {
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="spirituell"].stil-active {
-  color: #8e6fc4 !important;
-  background: rgba(142,111,196,0.18) !important;
-  border-color: #8e6fc4 !important;
-  box-shadow: 0 0 0 3px rgba(142,111,196,0.18), 0 0 16px rgba(142,111,196,0.18) !important;
+  color: #b06ac4 !important;
+  background: rgba(176,106,196,0.18) !important;
+  border-color: #b06ac4 !important;
+  box-shadow: 0 0 0 3px rgba(176,106,196,0.18), 0 0 16px rgba(176,106,196,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="jugend"].stil-active {
@@ -3680,6 +3686,8 @@ function renderRelationshipLines(perspectives, edges) {
 
   for (var k = 0; k < edges.length; k++) {
     var edge = edges[k];
+    // Nur Verbindungen mit echter Stärke zeichnen
+    if (edge.magnitude <= 0.4) continue;
     var posA = positions[edge.roleA];
     var posB = positions[edge.roleB];
     if (!posA || !posB) continue;
@@ -5356,8 +5364,8 @@ function renderCardConnections(perspectives, edges) {
   var gridRect = grid.getBoundingClientRect();
 
   // Only draw edges with significant magnitude or non-positive valence
-  var notable = edges.filter(function(e) { return e.magnitude > 0.4 || e.valence !== 'positive'; });
-  notable = notable.slice(0, 12); // max 12 lines
+  var notable = edges.filter(function(e) { return e.magnitude > 0.4; });
+  notable = notable.slice(0, 12); // max 12 lines — nur Verbindungen mit echter Stärke
 
   notable.forEach(function(edge) {
     var cardA = roleToCard[edge.roleA];

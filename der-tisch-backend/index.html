@@ -2519,7 +2519,13 @@ html[data-stil] body {
 
 /* Jugendsprache stil button — neon green only when active/hovered */
 .stil-btn[data-stil="jugend"]:hover { color: #39D353; border-color: rgba(57,211,83,0.4); }
-.stil-btn[data-stil="jugend"].stil-active { background: rgba(57,211,83,0.12); color: #39D353; border-color: #39D353; font-weight: 600; }
+.stil-btn[data-stil="jugend"].stil-active {
+  color: #39D353 !important;
+  background: rgba(57,211,83,0.12) !important;
+  border-color: #39D353 !important;
+  box-shadow: 0 0 0 3px rgba(57,211,83,0.12), 0 0 16px rgba(57,211,83,0.12) !important;
+  font-weight: 600 !important;
+}
 
 /* ─── Edge Panel (TEAM) ─────────────────────────────────────────────────── */
 .edge-panel {
@@ -2629,10 +2635,10 @@ html[data-stil] body {
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="akademisch"].stil-active {
-  color: #5b8ec4 !important;
-  background: rgba(91,142,196,0.18) !important;
-  border-color: #5b8ec4 !important;
-  box-shadow: 0 0 0 3px rgba(91,142,196,0.18), 0 0 16px rgba(91,142,196,0.18) !important;
+  color: #4a90c4 !important;
+  background: rgba(74,144,196,0.18) !important;
+  border-color: #4a90c4 !important;
+  box-shadow: 0 0 0 3px rgba(74,144,196,0.18), 0 0 16px rgba(74,144,196,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="alltag"].stil-active {
@@ -2643,17 +2649,17 @@ html[data-stil] body {
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="achtsam"].stil-active {
-  color: #5b8ec4 !important;
-  background: rgba(91,142,196,0.18) !important;
-  border-color: #5b8ec4 !important;
-  box-shadow: 0 0 0 3px rgba(91,142,196,0.18), 0 0 16px rgba(91,142,196,0.18) !important;
+  color: #2a9db0 !important;
+  background: rgba(42,157,176,0.18) !important;
+  border-color: #2a9db0 !important;
+  box-shadow: 0 0 0 3px rgba(42,157,176,0.18), 0 0 16px rgba(42,157,176,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="einfach"].stil-active {
-  color: #6bab7e !important;
-  background: rgba(107,171,126,0.18) !important;
-  border-color: #6bab7e !important;
-  box-shadow: 0 0 0 3px rgba(107,171,126,0.18), 0 0 16px rgba(107,171,126,0.18) !important;
+  color: #a0c44a !important;
+  background: rgba(160,196,74,0.18) !important;
+  border-color: #a0c44a !important;
+  box-shadow: 0 0 0 3px rgba(160,196,74,0.18), 0 0 16px rgba(160,196,74,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="kindgerecht"].stil-active {
@@ -2664,10 +2670,10 @@ html[data-stil] body {
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="spirituell"].stil-active {
-  color: #8e6fc4 !important;
-  background: rgba(142,111,196,0.18) !important;
-  border-color: #8e6fc4 !important;
-  box-shadow: 0 0 0 3px rgba(142,111,196,0.18), 0 0 16px rgba(142,111,196,0.18) !important;
+  color: #b06ac4 !important;
+  background: rgba(176,106,196,0.18) !important;
+  border-color: #b06ac4 !important;
+  box-shadow: 0 0 0 3px rgba(176,106,196,0.18), 0 0 16px rgba(176,106,196,0.18) !important;
   font-weight: 600 !important;
 }
 .stil-btn[data-stil="jugend"].stil-active {
@@ -5550,7 +5556,7 @@ function renderCardConnectionsTeam(perspectives, edges) {
   const valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
   const gridRect = grid.getBoundingClientRect();
 
-  const notable = edges.filter(e => e.magnitude > 0.4 || e.valence !== 'positive').slice(0, 12);
+  const notable = edges.filter(e => e.magnitude > 0.4).slice(0, 12);
 
   notable.forEach(edge => {
     const cardA = roleToCard[edge.roleA];
