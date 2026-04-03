@@ -257,30 +257,38 @@ class TableResponse(BaseModel):
 # ==========================================
 PERSPECTIVE_TOOL = {
     "name": "submit_perspective",
-    "description": "Submit methodical analysis including explicit claim-type identification",
+    "description": "Submit methodical analysis. CRITICAL RULES: (1) Start directly with content — never begin with meta-phrases like 'As a philosophical perspective...' or 'From my method...' or 'I would say...'. (2) Each field: 3-6 sentences, no more, no filler. (3) All fields roughly equal length. (4) No hedging, no apologies, no empty qualifiers.",
     "input_schema": {
         "type": "object",
         "properties": {
             "anspruchstyp": {
                 "type": "string",
                 "description": (
-                    "Which type of truth-claim can your method actually address? "
-                    "Be explicit: correspondence (statement-world), coherence (statement-belief system), "
-                    "validity (social stabilization), or evidential experience (subject-inner coherence). "
-                    "Also name what your method CANNOT address. (1-2 sentences)"
+                    "Name the claim-type your method addresses (correspondence / coherence / validity / evidential experience) "
+                    "and what it cannot address. Direct statement, 2-3 sentences. No meta-commentary."
                 )
             },
             "kernanalyse": {
                 "type": "string",
-                "description": "Core analysis in 2-3 sentences strictly from your methodical framework — stay within your claim-type"
+                "description": (
+                    "Core analysis strictly from your method. 3-6 sentences. "
+                    "Start with the substance, not with 'My method says...' or similar. "
+                    "Proportional to the question's weight — neither too short nor bloated."
+                )
             },
             "evidenz": {
                 "type": "string",
-                "description": "What concepts, observations or logic grounds your analysis? (1-2 sentences)"
+                "description": (
+                    "What grounds your analysis — concepts, logic, observed patterns, data. "
+                    "3-5 sentences. Concrete, not generic."
+                )
             },
             "blinder_fleck": {
                 "type": "string",
-                "description": "What can your method principally NOT see? Name it honestly. (1 sentence)"
+                "description": (
+                    "What your method principally cannot see. Honest, specific. "
+                    "2-4 sentences. Not a disclaimer — an honest limit."
+                )
             }
         },
         "required": ["anspruchstyp", "kernanalyse", "evidenz", "blinder_fleck"]
@@ -856,9 +864,12 @@ def sync_call_perspective(system_prompt: str, question: str, stil: str = "philos
         messages=[{
             "role": "user",
             "content": (
-                f"Analyse this question from your method.\n"
-                f"First: name which claim-type your method can address — and which it cannot.\n"
-                f"Then: stay strictly within your method's reach. Your finger points at your moon, not at all moons.\n\n"
+                f"Analyse this question from your specific method. Rules:\n"
+                f"- Begin every field with the substance, never with 'As [method]...' or 'From my perspective...'\n"
+                f"- 3-6 sentences per field. Proportional to the question's weight.\n"
+                f"- No filler, no hedging, no empty qualifiers. Every sentence must carry content.\n"
+                f"- All fields roughly equal in length.\n"
+                f"- Stay strictly within your method's reach.\n\n"
                 f"QUESTION: {question}"
             )
         }]

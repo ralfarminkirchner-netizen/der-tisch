@@ -850,7 +850,76 @@
     --dt-p3: var(--dt-color-philosophie);
     --dt-p4: var(--dt-color-oekonomie);
   }
-</style>
+
+  /* Glassy cards (DER TiSCH) */
+  .perspective-card {
+    background: rgba(255,255,255,0.75) !important;
+    backdrop-filter: blur(10px) saturate(1.3) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(1.3) !important;
+    border: 1px solid rgba(0,0,0,0.07) !important;
+    border-top: 2.5px solid var(--card-accent, var(--accent)) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  }
+  .perspective-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 32px rgba(0,0,0,0.12) !important;
+  }
+  /* Agent icon */
+  .card-agent-icon {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 7px;
+    background: rgba(232,97,74,0.12);
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .card-agent-icon svg { width: 16px; height: 16px; }
+  .card-header-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .card-role-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  /* History */
+   in card header */
+.card-agent-icon {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: var(--card-accent-dim, rgba(58,111,115,0.15));
+  color: var(--card-accent, var(--color-accent));
+  flex-shrink: 0;
+}
+.card-agent-icon svg { width: 18px; height: 18px; }
+.card-header-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.card-role-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--card-accent, var(--color-accent));
+}
+
+
+  .history-toggle-btn {
+    height: 34px; width: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); border: 1px solid var(--border);
+    background: transparent; cursor: pointer;
+    transition: all var(--transition);
+  }
+  .history-toggle-btn:hover { color: var(--text); background: var(--surface-off); }
+  .history-toggle-btn svg { width: 17px; height: 17px; }
+
+  </style>
 </head>
 <body>
 
@@ -887,6 +956,10 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
     <span>Verlauf</span>
     <span class="dt-hist-count" id="dt-histCount"></span>
+  </button>
+  <!-- History toggle -->
+  <button class="history-toggle-btn" onclick="historyToggle()" aria-label="Verlauf öffnen" title="Verlauf">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg>
   </button>
 </nav>
 
@@ -1428,11 +1501,28 @@
       card.className = 'perspective-card';
       card.style.setProperty('--card-accent', accent);
 
+      // Icon + role header
+      var iconRow = document.createElement('div');
+      iconRow.className = 'card-header-row';
+      var iconEl = document.createElement('div');
+      iconEl.className = 'card-agent-icon';
+      iconEl.style.color = accent;
+      iconEl.style.background = hexToRgba(accent, 0.14);
+      iconEl.innerHTML = getAgentIcon(role);
+      var roleLbl = document.createElement('span');
+      roleLbl.className = 'card-role-label';
+      roleLbl.style.color = accent;
+      roleLbl.textContent = role;
+      iconRow.appendChild(iconEl);
+      iconRow.appendChild(roleLbl);
+      card.appendChild(iconRow);
+
       var badge = document.createElement('div');
       badge.className = 'card-role-badge';
       badge.textContent = role;
       badge.style.background = hexToRgba(accent, 0.10);
       badge.style.color = accent;
+      badge.style.display = 'none'; // replaced by iconRow above
 
       var quote = document.createElement('div');
       quote.className = 'card-quote-mark';
@@ -1449,6 +1539,19 @@
       card.appendChild(textEl);
       container.appendChild(card);
     });
+
+    // Save to history
+    try {
+      historyAdd({
+        question: lastQuestion || '',
+        mode: currentLang === 'de' ? 'DER TiSCH' : 'THE TABLE',
+        stil: 'alltag',
+        perspectives: perspectives.map(function(p, i) {
+          return { rolle: p.role || p.name || ('Perspektive ' + (i+1)) };
+        }),
+        fazit: ''
+      });
+    } catch(e) {}
 
     // Show export buttons
     document.getElementById('export-btns').style.display = 'flex';
@@ -1941,6 +2044,131 @@
 
 
 <script>
+const AGENT_ICONS = {
+  "Philosophisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>`,
+  "Epistemisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+  "Analytisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7z"/><path d="M6.5 14v7M3 17.5h7"/></svg>`,
+  "Systemisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="17" r="2.5"/><circle cx="19" cy="17" r="2.5"/><path d="M12 7.5V12M12 12l-5 3.5M12 12l5 3.5"/></svg>`,
+  "Familiensystemisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="4" r="2"/><circle cx="5" cy="14" r="2"/><circle cx="19" cy="14" r="2"/><circle cx="12" cy="20" r="2"/><path d="M12 6v4M7 13l4-3M17 13l-4-3M7 15l4 3.5M17 15l-4 3.5"/></svg>`,
+  "Soziologisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="7" r="2.5"/><circle cx="17" cy="10" r="2.5"/><path d="M4 20c0-3 2.2-5 5-5s5 2 5 5M13 20c0-2.5 1.8-4 4-4s4 1.5 4 4"/></svg>`,
+  "Kulturell": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2l3 6.5L22 9.5l-5 5 1.2 7L12 18l-6.2 3.5L7 14.5 2 9.5l7-.5z"/></svg>`,
+  "Tiefenpsychologisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 22V12"/><path d="M12 12C12 8 8 5 4 6"/><path d="M12 12c0-4 4-7 8-6"/><circle cx="12" cy="5" r="2"/></svg>`,
+  "Psychologisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 9c0-2.2 1.3-4 3-4s3 1.8 3 4c0 2-1.5 3-3 4v2"/><circle cx="12" cy="20" r="1"/></svg>`,
+  "Biografisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6h16M4 10h12M4 14h10M4 18h8"/><path d="M17 14l2 2 4-4"/></svg>`,
+  "Neurodivergent": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M4 12c1.5 0 2.5 1 4 1s2.5-1 4-1 2.5 1 4 1"/><path d="M12 12v6"/><circle cx="12" cy="19" r="1.5"/></svg>`,
+  "Narrativ": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6c0-1.1.9-2 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V6z"/></svg>`,
+  "Therapeutisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 21.6C5.5 18 2 14 2 10a6 6 0 0 1 10-4.5A6 6 0 0 1 22 10c0 4-3.5 8-10 11.6z"/></svg>`,
+  "Achtsam": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
+  "Körperorientiert": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v6M9 10h6M9 22l3-6 3 6"/></svg>`,
+  "Ethisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2l2.5 7.5H22l-6.5 4.7 2.5 7.5L12 17.3 6 21.7l2.5-7.5L2 9.5h7.5z"/></svg>`,
+  "Juridisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2v20M5 6l7-2 7 2M4 10l8 2 8-2M3 16l9 2 9-2"/><path d="M8 10v6M16 10v6"/></svg>`,
+  "Strategisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 18l6-6 4 4 8-9"/><circle cx="21" cy="7" r="2"/></svg>`,
+  "Risiko": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2L2 20h20L12 2z"/><path d="M12 9v5"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>`,
+  "Abwägung": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3v18M5 8l3 5-3 5M19 8l-3 5 3 5"/><path d="M5 13h14"/></svg>`,
+  "Empirisch-Rational": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 3H5L3 9l4 10h10l4-10-2-6h-4"/><path d="M9 3l3 6 3-6"/><path d="M7 14l5-5 5 5"/></svg>`,
+  "Pädagogisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 7l10-5 10 5v2L12 9 2 9V7z"/><path d="M6 9v7c0 2 2.7 3 6 3s6-1 6-3V9"/><path d="M20 7v7"/></svg>`,
+  "Aus Kinderaugen": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="10" r="4"/><circle cx="12" cy="10" r="1.5" fill="currentColor"/><path d="M8 20c0-2.2 1.8-4 4-4s4 1.8 4 4"/><path d="M7 5.5C8 4 10 3 12 3s4 1 5 2.5"/></svg>`,
+  "Spirituell": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg>`,
+  "Phänomenologisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 12c0-5.5 4.5-10 10-10s10 4.5 10 10"/><path d="M12 22c-3 0-5.5-1.3-7.3-3.3"/><path d="M19.3 18.7C17.5 20.7 15 22 12 22"/><circle cx="12" cy="12" r="3"/></svg>`,
+  "Buddhistisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>`,
+  "Ökonomisch": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 20h20"/><path d="M5 20V10l7-7 7 7v10"/><path d="M10 20v-6h4v6"/></svg>`,
+  "_fallback": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>`
+};
+
+function getAgentIcon(role) {
+  if (AGENT_ICONS[role]) return AGENT_ICONS[role];
+  const keys = Object.keys(AGENT_ICONS);
+  for (let i = 0; i < keys.length; i++) {
+    if (role && role.indexOf(keys[i]) !== -1) return AGENT_ICONS[keys[i]];
+  }
+  return AGENT_ICONS['_fallback'];
+}
+
+// =============================================
+// HISTORY (localStorage)
+// =============================================
+const HISTORY_KEY = 'tisch_history_v1';
+const HISTORY_MAX = 50;
+
+function historyLoad() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function historySave(arr) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); }
+  catch(e) {}
+}
+function historyAdd(entry) {
+  const arr = historyLoad();
+  arr.unshift({ ...entry, ts: Date.now() });
+  historySave(arr);
+  historyRenderList();
+}
+function historyDelete(ts) {
+  const arr = historyLoad().filter(e => e.ts !== ts);
+  historySave(arr);
+  historyRenderList();
+}
+function historyClear() {
+  historySave([]);
+  historyRenderList();
+}
+function historyExport() {
+  const arr = historyLoad();
+  const blob = new Blob([JSON.stringify(arr, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = 'tisch-verlauf-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+function historyToggle() {
+  const panel = document.getElementById('historyPanel');
+  const overlay = document.getElementById('historyOverlay');
+  if (!panel) return;
+  const open = panel.classList.toggle('open');
+  overlay.classList.toggle('open', open);
+  if (open) historyRenderList();
+}
+function historyFormatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'2-digit'})
+    + ' ' + d.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+}
+function historyRenderList() {
+  const list = document.getElementById('historyList');
+  if (!list) return;
+  const arr = historyLoad();
+  if (!arr.length) {
+    list.innerHTML = '<div class="history-empty">Noch keine gespeicherten Fragen.<br>Stelle eine Frage — sie wird hier erscheinen.</div>';
+    return;
+  }
+  list.innerHTML = arr.map(e => {
+    const chips = (e.perspectives || []).map(p =>
+      `<span class="history-persp-chip">${p.rolle || ''}</span>`
+    ).join('');
+    const mode = e.mode ? `<span>${e.mode}</span>` : '';
+    const stil = e.stil ? `<span>${e.stil}</span>` : '';
+    return `
+    <div class="history-item">
+      <div class="history-item-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div class="history-item-meta">
+          <div class="history-item-question">${e.question || ''}</div>
+          <div class="history-item-info">
+            <span>${historyFormatDate(e.ts)}</span>${mode}${stil}
+          </div>
+        </div>
+        <button class="history-item-delete" onclick="event.stopPropagation();historyDelete(${e.ts})" aria-label="Löschen">×</button>
+      </div>
+      <div class="history-item-body">
+        <div>${chips}</div>
+        ${e.fazit ? `<p style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-3);line-height:1.6">${e.fazit}</p>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+</script>
+<script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
@@ -1954,5 +2182,28 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- HISTORY PANEL -->
+<div id="historyOverlay" onclick="historyToggle()"></div>
+<div id="historyPanel" role="dialog" aria-label="Verlauf">
+  <div class="history-panel-header">
+    <span class="history-panel-title">Verlauf</span>
+    <div class="history-panel-actions">
+      <button class="history-action-btn" onclick="historyExport()" title="Als JSON exportieren">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button class="history-action-btn" onclick="historyClear()" title="Alles löschen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Alles
+      </button>
+      <button class="history-close-btn" onclick="historyToggle()" aria-label="Schließen">×</button>
+    </div>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="history-empty">Noch keine gespeicherten Fragen.</div>
+  </div>
+</div>
+
 </body>
 </html>
