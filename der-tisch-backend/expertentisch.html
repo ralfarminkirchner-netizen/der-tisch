@@ -345,13 +345,14 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 24px; 
 
 /* Integrity Field (MUST KEEP) */
 .integrity-field-wrap {
-  margin: 32px 0 8px;
-  border: 2px solid rgba(44,95,138,0.5);
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(44,95,138,0.07) 0%, rgba(10,15,26,0.95) 100%);
-  padding: 18px 20px;
+  margin: 28px 0 0;
+  border: 2px solid rgba(44,95,138,0.55);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(44,95,138,0.09) 0%, rgba(10,15,26,0.97) 100%);
+  padding: 20px 24px;
   position: relative;
-  box-shadow: 0 0 0 1px rgba(44,95,138,0.15), 0 4px 24px rgba(0,0,0,0.3);
+  width: 100%;
+  box-shadow: 0 0 0 1px rgba(44,95,138,0.18), 0 6px 32px rgba(0,0,0,0.35);
 }
 .integrity-field-label {
   display: inline-flex; align-items: center; gap: 6px;
@@ -363,7 +364,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 24px; 
 .integrity-field-label svg { width: 11px; height: 11px; }
 .integrity-field-hint { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
 .integrity-textarea {
-  width: 100%; min-height: 72px; max-height: none;
+  width: 100%; min-height: 90px; max-height: none;
   border: 1px solid rgba(44,95,138,0.3); border-radius: 10px;
   background: rgba(10,15,26,0.8); color: var(--text);
   font-family: inherit; font-size: 14px; line-height: 1.65;
@@ -661,6 +662,13 @@ footer a:hover { color: var(--accent); }
 
     <div class="perspective-cards" id="perspective-cards"></div>
 
+    <!-- Integrity Field -->
+    <div class="integrity-field-wrap" id="integrity-field-wrap" style="display:none;">
+      <div class="integrity-field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        MUST KEEP
+      </div>
+
     <!-- Notizen -->
     <div class="notes-section" id="notes-section" style="display:none;">
       <div class="notes-header" onclick="toggleNotes()">
@@ -675,12 +683,6 @@ footer a:hover { color: var(--accent); }
       </div>
     </div>
 
-    <!-- Integrity Field -->
-    <div class="integrity-field-wrap" id="integrity-field-wrap" style="display:none;">
-      <div class="integrity-field-label">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        MUST KEEP
-      </div>
       <p class="integrity-field-hint" id="integrity-hint">Was hier steht, bleibt in der Synthese maximal erhalten — exakt, wie du es formuliert hast. Ziehe wichtige Passagen hierein oder schreibe direkt hinein.</p>
       <textarea class="integrity-textarea" id="integrity-textarea" placeholder="Formulierungen, Kernaussagen oder Passagen die unbedingt erhalten bleiben müssen…"></textarea>
     </div>

@@ -108,6 +108,118 @@
   }
   .writing-deco svg { color: var(--accent); }
 
+
+  /* ─── Integrity Field (MUST KEEP) ───────────────────── */
+  .integrity-field-wrap {
+    margin: 28px 0 0;
+    border: 2px solid rgba(200,121,65,0.5);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(200,121,65,0.08) 0%, rgba(28,18,8,0.97) 100%);
+    padding: 20px 24px;
+    width: 100%;
+    box-shadow: 0 0 0 1px rgba(200,121,65,0.18), 0 6px 32px rgba(0,0,0,0.4);
+  }
+  .integrity-field-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: #fff;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; border-radius: 6px; padding: 3px 9px;
+    margin-bottom: 10px; font-family: var(--font-sans);
+  }
+  .integrity-field-label svg { width: 11px; height: 11px; }
+  .integrity-field-hint {
+    font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
+    line-height: 1.5; font-family: var(--font-sans);
+  }
+  .integrity-textarea {
+    width: 100%; min-height: 90px; max-height: none;
+    border: 1.5px solid rgba(200,121,65,0.3); border-radius: 10px;
+    background: rgba(28,18,8,0.8); color: var(--text);
+    font-family: var(--font-sans); font-size: 14px; line-height: 1.65;
+    padding: 12px 16px; resize: vertical; outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .integrity-textarea::placeholder { color: var(--text-faint); }
+  .integrity-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  /* kiNTEGRiTY bar (LiTERATEN) */
+  .ki-bar-lt {
+    display: none; align-items: center; gap: 12px;
+    margin: 20px 0 8px; flex-wrap: wrap;
+  }
+  .ki-bar-lt.visible { display: flex; }
+  .ki-btn-lt {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid rgba(200,121,65,0.45); background: rgba(200,121,65,0.1);
+    border-radius: 10px; padding: 10px 20px;
+    font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+    color: var(--accent); cursor: pointer; transition: all 0.18s;
+  }
+  .ki-btn-lt:hover:not(:disabled) { background: rgba(200,121,65,0.2); border-color: var(--accent); }
+  .ki-btn-lt:disabled { opacity: 0.4; cursor: not-allowed; }
+  .ki-btn-lt svg { width: 14px; height: 14px; }
+  .ki-spinner-lt {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(200,121,65,0.3); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ki-btn-lt.loading .ki-spinner-lt { display: block; }
+  .ki-btn-lt.loading .ki-btn-text { display: none; }
+
+  /* kiNTEGRiTY panels (LiTERATEN) */
+  .ki-output-lt { display: none; margin-top: 20px; }
+  .ki-output-lt.visible { display: block; }
+  .ki-panel-lt {
+    border-radius: 14px; border: 1px solid; margin-bottom: 12px;
+    background: rgba(38,26,14,0.95);
+  }
+  .ki-panel-header-lt {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; cursor: pointer; border-bottom: 1px solid transparent;
+  }
+  .ki-panel-title-lt {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .ki-panel-title-lt svg { width: 13px; height: 13px; }
+  .ki-panel-body-lt { padding: 16px 18px; }
+  .ki-editable-lt {
+    min-height: 80px; outline: none;
+    font-family: var(--font-serif); font-size: 15px;
+    line-height: 1.8; color: var(--text);
+    white-space: pre-wrap; word-break: break-word;
+    border-radius: 8px; padding: 4px;
+  }
+  .ki-editable-lt:focus { background: rgba(255,255,255,0.02); }
+  .ki-editable-lt:empty::before { content: attr(data-placeholder); color: var(--text-faint); font-style: italic; pointer-events: none; }
+  /* Synthese */
+  .ki-synth-lt { border-color: rgba(200,121,65,0.3); }
+  .ki-synth-lt .ki-panel-header-lt { border-bottom-color: rgba(200,121,65,0.15); }
+  .ki-synth-lt .ki-panel-title-lt { color: var(--accent); }
+  /* Aber */
+  .ki-aber-lt { border-color: rgba(212,168,67,0.25); }
+  .ki-aber-lt .ki-panel-title-lt { color: #D4A843; }
+  /* Fraglich */
+  .ki-fragl-lt { border-color: rgba(180,60,50,0.2); }
+  .ki-fragl-lt .ki-panel-title-lt { color: #C0392B; }
+
+  .ki-copy-btn-lt {
+    border: 1px solid rgba(200,121,65,0.3); border-radius: 7px;
+    padding: 4px 10px; font-size: 11px; font-weight: 500;
+    cursor: pointer; background: transparent; color: var(--text-muted);
+    font-family: var(--font-sans); transition: all 0.15s; display: flex; align-items: center; gap: 4px;
+  }
+  .ki-copy-btn-lt:hover { border-color: var(--accent); color: var(--accent); }
+  .ki-copy-btn-lt svg { width: 11px; height: 11px; }
+  .panel-chevron-lt { transition: transform 0.18s; }
+  .ki-panel-lt.collapsed .panel-chevron-lt { transform: rotate(-90deg); }
+  .ki-panel-lt.collapsed .ki-panel-body-lt { display: none; }
+
   html { scroll-behavior: smooth; }
 
   body {
@@ -955,6 +1067,77 @@
     <!-- Actual cards -->
     <div class="perspective-cards" id="perspective-cards"></div>
 
+
+    <!-- Integrity Field (MUST KEEP) -->
+    <div class="integrity-field-wrap" id="lt-integrity-wrap" style="display:none;">
+      <div class="integrity-field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        MUST KEEP
+      </div>
+      <p class="integrity-field-hint">Was hier steht, bleibt in der Synthese maximal erhalten. Ziehe Passagen aus den Antworten hierein, oder schreibe direkt hinein — deine Formulierungen haben Vorrang.</p>
+      <textarea class="integrity-textarea" id="lt-integrity-textarea"
+        placeholder="Formulierungen, Kernaussagen oder Passagen die in der Synthese unbedingt erhalten bleiben müssen…"></textarea>
+    </div>
+
+    <!-- kiNTEGRiTY bar -->
+    <div class="ki-bar-lt" id="lt-ki-bar">
+      <button class="ki-btn-lt" id="lt-ki-btn" onclick="ltRunKintegrity()">
+        <span class="ki-spinner-lt" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="ki-btn-icon"><path d="M2 12l10-10 10 10M12 2v20"/></svg>
+        <span class="ki-btn-text">kiNTEGRiTY — Verdichten</span>
+      </button>
+      <span style="font-size:11px;color:var(--text-faint);font-family:var(--font-sans);">Fasst alle Literatenmeinungen integritätswahrend zusammen</span>
+    </div>
+
+    <!-- kiNTEGRiTY output -->
+    <div class="ki-output-lt" id="lt-ki-output">
+
+      <div class="ki-panel-lt ki-synth-lt" id="lt-ki-synth-panel">
+        <div class="ki-panel-header-lt" onclick="ltTogglePanel('lt-ki-synth-panel')">
+          <span class="ki-panel-title-lt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12l10-10 10 10M12 2v20"/></svg>
+            Synthese / Verdichtung
+          </span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="ki-copy-btn-lt" onclick="ltCopyPanel('lt-ki-synth-panel');event.stopPropagation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren
+            </button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron-lt"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="ki-panel-body-lt">
+          <div class="ki-editable-lt" id="lt-ki-synthesis" contenteditable="true" data-placeholder="Synthese erscheint hier…"></div>
+        </div>
+      </div>
+
+      <div class="ki-panel-lt ki-aber-lt" id="lt-ki-aber-panel">
+        <div class="ki-panel-header-lt" onclick="ltTogglePanel('lt-ki-aber-panel')">
+          <span class="ki-panel-title-lt" style="color:#D4A843;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            DAS GROßE ABER
+          </span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron-lt"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ki-panel-body-lt">
+          <div class="ki-editable-lt" id="lt-ki-aber" contenteditable="true" data-placeholder="Echte Widersprüche und inkommensurable Positionen…" style="color:#D4A843;"></div>
+        </div>
+      </div>
+
+      <div class="ki-panel-lt ki-fragl-lt" id="lt-ki-fragl-panel">
+        <div class="ki-panel-header-lt" onclick="ltTogglePanel('lt-ki-fragl-panel')">
+          <span class="ki-panel-title-lt" style="color:#C0392B;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Fraglich · Fehlerhaft
+          </span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron-lt"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ki-panel-body-lt">
+          <div class="ki-editable-lt" id="lt-ki-fragl" contenteditable="true" data-placeholder="Faktisch fragwürdige Aussagen…" style="color:#C0392B;"></div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- Export buttons -->
     <div class="export-btns" id="export-btns" style="display:none;">
       <button class="export-btn" onclick="exportPDF()" id="export-pdf-btn">
@@ -1334,6 +1517,11 @@ async function submitQuestion() {
     });
 
     if (exportBtns) exportBtns.style.display = 'flex';
+    // Show integrity + ki-bar
+    var ltIntegrity = document.getElementById('lt-integrity-wrap');
+    var ltKiBar = document.getElementById('lt-ki-bar');
+    if (ltIntegrity) ltIntegrity.style.display = 'block';
+    if (ltKiBar) ltKiBar.classList.add('visible');
     if (translateSection) {
       translateSection.style.display = 'block';
       const tBtn = document.getElementById('translate-btn');
@@ -1507,6 +1695,62 @@ function historyRenderList() {
       <div class="history-item-body"><div>${chips}</div></div>
     </div>`;
   }).join('');
+}
+
+
+// ─── kiNTEGRiTY (LiTERATEN) ─────────────────────────────
+async function ltRunKintegrity() {
+  if (!lastResults) return;
+  var kiBtn = document.getElementById('lt-ki-btn');
+  if (kiBtn) { kiBtn.classList.add('loading'); kiBtn.disabled = true; }
+
+  var integrityField = (document.getElementById('lt-integrity-textarea')?.value || '').trim();
+
+  var inputs = (lastResults.perspectives || []).map(function(p, i) {
+    return {
+      id: 'p' + i,
+      source_field: 'literaten_perspektive',
+      content: p.kernanalyse || p.text || '',
+      role: (p.rolle || p.role || '').replace(/^\[(custom|method)\]/, '').trim(),
+      is_user_authored: false
+    };
+  });
+
+  try {
+    var res = await fetch(API + '/api/kintegrity/synthesize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        inputs: inputs,
+        integrity_field: integrityField,
+        profile: 'literatentisch_profile',
+        lang: currentLang,
+        question: lastQuestion || '',
+      }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    var synth = document.getElementById('lt-ki-synthesis');
+    var aber  = document.getElementById('lt-ki-aber');
+    var fragl = document.getElementById('lt-ki-fragl');
+    if (synth) synth.textContent = data.synthesis || '';
+    if (aber)  aber.textContent  = data.aber_section || '';
+    if (fragl) fragl.textContent = data.questionable || '';
+    document.getElementById('lt-ki-output').classList.add('visible');
+  } catch(e) {
+    alert((currentLang === 'de' ? 'kiNTEGRiTY Fehler: ' : 'kiNTEGRiTY Error: ') + e.message);
+  } finally {
+    if (kiBtn) { kiBtn.classList.remove('loading'); kiBtn.disabled = false; }
+  }
+}
+
+function ltTogglePanel(id) {
+  document.getElementById(id)?.classList.toggle('collapsed');
+}
+
+function ltCopyPanel(id) {
+  var el = document.getElementById(id)?.querySelector('.ki-editable-lt');
+  if (el) navigator.clipboard.writeText(el.textContent || '').catch(function(){});
 }
 
 // Init
