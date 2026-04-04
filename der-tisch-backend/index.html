@@ -1965,20 +1965,45 @@ html[data-stil] body {
 #roundTableSection.visible { display: block; }
 
 /* =============================================
-   THREE.JS 3D TABLE
+   THREE.JS 3D TABLE — Preview + Fullscreen
 ============================================= */
-.rt-3d-wrap {
+
+/* Preview card — click to open fullscreen */
+.rt-preview {
   position: relative;
   width: 100%;
-  height: min(72vw, 620px);
+  height: min(56vw, 420px);
   border-radius: var(--radius-2xl);
   overflow: hidden;
   border: 1px solid var(--color-border);
-  background: #0a0a0f;
-  box-shadow: 0 12px 64px rgba(0,0,0,0.6);
-  cursor: grab;
+  background: #080810;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
 }
-.rt-3d-wrap:active { cursor: grabbing; }
+.rt-preview:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 12px 64px rgba(0,0,0,0.7);
+}
+.rt-preview:hover .rt-preview-hint { opacity: 1; }
+
+.rt-preview-hint {
+  position: absolute;
+  bottom: 16px; right: 16px;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(10,10,20,0.75);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(220,218,212,0.9);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(8px);
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
 #rtThreeCanvas {
   width: 100% !important;
   height: 100% !important;
@@ -1990,6 +2015,43 @@ html[data-stil] body {
   width: 100%; height: 100%;
   pointer-events: none;
   overflow: hidden;
+}
+
+/* Fullscreen overlay */
+#rtFullscreenOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #050508;
+  cursor: grab;
+}
+#rtFullscreenOverlay:active { cursor: grabbing; }
+#rtThreeCanvasFull {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+#rtLabelsFull {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.rt-fs-ctrl {
+  position: absolute;
+  top: 16px; right: 16px;
+  display: flex; gap: 8px;
+  z-index: 10;
+}
+.rt-fs-hint {
+  position: absolute;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: rgba(200,195,185,0.5);
+  letter-spacing: 0.08em;
+  pointer-events: none;
 }
 .rt-label {
   position: absolute;
@@ -3548,21 +3610,28 @@ html[data-stil] body {
 
     <section id="roundTableSection">
       <div class="round-table-wrap">
-        <div class="rt-3d-wrap">
-          <!-- Three.js canvas injected here by JS -->
+        <!-- Preview thumbnail — click to open fullscreen -->
+        <div class="rt-preview" id="rtPreview" onclick="rtOpenFullscreen()" title="Klicken zum Vergrößern" role="button" tabindex="0" aria-label="3D-Tisch in Vollbild öffnen">
           <canvas id="rtThreeCanvas"></canvas>
-          <!-- HTML label overlays -->
           <div id="rtLabels"></div>
-          <!-- Controls -->
-          <div class="rt-ctrl-bar">
-            <button class="rt-ctrl-btn" id="rtBtnOrbit" onclick="rtToggleOrbit()" title="Drehen">&#x21BA;</button>
-            <button class="rt-ctrl-btn" onclick="rtZoom3d(0.8)" title="Zoom +">+</button>
-            <button class="rt-ctrl-btn" onclick="rtZoom3d(1.25)" title="Zoom −">−</button>
-            <button class="rt-ctrl-btn" onclick="rtResetCam()" title="Reset">&#x2302;</button>
+          <div class="rt-preview-hint">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            Vollbild
           </div>
         </div>
       </div>
     </section>
+
+    <!-- FULLSCREEN TABLE OVERLAY -->
+    <div id="rtFullscreenOverlay" style="display:none;" onclick="rtHandleOverlayClick(event)" role="dialog" aria-label="3D-Tisch Vollbild">
+      <canvas id="rtThreeCanvasFull"></canvas>
+      <div id="rtLabelsFull"></div>
+      <div class="rt-fs-ctrl">
+        <button class="rt-ctrl-btn" onclick="rtResetCam()" title="Kamera zurücksetzen">&#x2302;</button>
+        <button class="rt-ctrl-btn" onclick="rtCloseFullscreen()" title="Schließen" style="font-size:18px;">&#x2715;</button>
+      </div>
+      <div class="rt-fs-hint">Ziehen = Drehen · Scrollen = Zoom · Pinch = Zoom</div>
+    </div>
 
     <!-- V5.5 — PERSPEKTIV-MODAL -->
     <div class="rt-modal-overlay" id="rtModalOverlay" onclick="closeRtModal(event)" role="dialog" aria-modal="true" aria-labelledby="rtModalRoleName">
@@ -6143,20 +6212,76 @@ function rtResetCam() {
   _rt3d.targetLookAt = new THREE.Vector3(0,0,0);
 }
 
+// Keep last perspectives+edges for re-init on fullscreen
+let _rtLastPerspectives = null;
+
 function renderRoundTable(perspectives) {
   const section = document.getElementById('roundTableSection');
   if (!section || !perspectives || perspectives.length === 0) return;
   section.classList.add('visible');
-  // Defer to let Three.js load
-  setTimeout(() => _initThreeTable(perspectives, window._currentTeamEdges || []), 60);
+  _rtLastPerspectives = perspectives;
+  setTimeout(() => _initThreeTable(
+    perspectives,
+    window._currentTeamEdges || [],
+    document.getElementById('rtThreeCanvas'),
+    document.getElementById('rtLabels'),
+    document.getElementById('rtPreview')
+  ), 60);
 }
 
-function _initThreeTable(perspectives, edges) {
-  if (typeof THREE === 'undefined') return;
+function rtOpenFullscreen() {
+  if (!_rtLastPerspectives) return;
+  const overlay = document.getElementById('rtFullscreenOverlay');
+  overlay.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // Stop preview renderer
+  if (_rt3d && _rt3d._previewOnly) {
+    cancelAnimationFrame(_rt3d.animId);
+  }
+  setTimeout(() => _initThreeTable(
+    _rtLastPerspectives,
+    window._currentTeamEdges || [],
+    document.getElementById('rtThreeCanvasFull'),
+    document.getElementById('rtLabelsFull'),
+    overlay,
+    true // fullscreen mode
+  ), 30);
+}
 
-  const wrap = document.querySelector('.rt-3d-wrap');
-  const canvas = document.getElementById('rtThreeCanvas');
-  const labelsEl = document.getElementById('rtLabels');
+function rtCloseFullscreen() {
+  const overlay = document.getElementById('rtFullscreenOverlay');
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  if (_rt3d && !_rt3d._previewOnly) {
+    cancelAnimationFrame(_rt3d.animId);
+    _rt3d.renderer.dispose();
+    _rt3d.labels.forEach(l => l.remove());
+    _rt3d = null;
+  }
+  // Restart preview
+  if (_rtLastPerspectives) {
+    setTimeout(() => _initThreeTable(
+      _rtLastPerspectives,
+      window._currentTeamEdges || [],
+      document.getElementById('rtThreeCanvas'),
+      document.getElementById('rtLabels'),
+      document.getElementById('rtPreview')
+    ), 30);
+  }
+}
+
+function rtHandleOverlayClick(ev) {
+  // Only close if clicking backdrop, not canvas/labels
+  if (ev.target.id === 'rtFullscreenOverlay') rtCloseFullscreen();
+}
+
+// ESC closes fullscreen
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape') rtCloseFullscreen();
+});
+
+function _initThreeTable(perspectives, edges, canvas, labelsEl, wrap, isFullscreen) {
+  if (typeof THREE === 'undefined') return;
   if (!wrap || !canvas || !labelsEl) return;
 
   // Destroy old scene
@@ -6167,13 +6292,19 @@ function _initThreeTable(perspectives, edges) {
   }
   labelsEl.innerHTML = '';
 
-  const W = wrap.clientWidth;
-  const H = wrap.clientHeight;
+  const W = isFullscreen ? window.innerWidth  : (wrap.clientWidth  || 600);
+  const H = isFullscreen ? window.innerHeight : (wrap.clientHeight || 420);
+
+  // TOP 3 strongest edges only
+  const topEdges = edges
+    .slice()
+    .sort((a, b) => b.magnitude - a.magnitude)
+    .slice(0, 3);
 
   // ── Scene ──
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x080810);
-  scene.fog = new THREE.Fog(0x080810, 22, 45);
+  scene.background = new THREE.Color(isFullscreen ? 0x040408 : 0x080810);
+  scene.fog = new THREE.Fog(isFullscreen ? 0x040408 : 0x080810, 28, 55);
 
   // ── Camera ──
   const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
@@ -6306,8 +6437,8 @@ function _initThreeTable(perspectives, edges) {
   const VALENCE_COLOR = { positive: 0x4CAF50, ambivalent: 0xFFC107, negative: 0xF44336 };
   const lineObjects = [];
 
-  if (edges.length > 0) {
-    edges.forEach(edge => {
+  if (topEdges.length > 0) {
+    topEdges.forEach(edge => {
       const idxA = perspectives.findIndex(p => p.rolle.replace(/^\[(custom|method)\]/, '').trim() === edge.roleA);
       const idxB = perspectives.findIndex(p => p.rolle.replace(/^\[(custom|method)\]/, '').trim() === edge.roleB);
       if (idxA < 0 || idxB < 0) return;
@@ -6339,9 +6470,7 @@ function _initThreeTable(perspectives, edges) {
       const line = new THREE.Line(lineGeo, lineMat);
       scene.add(line);
 
-      // Only show strong lines by default
-      if (mag < 0.65) { lineMat.opacity = 0; }
-      lineObjects.push({ line, lineMat, mag, color3, edge, visible: mag >= 0.65 });
+      lineObjects.push({ line, lineMat, mag, color3, edge });
     });
   }
 
@@ -6442,12 +6571,13 @@ function _initThreeTable(perspectives, edges) {
 
   // Resize
   const resizeObs = new ResizeObserver(() => {
-    const nW = wrap.clientWidth, nH = wrap.clientHeight;
+    const nW = isFullscreen ? window.innerWidth  : wrap.clientWidth;
+    const nH = isFullscreen ? window.innerHeight : wrap.clientHeight;
     renderer.setSize(nW, nH);
     camera.aspect = nW / nH;
     camera.updateProjectionMatrix();
   });
-  resizeObs.observe(wrap);
+  resizeObs.observe(isFullscreen ? document.documentElement : wrap);
 
   // ── Project 3D → 2D for labels ──
   function updateLabels() {
@@ -6491,7 +6621,7 @@ function _initThreeTable(perspectives, edges) {
   }
   animate();
 
-  _rt3d = { scene, camera, renderer, animId, perspectives, edges, labels: labelEls.map(l => l.el) };
+  _rt3d = { scene, camera, renderer, animId, perspectives, edges: topEdges, labels: labelEls.map(l => l.el), _previewOnly: !isFullscreen };
 }
 
 function renderRtConnections() {} // no-op: handled inside _initThreeTable
