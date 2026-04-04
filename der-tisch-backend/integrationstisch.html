@@ -3482,8 +3482,8 @@ function renderPerspectiveCard(p) {
     '<div class="" style="display:none;"><div class="role-icon ' + cfg.iconClass + '">' + cfg.icon + '</div>' +'<span class="role-label">' + escapeHtml(displayRole) + sourceBadge + '</span>' +'<button class="persp-gear-btn" onclick="event.stopPropagation();togglePerspOptions(this)" aria-expanded="false" title="Kontext" style="margin-left:auto;"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg></button>' +'</div>' +'<div class="persp-options-panel" id="pop-' + blockId + '">' +'<div class="persp-options-row"><span class="persp-options-label">Geschlecht</span>' +'<select class="persp-options-select"><option value="neutral">∅ Neutral</option><option value="maennlich">♂ Männlich</option><option value="weiblich">♀ Weiblich</option><option value="divers">⚧ Divers</option></select></div>' +'<div class="persp-options-row"><span class="persp-options-label">Bildung</span>' +'<select class="persp-options-select"><option value="">— offen —</option><option>Grundschule</option><option>Mittlere Reife</option><option>Abitur</option><option>Bachelor</option><option>Master</option><option>Promotion</option></select></div>' +'<div class="persp-options-row"><span class="persp-options-label">Neurotyp</span>' +'<select class="persp-options-select" onchange="onPerspNeuroChange(this,\'' + blockId + '\')">' +'<option value="neurotypisch">Neurotypisch</option><option value="neurodivergent">Neurodivergent</option></select></div>' +'<div class="persp-neuro-detail" id="persp-neuro-detail-' + blockId + '">' + ['ADHS','Autismus','Legasthenie','Dyskalkulie','Tourette','DCD'].map(function(x){return '<button type="button" class="persp-neuro-chip" onclick="toggleNeuroChip(this)">'+x+'</button>';}).join('') + '</div>' +'<p class="persp-diagnostic-note">Diese Angaben modifizieren die Perspektive kontextuell. Die App stellt keine Diagnosen — sie kann lediglich kompatible Muster benennen und zur fachlichen Abklärung empfehlen.</p>' +'</div>' +
         '<p class="perspective-analysis">' + escapeHtml(p.kernanalyse) + '</p>' +
     '<div class="perspective-meta">' +
-    '<div class="meta-block evidence"><p class="meta-label">' + t.evidenceLabel + '</p><p class="meta-text">' + escapeHtml(p.evidenz) + '</p></div>' +
-    '<div class="meta-block blind-spot"><p class="meta-label">' + t.blindSpotLabel + '</p><p class="meta-text">' + escapeHtml(p.blinder_fleck) + '</p></div>' +
+    '<div class="meta-block evidence"><p class="meta-text">' + escapeHtml(p.evidenz) + '</p></div>' +
+    '<div class="meta-block blind-spot"><p class="meta-text">' + escapeHtml(p.blinder_fleck) + '</p></div>' +
     '</div></article></div>';
 }
 
@@ -3942,7 +3942,7 @@ function renderRelationshipLines(perspectives, edges) {
   while (linesG.firstChild) linesG.removeChild(linesG.firstChild);
 
   var positions = window._seatPositions || {};
-  var valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
+  var valenceColors = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
   var n = perspectives ? perspectives.length : 0;
 
   // Track how many edges exist per pair for parallel offset
@@ -4015,15 +4015,33 @@ function renderRelationshipLines(perspectives, edges) {
       pathData = 'M ' + x1 + ' ' + y1 + ' L ' + x2 + ' ' + y2;
     }
 
+    // Pulse animation
+    var animName = mag > 0.8 ? 'pulse-strong' : (mag > 0.6 ? 'pulse-medium' : 'pulse-soft');
+    var animDur  = mag > 0.8 ? '1.2s' : (mag > 0.6 ? '1.8s' : '2.8s');
+
+    // ── Glow layer ────────────────────────────────────────────────────────
+    var glowLine = document.createElementNS(svgNS, 'path');
+    glowLine.setAttribute('d', pathData);
+    glowLine.setAttribute('stroke', color);
+    glowLine.setAttribute('stroke-width', String(sw * 3.5));
+    glowLine.setAttribute('stroke-opacity', '0.18');
+    glowLine.setAttribute('stroke-linecap', 'round');
+    glowLine.setAttribute('fill', 'none');
+    glowLine.style.animation = animName + ' ' + animDur + ' ease-in-out infinite';
+    glowLine.style.color = color;
+    glowLine.style.pointerEvents = 'none';
+    linesG.appendChild(glowLine);
+
     // ── Visible line ──────────────────────────────────────────────────────
     var visLine = document.createElementNS(svgNS, 'path');
     visLine.setAttribute('d', pathData);
     visLine.setAttribute('stroke', color);
     visLine.setAttribute('stroke-width', String(sw));
-    visLine.setAttribute('stroke-opacity', mag > 0.6 ? '0.85' : '0.6');
+    visLine.setAttribute('stroke-linecap', 'round');
     visLine.setAttribute('fill', 'none');
     if (dasharray !== 'none') visLine.setAttribute('stroke-dasharray', dasharray);
-    if (mag > 0.65) visLine.setAttribute('filter', 'url(#edgeGlow)');
+    visLine.style.animation = animName + ' ' + animDur + ' ease-in-out infinite';
+    visLine.style.color = color;
     visLine.style.pointerEvents = 'none';
 
     // ── Invisible thick hit area ──────────────────────────────────────────
@@ -5607,76 +5625,92 @@ function itGetPersonSlots() {
 
 
 // ─── Card-to-Card Connection Lines ────────────────────────────────────────
+// Inject pulse keyframes once
+if (!document.getElementById('connPulseStyleIT')) {
+  var _st = document.createElement('style');
+  _st.id = 'connPulseStyleIT';
+  _st.textContent = [
+    '@keyframes pulse-strong { 0%,100%{stroke-opacity:.85;filter:drop-shadow(0 0 6px currentColor)} 50%{stroke-opacity:.3;filter:drop-shadow(0 0 18px currentColor)} }',
+    '@keyframes pulse-medium { 0%,100%{stroke-opacity:.65;filter:drop-shadow(0 0 4px currentColor)} 50%{stroke-opacity:.2;filter:drop-shadow(0 0 10px currentColor)} }',
+    '@keyframes pulse-soft   { 0%,100%{stroke-opacity:.45;filter:drop-shadow(0 0 2px currentColor)} 50%{stroke-opacity:.15;filter:drop-shadow(0 0 6px currentColor)} }'
+  ].join('');
+  document.head.appendChild(_st);
+}
+
+function gutterPathIT(rA, rB, gr) {
+  var ax = rA.left - gr.left, ay = rA.top - gr.top;
+  var aw = rA.width, ah = rA.height;
+  var bx = rB.left - gr.left, by = rB.top - gr.top;
+  var bw = rB.width, bh = rB.height;
+  var cAx = ax + aw/2, cAy = ay + ah/2;
+  var cBx = bx + bw/2, cBy = by + bh/2;
+  var dx = cBx - cAx, dy = cBy - cAy;
+  var sX, sY, eX, eY;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    sX = dx > 0 ? ax + aw : ax; sY = cAy;
+    eX = dx > 0 ? bx : bx + bw; eY = cBy;
+  } else {
+    sX = cAx; sY = dy > 0 ? ay + ah : ay;
+    eX = cBx; eY = dy > 0 ? by : by + bh;
+  }
+  var mX = (sX + eX) / 2, mY = (sY + eY) / 2;
+  return 'M ' + sX + ' ' + sY + ' C ' + mX + ' ' + sY + ', ' + mX + ' ' + eY + ', ' + eX + ' ' + eY;
+}
+
 function renderCardConnections(perspectives, edges) {
   var grid = document.getElementById('perspectivesGrid');
   if (!grid) return;
-
-  // Remove old overlay
   var old = document.getElementById('cardConnSvg');
   if (old) old.remove();
-
   var cards = grid.querySelectorAll('.block-selectable[data-block-type="perspective"]');
   if (cards.length < 2 || !edges || edges.length === 0) return;
 
-  // Build role → card element map
   var roleToCard = {};
   perspectives.forEach(function(p, i) {
     var role = getRoleDisplay(p.rolle);
     if (cards[i]) roleToCard[role] = cards[i];
   });
 
-  // Create SVG overlay
   var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('id', 'cardConnSvg');
   svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
 
-  var valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
+  // Ampel: grün = Übereinstimmung, gelb = teils-teils, rot = inkompatibel
+  var VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
   var gridRect = grid.getBoundingClientRect();
-
-  // Only draw edges with significant magnitude or non-positive valence
-  var notable = edges.filter(function(e) { return e.magnitude > 0.4; });
-  notable = notable.slice(0, 12); // max 12 lines — nur Verbindungen mit echter Stärke
+  var notable = edges.filter(function(e) { return e.magnitude > 0.4; }).slice(0, 12);
 
   notable.forEach(function(edge) {
     var cardA = roleToCard[edge.roleA];
     var cardB = roleToCard[edge.roleB];
     if (!cardA || !cardB) return;
-
     var rA = cardA.getBoundingClientRect();
     var rB = cardB.getBoundingClientRect();
+    var color = VALENCE_COLOR[edge.valence] || '#FFC107';
+    var mag = edge.magnitude;
+    var sw = mag > 0.8 ? 3 : (mag > 0.6 ? 2.2 : 1.6);
+    var anim = mag > 0.8 ? 'pulse-strong' : (mag > 0.6 ? 'pulse-medium' : 'pulse-soft');
+    var dur  = mag > 0.8 ? '1.2s' : (mag > 0.6 ? '1.8s' : '2.8s');
+    var pathD = gutterPathIT(rA, rB, gridRect);
 
-    // Center-bottom of A to center-top of B (or center-center)
-    var x1 = rA.left - gridRect.left + rA.width / 2;
-    var y1 = rA.top  - gridRect.top  + rA.height / 2;
-    var x2 = rB.left - gridRect.left + rB.width / 2;
-    var y2 = rB.top  - gridRect.top  + rB.height / 2;
+    var glow = document.createElementNS('http://www.w3.org/2000/svg','path');
+    glow.setAttribute('d', pathD); glow.setAttribute('fill','none');
+    glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', sw * 3.5);
+    glow.setAttribute('stroke-opacity','0.18'); glow.setAttribute('stroke-linecap','round');
+    glow.style.animation = anim + ' ' + dur + ' ease-in-out infinite';
+    glow.style.color = color;
 
-    var color = valenceColors[edge.valence] || '#4a9e6a';
-    var mag   = edge.magnitude;
-    var sw    = mag > 0.7 ? 2.5 : (mag > 0.4 ? 1.8 : 1.2);
-    var dash  = mag > 0.65 ? 'none' : (mag > 0.4 ? '5 6' : '3 8');
+    var vis = document.createElementNS('http://www.w3.org/2000/svg','path');
+    vis.setAttribute('d', pathD); vis.setAttribute('fill','none');
+    vis.setAttribute('stroke', color); vis.setAttribute('stroke-width', sw);
+    vis.setAttribute('stroke-linecap','round');
+    vis.style.animation = anim + ' ' + dur + ' ease-in-out infinite';
+    vis.style.color = color;
 
-    // Visible line
-    var vis = document.createElementNS('http://www.w3.org/2000/svg','line');
-    vis.setAttribute('x1', x1); vis.setAttribute('y1', y1);
-    vis.setAttribute('x2', x2); vis.setAttribute('y2', y2);
-    vis.setAttribute('stroke', color);
-    vis.setAttribute('stroke-width', sw);
-    vis.setAttribute('stroke-opacity', mag > 0.6 ? '0.7' : '0.45');
-    vis.setAttribute('fill', 'none');
-    if (dash !== 'none') vis.setAttribute('stroke-dasharray', dash);
-    if (mag > 0.7) vis.setAttribute('filter', 'url(#edgeGlow)');
-    vis.style.pointerEvents = 'none';
-
-    // Invisible hit area
-    var hit = document.createElementNS('http://www.w3.org/2000/svg','line');
-    hit.setAttribute('x1', x1); hit.setAttribute('y1', y1);
-    hit.setAttribute('x2', x2); hit.setAttribute('y2', y2);
-    hit.setAttribute('stroke', 'transparent');
-    hit.setAttribute('stroke-width', '20');
-    hit.style.cursor = 'pointer';
-    hit.style.pointerEvents = 'stroke';
-
+    var hit = document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('d', pathD); hit.setAttribute('fill','none');
+    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','20');
+    hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
     (function(edgeData, edgeColor) {
       hit.addEventListener('click', function(ev) {
         ev.stopPropagation();
@@ -5685,11 +5719,11 @@ function renderCardConnections(perspectives, edges) {
       });
     })(edge, color);
 
+    svg.appendChild(glow);
     svg.appendChild(vis);
     svg.appendChild(hit);
   });
 
-  // Make grid relative for positioning — SVG inserted first so cards render above it
   grid.style.position = 'relative';
   grid.insertBefore(svg, grid.firstChild);
 }

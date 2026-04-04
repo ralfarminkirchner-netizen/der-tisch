@@ -4636,11 +4636,9 @@ function renderPerspectiveCard(p) {
         <p class="perspective-analysis">${escapeHtml(p.kernanalyse)}</p>
         <div class="perspective-meta">
           <div class="meta-block evidence">
-            <p class="meta-label">${t.evidenceLabel}</p>
             <p class="meta-text">${escapeHtml(p.evidenz)}</p>
           </div>
           <div class="meta-block blind-spot">
-            <p class="meta-label">${t.blindSpotLabel}</p>
             <p class="meta-text">${escapeHtml(p.blinder_fleck)}</p>
           </div>
         </div>
@@ -5831,6 +5829,54 @@ function buildTeamEdges(perspectives, friction) {
   return edges.sort((a,b) => a.magnitude - b.magnitude);
 }
 
+// Inject pulse keyframes once
+if (!document.getElementById('connPulseStyle')) {
+  const st = document.createElement('style');
+  st.id = 'connPulseStyle';
+  st.textContent = `
+    @keyframes pulse-strong { 0%,100%{stroke-opacity:.85;filter:drop-shadow(0 0 6px currentColor)} 50%{stroke-opacity:.3;filter:drop-shadow(0 0 18px currentColor)} }
+    @keyframes pulse-medium { 0%,100%{stroke-opacity:.65;filter:drop-shadow(0 0 4px currentColor)} 50%{stroke-opacity:.2;filter:drop-shadow(0 0 10px currentColor)} }
+    @keyframes pulse-soft   { 0%,100%{stroke-opacity:.45;filter:drop-shadow(0 0 2px currentColor)} 50%{stroke-opacity:.15;filter:drop-shadow(0 0 6px currentColor)} }
+  `;
+  document.head.appendChild(st);
+}
+
+function gutterPath(rA, rB, gr) {
+  // Returns SVG path d string routing via gutter between cards
+  const ax = rA.left - gr.left;
+  const ay = rA.top  - gr.top;
+  const aw = rA.width, ah = rA.height;
+  const bx = rB.left - gr.left;
+  const by = rB.top  - gr.top;
+  const bw = rB.width, bh = rB.height;
+
+  // Card centers
+  const cAx = ax + aw/2, cAy = ay + ah/2;
+  const cBx = bx + bw/2, cBy = by + bh/2;
+
+  // Determine exit/entry points at card edges (not center)
+  // Exit A: closest edge toward B
+  let sX, sY, eX, eY;
+  const dx = cBx - cAx, dy = cBy - cAy;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    // Horizontal connection
+    sX = dx > 0 ? ax + aw : ax;         sY = cAy;
+    eX = dx > 0 ? bx      : bx + bw;    eY = cBy;
+  } else {
+    // Vertical connection
+    sX = cAx;  sY = dy > 0 ? ay + ah : ay;
+    eX = cBx;  eY = dy > 0 ? by      : by + bh;
+  }
+
+  // Route via gutter midpoint
+  const mX = (sX + eX) / 2;
+  const mY = (sY + eY) / 2;
+
+  // Smooth cubic bezier staying in gutter
+  return `M ${sX} ${sY} C ${mX} ${sY}, ${mX} ${eY}, ${eX} ${eY}`;
+}
+
 function renderCardConnectionsTeam(perspectives, edges) {
   const grid = document.getElementById('perspectivesGrid');
   if (!grid) return;
@@ -5848,9 +5894,10 @@ function renderCardConnectionsTeam(perspectives, edges) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('id','teamCardConnSvg');
   svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
-  const valenceColors = { positive: '#4a9e6a', ambivalent: '#c8993a', negative: '#c0574a' };
-  const gridRect = grid.getBoundingClientRect();
 
+  // Ampel colors: magnitude determines intensity, valence determines color
+  const VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
+  const gridRect = grid.getBoundingClientRect();
   const notable = edges.filter(e => e.magnitude > 0.4).slice(0, 12);
 
   notable.forEach(edge => {
@@ -5859,38 +5906,50 @@ function renderCardConnectionsTeam(perspectives, edges) {
     if (!cardA || !cardB) return;
     const rA = cardA.getBoundingClientRect();
     const rB = cardB.getBoundingClientRect();
-    const x1 = rA.left - gridRect.left + rA.width/2;
-    const y1 = rA.top  - gridRect.top  + rA.height/2;
-    const x2 = rB.left - gridRect.left + rB.width/2;
-    const y2 = rB.top  - gridRect.top  + rB.height/2;
-    const color = valenceColors[edge.valence] || '#4a9e6a';
+    const color = VALENCE_COLOR[edge.valence] || '#FFC107';
     const mag = edge.magnitude;
-    const sw = mag > 0.7 ? 2.5 : (mag > 0.4 ? 1.8 : 1.2);
-    const dash = mag > 0.65 ? 'none' : (mag > 0.4 ? '5 6' : '3 8');
+    const sw = mag > 0.8 ? 3 : mag > 0.6 ? 2.2 : 1.6;
+    const anim = mag > 0.8 ? 'pulse-strong' : mag > 0.6 ? 'pulse-medium' : 'pulse-soft';
+    const dur  = mag > 0.8 ? '1.2s' : mag > 0.6 ? '1.8s' : '2.8s';
+    const pathD = gutterPath(rA, rB, gridRect);
 
-    const vis = document.createElementNS('http://www.w3.org/2000/svg','line');
-    vis.setAttribute('x1',x1); vis.setAttribute('y1',y1);
-    vis.setAttribute('x2',x2); vis.setAttribute('y2',y2);
-    vis.setAttribute('stroke',color); vis.setAttribute('stroke-width',sw);
-    vis.setAttribute('stroke-opacity', mag > 0.6 ? '0.7' : '0.45');
+    // Glow layer (wide, low opacity)
+    const glow = document.createElementNS('http://www.w3.org/2000/svg','path');
+    glow.setAttribute('d', pathD);
+    glow.setAttribute('fill','none');
+    glow.setAttribute('stroke', color);
+    glow.setAttribute('stroke-width', sw * 3.5);
+    glow.setAttribute('stroke-opacity', '0.18');
+    glow.setAttribute('stroke-linecap','round');
+    glow.style.animation = `${anim} ${dur} ease-in-out infinite`;
+    glow.style.color = color;
+
+    // Core line
+    const vis = document.createElementNS('http://www.w3.org/2000/svg','path');
+    vis.setAttribute('d', pathD);
     vis.setAttribute('fill','none');
-    if (dash !== 'none') vis.setAttribute('stroke-dasharray', dash);
-    vis.style.pointerEvents = 'none';
+    vis.setAttribute('stroke', color);
+    vis.setAttribute('stroke-width', sw);
+    vis.setAttribute('stroke-linecap','round');
+    vis.style.animation = `${anim} ${dur} ease-in-out infinite`;
+    vis.style.color = color;
 
-    const hit = document.createElementNS('http://www.w3.org/2000/svg','line');
-    hit.setAttribute('x1',x1); hit.setAttribute('y1',y1);
-    hit.setAttribute('x2',x2); hit.setAttribute('y2',y2);
-    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','20');
+    // Hit area
+    const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('d', pathD);
     hit.setAttribute('fill','none');
-    hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
-
-    const edgeCopy = { ...edge, color };
+    hit.setAttribute('stroke','transparent');
+    hit.setAttribute('stroke-width','20');
+    hit.style.cursor = 'pointer';
+    hit.style.pointerEvents = 'stroke';
     hit.addEventListener('click', ev => {
       ev.stopPropagation();
-      openEdgePanelTeam(edge.roleA, edge.roleB, edge.valence, edge.summary, valenceColors[edge.valence]);
+      openEdgePanelTeam(edge.roleA, edge.roleB, edge.valence, edge.summary, color);
     });
 
-    svg.appendChild(vis); svg.appendChild(hit);
+    svg.appendChild(glow);
+    svg.appendChild(vis);
+    svg.appendChild(hit);
   });
 
   grid.style.position = 'relative';
