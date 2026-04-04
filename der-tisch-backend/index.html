@@ -1960,7 +1960,7 @@ html[data-stil] body {
 ============================================= */
 #roundTableSection {
   margin: var(--space-8) 0 var(--space-4);
-  display: none; /* shown after results render */
+  display: none;
 }
 #roundTableSection.visible { display: block; }
 
@@ -1968,13 +1968,62 @@ html[data-stil] body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
-.round-table-canvas {
+/* 3D TABLE VIEWPORT */
+.rt-viewport {
   width: 100%;
-  max-width: 680px;
-  aspect-ratio: 1 / 1;
+  height: min(82vw, 640px);
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  background: radial-gradient(ellipse at 50% 30%, var(--color-surface-2) 0%, var(--color-bg) 100%);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.35);
+}
+.rt-viewport:active { cursor: grabbing; }
+
+.rt-scene {
+  width: 100%;
+  height: 100%;
+  perspective: 900px;
+  perspective-origin: 50% 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rt-stage {
+  transform-style: preserve-3d;
+  transform: rotateX(28deg) scale(1) translateY(-4%);
+  transition: transform 0.05s linear;
+}
+
+/* zoom controls */
+.rt-zoom-btns {
+  position: absolute;
+  bottom: 14px; right: 14px;
+  display: flex; gap: 6px; z-index: 10;
+}
+.rt-zoom-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  backdrop-filter: blur(8px);
+}
+.rt-zoom-btn:hover { color: var(--color-accent); border-color: var(--color-accent); }
+
+.round-table-canvas {
+  width: 600px;
+  height: 600px;
   position: relative;
   user-select: none;
 }
@@ -3419,20 +3468,35 @@ html[data-stil] body {
     <!-- V5.5 — RUNDER TISCH (rendered dynamically) -->
     <section id="roundTableSection">
       <div class="round-table-wrap">
-        <div class="round-table-canvas" id="roundTableCanvas" aria-label="Runder Tisch — klicke auf einen Stuhl um die Perspektive zu lesen">
-          <!-- Table circle -->
-          <div class="rt-table-circle">
-            <div class="rt-table-logo">
-              <svg width="28" height="20" viewBox="0 0 48 32" fill="none" aria-hidden="true">
-                <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
-                <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
-                <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
-                <rect x="22.25" y="10" width="3.5" height="10" rx="1.75" fill="currentColor" opacity="0.25"/>
-              </svg>
-              <span class="rt-table-logo-text">TEAM TiSCH</span>
+        <!-- 3D Viewport -->
+        <div class="rt-viewport" id="rtViewport">
+          <div class="rt-scene">
+            <div class="rt-stage" id="rtStage">
+              <div class="round-table-canvas" id="roundTableCanvas"
+                   aria-label="3D Tisch — klicke auf eine Perspektive oder Verbindungslinie">
+                <!-- SVG for connection lines (behind seats) -->
+                <svg id="rtConnSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;"></svg>
+                <!-- Table circle -->
+                <div class="rt-table-circle" style="z-index:2;">
+                  <div class="rt-table-logo">
+                    <svg width="28" height="20" viewBox="0 0 48 32" fill="none" aria-hidden="true">
+                      <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
+                      <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+                      <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
+                    </svg>
+                    <span class="rt-table-logo-text">TEAM TiSCH</span>
+                  </div>
+                </div>
+                <!-- Seats rendered by JS, z-index:3 -->
+              </div>
             </div>
           </div>
-          <!-- Seats rendered by JS -->
+          <!-- Zoom controls -->
+          <div class="rt-zoom-btns">
+            <button class="rt-zoom-btn" onclick="rtZoom(0.15)" aria-label="Zoom in">+</button>
+            <button class="rt-zoom-btn" onclick="rtZoom(-0.15)" aria-label="Zoom out">−</button>
+            <button class="rt-zoom-btn" onclick="rtReset()" aria-label="Reset" style="font-size:11px;letter-spacing:0.03em;">&#x21BA;</button>
+          </div>
         </div>
       </div>
     </section>
@@ -4672,8 +4736,8 @@ function renderListItems(items, type) {
 }
 
 function renderResults(data) {
-  // 0. Round table visualization
-  renderRoundTable(data.perspectives);
+  // 0. Round table visualization — called after edges are built below
+  // renderRoundTable called after edges are set
   // V5.6: Show TTS bar (small delay to let DOM settle)
   setTimeout(ttsShowBar, 300);
 
@@ -4747,11 +4811,14 @@ function renderResults(data) {
   }
 
 
-  // Draw card-to-card connections if we have friction data
+  // Draw card-to-card connections + round table
   if (data && data.perspectives && data.friction) {
     const teamEdges = buildTeamEdges(data.perspectives, data.friction);
+    window._currentTeamEdges = teamEdges;
     setTimeout(() => renderCardConnectionsTeam(data.perspectives, teamEdges), 80);
   }
+  // Always render round table (edges drawn separately when available)
+  renderRoundTable(data.perspectives);
 
   // 7b. Synthesis with concept nodes
   const synthText = data.integration.einfach_gesagt || data.integration.anspruchskarte || '';
@@ -5956,6 +6023,64 @@ function renderCardConnectionsTeam(perspectives, edges) {
   grid.insertBefore(svg, grid.firstChild);
 }
 
+// =============================================
+// 3D TABLE — Zoom / Pan
+// =============================================
+let _rtScale = 1, _rtDrag = false, _rtDragX = 0, _rtDragY = 0, _rtTX = 0, _rtTY = 0;
+
+function _rtApplyTransform() {
+  const stage = document.getElementById('rtStage');
+  if (!stage) return;
+  stage.style.transform = `rotateX(28deg) scale(${_rtScale}) translate(${_rtTX}px, ${_rtTY}px)`;
+}
+
+function rtZoom(delta) {
+  _rtScale = Math.max(0.4, Math.min(2.8, _rtScale + delta));
+  _rtApplyTransform();
+}
+
+function rtReset() {
+  _rtScale = 1; _rtTX = 0; _rtTY = 0;
+  _rtApplyTransform();
+}
+
+(function initRtPanZoom() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const vp = document.getElementById('rtViewport');
+    if (!vp) return;
+    vp.addEventListener('wheel', e => {
+      e.preventDefault();
+      rtZoom(e.deltaY < 0 ? 0.08 : -0.08);
+    }, { passive: false });
+    vp.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      _rtDrag = true; _rtDragX = e.clientX; _rtDragY = e.clientY;
+    });
+    window.addEventListener('mousemove', e => {
+      if (!_rtDrag) return;
+      _rtTX += (e.clientX - _rtDragX) / _rtScale * 0.5;
+      _rtTY += (e.clientY - _rtDragY) / _rtScale * 0.5;
+      _rtDragX = e.clientX; _rtDragY = e.clientY;
+      _rtApplyTransform();
+    });
+    window.addEventListener('mouseup', () => { _rtDrag = false; });
+    // Touch
+    let _lastTouchDist = 0;
+    vp.addEventListener('touchstart', e => {
+      if (e.touches.length === 2) {
+        _lastTouchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+      }
+    });
+    vp.addEventListener('touchmove', e => {
+      if (e.touches.length === 2) {
+        const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+        rtZoom((d - _lastTouchDist) * 0.004);
+        _lastTouchDist = d;
+      }
+    });
+  });
+})();
+
 function renderRoundTable(perspectives) {
   const section = document.getElementById('roundTableSection');
   const canvas  = document.getElementById('roundTableCanvas');
@@ -6037,6 +6162,96 @@ function renderRoundTable(perspectives) {
   });
 
   section.classList.add('visible');
+
+  // Draw connection lines after seats are in DOM (needs layout)
+  if (window._currentTeamEdges && window._currentTeamEdges.length > 0) {
+    setTimeout(() => renderRtConnections(perspectives, window._currentTeamEdges), 80);
+  }
+}
+
+function renderRtConnections(perspectives, edges) {
+  const canvas = document.getElementById('roundTableCanvas');
+  const svg    = document.getElementById('rtConnSvg');
+  if (!canvas || !svg) return;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const seats = canvas.querySelectorAll('.rt-seat');
+  if (seats.length < 2) return;
+
+  // Build role → {x%, y%} position map
+  const rolePos = {};
+  perspectives.forEach((p, i) => {
+    const role = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
+    if (seats[i]) {
+      // Get position from inline style (left/top as %)
+      const s = seats[i];
+      rolePos[role] = {
+        x: parseFloat(s.style.left),
+        y: parseFloat(s.style.top)
+      };
+    }
+  });
+
+  const VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
+  const W = canvas.offsetWidth || 600;
+  const H = canvas.offsetHeight || 600;
+
+  // ALL edges (no magnitude threshold — weak ones just thinner)
+  edges.forEach(edge => {
+    const posA = rolePos[edge.roleA];
+    const posB = rolePos[edge.roleB];
+    if (!posA || !posB) return;
+
+    const x1 = posA.x / 100 * W;
+    const y1 = posA.y / 100 * H;
+    const x2 = posB.x / 100 * W;
+    const y2 = posB.y / 100 * H;
+
+    const color = VALENCE_COLOR[edge.valence] || '#FFC107';
+    const mag   = edge.magnitude;
+    const sw    = mag > 0.8 ? 4 : mag > 0.6 ? 2.8 : mag > 0.35 ? 1.8 : 1;
+    const anim  = mag > 0.8 ? 'pulse-strong' : mag > 0.55 ? 'pulse-medium' : 'pulse-soft';
+    const dur   = mag > 0.8 ? '1.0s' : mag > 0.55 ? '1.6s' : '3s';
+    const opacity = mag > 0.6 ? 1 : mag > 0.35 ? 0.65 : 0.35;
+
+    // Midpoint slightly toward center for a gentle curve
+    const cx = (x1 + x2) / 2 + (W/2 - (x1+x2)/2) * 0.18;
+    const cy = (y1 + y2) / 2 + (H/2 - (y1+y2)/2) * 0.18;
+    const pathD = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+
+    // Glow layer
+    const glow = document.createElementNS('http://www.w3.org/2000/svg','path');
+    glow.setAttribute('d', pathD); glow.setAttribute('fill','none');
+    glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', sw * 4);
+    glow.setAttribute('stroke-linecap','round'); glow.setAttribute('stroke-opacity','0.15');
+    glow.style.animation = `${anim} ${dur} ease-in-out infinite`;
+    glow.style.color = color; glow.style.pointerEvents = 'none';
+    svg.appendChild(glow);
+
+    // Core line
+    const line = document.createElementNS('http://www.w3.org/2000/svg','path');
+    line.setAttribute('d', pathD); line.setAttribute('fill','none');
+    line.setAttribute('stroke', color); line.setAttribute('stroke-width', sw);
+    line.setAttribute('stroke-linecap','round');
+    line.setAttribute('stroke-opacity', String(opacity));
+    line.style.animation = `${anim} ${dur} ease-in-out infinite`;
+    line.style.color = color; line.style.pointerEvents = 'none';
+    svg.appendChild(line);
+
+    // Hit area — wide, fully clickable
+    const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('d', pathD); hit.setAttribute('fill','none');
+    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','22');
+    hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
+    const edgeCopy = { ...edge, color };
+    hit.addEventListener('click', ev => {
+      ev.stopPropagation();
+      openEdgePanelTeam(edge.roleA, edge.roleB, edge.valence, edge.summary, color);
+    });
+    svg.appendChild(hit);
+  });
+
+  svg.style.pointerEvents = 'none'; // only hit areas catch events
 }
 
 function openRtModal(p, displayRole, color, colorBg, svgIcon) {
