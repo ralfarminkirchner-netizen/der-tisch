@@ -195,7 +195,12 @@
 
   /* ─── Hero ──────────────────────────────────────────────── */
   .hero {
-    padding: 72px 0 48px;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 0 40px;
     text-align: center;
   }
 
@@ -229,12 +234,12 @@
   }
 
   .hero h1 {
-    font-size: clamp(28px, 5vw, 44px);
-    font-weight: 700;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 500;
     color: var(--text);
-    line-height: 1.2;
+    line-height: 1.25;
     letter-spacing: -0.02em;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .hero-sub {
@@ -282,12 +287,13 @@
 
   /* ─── Example Chips ─────────────────────────────────────── */
   .chip-row {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
   }
+  .chip-row.visible { display: flex; }
 
   .chip {
     border: 1px solid var(--border);
@@ -884,9 +890,8 @@
     letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--accent);
   }
-  /* History */
-   in card header */
-.card-agent-icon {
+  /* Agent icon in card header */
+  .card-agent-icon {
   width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 8px;
@@ -919,6 +924,33 @@
   .history-toggle-btn:hover { color: var(--text); background: var(--surface-off); }
   .history-toggle-btn svg { width: 17px; height: 17px; }
 
+
+  /* ─── Chip Toggle Button ─────────────────────────────── */
+  .chip-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: 12px;
+  }
+  .chip-toggle-btn:hover {
+    border-color: var(--accent-1);
+    color: var(--accent-1);
+  }
+  .chip-toggle-btn.active {
+    border-color: var(--accent-1);
+    color: var(--accent-1);
+    background: rgba(232,97,74,0.05);
+  }
   </style>
 </head>
 <body>
@@ -951,12 +983,7 @@
     <button class="tone-btn active" id="dt-tone-achtsam" onclick="setDtTone('achtsam')" aria-pressed="true">achtsam</button>
     <button class="tone-btn" id="dt-tone-direkt" onclick="setDtTone('direkt')" aria-pressed="false">direkt</button>
   </div>
-  <!-- MODULE: SESSION VERLAUF -->
-  <button class="dt-history-btn" id="dt-histBtn" onclick="dtHistToggle()" aria-label="Verlauf" title="Verlauf">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-    <span>Verlauf</span>
-    <span class="dt-hist-count" id="dt-histCount"></span>
-  </button>
+
   <!-- History toggle -->
   <button class="history-toggle-btn" onclick="historyToggle()" aria-label="Verlauf öffnen" title="Verlauf">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg>
@@ -1009,7 +1036,7 @@
     </p>
 
     <!-- Input -->
-    <div class="hero-input-section">
+    <div class="hero-input-section" style="max-width:600px;width:100%;">
       <div class="input-wrapper">
         <label for="question-input" class="sr-only" id="input-label">Deine Frage oder Thema</label>
         <textarea
@@ -1029,12 +1056,29 @@
         <button class="reg-btn" data-reg="fachsprache" onclick="setDTRegister(this)" id="reg-fachsprache">Fachsprache</button>
       </div>
 
-      <div class="chip-row" id="chip-row" role="list" aria-label="Beispielfragen">
-        <button class="chip" role="listitem" onclick="fillChip(this)">Sollte ich kündigen?</button>
-        <button class="chip" role="listitem" onclick="fillChip(this)">KI im Unterricht — Fluch oder Segen?</button>
-        <button class="chip" role="listitem" onclick="fillChip(this)">Streit mit einem engen Freund</button>
-        <button class="chip" role="listitem" onclick="fillChip(this)">Klimawandel — was kann ich tun?</button>
-        <button class="chip" role="listitem" onclick="fillChip(this)">Zwischen zwei Entscheidungen</button>
+      <!-- Beispiele toggle + collapsible chip-row -->
+      <div style="margin-bottom:20px;">
+        <button class="chip-toggle-btn" id="chip-toggle-btn" onclick="dtToggleChips()" aria-expanded="false">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          Beispiele
+        </button>
+        <div class="chip-row" id="chip-row" role="list" aria-label="Beispielfragen">
+          <button class="chip" role="listitem" onclick="fillChip(this)">Sollte ich kündigen?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">KI im Unterricht — Fluch oder Segen?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Streit mit einem engen Freund</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Klimawandel — was kann ich tun?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Zwischen zwei Entscheidungen</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Trenne ich mich oder bleibe ich?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Zu viel Bildschirmzeit bei Kindern?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Wann ist Lügen erlaubt?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Soll ich mein Kind impfen lassen?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Gerechtigkeit vs. Mitgefühl</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Neue Stadt oder bekanntes Umfeld?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Mehr Geld oder mehr Zeit?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Pflege der Eltern — allein schaffen?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Konsum reduzieren — wo anfangen?</button>
+          <button class="chip" role="listitem" onclick="fillChip(this)">Grenzen setzen ohne zu verletzen</button>
+        </div>
       </div>
 
       <button class="cta-btn" id="cta-btn" onclick="askQuestion()" aria-label="Am Tisch Platz nehmen">
@@ -2166,6 +2210,17 @@ function historyRenderList() {
     </div>`;
   }).join('');
 }
+
+</script>
+<script>
+  window.dtToggleChips = function() {
+    var row = document.getElementById('chip-row');
+    var btn = document.getElementById('chip-toggle-btn');
+    if (!row || !btn) return;
+    var isOpen = row.classList.toggle('visible');
+    btn.classList.toggle('active', isOpen);
+    btn.setAttribute('aria-expanded', String(isOpen));
+  };
 
 </script>
 <script>
