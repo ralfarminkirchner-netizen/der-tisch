@@ -5660,10 +5660,10 @@ function renderCardConnections(perspectives, edges) {
   svg.setAttribute('id', 'cardConnSvg');
   svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
 
-  // Ampel: grün = Übereinstimmung, gelb = teils-teils, rot = inkompatibel
   var VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
+  var STRONG_THRESH = 0.65;
   var gridRect = grid.getBoundingClientRect();
-  var notable = edges.filter(function(e) { return e.magnitude > 0.4; }).slice(0, 12);
+  var notable = edges.filter(function(e) { return e.magnitude > 0; }).slice(0, 20);
 
   notable.forEach(function(edge) {
     var cardA = roleToCard[edge.roleA];
@@ -5673,29 +5673,47 @@ function renderCardConnections(perspectives, edges) {
     var rB = cardB.getBoundingClientRect();
     var color = VALENCE_COLOR[edge.valence] || '#FFC107';
     var mag = edge.magnitude;
-    var sw = mag > 0.8 ? 3 : (mag > 0.6 ? 2.2 : 1.6);
-    var anim = mag > 0.8 ? 'pulse-strong' : (mag > 0.6 ? 'pulse-medium' : 'pulse-soft');
-    var dur  = mag > 0.8 ? '1.2s' : (mag > 0.6 ? '1.8s' : '2.8s');
+    var isStrong = mag >= STRONG_THRESH;
+    var sw = mag > 0.85 ? 3.2 : (mag > 0.65 ? 2.4 : 1.6);
+    var anim = mag > 0.85 ? 'pulse-strong' : (mag > 0.65 ? 'pulse-medium' : 'pulse-soft');
+    var dur  = mag > 0.85 ? '1.0s' : (mag > 0.65 ? '1.6s' : '2.4s');
     var pathD = gutterPathIT(rA, rB, gridRect);
+
+    // Visual group (hidden for weak lines)
+    var g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('data-role-a', edge.roleA);
+    g.setAttribute('data-role-b', edge.roleB);
+    g.setAttribute('data-mag', mag);
+    g.style.opacity = isStrong ? '1' : '0';
+    g.style.transition = 'opacity 0.3s';
+    g.style.pointerEvents = 'none';
 
     var glow = document.createElementNS('http://www.w3.org/2000/svg','path');
     glow.setAttribute('d', pathD); glow.setAttribute('fill','none');
     glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', sw * 3.5);
-    glow.setAttribute('stroke-opacity','0.18'); glow.setAttribute('stroke-linecap','round');
+    glow.setAttribute('stroke-opacity','0.2'); glow.setAttribute('stroke-linecap','round');
     glow.style.animation = anim + ' ' + dur + ' ease-in-out infinite';
-    glow.style.color = color;
+    glow.style.pointerEvents = 'none';
 
     var vis = document.createElementNS('http://www.w3.org/2000/svg','path');
     vis.setAttribute('d', pathD); vis.setAttribute('fill','none');
     vis.setAttribute('stroke', color); vis.setAttribute('stroke-width', sw);
     vis.setAttribute('stroke-linecap','round');
     vis.style.animation = anim + ' ' + dur + ' ease-in-out infinite';
-    vis.style.color = color;
+    vis.style.pointerEvents = 'none';
 
+    g.appendChild(glow); g.appendChild(vis);
+    svg.appendChild(g);
+
+    // Hit area — outside the pointer-events:none group
     var hit = document.createElementNS('http://www.w3.org/2000/svg','path');
     hit.setAttribute('d', pathD); hit.setAttribute('fill','none');
-    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','20');
+    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','24');
+    hit.setAttribute('stroke-linecap','round');
     hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
+    hit.style.opacity = isStrong ? '1' : '0';
+    hit.setAttribute('data-role-a', edge.roleA);
+    hit.setAttribute('data-role-b', edge.roleB);
     (function(edgeData, edgeColor) {
       hit.addEventListener('click', function(ev) {
         ev.stopPropagation();
@@ -5703,10 +5721,33 @@ function renderCardConnections(perspectives, edges) {
         openEdgePanel(edgeData);
       });
     })(edge, color);
-
-    svg.appendChild(glow);
-    svg.appendChild(vis);
     svg.appendChild(hit);
+  });
+
+  // Enable pointer events on SVG for hit areas
+  svg.style.pointerEvents = 'all';
+
+  // Card hover → reveal weak lines
+  grid.querySelectorAll('.perspective-card, .block-selectable').forEach(function(card) {
+    var roleEl = card.querySelector('.card-role-label');
+    if (!roleEl) return;
+    var roleName = roleEl.textContent.trim();
+    card.addEventListener('mouseenter', function() {
+      svg.querySelectorAll('g[data-role-a], g[data-role-b]').forEach(function(g) {
+        if (g.dataset.roleA === roleName || g.dataset.roleB === roleName) g.style.opacity = '1';
+      });
+      svg.querySelectorAll('path[data-role-a]').forEach(function(p) {
+        if (p.dataset.roleA === roleName || p.dataset.roleB === roleName) p.style.opacity = '1';
+      });
+    });
+    card.addEventListener('mouseleave', function() {
+      svg.querySelectorAll('g[data-mag]').forEach(function(g) {
+        g.style.opacity = parseFloat(g.dataset.mag) >= STRONG_THRESH ? '1' : '0';
+      });
+      svg.querySelectorAll('path[data-role-a]').forEach(function(p) {
+        p.style.opacity = parseFloat(p.dataset.mag || '0') >= STRONG_THRESH ? '1' : '0';
+      });
+    });
   });
 
   grid.style.position = 'relative';

@@ -6028,7 +6028,11 @@ function renderCardConnectionsTeam(perspectives, edges) {
   // Ampel colors: magnitude determines intensity, valence determines color
   const VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
   const gridRect = grid.getBoundingClientRect();
-  const notable = edges.filter(e => e.magnitude > 0.4).slice(0, 12);
+
+  // Show only strong lines (>0.65). Weaker lines hidden, revealed on card hover via JS
+  const STRONG_THRESH = 0.65;
+  const allEdges = edges.filter(e => e.magnitude > 0);
+  const notable  = allEdges.slice(0, 20); // draw all, but weak ones start hidden
 
   notable.forEach(edge => {
     const cardA = roleToCard[edge.roleA];
@@ -6038,48 +6042,83 @@ function renderCardConnectionsTeam(perspectives, edges) {
     const rB = cardB.getBoundingClientRect();
     const color = VALENCE_COLOR[edge.valence] || '#FFC107';
     const mag = edge.magnitude;
-    const sw = mag > 0.8 ? 3 : mag > 0.6 ? 2.2 : 1.6;
-    const anim = mag > 0.8 ? 'pulse-strong' : mag > 0.6 ? 'pulse-medium' : 'pulse-soft';
-    const dur  = mag > 0.8 ? '1.2s' : mag > 0.6 ? '1.8s' : '2.8s';
+    const isStrong = mag >= STRONG_THRESH;
+    const sw = mag > 0.85 ? 3.2 : mag > 0.65 ? 2.4 : 1.6;
+    const anim = mag > 0.85 ? 'pulse-strong' : mag > 0.65 ? 'pulse-medium' : 'pulse-soft';
+    const dur  = mag > 0.85 ? '1.0s' : mag > 0.65 ? '1.6s' : '2.4s';
     const pathD = gutterPath(rA, rB, gridRect);
 
-    // Glow layer (wide, low opacity)
+    // Group — hidden for weak lines, shown on hover
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('data-role-a', edge.roleA);
+    g.setAttribute('data-role-b', edge.roleB);
+    g.setAttribute('data-mag', mag);
+    g.style.opacity = isStrong ? '1' : '0';
+    g.style.transition = 'opacity 0.3s';
+    g.style.pointerEvents = 'none';
+
+    // Glow layer
     const glow = document.createElementNS('http://www.w3.org/2000/svg','path');
-    glow.setAttribute('d', pathD);
-    glow.setAttribute('fill','none');
-    glow.setAttribute('stroke', color);
-    glow.setAttribute('stroke-width', sw * 3.5);
-    glow.setAttribute('stroke-opacity', '0.18');
-    glow.setAttribute('stroke-linecap','round');
+    glow.setAttribute('d', pathD); glow.setAttribute('fill','none');
+    glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', sw * 3.5);
+    glow.setAttribute('stroke-opacity', '0.2'); glow.setAttribute('stroke-linecap','round');
     glow.style.animation = `${anim} ${dur} ease-in-out infinite`;
-    glow.style.color = color;
+    glow.style.color = color; glow.style.pointerEvents = 'none';
 
     // Core line
     const vis = document.createElementNS('http://www.w3.org/2000/svg','path');
-    vis.setAttribute('d', pathD);
-    vis.setAttribute('fill','none');
-    vis.setAttribute('stroke', color);
-    vis.setAttribute('stroke-width', sw);
+    vis.setAttribute('d', pathD); vis.setAttribute('fill','none');
+    vis.setAttribute('stroke', color); vis.setAttribute('stroke-width', sw);
     vis.setAttribute('stroke-linecap','round');
     vis.style.animation = `${anim} ${dur} ease-in-out infinite`;
-    vis.style.color = color;
+    vis.style.color = color; vis.style.pointerEvents = 'none';
 
-    // Hit area
+    g.appendChild(glow); g.appendChild(vis);
+    svg.appendChild(g);
+
+    // Separate clickable hit area — MUST be outside pointer-events:none group
     const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
-    hit.setAttribute('d', pathD);
-    hit.setAttribute('fill','none');
-    hit.setAttribute('stroke','transparent');
-    hit.setAttribute('stroke-width','20');
+    hit.setAttribute('d', pathD); hit.setAttribute('fill','none');
+    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','24');
+    hit.setAttribute('stroke-linecap','round');
     hit.style.cursor = 'pointer';
     hit.style.pointerEvents = 'stroke';
+    hit.style.opacity = isStrong ? '1' : '0';
+    hit.setAttribute('data-role-a', edge.roleA);
+    hit.setAttribute('data-role-b', edge.roleB);
+    const _color = color;
+    const _edge  = { ...edge };
     hit.addEventListener('click', ev => {
       ev.stopPropagation();
-      openEdgePanelTeam(edge.roleA, edge.roleB, edge.valence, edge.summary, color);
+      openEdgePanelTeam(_edge.roleA, _edge.roleB, _edge.valence, _edge.summary || '', _color);
     });
-
-    svg.appendChild(glow);
-    svg.appendChild(vis);
     svg.appendChild(hit);
+  });
+
+  // SVG must allow pointer events for hit areas to work
+  svg.style.pointerEvents = 'all';
+
+  // Card hover → reveal weak lines connected to that card
+  grid.querySelectorAll('.perspective-card, .block-selectable').forEach(card => {
+    const role = card.querySelector('.card-role-label');
+    if (!role) return;
+    const roleName = role.textContent.trim();
+    card.addEventListener('mouseenter', () => {
+      svg.querySelectorAll('g[data-role-a], g[data-role-b]').forEach(g => {
+        if (g.dataset.roleA === roleName || g.dataset.roleB === roleName) g.style.opacity = '1';
+      });
+      svg.querySelectorAll('path[data-role-a], path[data-role-b]').forEach(p => {
+        if (p.dataset.roleA === roleName || p.dataset.roleB === roleName) p.style.opacity = '1';
+      });
+    });
+    card.addEventListener('mouseleave', () => {
+      svg.querySelectorAll('g[data-mag]').forEach(g => {
+        g.style.opacity = parseFloat(g.dataset.mag) >= STRONG_THRESH ? '1' : '0';
+      });
+      svg.querySelectorAll('path[data-role-a]').forEach(p => {
+        p.style.opacity = parseFloat(p.parentElement?.dataset?.mag || p.getAttribute('stroke-width') > 20 ? 0 : 1) >= STRONG_THRESH ? '1' : '0';
+      });
+    });
   });
 
   grid.style.position = 'relative';
@@ -6300,9 +6339,40 @@ function _initThreeTable(perspectives, edges) {
       const line = new THREE.Line(lineGeo, lineMat);
       scene.add(line);
 
-      lineObjects.push({ line, lineMat, mag, color3, edge });
+      // Only show strong lines by default
+      if (mag < 0.65) { lineMat.opacity = 0; }
+      lineObjects.push({ line, lineMat, mag, color3, edge, visible: mag >= 0.65 });
     });
   }
+
+  // ── Raycaster for line clicks on 3D table ──
+  const raycaster3d = new THREE.Raycaster();
+  raycaster3d.params.Line.threshold = 0.25;
+  const mouse3d = new THREE.Vector2();
+
+  canvas.addEventListener('click', ev => {
+    if (_rt3d && _rt3d._wasDragging) return; // ignore drag-end
+    const rect = canvas.getBoundingClientRect();
+    mouse3d.x =  ((ev.clientX - rect.left) / rect.width)  * 2 - 1;
+    mouse3d.y = -((ev.clientY - rect.top)  / rect.height) * 2 + 1;
+    raycaster3d.setFromCamera(mouse3d, camera);
+    const lineMeshes = lineObjects.map(o => o.line);
+    const hits = raycaster3d.intersectObjects(lineMeshes);
+    if (hits.length > 0) {
+      const hitLine = hits[0].object;
+      const obj = lineObjects.find(o => o.line === hitLine);
+      if (obj) {
+        const hexColor = '#' + obj.color3.getHexString();
+        openEdgePanelTeam(obj.edge.roleA, obj.edge.roleB, obj.edge.valence, obj.edge.summary || '', hexColor);
+      }
+    }
+  });
+
+  // Track drag to distinguish drag from click
+  let _dragDist = 0;
+  canvas.addEventListener('pointerdown', () => { _dragDist = 0; });
+  canvas.addEventListener('pointermove', () => { _dragDist++; });
+  canvas.addEventListener('pointerup',   () => { if (_rt3d) _rt3d._wasDragging = _dragDist > 4; });
 
   // ── HTML Labels ──
   const labelEls = [];
