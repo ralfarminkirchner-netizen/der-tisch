@@ -1348,7 +1348,10 @@
     btn.disabled = true;
     lbl.textContent = 'Wird übersetzt…';
     try {
+      const _ctrl1 = new AbortController();
+      const _tid1 = setTimeout(() => _ctrl1.abort(), 120000);
       var res = await fetch(API + '/api/translate', {
+      signal: _ctrl1.signal,
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ question: dtLastQuestion, lang: currentLang, stil: 'alltag', register: targetReg, tone: currentTone }),
       });
@@ -1415,7 +1418,10 @@
       custom_perspectives: []
     };
 
+    const _ctrl0 = new AbortController();
+    const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
     fetch(API + '/api/ask-simple', {
+      signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1423,6 +1429,7 @@
       .then(function (res) {
         if (!res.ok) {
           return res.text().then(function (t) {
+        clearTimeout(_tid0);
             throw new Error('SERVER:' + res.status + ':' + t);
           });
         }
@@ -1434,6 +1441,7 @@
         renderResults(data);
       })
       .catch(function (err) {
+        clearTimeout(_tid0);
         setLoading(false);
         hideSkeleton();
         document.getElementById('results-section').classList.remove('visible');

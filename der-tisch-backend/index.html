@@ -4119,7 +4119,10 @@ async function deepenConceptTeam(stil) {
   deepened.textContent = currentLang === 'de' ? 'Einen Moment …' : 'One moment …';
   deepened.classList.remove('hidden');
   try {
+    const _ctrl4 = new AbortController();
+    const _tid4 = setTimeout(() => _ctrl4.abort(), 120000);
     const res = await fetch(`${API}/api/ask`, {
+      signal: _ctrl4.signal,
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ question: term, lang: currentLang, stil: stil }),
@@ -4183,7 +4186,10 @@ async function runTranslation() {
 
   try {
     const question = window._tischCurrentData && window._tischCurrentData.question || '';
+    const _ctrl3 = new AbortController();
+    const _tid3 = setTimeout(() => _ctrl3.abort(), 120000);
     const res = await fetch(`${API}/api/translate`, {
+      signal: _ctrl3.signal,
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -5232,7 +5238,10 @@ async function submitQuestion() {
   document.getElementById('loadingPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   try {
+    const _ctrl2 = new AbortController();
+    const _tid2 = setTimeout(() => _ctrl2.abort(), 120000);
     const res = await fetch(`${API}/api/ask`, {
+      signal: _ctrl2.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question, lang: currentLang, stil: currentStil, register: currentRegister, tone: currentTone }),
@@ -5709,7 +5718,10 @@ async function submitClarify() {
   document.getElementById('loadingPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   try {
+    const _ctrl1 = new AbortController();
+    const _tid1 = setTimeout(() => _ctrl1.abort(), 120000);
     const res = await fetch(`${API}/api/ask-clarify`, {
+      signal: _ctrl1.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -7071,7 +7083,10 @@ async function submitTable() {
   document.getElementById('loadingPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   try {
+    const _ctrl0 = new AbortController();
+    const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
     const res = await fetch(`${API}/api/ask-table`, {
+      signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

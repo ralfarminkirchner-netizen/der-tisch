@@ -4437,13 +4437,17 @@ async function submitQuestion() {
   if (allCustom.length > 0) body.custom_perspectives = allCustom;
 
   try {
+    const _ctrl0 = new AbortController();
+    const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
     var res = await fetch(API + '/api/ask', {
+      signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      var err = await res.json().catch(function() { return {}; });
+      var err = await res.json().catch(function() {
+        clearTimeout(_tid0); return {}; });
       throw new Error(err.detail || 'HTTP ' + res.status);
     }
     var data = await res.json();
@@ -6009,7 +6013,10 @@ async function runTranslation() {
 
   try {
     var question = window._lastQuestion || '';
+    const _ctrl1 = new AbortController();
+    const _tid1 = setTimeout(() => _ctrl1.abort(), 120000);
     var res = await fetch(API + '/api/translate', {
+      signal: _ctrl1.signal,
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({

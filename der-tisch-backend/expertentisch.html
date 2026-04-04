@@ -1170,7 +1170,10 @@ async function runKintegrity() {
   }
 
   try {
+    const _ctrl0 = new AbortController();
+    const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
     const res = await fetch(API + '/api/kintegrity/synthesize', {
+      signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1217,7 +1220,8 @@ function copyKiPanel(id) {
   const panel = document.getElementById(id);
   const editable = panel?.querySelector('.ki-editable');
   if (!editable) return;
-  navigator.clipboard.writeText(editable.textContent || '').catch(() => {});
+  navigator.clipboard.writeText(editable.textContent || '').catch(() => {
+        clearTimeout(_tid0);});
 }
 
 // ─── Notes ─────────────────────────────────

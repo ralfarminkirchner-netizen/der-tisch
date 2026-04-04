@@ -1494,14 +1494,18 @@ async function submitQuestion() {
   };
 
   try {
+    const _ctrl0 = new AbortController();
+    const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
     const res = await fetch(API + '/api/ask-table', {
+      signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
+      const err = await res.json().catch(() => ({
+        clearTimeout(_tid0);}));
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
 
@@ -1561,7 +1565,10 @@ async function ltTranslate() {
   const targetReg = currentRegister === 'alltag' ? 'fachsprache' : 'alltag';
 
   try {
+    const _ctrl1 = new AbortController();
+    const _tid1 = setTimeout(() => _ctrl1.abort(), 120000);
     const res = await fetch(API + '/api/translate', {
+      signal: _ctrl1.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1717,7 +1724,10 @@ async function ltRunKintegrity() {
   });
 
   try {
+    const _ctrl2 = new AbortController();
+    const _tid2 = setTimeout(() => _ctrl2.abort(), 120000);
     var res = await fetch(API + '/api/kintegrity/synthesize', {
+      signal: _ctrl2.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1750,7 +1760,8 @@ function ltTogglePanel(id) {
 
 function ltCopyPanel(id) {
   var el = document.getElementById(id)?.querySelector('.ki-editable-lt');
-  if (el) navigator.clipboard.writeText(el.textContent || '').catch(function(){});
+  if (el) navigator.clipboard.writeText(el.textContent || '').catch(function(){
+        clearTimeout(_tid2);});
 }
 
 // Init
