@@ -36,35 +36,86 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:          #0E0E1A;
-    --surface:     #161626;
-    --surface-off: #1C1C30;
-    --surface-2:   #12121E;
-    --text:        #EAE8E0;
-    --text-muted:  #9A96A8;
-    --text-faint:  #5A5668;
-    --border:      #2A2840;
-    --border-2:    #3A3658;
-    --accent:      #7B68EE; /* medium-slate-blue — tinte */
-    --accent-dim:  rgba(123,104,238,0.12);
-    --accent-glow: rgba(123,104,238,0.25);
-    --gold:        #C9A84C;
-    --gold-dim:    rgba(201,168,76,0.1);
+    --bg:          #1C1208;   /* sehr dunkles espresso */
+    --surface:     #261A0E;   /* dunkles leder */
+    --surface-off: #2F2012;   /* etwas heller */
+    --surface-2:   #1A1008;   /* fast schwarz-braun */
+    --text:        #EDE0CC;   /* leinen/creme */
+    --text-muted:  #B09A7E;   /* weizenbraun */
+    --text-faint:  #6B5540;   /* tabakbraun */
+    --border:      #3D2C1A;   /* dunkles mahagoni */
+    --border-2:    #5C4030;   /* mittelhell */
+    --accent:      #C87941;   /* bernstein-orange */
+    --accent-dim:  rgba(200,121,65,0.14);
+    --accent-glow: rgba(200,121,65,0.28);
+    --gold:        #D4A843;
+    --gold-dim:    rgba(212,168,67,0.12);
     --r-card:      16px;
     --r-btn:       12px;
     --r-input:     20px;
-    --shadow-card: 0 2px 16px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.2);
-    --shadow-lg:   0 8px 40px rgba(0,0,0,0.5);
+    --shadow-card: 0 2px 20px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.25);
+    --shadow-lg:   0 8px 48px rgba(0,0,0,0.6);
     --transition:  0.2s ease;
     --font-serif:  'Playfair Display', Georgia, serif;
     --font-sans:   'Inter', system-ui, sans-serif;
   }
 
+
+  /* ─── Book Illustration ──────────────────────────────── */
+  .book-shelf {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 20px;
+    height: 52px;
+    user-select: none;
+    pointer-events: none;
+  }
+  .book {
+    width: 18px;
+    border-radius: 2px 4px 4px 2px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .book::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 2px 0 0 2px;
+  }
+  .book-spine-text {
+    position: absolute;
+    bottom: 6px; left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+    font-size: 7px;
+    white-space: nowrap;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.04em;
+    font-family: var(--font-serif);
+  }
+
+  /* Writing/scroll decoration */
+  .writing-deco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    opacity: 0.45;
+  }
+  .writing-deco svg { color: var(--accent); }
+
   html { scroll-behavior: smooth; }
 
   body {
     font-family: var(--font-sans);
-    background: var(--bg);
+    background:
+      radial-gradient(ellipse at 15% 25%, rgba(80,42,12,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 75%, rgba(60,30,8,0.3) 0%, transparent 55%),
+      var(--bg);
     color: var(--text);
     min-height: 100vh;
     display: flex;
@@ -77,7 +128,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(14,14,26,0.92);
+    background: rgba(22,10,4,0.94);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
@@ -311,7 +362,7 @@
   .question-input::placeholder { color: var(--text-faint); }
   .question-input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-card);
+    box-shadow: 0 0 0 3px var(--accent-glow), inset 0 1px 0 rgba(212,168,67,0.06), var(--shadow-card);
   }
 
   /* Werk/Autor field (secondary, shown in Werk-Modus) */
@@ -789,6 +840,41 @@
 <main>
   <!-- Hero -->
   <section class="hero">
+    <div class="book-shelf" aria-hidden="true">
+      <!-- Book 1 -->
+      <div class="book" style="height:44px;background:#6B3E1A;"></div>
+      <!-- Book 2 -->
+      <div class="book" style="height:38px;width:14px;background:#8B5E2A;"></div>
+      <!-- Book 3 (tall) -->
+      <div class="book" style="height:50px;width:20px;background:#4A2A0E;"></div>
+      <!-- Book 4 -->
+      <div class="book" style="height:36px;background:#7A4820;"></div>
+      <!-- Book 5 -->
+      <div class="book" style="height:46px;width:16px;background:#C87941;opacity:0.7;"></div>
+      <!-- Book 6 -->
+      <div class="book" style="height:40px;background:#5A3518;"></div>
+      <!-- Book 7 (widest) -->
+      <div class="book" style="height:48px;width:22px;background:#3D2010;"></div>
+      <!-- Book 8 -->
+      <div class="book" style="height:34px;width:14px;background:#8A5C28;"></div>
+    </div>
+    <div class="writing-deco" aria-hidden="true">
+      <!-- Quill SVG -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M20 3C20 3 16 7 12 12L8 16l-2 5 5-2 4-4c5-4 9-8 9-9s-1.5-3-4 1z"/>
+        <path d="M8 16l-2-2"/>
+      </svg>
+      <!-- Scroll SVG -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+      </svg>
+      <!-- Open book SVG -->
+      <svg width="22" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
+        <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+      </svg>
+    </div>
     <div class="hero-eyebrow">
       <span class="hero-eyebrow-dot"></span>
       <span id="eyebrow-text">Acht Stimmen · Ein Text</span>
