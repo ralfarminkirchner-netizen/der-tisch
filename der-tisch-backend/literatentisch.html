@@ -917,6 +917,14 @@
     main { padding: 0 16px; }
     nav { padding: 0 16px; }
   }
+
+/* ─── Hero Logo ───────────────────────────────────── */
+.hero-logo-svg {
+  width: clamp(220px, 55vw, 460px);
+  height: auto;
+  display: block;
+  margin: 16px auto 8px;
+}
 </style>
 </head>
 
@@ -955,6 +963,22 @@
     <div class="book-shelf" aria-hidden="true">
       <!-- Book 1 -->
       <div class="book" style="height:44px;background:#6B3E1A;"></div>
+
+    <!-- Hero Logo -->
+    <svg class="hero-logo-svg" viewBox="0 0 360 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LiTERATUR TiSCH">
+      <!-- Tagline -->
+      <text x="180" y="13" font-family="'Playfair Display','Georgia',serif" font-size="9" font-weight="400" fill="#C87941" letter-spacing="0.2em" text-anchor="middle" font-style="italic">Acht Stimmen · Ein Text</text>
+      <!-- Table bar — warm wood tone -->
+      <rect x="30" y="22" width="260" height="10" fill="#C87941"/>
+      <!-- Left leg -->
+      <rect x="90" y="32" width="10" height="60" fill="#C87941"/>
+      <!-- Right leg -->
+      <rect x="220" y="32" width="10" height="60" fill="#C87941"/>
+      <!-- LiTERATUR — left -->
+      <text x="103" y="82" font-family="'Playfair Display','Georgia',serif" font-size="34" font-weight="400" fill="currentColor" letter-spacing="-0.3">L<tspan fill="#C87941" font-style="italic">i</tspan>TERATUR</text>
+      <!-- TiSCH — right -->
+      <text x="233" y="82" font-family="'Playfair Display','Georgia',serif" font-size="34" font-weight="400" fill="currentColor" letter-spacing="-0.3">T<tspan fill="#C87941" font-style="italic">i</tspan>SCH</text>
+    </svg>
       <!-- Book 2 -->
       <div class="book" style="height:38px;width:14px;background:#8B5E2A;"></div>
       <!-- Book 3 (tall) -->

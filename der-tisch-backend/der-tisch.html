@@ -951,7 +951,15 @@
     color: var(--accent-1);
     background: rgba(232,97,74,0.05);
   }
-  </style>
+  
+/* ─── Hero Logo ───────────────────────────────────── */
+.hero-logo-svg {
+  width: clamp(200px, 52vw, 440px);
+  height: auto;
+  display: block;
+  margin: 0 auto 12px;
+}
+</style>
 </head>
 <body>
 
@@ -1022,12 +1030,29 @@
 
   <!-- Hero -->
   <section class="hero" aria-labelledby="hero-heading">
+    
+    <!-- Hero Logo -->
+    <h1 class="hero-logo-wrap" aria-label="DER TiSCH" style="margin:0 auto 8px;text-align:center;">
+      <svg class="hero-logo-svg" viewBox="0 0 340 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DER TiSCH">
+        <!-- Tagline -->
+        <text x="170" y="13" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="9" font-weight="500" fill="#E8614A" letter-spacing="0.22em" text-anchor="middle">MULTIPERSPEKTIVE · KI</text>
+        <!-- Table bar -->
+        <rect x="40" y="22" width="220" height="10" fill="#E8614A"/>
+        <!-- Single center leg -->
+        <rect x="150" y="32" width="10" height="58" fill="#E8614A"/>
+        <!-- DER — left of leg -->
+        <text x="60" y="82" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="currentColor" letter-spacing="-1">DER</text>
+        <!-- TiSCH — right of leg -->
+        <text x="165" y="82" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="currentColor" letter-spacing="-1"><tspan fill="#E8614A">i</tspan>SCH</text>
+      </svg>
+    </h1>
+
     <div class="hero-eyebrow">
       <span class="hero-eyebrow-dot" aria-hidden="true"></span>
       <span id="eyebrow-text">KI-Multiperspektive</span>
     </div>
 
-    <h1 id="hero-heading" data-de="Was denkst du — und was übersehen wir?" data-en="What do you think — and what are we missing?">
+    <h1 id="hero-heading" style="display:none;" aria-hidden="true" data-de="Was denkst du — und was übersehen wir?" data-en="What do you think — and what are we missing?">
       Was denkst du — und was übersehen wir?
     </h1>
 

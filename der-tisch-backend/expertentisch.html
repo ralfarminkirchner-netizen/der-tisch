@@ -539,6 +539,14 @@ footer a { font-size: 11px; color: var(--faint); text-decoration: none; transiti
 footer a:hover { color: var(--accent); }
 
 @media (max-width: 600px) { main { padding: 0 14px; } nav { padding: 0 14px; } .hero h1 { font-size: 22px; } }
+
+/* ─── Hero Logo ───────────────────────────────────── */
+.hero-logo-svg {
+  width: clamp(220px, 55vw, 480px);
+  height: auto;
+  display: block;
+  margin: 0 auto 20px;
+}
 </style>
 </head>
 <body>
@@ -565,11 +573,28 @@ footer a:hover { color: var(--accent); }
 
 <main>
   <section class="hero">
+    
+    <!-- Hero Logo -->
+    <svg class="hero-logo-svg" viewBox="0 0 380 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EXPERTiSEN TiSCH">
+      <!-- Tagline -->
+      <text x="190" y="14" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="9.5" font-weight="500" fill="#6BA3CC" letter-spacing="0.2em" text-anchor="middle">FACHEXPERTISE AM TiSCH</text>
+      <!-- Table bar — wide, premium -->
+      <rect x="30" y="24" width="280" height="11" fill="#2C5F8A"/>
+      <!-- Left leg -->
+      <rect x="95" y="35" width="11" height="65" fill="#2C5F8A"/>
+      <!-- Right leg -->
+      <rect x="234" y="35" width="11" height="65" fill="#2C5F8A"/>
+      <!-- EXPERTEN — left of left leg -->
+      <text x="109" y="88" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="36" font-weight="300" fill="currentColor" letter-spacing="-0.5">EXPERTEN</text>
+      <!-- TiSCH — right of right leg -->
+      <text x="248" y="88" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="36" font-weight="300" fill="currentColor" letter-spacing="-0.5">T<tspan fill="#2C5F8A">i</tspan>SCH</text>
+    </svg>
+
     <div class="hero-badge">
       <span class="badge-dot"></span>
       <span id="hero-badge-text">Fachexpertise am Tisch</span>
     </div>
-    <h1 id="hero-h1">Was sagen die Experten?</h1>
+    <h1 id="hero-h1" style="display:none;" aria-hidden="true">Was sagen die Experten?</h1>
     <p class="hero-sub" id="hero-sub">KI wählt passende Fachleute aus — oder du wählst selbst aus 50+ Disziplinen.</p>
 
     <div class="input-wrap">
