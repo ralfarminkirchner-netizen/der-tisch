@@ -574,22 +574,101 @@ footer a:hover { color: var(--accent); }
 <main>
   <section class="hero">
     
-    <!-- Hero Logo -->
-    <svg class="hero-logo-svg" viewBox="0 0 380 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EXPERTiSEN TiSCH">
-      <!-- Tagline -->
-      <text x="190" y="14" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="9.5" font-weight="500" fill="#6BA3CC" letter-spacing="0.2em" text-anchor="middle">FACHEXPERTISE AM TiSCH</text>
-      <!-- Table bar — wide, premium -->
-      <rect x="30" y="24" width="280" height="11" fill="#2C5F8A"/>
-      <!-- Left leg -->
-      <rect x="95" y="35" width="11" height="65" fill="#2C5F8A"/>
-      <!-- Right leg -->
-      <rect x="234" y="35" width="11" height="65" fill="#2C5F8A"/>
-      <!-- EXPERTEN — left of left leg -->
-      <text x="109" y="88" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="36" font-weight="300" fill="currentColor" letter-spacing="-0.5">EXPERTEN</text>
-      <!-- TiSCH — right of right leg -->
-      <text x="248" y="88" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="36" font-weight="300" fill="currentColor" letter-spacing="-0.5">T<tspan fill="#2C5F8A">i</tspan>SCH</text>
-    </svg>
 
+    <!-- ─── Hero: Experten-Silhouetten + Logo ────────────── -->
+    <div style="text-align:center;margin:0 auto 24px;width:100%;max-width:860px;">
+      <svg class="hero-logo-svg" viewBox="0 0 800 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EXPERTiSEN TiSCH" style="width:clamp(300px,80vw,800px);height:auto;display:block;margin:0 auto;opacity:1;">
+
+        <!-- ── Silhouetten Expertenobjekte (links) ── -->
+        <!-- Stethoskop (Medizin) -->
+        <g transform="translate(30,40)" opacity="0.18" fill="#2C5F8A">
+          <circle cx="18" cy="8" r="8" fill="none" stroke="#2C5F8A" stroke-width="4"/>
+          <path d="M10 8 Q4 8 4 20 Q4 38 18 38 Q32 38 32 20 Q32 8 26 8" fill="none" stroke="#2C5F8A" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="18" cy="42" r="5" fill="#2C5F8A"/>
+        </g>
+        <!-- Waage (Recht) -->
+        <g transform="translate(80,35)" opacity="0.18" fill="#2C5F8A">
+          <line x1="12" y1="8" x2="12" y2="52" stroke="#2C5F8A" stroke-width="3"/>
+          <line x1="2" y1="8" x2="22" y2="8" stroke="#2C5F8A" stroke-width="3"/>
+          <line x1="2" y1="8" x2="0" y2="22" stroke="#2C5F8A" stroke-width="2.5"/>
+          <line x1="22" y1="8" x2="24" y2="22" stroke="#2C5F8A" stroke-width="2.5"/>
+          <path d="M-2 22 Q-1 28 4 28 Q9 28 4 22Z" fill="#2C5F8A"/>
+          <path d="M22 22 Q23 28 28 28 Q33 28 28 22Z" fill="#2C5F8A"/>
+          <line x1="4" y1="52" x2="20" y2="52" stroke="#2C5F8A" stroke-width="2.5"/>
+        </g>
+        <!-- Mikroskop (Wissenschaft) -->
+        <g transform="translate(135,28)" opacity="0.18" fill="#2C5F8A">
+          <ellipse cx="12" cy="10" rx="6" ry="9" fill="none" stroke="#2C5F8A" stroke-width="3.5"/>
+          <line x1="12" y1="19" x2="12" y2="36" stroke="#2C5F8A" stroke-width="3.5"/>
+          <ellipse cx="12" cy="38" rx="10" ry="4" fill="#2C5F8A"/>
+          <line x1="12" y1="36" x2="6" y2="44" stroke="#2C5F8A" stroke-width="3"/>
+          <line x1="2" y1="44" x2="22" y2="44" stroke="#2C5F8A" stroke-width="2.5"/>
+        </g>
+        <!-- Rechenschieber / Taschenrechner (Wirtschaft) -->
+        <g transform="translate(188,38)" opacity="0.18">
+          <rect x="0" y="0" width="28" height="44" rx="3" fill="#2C5F8A"/>
+          <rect x="3" y="3" width="22" height="10" rx="1" fill="#0A0F1A" opacity="0.6"/>
+          <rect x="4" y="17" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="12" y="17" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="20" y="17" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="4" y="25" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="12" y="25" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="20" y="25" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="4" y="33" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="12" y="33" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+          <rect x="20" y="33" width="6" height="5" rx="1" fill="#0A0F1A" opacity="0.5"/>
+        </g>
+
+        <!-- ── Silhouetten Expertenobjekte (rechts) ── -->
+        <!-- Feder (Philosophie/Literatur) -->
+        <g transform="translate(556,32)" opacity="0.18" fill="#2C5F8A">
+          <path d="M4 48 Q8 28 18 8 Q28 -4 36 2 Q44 10 32 24 Q20 38 4 48Z" fill="#2C5F8A"/>
+          <path d="M4 48 L12 36" stroke="#0A0F1A" stroke-width="1.5" opacity="0.5"/>
+          <line x1="4" y1="48" x2="0" y2="58" stroke="#2C5F8A" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <!-- Kompass (Architektur/Ingenieur) -->
+        <g transform="translate(606,30)" opacity="0.18">
+          <line x1="14" y1="4" x2="4" y2="52" stroke="#2C5F8A" stroke-width="3" stroke-linecap="round"/>
+          <line x1="14" y1="4" x2="24" y2="52" stroke="#2C5F8A" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="14" cy="4" r="4" fill="#2C5F8A"/>
+          <path d="M7 30 Q14 34 21 30" stroke="#2C5F8A" stroke-width="2" fill="none"/>
+        </g>
+        <!-- Reagenzglas (Chemie/Pharma) -->
+        <g transform="translate(650,28)" opacity="0.18">
+          <rect x="8" y="0" width="10" height="36" rx="5" fill="#2C5F8A"/>
+          <line x1="4" y1="6" x2="22" y2="6" stroke="#2C5F8A" stroke-width="2.5"/>
+          <ellipse cx="13" cy="36" rx="5" ry="5" fill="#2C5F8A"/>
+        </g>
+        <!-- Lupe (Forschung/Analyse) -->
+        <g transform="translate(692,30)" opacity="0.18">
+          <circle cx="16" cy="16" r="13" fill="none" stroke="#2C5F8A" stroke-width="4"/>
+          <line x1="26" y1="26" x2="38" y2="42" stroke="#2C5F8A" stroke-width="4" stroke-linecap="round"/>
+        </g>
+        <!-- Buch (Bildung) -->
+        <g transform="translate(742,36)" opacity="0.18">
+          <rect x="0" y="0" width="22" height="32" rx="2" fill="#2C5F8A"/>
+          <line x1="11" y1="0" x2="11" y2="32" stroke="#0A0F1A" stroke-width="1.5" opacity="0.4"/>
+          <line x1="3" y1="8" x2="9" y2="8" stroke="#0A0F1A" stroke-width="1.5" opacity="0.4"/>
+          <line x1="3" y1="13" x2="9" y2="13" stroke="#0A0F1A" stroke-width="1.5" opacity="0.4"/>
+          <line x1="13" y1="8" x2="19" y2="8" stroke="#0A0F1A" stroke-width="1.5" opacity="0.4"/>
+          <line x1="13" y1="13" x2="19" y2="13" stroke="#0A0F1A" stroke-width="1.5" opacity="0.4"/>
+        </g>
+
+        <!-- ── Tisch-Logo zentriert ── -->
+        <!-- Tagline -->
+        <text x="400" y="110" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="10" font-weight="500" fill="#6BA3CC" letter-spacing="0.22em" text-anchor="middle">FACHEXPERTISE AM TiSCH</text>
+        <!-- Table bar -->
+        <rect x="160" y="120" width="440" height="12" fill="#2C5F8A" rx="1"/>
+        <!-- Left leg -->
+        <rect x="248" y="132" width="12" height="72" fill="#2C5F8A"/>
+        <!-- Right leg -->
+        <rect x="500" y="132" width="12" height="72" fill="#2C5F8A"/>
+        <!-- EXPERTEN -->
+        <text x="263" y="195" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="40" font-weight="300" fill="currentColor" letter-spacing="-1">EXPERTEN</text>
+        <!-- TiSCH -->
+        <text x="515" y="195" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="40" font-weight="300" fill="currentColor" letter-spacing="-1">T<tspan fill="#2C5F8A">i</tspan>SCH</text>
+      </svg>
+    </div>
     <div class="hero-badge">
       <span class="badge-dot"></span>
       <span id="hero-badge-text">Fachexpertise am Tisch</span>
