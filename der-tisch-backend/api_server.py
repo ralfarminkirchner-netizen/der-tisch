@@ -29,6 +29,10 @@ async def serve_integrationstisch():
 async def serve_der_tisch():
     return FileResponse(Path(__file__).parent / "der-tisch.html")
 
+@app.get("/literatentisch.html")
+async def serve_literatentisch():
+    return FileResponse(Path(__file__).parent / "literatentisch.html")
+
 # PWA Manifests
 @app.get("/manifest-team-tisch.json")
 async def serve_manifest_team():
