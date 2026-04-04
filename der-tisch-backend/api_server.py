@@ -7,6 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from kintegrity import KintegrityRequest, KintegrityResponse, kintegrity_synthesize
 from pydantic import BaseModel
 from typing import List, Optional
 import anthropic
@@ -32,6 +33,18 @@ async def serve_der_tisch():
 @app.get("/literatentisch.html")
 async def serve_literatentisch():
     return FileResponse(Path(__file__).parent / "literatentisch.html")
+
+@app.get("/expertentisch.html")
+async def serve_expertentisch():
+    return FileResponse(Path(__file__).parent / "expertentisch.html")
+
+@app.post("/api/kintegrity/synthesize", response_model=KintegrityResponse)
+async def api_kintegrity_synthesize(req: KintegrityRequest):
+    try:
+        return await kintegrity_synthesize(req)
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}")
 
 # PWA Manifests
 @app.get("/manifest-team-tisch.json")

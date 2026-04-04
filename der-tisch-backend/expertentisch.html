@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!--
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A0F1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EXPERTiSEN TiSCH">
+<title>EXPERTiSEN TiSCH — Fachexpertise am Tisch</title>
+<meta name="description" content="EXPERTiSEN TiSCH: KI wählt passende Experten aus 50+ Fachbereichen oder du wählst selbst.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── Variables ──────────────────────────────────────────── */
+:root {
+  --bg:         #0A0F1A;
+  --surface:    #111827;
+  --surface-2:  #0D1525;
+  --surface-off:#162032;
+  --text:       #E2E8F0;
+  --muted:      #94A3B8;
+  --faint:      #475569;
+  --border:     #1E2D42;
+  --border-2:   #2A3D56;
+  --accent:     #2C5F8A;   /* steel blue */
+  --accent-dim: rgba(44,95,138,0.15);
+  --accent-glow:rgba(44,95,138,0.3);
+  --green:      #22C55E;
+  --amber:      #F59E0B;
+  --red:        #EF4444;
+  --gold:       #D4A843;
+  --r-card:     14px;
+  --r-btn:      10px;
+  --shadow:     0 2px 16px rgba(0,0,0,0.4);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,0.55);
+  --trans:      0.18s ease;
+  --font:       'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Nav ────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(10,15,26,0.94);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  height: 60px; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.nav-logo { display: flex; flex-direction: column; line-height: 1; user-select: none; text-decoration: none; }
+.nav-logo-pre { font-size: 8px; letter-spacing: 0.2em; color: var(--faint); text-transform: uppercase; font-weight: 600; margin-bottom: 1px; }
+.nav-logo-name { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.nav-logo-name span { color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+
+.toggle-group {
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--surface-off); border: 1px solid var(--border); border-radius: 10px;
+}
+.tgl-btn {
+  border: none; background: transparent; padding: 5px 10px; border-radius: 7px;
+  font-family: inherit; font-size: 11px; font-weight: 600; color: var(--muted);
+  cursor: pointer; transition: all var(--trans); white-space: nowrap; letter-spacing: 0.03em;
+}
+.tgl-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.35); }
+.tgl-btn:hover:not(.active) { color: var(--text); }
+
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all var(--trans);
+}
+.icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ─── Main ───────────────────────────────────────────────── */
+main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+/* ─── Hero ───────────────────────────────────────────────── */
+.hero {
+  min-height: calc(100vh - 60px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 0 36px; text-align: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-dim); border: 1px solid rgba(44,95,138,0.3);
+  border-radius: 100px; padding: 5px 16px;
+  font-size: 11px; font-weight: 600; color: #6BA3CC;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 28px;
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #6BA3CC;
+  animation: pulse-dot 2.5s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.6)} }
+
+.hero h1 {
+  font-size: clamp(24px, 4vw, 38px); font-weight: 600;
+  color: var(--text); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 12px;
+}
+.hero-sub {
+  font-size: 15px; color: var(--muted); margin-bottom: 40px; line-height: 1.65; max-width: 520px;
+}
+
+/* ─── Mode selector ──────────────────────────────────────── */
+.mode-tabs {
+  display: flex; gap: 2px; padding: 4px;
+  background: var(--surface-off); border: 1px solid var(--border); border-radius: 13px;
+  margin-bottom: 20px; width: fit-content; margin-left: auto; margin-right: auto;
+}
+.mode-tab {
+  border: none; background: transparent; padding: 8px 20px; border-radius: 10px;
+  font-family: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+  cursor: pointer; transition: all var(--trans); display: flex; align-items: center; gap: 7px;
+}
+.mode-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.mode-tab:hover:not(.active) { color: var(--text); }
+.mode-tab svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ─── Input area ─────────────────────────────────────────── */
+.input-wrap { width: 100%; max-width: 680px; }
+
+.question-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 18px;
+  padding: 18px 22px; font-family: inherit; font-size: 15px; color: var(--text);
+  background: var(--surface); resize: none; outline: none;
+  min-height: 72px; max-height: none; line-height: 1.6;
+  box-shadow: var(--shadow); transition: border-color var(--trans), box-shadow var(--trans);
+  margin-bottom: 10px; display: block; width: 100%;
+}
+.question-input::placeholder { color: var(--faint); }
+.question-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow); }
+
+/* ─── Expert selector panel ──────────────────────────────── */
+.expert-selector {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.expert-selector-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px;
+}
+.expert-selector-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint);
+}
+.auto-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 100px; padding: 3px 10px;
+  font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: 0.06em;
+}
+.auto-badge svg { width: 10px; height: 10px; }
+
+/* Expert mode sub-tabs */
+.expert-sub-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+.expert-sub-tab {
+  border: 1px solid var(--border); background: transparent; border-radius: 8px;
+  padding: 5px 12px; font-family: inherit; font-size: 12px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all var(--trans);
+}
+.expert-sub-tab.active { border-color: var(--accent); color: #6BA3CC; background: var(--accent-dim); }
+.expert-sub-tab:hover:not(.active) { color: var(--text); border-color: var(--border-2); }
+
+/* Selected experts chips */
+.selected-experts { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
+.expert-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-dim); border: 1px solid rgba(44,95,138,0.35);
+  border-radius: 100px; padding: 4px 10px;
+  font-size: 12px; font-weight: 600; color: #6BA3CC;
+}
+.expert-chip-remove {
+  background: none; border: none; cursor: pointer; color: #6BA3CC;
+  font-size: 14px; line-height: 1; padding: 0; opacity: 0.65; transition: opacity var(--trans);
+}
+.expert-chip-remove:hover { opacity: 1; }
+.expert-chip-placeholder {
+  font-size: 12px; color: var(--faint); font-style: italic;
+}
+
+/* Fachbereiche grid */
+.fachbereiche-grid {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 5px;
+  margin-top: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.fachbereiche-grid.visible { display: grid; }
+.fachbereich-btn {
+  border: 1px solid var(--border); background: var(--surface-off);
+  border-radius: 8px; padding: 6px 10px;
+  font-family: inherit; font-size: 11px; font-weight: 500; color: var(--muted);
+  cursor: pointer; transition: all var(--trans); text-align: left;
+  display: flex; align-items: center; gap: 5px;
+}
+.fachbereich-btn:hover { border-color: var(--border-2); color: var(--text); }
+.fachbereich-btn.selected { border-color: var(--accent); color: #6BA3CC; background: var(--accent-dim); }
+.fachbereich-btn .fb-icon { font-size: 13px; line-height: 1; flex-shrink: 0; }
+
+/* Fachbereich search */
+.fb-search {
+  width: 100%; border: 1px solid var(--border); border-radius: 9px;
+  padding: 7px 12px; font-family: inherit; font-size: 13px; color: var(--text);
+  background: var(--surface-2); outline: none; margin-bottom: 8px; margin-top: 8px;
+  transition: border-color var(--trans);
+}
+.fb-search::placeholder { color: var(--faint); }
+.fb-search:focus { border-color: var(--accent); }
+
+/* Custom expert input */
+.custom-expert-form {
+  display: none; flex-direction: column; gap: 8px; margin-top: 10px;
+}
+.custom-expert-form.visible { display: flex; }
+.custom-expert-row { display: flex; gap: 8px; }
+.custom-input {
+  flex: 1; border: 1px solid var(--border); border-radius: 9px;
+  padding: 8px 12px; font-family: inherit; font-size: 13px; color: var(--text);
+  background: var(--surface-2); outline: none; transition: border-color var(--trans);
+}
+.custom-input::placeholder { color: var(--faint); }
+.custom-input:focus { border-color: var(--accent); }
+.custom-add-btn {
+  border: 1px solid var(--accent); background: var(--accent-dim); border-radius: 9px;
+  padding: 8px 14px; font-family: inherit; font-size: 12px; font-weight: 600;
+  color: #6BA3CC; cursor: pointer; transition: all var(--trans); white-space: nowrap;
+}
+.custom-add-btn:hover { background: rgba(44,95,138,0.25); }
+
+/* ─── CTA ────────────────────────────────────────────────── */
+.cta-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--accent); color: #fff; border: none; border-radius: var(--r-btn);
+  padding: 14px 28px; font-family: inherit; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all var(--trans);
+  box-shadow: 0 4px 20px var(--accent-glow); letter-spacing: -0.01em;
+}
+.cta-btn:hover:not(:disabled) { background: #245274; transform: translateY(-1px); box-shadow: 0 6px 28px var(--accent-glow); }
+.cta-btn:active:not(:disabled) { transform: translateY(0); }
+.cta-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.cta-btn.loading .spinner { display: block; }
+.cta-btn.loading .btn-text, .cta-btn.loading .cta-arrow { display: none; }
+
+.chip-toggle-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--border); background: transparent; border-radius: 100px;
+  padding: 5px 13px; font-family: inherit; font-size: 11px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all var(--trans);
+}
+.chip-toggle-btn:hover, .chip-toggle-btn.active { border-color: var(--accent); color: #6BA3CC; }
+.chip-row { display: none; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip-row.visible { display: flex; }
+.chip {
+  border: 1px solid var(--border); background: var(--surface); border-radius: 100px;
+  padding: 5px 13px; font-family: inherit; font-size: 11px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all var(--trans);
+}
+.chip:hover { border-color: var(--accent); color: #6BA3CC; background: var(--accent-dim); }
+
+.error-msg {
+  display: none; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--red); margin-top: 10px;
+}
+.error-msg.visible { display: block; }
+
+/* ─── Results ────────────────────────────────────────────── */
+.results-section { display: none; padding-bottom: 80px; }
+.results-section.visible { display: block; }
+
+.results-header {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 24px; padding-top: 16px;
+}
+.results-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.results-q { font-size: 14px; color: var(--muted); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 440px; }
+
+/* Skeleton */
+.skeleton-cards { display: flex; flex-direction: column; gap: 16px; }
+.skeleton-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-card); padding: 22px 22px 22px 30px; position: relative; overflow: hidden;
+}
+.skeleton-card::before { content:''; position:absolute; left:0; top:0; width:3px; height:100%; background:var(--border-2); }
+.sk-line { height:12px; border-radius:6px; background:linear-gradient(90deg,#1a2538 25%,#22304a 50%,#1a2538 75%); background-size:200% 100%; animation:shimmer 1.5s ease-in-out infinite; margin-bottom:9px; }
+.sk-line.short { width:28%; height:10px; margin-bottom:13px; }
+.sk-line.long { width:100%; }
+.sk-line.med { width:68%; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* Perspective cards */
+.perspective-cards { display: flex; flex-direction: column; gap: 16px; }
+.perspective-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-card); padding: 22px 22px 22px 30px;
+  position: relative; overflow: hidden; box-shadow: var(--shadow);
+  transition: transform var(--trans), box-shadow var(--trans), border-color var(--trans);
+  animation: card-in 0.4s ease both;
+}
+.perspective-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--border-2); }
+.perspective-card::before {
+  content:''; position:absolute; left:0; top:0; width:3px; height:100%;
+  background:var(--card-accent,var(--accent)); border-radius:var(--r-card) 0 0 var(--r-card);
+}
+@keyframes card-in { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.perspective-card:nth-child(1){animation-delay:.04s}
+.perspective-card:nth-child(2){animation-delay:.09s}
+.perspective-card:nth-child(3){animation-delay:.14s}
+.perspective-card:nth-child(4){animation-delay:.19s}
+.perspective-card:nth-child(5){animation-delay:.24s}
+.perspective-card:nth-child(6){animation-delay:.29s}
+.perspective-card:nth-child(7){animation-delay:.34s}
+.perspective-card:nth-child(8){animation-delay:.39s}
+
+.card-header-row { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.card-agent-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.card-agent-icon svg { width: 14px; height: 14px; }
+.card-role-label { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+.card-text { font-size: 14px; line-height: 1.75; color: var(--text); }
+
+/* ─── kiNTEGRiTY UI ──────────────────────────────────────── */
+
+/* Integrity Field (MUST KEEP) */
+.integrity-field-wrap {
+  margin: 32px 0 8px;
+  border: 2px solid rgba(44,95,138,0.5);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(44,95,138,0.07) 0%, rgba(10,15,26,0.95) 100%);
+  padding: 18px 20px;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(44,95,138,0.15), 0 4px 24px rgba(0,0,0,0.3);
+}
+.integrity-field-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent); color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; border-radius: 6px; padding: 3px 8px;
+  margin-bottom: 12px;
+}
+.integrity-field-label svg { width: 11px; height: 11px; }
+.integrity-field-hint { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+.integrity-textarea {
+  width: 100%; min-height: 72px; max-height: none;
+  border: 1px solid rgba(44,95,138,0.3); border-radius: 10px;
+  background: rgba(10,15,26,0.8); color: var(--text);
+  font-family: inherit; font-size: 14px; line-height: 1.65;
+  padding: 12px 14px; resize: vertical; outline: none;
+  transition: border-color var(--trans), box-shadow var(--trans);
+}
+.integrity-textarea::placeholder { color: var(--faint); }
+.integrity-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+/* kiNTEGRiTY action bar */
+.kintegrity-bar {
+  display: none; align-items: center; gap: 10px;
+  margin: 24px 0 8px; flex-wrap: wrap;
+}
+.kintegrity-bar.visible { display: flex; }
+.kintegrity-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid rgba(44,95,138,0.5); background: var(--accent-dim);
+  border-radius: var(--r-btn); padding: 10px 18px;
+  font-family: inherit; font-size: 13px; font-weight: 600; color: #6BA3CC;
+  cursor: pointer; transition: all var(--trans);
+}
+.kintegrity-btn:hover:not(:disabled) { background: rgba(44,95,138,0.25); border-color: var(--accent); }
+.kintegrity-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.kintegrity-btn svg { width: 14px; height: 14px; }
+.kintegrity-spinner { width: 14px; height: 14px; border: 2px solid rgba(107,163,204,0.3); border-top-color: #6BA3CC; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+.kintegrity-btn.loading .kintegrity-spinner { display: block; }
+.kintegrity-btn.loading .ki-btn-text { display: none; }
+
+/* kiNTEGRiTY output panels */
+.kintegrity-output { display: none; margin-top: 24px; }
+.kintegrity-output.visible { display: block; }
+
+.ki-panel {
+  border-radius: 14px; border: 1px solid; margin-bottom: 14px; overflow: hidden;
+}
+.ki-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; cursor: pointer; user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: background var(--trans);
+}
+.ki-panel-header:hover { background: rgba(255,255,255,0.03); }
+.ki-panel-title { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.ki-panel-title svg { width: 14px; height: 14px; }
+.ki-panel-actions { display: flex; gap: 5px; }
+.ki-action-btn {
+  border: 1px solid; border-radius: 7px; padding: 4px 10px;
+  font-family: inherit; font-size: 11px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; gap: 4px; transition: all var(--trans);
+}
+.ki-action-btn svg { width: 11px; height: 11px; }
+.ki-panel-body { padding: 16px; }
+.ki-editable {
+  min-height: 80px; outline: none; font-family: inherit; font-size: 14px;
+  line-height: 1.75; color: var(--text); white-space: pre-wrap; word-break: break-word;
+  border-radius: 8px; padding: 4px; transition: background var(--trans);
+}
+.ki-editable:focus { background: rgba(255,255,255,0.03); }
+.ki-editable:empty::before { content: attr(data-placeholder); color: var(--faint); pointer-events: none; }
+
+/* Synthesis panel */
+.ki-synthesis { border-color: rgba(44,95,138,0.3); background: rgba(44,95,138,0.04); }
+.ki-synthesis .ki-panel-header { border-bottom-color: rgba(44,95,138,0.15); }
+.ki-synthesis .ki-panel-title { color: #6BA3CC; }
+.ki-synthesis .ki-action-btn { border-color: rgba(44,95,138,0.3); color: #6BA3CC; background: transparent; }
+.ki-synthesis .ki-action-btn:hover { background: var(--accent-dim); }
+
+/* Aber panel */
+.ki-aber { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.03); }
+.ki-aber .ki-panel-header { border-bottom-color: rgba(245,158,11,0.12); }
+.ki-aber .ki-panel-title { color: var(--amber); }
+.ki-aber .ki-action-btn { border-color: rgba(245,158,11,0.3); color: var(--amber); background: transparent; }
+.ki-aber .ki-action-btn:hover { background: rgba(245,158,11,0.07); }
+
+/* Fraglich panel */
+.ki-fraglich { border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.03); }
+.ki-fraglich .ki-panel-header { border-bottom-color: rgba(239,68,68,0.1); }
+.ki-fraglich .ki-panel-title { color: var(--red); }
+.ki-fraglich .ki-action-btn { border-color: rgba(239,68,68,0.25); color: var(--red); background: transparent; }
+.ki-fraglich .ki-action-btn:hover { background: rgba(239,68,68,0.07); }
+
+.panel-chevron { transition: transform var(--trans); }
+.panel-collapsed .panel-chevron { transform: rotate(-90deg); }
+.panel-collapsed .ki-panel-body { display: none; }
+.panel-collapsed .ki-panel-header { border-bottom-color: transparent !important; }
+
+/* Provenance chips */
+.provenance-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); }
+.prov-chip {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+  border-radius: 100px; padding: 2px 8px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--faint);
+}
+
+/* Export */
+.export-btns { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+.export-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-btn);
+  padding: 9px 16px; font-family: inherit; font-size: 12px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all var(--trans);
+}
+.export-btn:hover { border-color: var(--border-2); color: var(--text); }
+.export-btn svg { width: 13px; height: 13px; }
+
+/* Notes area */
+.notes-section {
+  margin-top: 24px; border: 1px solid var(--border); border-radius: 14px;
+  background: var(--surface); overflow: hidden;
+}
+.notes-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px; border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.notes-title { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--faint); display: flex; align-items: center; gap: 6px; }
+.notes-title svg { width: 13px; height: 13px; }
+.notes-body { padding: 14px 16px; display: none; }
+.notes-body.open { display: block; }
+.notes-textarea {
+  width: 100%; min-height: 100px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--surface-2); color: var(--text); font-family: inherit; font-size: 13px;
+  line-height: 1.65; padding: 10px 13px; resize: vertical; outline: none;
+  transition: border-color var(--trans);
+}
+.notes-textarea::placeholder { color: var(--faint); }
+.notes-textarea:focus { border-color: var(--accent); }
+
+/* History panel */
+#historyPanel {
+  position: fixed; top: 0; right: -420px; width: 400px; max-width: 92vw; height: 100vh;
+  z-index: 900; background: var(--surface); border-left: 1px solid var(--border);
+  box-shadow: -8px 0 48px rgba(0,0,0,0.55); display: flex; flex-direction: column;
+  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+#historyPanel.open { right: 0; }
+#historyOverlay {
+  position: fixed; inset: 0; z-index: 899; background: rgba(0,0,0,0.5);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+#historyOverlay.open { opacity: 1; pointer-events: all; }
+.history-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.history-panel-title { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.history-panel-actions { display: flex; gap: 5px; }
+.h-action-btn {
+  height: 26px; padding: 0 9px; border-radius: 7px; font-size: 10px; font-weight: 600;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  cursor: pointer; transition: all var(--trans); display: flex; align-items: center; gap: 3px;
+}
+.h-action-btn:hover { border-color: var(--accent); color: #6BA3CC; }
+.h-close-btn {
+  width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent;
+  color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color var(--trans);
+}
+.h-close-btn:hover { color: var(--text); }
+.history-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+.history-empty { text-align: center; color: var(--faint); font-size: 12px; padding: 36px 16px; line-height: 1.7; }
+.history-item { background: var(--surface-off); border: 1px solid var(--border); border-radius: 10px; }
+.history-item-header { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; cursor: pointer; }
+.history-item-q { flex: 1; font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.history-item-info { font-size: 10px; color: var(--faint); margin-top: 2px; }
+.history-item-del { background: none; border: none; color: var(--faint); cursor: pointer; font-size: 13px; flex-shrink: 0; transition: color var(--trans); }
+.history-item-del:hover { color: var(--red); }
+
+footer {
+  padding: 20px; text-align: center; border-top: 1px solid var(--border); margin-top: auto;
+}
+footer a { font-size: 11px; color: var(--faint); text-decoration: none; transition: color var(--trans); }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 600px) { main { padding: 0 14px; } nav { padding: 0 14px; } .hero h1 { font-size: 22px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/expertentisch.html" aria-label="EXPERTiSEN TiSCH">
+    <span class="nav-logo-pre">EXPERTiSEN</span>
+    <span class="nav-logo-name">T<span>i</span>SCH</span>
+  </a>
+  <div class="nav-right">
+    <div class="toggle-group" role="group" aria-label="Sprache">
+      <button class="tgl-btn active" id="btn-de" onclick="setLang('de')">DE</button>
+      <button class="tgl-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="toggle-group" role="group" aria-label="Ton">
+      <button class="tgl-btn active" id="tone-achtsam" onclick="setTone('achtsam')">achtsam</button>
+      <button class="tgl-btn" id="tone-direkt" onclick="setTone('direkt')">direkt</button>
+    </div>
+    <button class="icon-btn" onclick="historyToggle()" aria-label="Verlauf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span id="hero-badge-text">Fachexpertise am Tisch</span>
+    </div>
+    <h1 id="hero-h1">Was sagen die Experten?</h1>
+    <p class="hero-sub" id="hero-sub">KI wählt passende Fachleute aus — oder du wählst selbst aus 50+ Disziplinen.</p>
+
+    <div class="input-wrap">
+      <textarea class="question-input" id="question-input"
+        placeholder="Welche Frage, These oder welches Problem soll am Expertentisch besprochen werden?"
+        rows="3" oninput="autoResize(this)" onkeydown="handleEnter(event)"></textarea>
+
+      <!-- Expert selector -->
+      <div class="expert-selector">
+        <div class="expert-selector-header">
+          <span class="expert-selector-title" id="selector-title">Expertenwahl</span>
+          <div class="auto-badge" id="auto-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2l2.5 7.5H22l-6.5 4.7 2.5 7.5L12 17l-6 4.7 2.5-7.5L2 9.5h7.5z"/></svg>
+            KI-Auto aktiv
+          </div>
+        </div>
+
+        <div class="expert-sub-tabs">
+          <button class="expert-sub-tab active" id="tab-auto" onclick="setExpertMode('auto')">
+            ✦ KI-Auto
+          </button>
+          <button class="expert-sub-tab" id="tab-wahl" onclick="setExpertMode('wahl')">
+            Aus Liste wählen
+          </button>
+          <button class="expert-sub-tab" id="tab-custom" onclick="setExpertMode('custom')">
+            Eigene definieren
+          </button>
+        </div>
+
+        <!-- Selected chips display -->
+        <div class="selected-experts" id="selected-experts">
+          <span class="expert-chip-placeholder" id="expert-placeholder">KI wählt passende Experten automatisch aus der Frage.</span>
+        </div>
+
+        <!-- Fachbereiche grid -->
+        <div class="fachbereiche-grid" id="fachbereiche-grid">
+          <input type="text" class="fb-search" id="fb-search" placeholder="Suchen..." oninput="filterFachbereiche()" aria-label="Fachbereich suchen">
+          <!-- Buttons injected by JS -->
+        </div>
+
+        <!-- Custom expert form -->
+        <div class="custom-expert-form" id="custom-expert-form">
+          <div class="custom-expert-row">
+            <input type="text" class="custom-input" id="custom-name" placeholder="Name (z.B. Prof. Müller)" aria-label="Expertenname">
+            <input type="text" class="custom-input" id="custom-field" placeholder="Fachgebiet (z.B. Quantenbiologie)" aria-label="Fachgebiet">
+            <button class="custom-add-btn" onclick="addCustomExpert()">+ Hinzufügen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="cta-btn" id="cta-btn" onclick="submitQuestion()">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-text" id="btn-text">Am Tisch fragen</span>
+          <svg class="cta-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <div>
+          <button class="chip-toggle-btn" id="chip-toggle-btn" onclick="toggleChips()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            Beispiele
+          </button>
+          <div class="chip-row" id="chip-row">
+            <button class="chip" onclick="fillChip(this)">Wie gefährlich ist diese Substanz?</button>
+            <button class="chip" onclick="fillChip(this)">Ist diese Verfassung rechtswirksam?</button>
+            <button class="chip" onclick="fillChip(this)">Was verursacht diese Symptome?</button>
+            <button class="chip" onclick="fillChip(this)">Gibt es freien Willen?</button>
+            <button class="chip" onclick="fillChip(this)">Wie wirkt Stress auf das Immunsystem?</button>
+            <button class="chip" onclick="fillChip(this)">Ist diese Investition sinnvoll?</button>
+            <button class="chip" onclick="fillChip(this)">Welche pädagogischen Methoden sind hier best?</button>
+            <button class="chip" onclick="fillChip(this)">Wie beurteile ich diesen Konflikt?</button>
+          </div>
+        </div>
+      </div>
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="results-section" id="results-section">
+    <div class="results-header">
+      <span class="results-label" id="results-label">Am Tisch</span>
+      <span class="results-q" id="results-q"></span>
+    </div>
+
+    <div class="skeleton-cards" id="skeleton-cards">
+      <div class="skeleton-card"><div class="sk-line short"></div><div class="sk-line long"></div><div class="sk-line med"></div><div class="sk-line long"></div></div>
+      <div class="skeleton-card"><div class="sk-line short"></div><div class="sk-line long"></div><div class="sk-line med"></div></div>
+      <div class="skeleton-card"><div class="sk-line short"></div><div class="sk-line long"></div><div class="sk-line med"></div></div>
+    </div>
+
+    <div class="perspective-cards" id="perspective-cards"></div>
+
+    <!-- Notizen -->
+    <div class="notes-section" id="notes-section" style="display:none;">
+      <div class="notes-header" onclick="toggleNotes()">
+        <span class="notes-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Notizen
+        </span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron" id="notes-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="notes-body" id="notes-body">
+        <textarea class="notes-textarea" id="notes-textarea" placeholder="Eigene Notizen, Gedanken, Ergänzungen…"></textarea>
+      </div>
+    </div>
+
+    <!-- Integrity Field -->
+    <div class="integrity-field-wrap" id="integrity-field-wrap" style="display:none;">
+      <div class="integrity-field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        MUST KEEP
+      </div>
+      <p class="integrity-field-hint" id="integrity-hint">Was hier steht, bleibt in der Synthese maximal erhalten — exakt, wie du es formuliert hast. Ziehe wichtige Passagen hierein oder schreibe direkt hinein.</p>
+      <textarea class="integrity-textarea" id="integrity-textarea" placeholder="Formulierungen, Kernaussagen oder Passagen die unbedingt erhalten bleiben müssen…"></textarea>
+    </div>
+
+    <!-- kiNTEGRiTY action bar -->
+    <div class="kintegrity-bar" id="kintegrity-bar">
+      <button class="kintegrity-btn" id="ki-btn" onclick="runKintegrity()">
+        <span class="kintegrity-spinner" aria-hidden="true"></span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="ki-btn-icon"><path d="M2 12l10-10 10 10M12 2v20"/></svg>
+        <span class="ki-btn-text" id="ki-btn-text">kiNTEGRiTY — Verdichten</span>
+      </button>
+      <span style="font-size:11px;color:var(--faint);" id="ki-hint">Fasst alle Expertenmeinungen integritätswahrend zusammen</span>
+    </div>
+
+    <!-- kiNTEGRiTY output -->
+    <div class="kintegrity-output" id="kintegrity-output">
+
+      <!-- Synthese -->
+      <div class="ki-panel ki-synthesis" id="ki-synthesis-panel">
+        <div class="ki-panel-header" onclick="toggleKiPanel('ki-synthesis-panel')">
+          <span class="ki-panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12l10-10 10 10M12 2v20"/></svg>
+            Synthese / Verdichtung
+          </span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="ki-panel-actions">
+              <button class="ki-action-btn" onclick="copyKiPanel('ki-synthesis-panel');event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Kopieren
+              </button>
+            </div>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="ki-panel-body">
+          <div class="ki-editable" id="ki-synthesis" contenteditable="true" data-placeholder="Synthese erscheint hier nach der Verdichtung…"></div>
+          <div class="provenance-row" id="ki-synthesis-prov"></div>
+        </div>
+      </div>
+
+      <!-- DAS GROßE ABER -->
+      <div class="ki-panel ki-aber" id="ki-aber-panel">
+        <div class="ki-panel-header" onclick="toggleKiPanel('ki-aber-panel')">
+          <span class="ki-panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            DAS GROßE ABER — Inkommensurables · Gegensätze
+          </span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="ki-panel-actions">
+              <button class="ki-action-btn" onclick="copyKiPanel('ki-aber-panel');event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Kopieren
+              </button>
+            </div>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="ki-panel-body">
+          <div class="ki-editable" id="ki-aber" contenteditable="true" data-placeholder="Echte Widersprüche und inkommensurable Positionen erscheinen hier…"></div>
+        </div>
+      </div>
+
+      <!-- Fraglich -->
+      <div class="ki-panel ki-fraglich" id="ki-fraglich-panel">
+        <div class="ki-panel-header" onclick="toggleKiPanel('ki-fraglich-panel')">
+          <span class="ki-panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Fraglich · Fehlerhaft · Halluziniert
+          </span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="ki-panel-actions">
+              <button class="ki-action-btn" onclick="copyKiPanel('ki-fraglich-panel');event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Kopieren
+              </button>
+            </div>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="panel-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="ki-panel-body">
+          <div class="ki-editable" id="ki-fraglich" contenteditable="true" data-placeholder="Faktisch fragwürdige oder widersprüchliche Aussagen erscheinen hier…"></div>
+        </div>
+      </div>
+
+    </div><!-- /kintegrity-output -->
+
+    <!-- Export -->
+    <div class="export-btns" id="export-btns" style="display:none;">
+      <button class="export-btn" onclick="exportPDF()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+        PDF
+      </button>
+      <button class="export-btn" onclick="exportTxt()">TXT</button>
+    </div>
+
+  </section>
+</main>
+
+<!-- History Panel -->
+<div id="historyOverlay" onclick="historyToggle()"></div>
+<div id="historyPanel">
+  <div class="history-panel-header">
+    <span class="history-panel-title">Verlauf</span>
+    <div class="history-panel-actions">
+      <button class="h-action-btn" onclick="historyExport()">Export</button>
+      <button class="h-action-btn" onclick="historyClear()">Alles</button>
+      <button class="h-close-btn" onclick="historyToggle()">×</button>
+    </div>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="history-empty">Noch keine Anfragen gespeichert.</div>
+  </div>
+</div>
+
+<footer>
+  <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// =============================================
+// EXPERTiSEN TiSCH — Main JS
+// =============================================
+const API = '';
+
+// ─── 50+ Fachbereiche ──────────────────────
+const FACHBEREICHE = [
+  {name:'Allgemeinmedizin',icon:'⚕️'},{name:'Neurologie',icon:'🧠'},{name:'Psychiatrie',icon:'🧬'},
+  {name:'Psychologie',icon:'💭'},{name:'Psychotherapie',icon:'🤝'},{name:'Krisenpsychologie',icon:'🆘'},
+  {name:'Entwicklungspsychologie',icon:'👶'},{name:'Kognitionswissenschaft',icon:'🔬'},
+  {name:'Bewusstseinsforschung',icon:'✨'},{name:'Pharmakologie',icon:'💊'},
+  {name:'Epidemiologie',icon:'📊'},{name:'Medizinethik',icon:'⚖️'},{name:'Pflegewissenschaft',icon:'🏥'},
+  {name:'Sportmedizin',icon:'🏃'},{name:'Ernährungswissenschaft',icon:'🥗'},
+  {name:'Philosophie',icon:'🦉'},{name:'Ethik',icon:'⚖️'},{name:'Phänomenologie',icon:'🌀'},
+  {name:'Erkenntnistheorie',icon:'🔍'},{name:'Narratologie',icon:'📖'},
+  {name:'Verfassungsrecht',icon:'📜'},{name:'Strafrecht',icon:'⚖️'},{name:'Arbeitsrecht',icon:'🔨'},
+  {name:'Internationales Recht',icon:'🌐'},{name:'Medienrecht',icon:'📱'},
+  {name:'Volkswirtschaft',icon:'📈'},{name:'Verhaltensökonomie',icon:'🧮'},{name:'Finanzwesen',icon:'💰'},
+  {name:'Soziologie',icon:'👥'},{name:'Politikwissenschaft',icon:'🏛️'},
+  {name:'Kulturwissenschaft',icon:'🎭'},{name:'Religionswissenschaft',icon:'🕊️'},
+  {name:'Geschichte',icon:'📚'},{name:'Anthropologie',icon:'🌍'},
+  {name:'Linguistik',icon:'💬'},{name:'Kommunikationswissenschaft',icon:'📡'},
+  {name:'Pädagogik',icon:'🎓'},{name:'Sonderpädagogik',icon:'🌱'},
+  {name:'Physik',icon:'⚛️'},{name:'Quantenphysik',icon:'🌊'},{name:'Mathematik',icon:'🔢'},
+  {name:'Statistik',icon:'📉'},{name:'Informatik',icon:'💻'},{name:'KI-Forschung',icon:'🤖'},
+  {name:'Biologie',icon:'🧬'},{name:'Evolutionsbiologie',icon:'🦎'},{name:'Genetik',icon:'🧫'},
+  {name:'Umweltwissenschaft',icon:'🌿'},{name:'Klimaforschung',icon:'🌡️'},
+  {name:'Systemtheorie',icon:'🔄'},{name:'Architektur',icon:'🏗️'},{name:'Stadtplanung',icon:'🏙️'},
+  {name:'Forensik',icon:'🔎'},{name:'Philosophie des Geistes',icon:'🌐'},
+];
+
+// Agent colors per Fachbereich (rotating palette)
+const FB_COLORS = ['#2C5F8A','#22A37A','#C9762E','#8B4AC9','#B53040','#3A7BC8','#5A9E2A','#B87B12','#6B44C4','#2A9DB0'];
+function fbColor(i) { return FB_COLORS[i % FB_COLORS.length]; }
+
+// ─── State ─────────────────────────────────
+let currentLang = 'de';
+let currentTone = 'achtsam';
+let expertMode  = 'auto';   // 'auto' | 'wahl' | 'custom'
+let selectedFachbereiche = []; // array of {name, icon}
+let customExperts = [];        // array of {name, field}
+let lastQuestion = '';
+let lastResults  = null;
+let notesOpen = false;
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-de').classList.toggle('active', lang==='de');
+  document.getElementById('btn-en').classList.toggle('active', lang==='en');
+  document.getElementById('question-input').placeholder =
+    lang==='de' ? 'Welche Frage, These oder welches Problem soll am Expertentisch besprochen werden?'
+                : 'What question, thesis or problem should be discussed at the expert table?';
+  document.getElementById('btn-text').textContent = lang==='de' ? 'Am Tisch fragen' : 'Ask at the table';
+  document.getElementById('hero-h1').textContent = lang==='de' ? 'Was sagen die Experten?' : 'What do the experts say?';
+  document.getElementById('hero-sub').textContent = lang==='de'
+    ? 'KI wählt passende Fachleute aus — oder du wählst selbst aus 50+ Disziplinen.'
+    : 'AI selects fitting experts — or choose yourself from 50+ disciplines.';
+  document.getElementById('results-label').textContent = lang==='de' ? 'Am Tisch' : 'At the table';
+  document.getElementById('ki-btn-text').textContent = lang==='de' ? 'kiNTEGRiTY — Verdichten' : 'kiNTEGRiTY — Synthesize';
+  document.getElementById('ki-hint').textContent = lang==='de'
+    ? 'Fasst alle Expertenmeinungen integritätswahrend zusammen'
+    : 'Synthesizes all expert opinions while preserving integrity';
+  document.getElementById('integrity-hint').textContent = lang==='de'
+    ? 'Was hier steht, bleibt in der Synthese maximal erhalten — exakt, wie du es formuliert hast.'
+    : 'What you write here is preserved maximally in the synthesis — exactly as formulated.';
+}
+
+function setTone(t) {
+  currentTone = t;
+  document.getElementById('tone-achtsam').classList.toggle('active', t==='achtsam');
+  document.getElementById('tone-direkt').classList.toggle('active', t==='direkt');
+}
+
+// ─── Expert mode ───────────────────────────
+function setExpertMode(mode) {
+  expertMode = mode;
+  ['auto','wahl','custom'].forEach(m => {
+    document.getElementById('tab-'+m).classList.toggle('active', m===mode);
+  });
+  document.getElementById('fachbereiche-grid').classList.toggle('visible', mode==='wahl');
+  document.getElementById('custom-expert-form').classList.toggle('visible', mode==='custom');
+  document.getElementById('auto-badge').style.display = mode==='auto' ? 'inline-flex' : 'none';
+  updateExpertPlaceholder();
+}
+
+function updateExpertPlaceholder() {
+  const container = document.getElementById('selected-experts');
+  const ph = document.getElementById('expert-placeholder');
+  const allExperts = [...selectedFachbereiche, ...customExperts];
+
+  if (expertMode === 'auto' && allExperts.length === 0) {
+    container.innerHTML = '<span class="expert-chip-placeholder" id="expert-placeholder">KI wählt passende Experten automatisch aus der Frage.</span>';
+    return;
+  }
+
+  if (allExperts.length === 0) {
+    container.innerHTML = '<span class="expert-chip-placeholder" id="expert-placeholder">Noch keine Experten gewählt.</span>';
+    return;
+  }
+
+  container.innerHTML = allExperts.map(e => {
+    const label = e.name + (e.field ? ` (${e.field})` : '');
+    const key = e.name + (e.field||'');
+    return `<span class="expert-chip">
+      ${e.icon||'🎓'} ${escHtml(label)}
+      <button class="expert-chip-remove" onclick="removeExpert('${escHtml(key)}')" aria-label="Entfernen">×</button>
+    </span>`;
+  }).join('');
+}
+
+function removeExpert(key) {
+  selectedFachbereiche = selectedFachbereiche.filter(e => (e.name+(e.field||'')) !== key);
+  customExperts = customExperts.filter(e => (e.name+(e.field||'')) !== key);
+  // Deselect in grid
+  document.querySelectorAll('.fachbereich-btn.selected').forEach(btn => {
+    if ((btn.dataset.name + '') === key) btn.classList.remove('selected');
+  });
+  updateExpertPlaceholder();
+}
+
+// ─── Fachbereiche grid ─────────────────────
+function buildFachbereicheGrid() {
+  const grid = document.getElementById('fachbereiche-grid');
+  // Keep the search input, rebuild buttons
+  const existing = grid.querySelector('.fb-search');
+  grid.innerHTML = '';
+  if (existing) grid.appendChild(existing);
+  else {
+    const s = document.createElement('input');
+    s.type = 'text'; s.className = 'fb-search'; s.id = 'fb-search';
+    s.placeholder = 'Suchen...'; s.setAttribute('oninput','filterFachbereiche()');
+    grid.appendChild(s);
+  }
+
+  FACHBEREICHE.forEach((fb, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'fachbereich-btn';
+    btn.dataset.name = fb.name;
+    btn.dataset.index = i;
+    btn.innerHTML = `<span class="fb-icon">${fb.icon}</span>${fb.name}`;
+    btn.onclick = () => toggleFachbereich(fb, btn);
+    if (selectedFachbereiche.find(s => s.name === fb.name)) btn.classList.add('selected');
+    grid.appendChild(btn);
+  });
+}
+
+function filterFachbereiche() {
+  const q = (document.getElementById('fb-search')?.value || '').toLowerCase();
+  document.querySelectorAll('.fachbereich-btn').forEach(btn => {
+    btn.style.display = btn.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function toggleFachbereich(fb, btn) {
+  const idx = selectedFachbereiche.findIndex(s => s.name === fb.name);
+  if (idx >= 0) {
+    selectedFachbereiche.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedFachbereiche.length >= 8) {
+      showError(currentLang==='de' ? 'Maximal 8 Fachbereiche.' : 'Maximum 8 disciplines.'); return;
+    }
+    selectedFachbereiche.push(fb);
+    btn.classList.add('selected');
+  }
+  updateExpertPlaceholder();
+}
+
+function addCustomExpert() {
+  const name  = document.getElementById('custom-name').value.trim();
+  const field = document.getElementById('custom-field').value.trim();
+  if (!name && !field) return;
+  if (customExperts.length + selectedFachbereiche.length >= 8) {
+    showError(currentLang==='de' ? 'Maximal 8 Experten.' : 'Maximum 8 experts.'); return;
+  }
+  customExperts.push({ name: name || field, field: name ? field : '', icon: '🎓' });
+  document.getElementById('custom-name').value = '';
+  document.getElementById('custom-field').value = '';
+  updateExpertPlaceholder();
+}
+
+// ─── Build custom_perspectives payload ─────
+function buildCustomPerspectives() {
+  if (expertMode === 'auto' && selectedFachbereiche.length === 0 && customExperts.length === 0) {
+    // KI-Auto: no custom_perspectives → backend's ask-simple picks best 4-6
+    return null;
+  }
+
+  const all = [
+    ...selectedFachbereiche.map(fb => ({
+      name: fb.name,
+      position: currentLang === 'de'
+        ? `Antworten ausschließlich aus der Perspektive des/der ${fb.name}. Fachterminologie korrekt einsetzen. Keine Generalaussagen.`
+        : `Respond exclusively from the perspective of ${fb.name}. Use correct technical terminology. No generic statements.`
+    })),
+    ...customExperts.map(e => ({
+      name: e.name + (e.field ? ` (${e.field})` : ''),
+      position: currentLang === 'de'
+        ? `Antworten aus Sicht von ${e.name}${e.field ? ', Fachgebiet ' + e.field : ''}. Fachspezifisch und präzise.`
+        : `Respond from the perspective of ${e.name}${e.field ? ', field: ' + e.field : ''}. Field-specific and precise.`
+    }))
+  ];
+  return all;
+}
+
+// ─── Submit ────────────────────────────────
+async function submitQuestion() {
+  clearError();
+  const qi = document.getElementById('question-input');
+  const question = qi ? qi.value.trim() : '';
+  if (!question || question.length < 3) {
+    showError(currentLang==='de' ? 'Bitte mindestens 3 Zeichen eingeben.' : 'Please enter at least 3 characters.');
+    return;
+  }
+  lastQuestion = question;
+
+  const ctaBtn = document.getElementById('cta-btn');
+  if (ctaBtn) { ctaBtn.classList.add('loading'); ctaBtn.disabled = true; }
+
+  const resultsSection = document.getElementById('results-section');
+  const skeletonCards  = document.getElementById('skeleton-cards');
+  const perspCards     = document.getElementById('perspective-cards');
+  const exportBtns     = document.getElementById('export-btns');
+  const kiBar          = document.getElementById('kintegrity-bar');
+  const kiOutput       = document.getElementById('kintegrity-output');
+  const notesSection   = document.getElementById('notes-section');
+  const integrityWrap  = document.getElementById('integrity-field-wrap');
+  const rq             = document.getElementById('results-q');
+
+  resultsSection.classList.add('visible');
+  skeletonCards.style.display = 'flex';
+  perspCards.innerHTML = '';
+  if (exportBtns) exportBtns.style.display = 'none';
+  if (kiBar) kiBar.classList.remove('visible');
+  if (kiOutput) kiOutput.classList.remove('visible');
+  if (rq) rq.textContent = question;
+  resultsSection.scrollIntoView({ behavior:'smooth', block:'start' });
+
+  const customPersp = buildCustomPerspectives();
+  const isAutoMode  = !customPersp;
+
+  // Endpoint: auto → ask-simple, manual → ask-table
+  const endpoint = isAutoMode ? '/api/ask-simple' : '/api/ask-table';
+  const payload = isAutoMode
+    ? { question, lang: currentLang, stil: 'akademisch', register: '', tone: currentTone }
+    : {
+        question, lang: currentLang, stil: 'akademisch', register: '', tone: currentTone,
+        custom_perspectives: customPersp,
+        methods: [],
+        reibungsintensitaet: 'standard',
+      };
+
+  try {
+    const res = await fetch(API + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    lastResults = data;
+
+    skeletonCards.style.display = 'none';
+    perspCards.innerHTML = '';
+
+    (data.perspectives || []).forEach((p, i) => {
+      perspCards.appendChild(renderCard(p, i));
+    });
+
+    if (exportBtns) exportBtns.style.display = 'flex';
+    if (kiBar) kiBar.classList.add('visible');
+    if (notesSection) notesSection.style.display = 'block';
+    if (integrityWrap) integrityWrap.style.display = 'block';
+
+    // Save history
+    try {
+      historyAdd({ question, mode: expertMode, perspectives: data.perspectives || [], fazit: '' });
+    } catch(e) {}
+
+  } catch(err) {
+    skeletonCards.style.display = 'none';
+    showError((currentLang==='de' ? 'Fehler: ' : 'Error: ') + (err.message || 'Unbekannt'));
+  } finally {
+    if (ctaBtn) { ctaBtn.classList.remove('loading'); ctaBtn.disabled = false; }
+  }
+}
+
+// ─── Render card ───────────────────────────
+const EXPERT_COLORS = {
+  'Philosoph': '#6B44C4', 'Philosophie': '#6B44C4',
+  'Therapeut': '#3498DB', 'Psycholog': '#3498DB', 'Psychiater': '#9B6FE0',
+  'Medizin': '#22A37A', 'Neurolog': '#0E6655', 'Arzt': '#22A37A',
+  'Recht': '#922B21', 'Jurist': '#922B21', 'Anwalt': '#C0392B',
+  'Wirtschaft': '#C9A84C', 'Ökonom': '#C9A84C', 'Finanz': '#D4A843',
+  'Physik': '#2980B9', 'Mathematik': '#1565C0', 'Informatik': '#2471A3',
+  'KI': '#17A89B', 'Systemtheorie': '#1ABC9C',
+  'Soziol': '#5C7A3E', 'Politikwissen': '#7A9E50',
+  'Pädagog': '#E67E22', 'Erzieh': '#E67E22',
+  'Biologe': '#27AE60', 'Genetik': '#3DAA6A', 'Evolution': '#1A6B40',
+  'Forensik': '#8e3060', 'Kriminolog': '#8e3060',
+  'Klimafor': '#2E8B57', 'Umwelt': '#5C7A3E',
+  'Statistik': '#4a90c4', 'Kommunikation': '#2471A3',
+  'Linguist': '#6B44C4', 'Sprach': '#6B44C4',
+  'Kultur': '#8E44AD', 'Religion': '#7E5AC8', 'Anthrop': '#9B6FE0',
+};
+
+function getExpertColor(role) {
+  for (const [key, color] of Object.entries(EXPERT_COLORS)) {
+    if (role && role.includes(key)) return color;
+  }
+  // Fallback: cycle through palette
+  return FB_COLORS[Math.abs(hashStr(role)) % FB_COLORS.length];
+}
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < (s||'').length; i++) h = ((h << 5) - h) + s.charCodeAt(i);
+  return h;
+}
+
+function renderCard(p, i) {
+  const role  = (p.rolle || p.role || 'Experte').replace(/^\[(custom|method)\]/, '').trim();
+  const color = getExpertColor(role);
+  const colorBg = color + '18';
+  const text  = p.kernanalyse || p.text || p.content || '';
+  const card  = document.createElement('div');
+  card.className = 'perspective-card';
+  card.style.setProperty('--card-accent', color);
+  card.style.animationDelay = (i * 0.06) + 's';
+  card.innerHTML = `
+    <div class="card-header-row">
+      <div class="card-agent-icon" style="color:${color};background:${colorBg};">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <span class="card-role-label" style="color:${color};">${escHtml(role)}</span>
+    </div>
+    <div class="card-text">${escHtml(text)}</div>
+  `;
+  return card;
+}
+
+// ─── kiNTEGRiTY ────────────────────────────
+async function runKintegrity() {
+  if (!lastResults) return;
+  const kiBtn = document.getElementById('ki-btn');
+  if (kiBtn) { kiBtn.classList.add('loading'); kiBtn.disabled = true; }
+
+  const integrityField = (document.getElementById('integrity-textarea')?.value || '').trim();
+
+  const inputs = (lastResults.perspectives || []).map((p, i) => ({
+    id: 'p' + i,
+    source_field: 'perspective',
+    content: p.kernanalyse || p.text || '',
+    role: (p.rolle || p.role || '').replace(/^\[(custom|method)\]/, '').trim(),
+    is_user_authored: false,
+  }));
+
+  // Add notes as user-authored input if present
+  const notesText = (document.getElementById('notes-textarea')?.value || '').trim();
+  if (notesText) {
+    inputs.push({ id: 'notes', source_field: 'notes', content: notesText, role: 'Nutzer-Notizen', is_user_authored: true });
+  }
+
+  try {
+    const res = await fetch(API + '/api/kintegrity/synthesize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        inputs,
+        integrity_field: integrityField,
+        profile: 'expert_tisch_profile',
+        lang: currentLang,
+        question: lastQuestion,
+      }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    // Fill panels
+    const synth = document.getElementById('ki-synthesis');
+    const aber  = document.getElementById('ki-aber');
+    const fragl = document.getElementById('ki-fraglich');
+    if (synth) synth.textContent = data.synthesis || '';
+    if (aber)  aber.textContent  = data.aber_section || '';
+    if (fragl) fragl.textContent = data.questionable || '';
+
+    // Provenance
+    const provEl = document.getElementById('ki-synthesis-prov');
+    if (provEl && data.provenance?.length > 0) {
+      provEl.innerHTML = data.provenance.slice(0, 5).map(p =>
+        `<span class="prov-chip">← ${p.source_ids.join(', ')}</span>`
+      ).join('');
+    }
+
+    document.getElementById('kintegrity-output').classList.add('visible');
+
+  } catch(err) {
+    showError((currentLang==='de' ? 'kiNTEGRiTY Fehler: ' : 'kiNTEGRiTY Error: ') + err.message);
+  } finally {
+    if (kiBtn) { kiBtn.classList.remove('loading'); kiBtn.disabled = false; }
+  }
+}
+
+function toggleKiPanel(id) {
+  document.getElementById(id)?.classList.toggle('panel-collapsed');
+}
+
+function copyKiPanel(id) {
+  const panel = document.getElementById(id);
+  const editable = panel?.querySelector('.ki-editable');
+  if (!editable) return;
+  navigator.clipboard.writeText(editable.textContent || '').catch(() => {});
+}
+
+// ─── Notes ─────────────────────────────────
+function toggleNotes() {
+  notesOpen = !notesOpen;
+  document.getElementById('notes-body').classList.toggle('open', notesOpen);
+  const chev = document.getElementById('notes-chevron');
+  if (chev) chev.style.transform = notesOpen ? 'rotate(180deg)' : '';
+}
+
+// ─── Chips ─────────────────────────────────
+function toggleChips() {
+  const row = document.getElementById('chip-row');
+  const btn = document.getElementById('chip-toggle-btn');
+  if (!row || !btn) return;
+  const open = row.classList.toggle('visible');
+  btn.classList.toggle('active', open);
+}
+function fillChip(btn) {
+  const qi = document.getElementById('question-input');
+  if (qi) { qi.value = btn.textContent.trim(); autoResize(qi); qi.focus(); }
+  document.getElementById('chip-row')?.classList.remove('visible');
+  document.getElementById('chip-toggle-btn')?.classList.remove('active');
+}
+
+// ─── Export ────────────────────────────────
+function exportTxt() {
+  if (!lastResults) return;
+  let out = lastQuestion + '\n' + '─'.repeat(60) + '\n\n';
+  (lastResults.perspectives || []).forEach(p => {
+    out += (p.rolle||p.role||'') + '\n' + (p.kernanalyse||p.text||'') + '\n\n';
+  });
+  const synth = document.getElementById('ki-synthesis')?.textContent;
+  if (synth) out += '\n─── SYNTHESE ───\n' + synth;
+  const blob = new Blob([out], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'expertentisch-' + Date.now() + '.txt'; a.click();
+}
+function exportPDF() {
+  if (!lastResults || typeof jspdf === 'undefined') return;
+  const {jsPDF} = jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  let y = 20;
+  doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text('EXPERTiSEN TiSCH', 20, y); y += 10;
+  doc.setFontSize(11); doc.setFont('helvetica','italic');
+  doc.text(doc.splitTextToSize(lastQuestion, 170), 20, y); y += 10;
+  (lastResults.perspectives || []).forEach(p => {
+    if (y > 260) { doc.addPage(); y = 20; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    doc.text(p.rolle||p.role||'', 20, y); y += 5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    const lines = doc.splitTextToSize(p.kernanalyse||p.text||'', 170);
+    doc.text(lines, 20, y); y += lines.length * 5 + 6;
+  });
+  doc.save('expertentisch-' + Date.now() + '.pdf');
+}
+
+// ─── Helpers ───────────────────────────────
+function autoResize(el) { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+function handleEnter(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitQuestion();} }
+function escHtml(s) { const d=document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+function showError(msg) { const el=document.getElementById('error-msg'); if(el){el.textContent=msg;el.classList.add('visible');} }
+function clearError() { document.getElementById('error-msg')?.classList.remove('visible'); }
+
+// ─── History ───────────────────────────────
+const HIST_KEY = 'tisch_history_v1';
+function historyLoad() { try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];} }
+function historySave(a) { try{localStorage.setItem(HIST_KEY,JSON.stringify(a.slice(0,50)));}catch(e){} }
+function historyAdd(entry) { const a=historyLoad(); a.unshift({...entry,ts:Date.now()}); historySave(a); historyRenderList(); }
+function historyDelete(ts) { historySave(historyLoad().filter(e=>e.ts!==ts)); historyRenderList(); }
+function historyClear() { historySave([]); historyRenderList(); }
+function historyExport() {
+  const blob=new Blob([JSON.stringify(historyLoad(),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='expertentisch-verlauf-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+}
+function historyToggle() {
+  const panel=document.getElementById('historyPanel');
+  const overlay=document.getElementById('historyOverlay');
+  const open=panel.classList.toggle('open');
+  overlay.classList.toggle('open',open);
+  if(open) historyRenderList();
+}
+function historyRenderList() {
+  const list=document.getElementById('historyList'); if(!list) return;
+  const arr=historyLoad();
+  if(!arr.length){list.innerHTML='<div class="history-empty">Noch keine Anfragen gespeichert.</div>';return;}
+  list.innerHTML=arr.map(e=>{
+    const d=new Date(e.ts);
+    const ds=d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'})+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="history-item">
+      <div class="history-item-header" onclick="this.nextElementSibling?.classList.toggle('open')">
+        <div><div class="history-item-q">${escHtml(e.question||'')}</div><div class="history-item-info">${ds}</div></div>
+        <button class="history-item-del" onclick="event.stopPropagation();historyDelete(${e.ts})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Init ──────────────────────────────────
+buildFachbereicheGrid();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
