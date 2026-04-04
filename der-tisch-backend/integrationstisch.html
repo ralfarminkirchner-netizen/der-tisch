@@ -282,8 +282,8 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
   background: transparent; border: none; outline: none;
   font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text);
   border-radius: var(--radius-xl); resize: none; line-height: 1.6;
-  overflow-x: hidden; overflow-y: auto; max-height: 260px;
-  min-height: 56px;
+  overflow-x: hidden; overflow-y: auto;
+  min-height: 56px; max-height: none;
 }
 .question-input::placeholder { color: var(--color-text-faint); }
 .question-submit {
@@ -399,7 +399,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 }
 .claim-type-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); white-space: nowrap; flex-shrink: 0; }
 .claim-type-text { font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
-.perspective-analysis { font-size: var(--text-base); line-height: 1.8; color: var(--color-text); flex: 1; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+.perspective-analysis { font-size: var(--text-base); line-height: 1.8; color: var(--color-text); flex: 1; cursor: pointer; }
 .perspective-meta { display: flex; flex-direction: column; gap: var(--space-3); }
 .meta-block { padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg); }
 .meta-block.evidence { background: var(--color-surface-offset); border: 1px solid var(--color-divider); }
@@ -407,7 +407,7 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
 .meta-label { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2); }
 .meta-block.evidence .meta-label  { color: var(--color-text-faint); }
 .meta-block.blind-spot .meta-label { color: var(--color-friction); }
-.meta-text { font-size: var(--text-sm); line-height: 1.65; color: var(--color-text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.meta-text { font-size: var(--text-sm); line-height: 1.65; color: var(--color-text-muted); }
 .meta-block.blind-spot .meta-text { color: var(--color-text); opacity: 0.8; }
 
 /* Role color accents */
