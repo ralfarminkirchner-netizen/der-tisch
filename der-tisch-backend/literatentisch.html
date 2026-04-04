@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+
+<meta charset="UTF-8">
+<meta name="theme-color" content="#1C1C2E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="LiTERATEN TiSCH">
+<meta name="application-name" content="LiTERATEN TiSCH">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiTERATEN TiSCH — Acht Stimmen. Ein Text.</title>
+<meta name="description" content="LiTERATEN TiSCH: Autor, Kritiker, Verleger, Lektor, Philologe, Bibliothekar, Übersetzer und Lesende Stimme beleuchten Fragen zu Literatur, Sprache und Denken.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── Reset & Base ──────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #0E0E1A;
+    --surface:     #161626;
+    --surface-off: #1C1C30;
+    --surface-2:   #12121E;
+    --text:        #EAE8E0;
+    --text-muted:  #9A96A8;
+    --text-faint:  #5A5668;
+    --border:      #2A2840;
+    --border-2:    #3A3658;
+    --accent:      #7B68EE; /* medium-slate-blue — tinte */
+    --accent-dim:  rgba(123,104,238,0.12);
+    --accent-glow: rgba(123,104,238,0.25);
+    --gold:        #C9A84C;
+    --gold-dim:    rgba(201,168,76,0.1);
+    --r-card:      16px;
+    --r-btn:       12px;
+    --r-input:     20px;
+    --shadow-card: 0 2px 16px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.2);
+    --shadow-lg:   0 8px 40px rgba(0,0,0,0.5);
+    --transition:  0.2s ease;
+    --font-serif:  'Playfair Display', Georgia, serif;
+    --font-sans:   'Inter', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Nav ─────────────────────────────────────────── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(14,14,26,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* Logo */
+  .nav-logo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    user-select: none;
+    text-decoration: none;
+    cursor: default;
+    flex-shrink: 0;
+  }
+  .nav-logo-pre {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--text-faint);
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .nav-logo-tisch {
+    display: flex;
+    align-items: baseline;
+    line-height: 1;
+    gap: 1px;
+  }
+  .nav-logo-L { font-family: var(--font-serif); font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .nav-logo-i { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--accent); font-style: italic; letter-spacing: -0.01em; }
+  .nav-logo-rest { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Lang toggle */
+  .lang-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--surface-off);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .lang-btn {
+    border: none;
+    background: transparent;
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .lang-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .lang-btn:hover:not(.active) { color: var(--text); }
+
+  /* Tone toggle */
+  .tone-toggle-lt {
+    display: flex; gap: 2px;
+    background: var(--surface-off);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .tone-btn {
+    border: none; background: transparent;
+    padding: 5px 10px; border-radius: 7px;
+    font-family: inherit; font-size: 12px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    transition: all var(--transition); white-space: nowrap;
+  }
+  .tone-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .tone-btn:hover:not(.active) { color: var(--text); }
+
+  /* History button */
+  .history-toggle-btn {
+    height: 34px; width: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); border: 1px solid var(--border);
+    background: transparent; cursor: pointer;
+    transition: all var(--transition);
+  }
+  .history-toggle-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .history-toggle-btn svg { width: 16px; height: 16px; }
+
+  /* ─── Main ─────────────────────────────────────────── */
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ─── Hero ─────────────────────────────────────────── */
+  .hero {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 0 40px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(123,104,238,0.25);
+    border-radius: 100px;
+    padding: 5px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse-dot 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.4; transform:scale(0.65); }
+  }
+
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(26px, 4.5vw, 40px);
+    font-weight: 500;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+
+  .hero-sub {
+    font-size: clamp(14px, 2vw, 16px);
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-bottom: 44px;
+    line-height: 1.65;
+    max-width: 480px;
+  }
+
+  /* ─── Input ─────────────────────────────────────────── */
+  .input-wrap {
+    width: 100%;
+    max-width: 620px;
+    margin-bottom: 12px;
+  }
+
+  /* Mode tabs */
+  .mode-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--surface-off);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 4px;
+    margin-bottom: 16px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .mode-tab {
+    border: none; background: transparent;
+    padding: 7px 18px; border-radius: 10px;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    transition: all var(--transition);
+  }
+  .mode-tab.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  }
+  .mode-tab:hover:not(.active) { color: var(--text); }
+
+  .input-box {
+    position: relative;
+    margin-bottom: 8px;
+  }
+
+  .question-input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-input);
+    padding: 18px 22px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--surface);
+    resize: none;
+    outline: none;
+    min-height: 64px;
+    max-height: none;
+    overflow-y: auto;
+    line-height: 1.6;
+    box-shadow: var(--shadow-card);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .question-input::placeholder { color: var(--text-faint); }
+  .question-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-card);
+  }
+
+  /* Werk/Autor field (secondary, shown in Werk-Modus) */
+  .werk-input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-input);
+    padding: 14px 22px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    display: none;
+  }
+  .werk-input.visible { display: block; }
+  .werk-input::placeholder { color: var(--text-faint); }
+  .werk-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  /* CTA button */
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-btn);
+    padding: 15px 30px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    box-shadow: 0 4px 20px var(--accent-glow);
+    letter-spacing: -0.01em;
+    margin-top: 4px;
+  }
+  .cta-btn:hover:not(:disabled) {
+    background: #6B58DE;
+    box-shadow: 0 6px 28px rgba(123,104,238,0.4);
+    transform: translateY(-1px);
+  }
+  .cta-btn:active:not(:disabled) { transform: translateY(0); }
+  .cta-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .cta-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .cta-btn.loading .spinner { display: block; }
+  .cta-btn.loading .btn-text { display: none; }
+  .cta-btn.loading .cta-arrow { display: none; }
+
+  /* Example chips */
+  .chip-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-top: 12px;
+  }
+  .chip-toggle-btn:hover, .chip-toggle-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .chip-row {
+    display: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .chip-row.visible { display: flex; }
+  .chip {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    background: rgba(244,67,54,0.06);
+    border: 1px solid rgba(244,67,54,0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #F44336;
+    margin-top: 12px;
+    text-align: left;
+  }
+  .error-msg.visible { display: block; }
+
+  /* ─── Results ───────────────────────────────────────── */
+  .results-section {
+    display: none;
+    padding-bottom: 80px;
+  }
+  .results-section.visible { display: block; }
+
+  .results-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 28px;
+    padding-top: 16px;
+  }
+  .results-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .results-question-preview {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 400px;
+  }
+
+  /* Skeleton */
+  .skeleton-cards { display: flex; flex-direction: column; gap: 20px; }
+  .skeleton-card {
+    background: var(--surface);
+    border-radius: var(--r-card);
+    border: 1px solid var(--border);
+    padding: 24px 24px 24px 32px;
+    position: relative; overflow: hidden;
+  }
+  .skeleton-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0;
+    width: 3px; height: 100%;
+    background: var(--border-2);
+  }
+  .skeleton-line {
+    height: 13px; border-radius: 7px;
+    background: linear-gradient(90deg, #1C1C30 25%, #242438 50%, #1C1C30 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  .skeleton-line.short { width: 30%; height: 11px; margin-bottom: 14px; }
+  .skeleton-line.long { width: 100%; }
+  .skeleton-line.medium { width: 72%; }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Perspective cards */
+  .perspective-cards { display: flex; flex-direction: column; gap: 20px; }
+
+  .perspective-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 26px 26px 26px 34px;
+    position: relative;
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition), box-shadow var(--transition);
+    animation: card-in 0.4s ease both;
+    overflow: hidden;
+  }
+  .perspective-card:nth-child(1) { animation-delay: 0.05s; }
+  .perspective-card:nth-child(2) { animation-delay: 0.12s; }
+  .perspective-card:nth-child(3) { animation-delay: 0.19s; }
+  .perspective-card:nth-child(4) { animation-delay: 0.26s; }
+  .perspective-card:nth-child(5) { animation-delay: 0.33s; }
+  .perspective-card:nth-child(6) { animation-delay: 0.40s; }
+  .perspective-card:nth-child(7) { animation-delay: 0.47s; }
+  .perspective-card:nth-child(8) { animation-delay: 0.54s; }
+  @keyframes card-in {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .perspective-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    border-color: var(--border-2);
+  }
+  /* Left accent stripe */
+  .perspective-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0;
+    width: 3px; height: 100%;
+    background: var(--card-accent, var(--accent));
+    border-radius: var(--r-card) 0 0 var(--r-card);
+  }
+
+  /* Card header row with icon */
+  .card-header-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .card-agent-icon {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .card-agent-icon svg { width: 15px; height: 15px; }
+  .card-role-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.09em; text-transform: uppercase;
+  }
+
+  /* Decorative quote mark */
+  .card-quote-mark {
+    position: absolute; top: 10px; right: 18px;
+    font-family: var(--font-serif);
+    font-size: 72px; line-height: 1;
+    opacity: 0.05; user-select: none; pointer-events: none;
+    color: var(--card-accent, var(--accent));
+  }
+
+  .card-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* Export */
+  .export-btns {
+    display: flex; gap: 10px;
+    margin-top: 32px; flex-wrap: wrap;
+  }
+  .export-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-btn);
+    padding: 10px 18px;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    transition: all var(--transition);
+  }
+  .export-btn:hover { border-color: var(--border-2); color: var(--text); }
+
+  /* Divider */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  /* Translate section */
+  .translate-section {
+    margin-top: 28px;
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+  }
+  .translate-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-faint); margin-bottom: 10px;
+  }
+  .translate-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface-off);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    transition: all var(--transition);
+  }
+  .translate-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .translate-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .translated-section { margin-top: 20px; }
+  .translated-section-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-faint); margin-bottom: 16px;
+  }
+
+  /* History panel */
+  #historyPanel {
+    position: fixed;
+    top: 0; right: -420px;
+    width: 400px; max-width: 92vw;
+    height: 100vh;
+    z-index: 900;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -8px 0 48px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  #historyPanel.open { right: 0; }
+  #historyOverlay {
+    position: fixed; inset: 0; z-index: 899;
+    background: rgba(0,0,0,0.5);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  #historyOverlay.open { opacity: 1; pointer-events: all; }
+  .history-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .history-panel-title {
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .history-panel-actions { display: flex; gap: 6px; }
+  .history-action-btn {
+    height: 28px; padding: 0 10px;
+    border-radius: 8px; font-size: 11px; font-weight: 600;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-muted); cursor: pointer;
+    transition: all var(--transition);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .history-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .history-action-btn svg { width: 12px; height: 12px; }
+  .history-close-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: none; background: transparent;
+    color: var(--text-muted); font-size: 17px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: color var(--transition);
+  }
+  .history-close-btn:hover { color: var(--text); }
+  .history-list {
+    flex: 1; overflow-y: auto;
+    padding: 12px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .history-empty {
+    text-align: center; color: var(--text-faint);
+    font-size: 13px; padding: 40px 20px; line-height: 1.7;
+  }
+  .history-item {
+    background: var(--surface-off);
+    border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    transition: border-color var(--transition);
+  }
+  .history-item:hover { border-color: var(--border-2); }
+  .history-item-header {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; cursor: pointer;
+  }
+  .history-item-meta { flex: 1; min-width: 0; }
+  .history-item-question {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    line-height: 1.4; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .history-item-info {
+    font-size: 11px; color: var(--text-faint);
+    margin-top: 3px; display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .history-item-delete {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: none; background: transparent; color: var(--text-faint);
+    cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: color var(--transition);
+    flex-shrink: 0;
+  }
+  .history-item-delete:hover { color: #F44336; }
+  .history-item-body {
+    display: none;
+    padding: 0 14px 12px;
+    border-top: 1px solid var(--border);
+  }
+  .history-item-body.open { display: block; }
+  .history-persp-chip {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px;
+    background: var(--surface); color: var(--text-muted);
+    border: 1px solid var(--border); margin: 8px 3px 0 0;
+  }
+
+  /* Footer */
+  footer {
+    padding: 24px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+  footer a {
+    font-size: 12px;
+    color: var(--text-faint);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+  footer a:hover { color: var(--accent); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 26px; }
+    main { padding: 0 16px; }
+    nav { padding: 0 16px; }
+  }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <!-- Logo -->
+  <a class="nav-logo" href="/literatentisch.html" aria-label="LiTERATEN TiSCH">
+    <span class="nav-logo-pre">LiTERATEN</span>
+    <span class="nav-logo-tisch">
+      <span class="nav-logo-L">T</span><span class="nav-logo-i">i</span><span class="nav-logo-rest">SCH</span>
+    </span>
+  </a>
+
+  <div class="nav-right">
+    <!-- Lang toggle -->
+    <div class="lang-toggle" role="group" aria-label="Sprache wählen">
+      <button class="lang-btn active" id="btn-de" onclick="setLang('de')" aria-pressed="true">DE</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
+    </div>
+    <!-- Tone toggle -->
+    <div class="tone-toggle-lt" role="group" aria-label="Ton wählen">
+      <button class="tone-btn active" id="lt-tone-achtsam" onclick="setLtTone('achtsam')" aria-pressed="true">achtsam</button>
+      <button class="tone-btn" id="lt-tone-direkt" onclick="setLtTone('direkt')" aria-pressed="false">direkt</button>
+    </div>
+    <!-- History -->
+    <button class="history-toggle-btn" onclick="historyToggle()" aria-label="Verlauf" title="Verlauf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      <span id="eyebrow-text">Acht Stimmen · Ein Text</span>
+    </div>
+    <h1 id="hero-h1">Was sagen die Literatinnen<br>und Literaten dazu?</h1>
+    <p class="hero-sub" id="hero-sub">Stelle eine Frage oder gib ein Werk an — Autor, Kritiker, Verleger, Lektor, Philologe, Bibliothekar, Übersetzer und Lesende Stimme antworten.</p>
+
+    <div class="input-wrap">
+      <!-- Mode tabs -->
+      <div class="mode-tabs" role="tablist">
+        <button class="mode-tab active" id="tab-frage" onclick="setMode('frage')" role="tab" aria-selected="true" data-de="Freie Frage" data-en="Open Question">Freie Frage</button>
+        <button class="mode-tab" id="tab-werk" onclick="setMode('werk')" role="tab" aria-selected="false" data-de="Werk / Autor" data-en="Work / Author">Werk / Autor</button>
+      </div>
+
+      <!-- Werk/Autor field (hidden in Frage-Modus) -->
+      <input type="text" class="werk-input" id="werk-input"
+        placeholder="Titel, Autor oder Epoche — optional"
+        aria-label="Werk oder Autor">
+
+      <!-- Question textarea -->
+      <div class="input-box">
+        <textarea class="question-input" id="question-input"
+          placeholder="Was beschäftigt dich zu diesem Text, dieser Frage, dieser Stimme?"
+          aria-label="Frage oder Thema"
+          rows="3"
+          oninput="autoResize(this)"
+          onkeydown="handleEnterKey(event)"></textarea>
+      </div>
+
+      <!-- CTA -->
+      <button class="cta-btn" id="cta-btn" onclick="submitQuestion()" aria-label="Frage stellen">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-text" id="btn-text">Am Tisch fragen</span>
+        <svg class="cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+
+      <!-- Beispiele -->
+      <div>
+        <button class="chip-toggle-btn" id="chip-toggle-btn" onclick="ltToggleChips()" aria-expanded="false">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          Beispiele
+        </button>
+        <div class="chip-row" id="chip-row" role="list" aria-label="Beispielfragen">
+          <button class="chip" onclick="fillChip(this)">Was macht Kafkas Prosa so bedrängend?</button>
+          <button class="chip" onclick="fillChip(this)">Wozu brauchen wir Lyrik heute noch?</button>
+          <button class="chip" onclick="fillChip(this)">Ist Übersetzen Verrat oder Treue?</button>
+          <button class="chip" onclick="fillChip(this)">Was verrät ein Lektor über ein Buch?</button>
+          <button class="chip" onclick="fillChip(this)">Darf Literatur politisch sein?</button>
+          <button class="chip" onclick="fillChip(this)">Gibt es noch den großen Roman?</button>
+          <button class="chip" onclick="fillChip(this)">Was macht einen Klassiker zeitlos?</button>
+          <button class="chip" onclick="fillChip(this)">Kann KI wirklich schreiben?</button>
+          <button class="chip" onclick="fillChip(this)">Wozu dient Literaturkritik?</button>
+          <button class="chip" onclick="fillChip(this)">Was verliert Literatur in der Digitalisierung?</button>
+          <button class="chip" onclick="fillChip(this)">Hamlet — Schwäche oder Tiefe?</button>
+          <button class="chip" onclick="fillChip(this)">Warum lesen wir Dinge, die uns schmerzen?</button>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="error-msg" id="error-msg" role="alert" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="results-section" id="results-section" aria-live="polite">
+    <div class="results-header">
+      <span class="results-label" id="results-label">Am Tisch</span>
+      <span class="results-question-preview" id="results-question-preview"></span>
+    </div>
+
+    <!-- Skeleton -->
+    <div class="skeleton-cards" id="skeleton-cards" aria-hidden="true">
+      <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-line long"></div></div>
+      <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div></div>
+      <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div><div class="skeleton-line medium"></div><div class="skeleton-line long"></div></div>
+    </div>
+
+    <!-- Actual cards -->
+    <div class="perspective-cards" id="perspective-cards"></div>
+
+    <!-- Export buttons -->
+    <div class="export-btns" id="export-btns" style="display:none;">
+      <button class="export-btn" onclick="exportPDF()" id="export-pdf-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        PDF
+      </button>
+      <button class="export-btn" onclick="exportTxt()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        TXT
+      </button>
+    </div>
+
+    <!-- Translate section -->
+    <div class="translate-section" id="translate-section" style="display:none;">
+      <div class="translate-label" id="translate-label">Register wechseln</div>
+      <button class="translate-btn" id="translate-btn" onclick="ltTranslate()" disabled>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 8l6 6M4 14l6-6 2-2M2 5h7M7 2v3M22 22l-5-10-5 10M14 18h6"/></svg>
+        <span id="translate-btn-label">In Fachsprache übersetzen</span>
+      </button>
+      <div class="translated-section" id="translated-section" style="display:none;">
+        <div class="translated-section-label">Übersetzt</div>
+        <div class="perspective-cards" id="translated-cards"></div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- History Panel -->
+<div id="historyOverlay" onclick="historyToggle()"></div>
+<div id="historyPanel" role="dialog" aria-label="Verlauf">
+  <div class="history-panel-header">
+    <span class="history-panel-title">Verlauf</span>
+    <div class="history-panel-actions">
+      <button class="history-action-btn" onclick="historyExport()" title="JSON exportieren">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button class="history-action-btn" onclick="historyClear()">Alles</button>
+      <button class="history-close-btn" onclick="historyToggle()">×</button>
+    </div>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="history-empty">Noch keine gespeicherten Anfragen.</div>
+  </div>
+</div>
+
+<footer>
+  <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// =============================================
+// LiTERATEN TiSCH — Main Script
+// =============================================
+const API = '';
+
+// ─── Agent colors ──────────────────────────
+const LT_COLORS = {
+  'Autor':               '#9B6FE0',
+  'Erzähler':            '#9B6FE0',
+  'Autor/Erzähler':      '#9B6FE0',
+  'Literaturkritiker':   '#F44336',
+  'Verleger':            '#C9A84C',
+  'Kurator':             '#C9A84C',
+  'Verleger/Kurator':    '#C9A84C',
+  'Lektor':              '#4CAF50',
+  'Philologe':           '#2980B9',
+  'Bibliothekar':        '#17A89B',
+  'Übersetzer':          '#E67E22',
+  'Lesende Stimme':      '#8E44AD',
+  'Publikum':            '#8E44AD',
+};
+
+function getLtColor(role) {
+  if (LT_COLORS[role]) return LT_COLORS[role];
+  for (const k of Object.keys(LT_COLORS)) {
+    if (role && role.indexOf(k) !== -1) return LT_COLORS[k];
+  }
+  return '#7B68EE';
+}
+
+// ─── State ─────────────────────────────────
+let currentLang = 'de';
+let currentTone = 'achtsam';
+let currentMode = 'frage';
+let currentRegister = 'alltag';
+let lastQuestion = '';
+let lastResults = null;
+
+// ─── Icons ─────────────────────────────────
+const LT_ICONS = {
+  'Autor':            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+  'Erzähler':         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+  'Autor/Erzähler':   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+  'Literaturkritiker':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  'Verleger':         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+  'Kurator':          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+  'Verleger/Kurator': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+  'Lektor':           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  'Philologe':        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="19" cy="17" r="3"/><path d="M21.5 19.5L23 21"/></svg>',
+  'Bibliothekar':     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="8" y="3" width="4" height="18" rx="1"/><rect x="14" y="6" width="4" height="15" rx="1"/></svg>',
+  'Übersetzer':       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 8l6 6M4 14l6-6 2-2M2 5h7M7 2v3M22 22l-5-10-5 10M14 18h6"/></svg>',
+  'Lesende Stimme':   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+  'Publikum':         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+};
+const LT_ICON_FALLBACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
+
+function getLtIcon(role) {
+  if (LT_ICONS[role]) return LT_ICONS[role];
+  for (const k of Object.keys(LT_ICONS)) {
+    if (role && role.indexOf(k) !== -1) return LT_ICONS[k];
+  }
+  return LT_ICON_FALLBACK;
+}
+
+// ─── i18n ──────────────────────────────────
+const i18n = {
+  de: {
+    eyebrow: 'Acht Stimmen · Ein Text',
+    h1: 'Was sagen die Literatinnen\nund Literaten dazu?',
+    sub: 'Stelle eine Frage oder gib ein Werk an — Autor, Kritiker, Verleger, Lektor, Philologe, Bibliothekar, Übersetzer und Lesende Stimme antworten.',
+    placeholder: 'Was beschäftigt dich zu diesem Text, dieser Frage, dieser Stimme?',
+    werkPlaceholder: 'Titel, Autor oder Epoche — optional',
+    btnText: 'Am Tisch fragen',
+    tabFrage: 'Freie Frage',
+    tabWerk: 'Werk / Autor',
+    resultsLabel: 'Am Tisch',
+    translateLabel: 'Register wechseln',
+    toFachsprache: 'In Fachsprache übersetzen',
+    toAlltag: 'In Alltagssprache übersetzen',
+    translatedLabel: 'Übersetzt',
+  },
+  en: {
+    eyebrow: 'Eight Voices · One Text',
+    h1: 'What do the literati\nhave to say?',
+    sub: 'Ask a question or name a work — Author, Critic, Publisher, Editor, Philologist, Librarian, Translator and Reading Voice respond.',
+    placeholder: 'What is on your mind about this text, this question, this voice?',
+    werkPlaceholder: 'Title, author or era — optional',
+    btnText: 'Ask at the table',
+    tabFrage: 'Open Question',
+    tabWerk: 'Work / Author',
+    resultsLabel: 'At the table',
+    translateLabel: 'Switch register',
+    toFachsprache: 'Translate to academic language',
+    toAlltag: 'Translate to everyday language',
+    translatedLabel: 'Translated',
+  }
+};
+
+function t() { return i18n[currentLang] || i18n.de; }
+
+function updateTexts() {
+  const tx = t();
+  const eyebrow = document.getElementById('eyebrow-text');
+  const h1 = document.getElementById('hero-h1');
+  const sub = document.getElementById('hero-sub');
+  const qi = document.getElementById('question-input');
+  const wi = document.getElementById('werk-input');
+  const btn = document.getElementById('btn-text');
+  const tabFrage = document.getElementById('tab-frage');
+  const tabWerk = document.getElementById('tab-werk');
+  if (eyebrow) eyebrow.textContent = tx.eyebrow;
+  if (h1) h1.innerHTML = tx.h1.replace('\n', '<br>');
+  if (sub) sub.textContent = tx.sub;
+  if (qi) qi.placeholder = tx.placeholder;
+  if (wi) wi.placeholder = tx.werkPlaceholder;
+  if (btn) btn.textContent = tx.btnText;
+  if (tabFrage) tabFrage.textContent = tx.tabFrage;
+  if (tabWerk) tabWerk.textContent = tx.tabWerk;
+  const rl = document.getElementById('results-label');
+  if (rl) rl.textContent = tx.resultsLabel;
+  const tl = document.getElementById('translate-label');
+  if (tl) tl.textContent = tx.translateLabel;
+  const tbl = document.getElementById('translate-btn-label');
+  if (tbl) tbl.textContent = currentRegister === 'alltag' ? tx.toFachsprache : tx.toAlltag;
+  const tsl = document.querySelector('.translated-section-label');
+  if (tsl) tsl.textContent = tx.translatedLabel;
+  document.getElementById('btn-de').classList.toggle('active', currentLang === 'de');
+  document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  updateTexts();
+}
+
+function setLtTone(tone) {
+  currentTone = tone;
+  document.getElementById('lt-tone-achtsam').classList.toggle('active', tone === 'achtsam');
+  document.getElementById('lt-tone-direkt').classList.toggle('active', tone === 'direkt');
+  document.getElementById('lt-tone-achtsam').setAttribute('aria-pressed', String(tone === 'achtsam'));
+  document.getElementById('lt-tone-direkt').setAttribute('aria-pressed', String(tone === 'direkt'));
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('tab-frage').classList.toggle('active', mode === 'frage');
+  document.getElementById('tab-werk').classList.toggle('active', mode === 'werk');
+  document.getElementById('tab-frage').setAttribute('aria-selected', String(mode === 'frage'));
+  document.getElementById('tab-werk').setAttribute('aria-selected', String(mode === 'werk'));
+  const wi = document.getElementById('werk-input');
+  if (wi) wi.classList.toggle('visible', mode === 'werk');
+}
+
+function ltToggleChips() {
+  const row = document.getElementById('chip-row');
+  const btn = document.getElementById('chip-toggle-btn');
+  if (!row || !btn) return;
+  const isOpen = row.classList.toggle('visible');
+  btn.classList.toggle('active', isOpen);
+  btn.setAttribute('aria-expanded', String(isOpen));
+}
+
+function fillChip(btn) {
+  const qi = document.getElementById('question-input');
+  if (qi) {
+    qi.value = btn.textContent;
+    autoResize(qi);
+    qi.focus();
+  }
+  const row = document.getElementById('chip-row');
+  const tb = document.getElementById('chip-toggle-btn');
+  if (row) row.classList.remove('visible');
+  if (tb) tb.classList.remove('active');
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function handleEnterKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    submitQuestion();
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  if (el) { el.textContent = msg; el.classList.add('visible'); }
+}
+function clearError() {
+  const el = document.getElementById('error-msg');
+  if (el) el.classList.remove('visible');
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(str || ''));
+  return d.innerHTML;
+}
+
+// ─── Render card ───────────────────────────
+function renderCard(p, accent) {
+  const role    = (p.rolle || p.role || 'Stimme').trim();
+  const color   = getLtColor(role);
+  const icon    = getLtIcon(role);
+  const colorBg = color + '18';
+  const text    = p.kernanalyse || p.text || p.content || '';
+
+  const card = document.createElement('div');
+  card.className = 'perspective-card';
+  card.style.setProperty('--card-accent', color);
+
+  card.innerHTML = `
+    <div class="card-header-row">
+      <div class="card-agent-icon" style="color:${color};background:${colorBg};">${icon}</div>
+      <span class="card-role-label" style="color:${color};">${escapeHtml(role)}</span>
+    </div>
+    <div class="card-quote-mark">"</div>
+    <div class="card-text">${escapeHtml(text)}</div>
+  `;
+  return card;
+}
+
+// ─── Submit ────────────────────────────────
+async function submitQuestion() {
+  clearError();
+  const qi = document.getElementById('question-input');
+  const wi = document.getElementById('werk-input');
+  const ctaBtn = document.getElementById('cta-btn');
+  const question = (qi ? qi.value.trim() : '');
+
+  if (!question || question.length < 3) {
+    showError(currentLang === 'de' ? 'Bitte mindestens 3 Zeichen eingeben.' : 'Please enter at least 3 characters.');
+    return;
+  }
+
+  lastQuestion = question;
+
+  // Build enriched question
+  let fullQuestion = question;
+  if (currentMode === 'werk' && wi && wi.value.trim()) {
+    const werk = wi.value.trim();
+    fullQuestion = currentLang === 'de'
+      ? `[Werk/Autor: ${werk}] ${question}`
+      : `[Work/Author: ${werk}] ${question}`;
+  }
+
+  // UI: loading state
+  if (ctaBtn) ctaBtn.classList.add('loading');
+  if (ctaBtn) ctaBtn.disabled = true;
+
+  const resultsSection  = document.getElementById('results-section');
+  const skeletonCards   = document.getElementById('skeleton-cards');
+  const perspCards      = document.getElementById('perspective-cards');
+  const exportBtns      = document.getElementById('export-btns');
+  const translateSection = document.getElementById('translate-section');
+  const translatedSection = document.getElementById('translated-section');
+  const qPreview        = document.getElementById('results-question-preview');
+
+  resultsSection.classList.add('visible');
+  skeletonCards.style.display = 'flex';
+  perspCards.innerHTML = '';
+  if (exportBtns) exportBtns.style.display = 'none';
+  if (translateSection) translateSection.style.display = 'none';
+  if (translatedSection) translatedSection.style.display = 'none';
+  if (qPreview) qPreview.textContent = question;
+
+  resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Build payload — 8 literary agents via ask-simple
+  const payload = {
+    question: fullQuestion,
+    lang: currentLang,
+    stil: 'akademisch',  // literary/academic register as base
+    register: currentRegister,
+    tone: currentTone,
+    // Override: ask-simple picks 4, but we want all 8 literary perspectives
+    // We use ask-table with custom_perspectives
+    custom_perspectives: [
+      { name: currentLang === 'de' ? 'Autor/Erzähler' : 'Author/Narrator',
+        position: currentLang === 'de' ? 'Schreibende Perspektive: Handwerk, Absicht, Stimme, Entstehung.' : 'Writing perspective: craft, intent, voice, genesis.' },
+      { name: currentLang === 'de' ? 'Literaturkritiker' : 'Literary Critic',
+        position: currentLang === 'de' ? 'Analytische Außenperspektive: Qualität, Einordnung, Bedeutung im Kanon.' : 'Analytical outside view: quality, classification, significance in the canon.' },
+      { name: currentLang === 'de' ? 'Verleger/Kurator' : 'Publisher/Curator',
+        position: currentLang === 'de' ? 'Wirtschaftliche und kuratorische Perspektive: Was wird gedruckt, warum, für wen?' : 'Economic and curatorial view: what gets published, why, for whom?' },
+      { name: currentLang === 'de' ? 'Lektor' : 'Editor',
+        position: currentLang === 'de' ? 'Handwerkliche Innenperspektive: Sprache, Struktur, was bleibt, was geht.' : 'Craft inside view: language, structure, what stays, what goes.' },
+      { name: currentLang === 'de' ? 'Philologe' : 'Philologist',
+        position: currentLang === 'de' ? 'Historisch-linguistische Perspektive: Quellen, Überlieferung, Bedeutungswandel.' : 'Historical-linguistic view: sources, transmission, semantic shifts.' },
+      { name: currentLang === 'de' ? 'Bibliothekar' : 'Librarian',
+        position: currentLang === 'de' ? 'Perspektive des Bewahrens und Zugänglichmachens: Was überdauert, was geht verloren?' : 'Perspective of preservation and access: what endures, what is lost?' },
+      { name: currentLang === 'de' ? 'Übersetzer' : 'Translator',
+        position: currentLang === 'de' ? 'Perspektive des Übergangs: Was lässt sich übertragen, was nicht, was wird neu geschaffen?' : 'Transition perspective: what can be transferred, what cannot, what is newly created?' },
+      { name: currentLang === 'de' ? 'Lesende Stimme' : 'Reading Voice',
+        position: currentLang === 'de' ? 'Publikumsperspektive: Was berührt, was bleibt, was verändert?' : 'Audience perspective: what moves, what stays, what changes?' },
+    ],
+    methods: [],
+    reibungsintensitaet: 'standard',
+  };
+
+  try {
+    const res = await fetch(API + '/api/ask-table', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    lastResults = data;
+
+    skeletonCards.style.display = 'none';
+    perspCards.innerHTML = '';
+
+    const perspectives = data.perspectives || [];
+    perspectives.forEach(p => {
+      perspCards.appendChild(renderCard(p));
+    });
+
+    if (exportBtns) exportBtns.style.display = 'flex';
+    if (translateSection) {
+      translateSection.style.display = 'block';
+      const tBtn = document.getElementById('translate-btn');
+      if (tBtn) tBtn.disabled = false;
+      const tbl = document.getElementById('translate-btn-label');
+      if (tbl) tbl.textContent = t()[currentRegister === 'alltag' ? 'toFachsprache' : 'toAlltag'];
+    }
+
+    // Save to history
+    try {
+      historyAdd({
+        question: question,
+        mode: currentMode,
+        perspectives: perspectives,
+        fazit: (data.integration && data.integration.einfach_gesagt) || '',
+      });
+    } catch(e) {}
+
+  } catch (err) {
+    skeletonCards.style.display = 'none';
+    showError((currentLang === 'de' ? 'Fehler: ' : 'Error: ') + (err.message || 'Unbekannter Fehler'));
+  } finally {
+    if (ctaBtn) ctaBtn.classList.remove('loading');
+    if (ctaBtn) ctaBtn.disabled = false;
+  }
+}
+
+// ─── Translate ─────────────────────────────
+async function ltTranslate() {
+  if (!lastQuestion || !lastResults) return;
+  const tBtn = document.getElementById('translate-btn');
+  const tbl  = document.getElementById('translate-btn-label');
+  const translatedSection = document.getElementById('translated-section');
+  const translatedCards   = document.getElementById('translated-cards');
+
+  if (tBtn) tBtn.disabled = true;
+  const targetReg = currentRegister === 'alltag' ? 'fachsprache' : 'alltag';
+
+  try {
+    const res = await fetch(API + '/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: lastQuestion,
+        lang: currentLang,
+        stil: 'akademisch',
+        register: targetReg,
+        tone: currentTone,
+        custom_perspectives: (lastResults.perspectives || []).map(p => ({
+          name: p.rolle || p.role || '',
+          position: p.kernanalyse || p.text || '',
+        })),
+      }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    translatedCards.innerHTML = '';
+    (data.perspectives || []).forEach(p => translatedCards.appendChild(renderCard(p)));
+
+    if (translatedSection) translatedSection.style.display = 'block';
+    currentRegister = targetReg;
+    if (tbl) tbl.textContent = t()[targetReg === 'alltag' ? 'toFachsprache' : 'toAlltag'];
+  } catch(e) {
+    showError((currentLang === 'de' ? 'Übersetzungsfehler: ' : 'Translation error: ') + e.message);
+  } finally {
+    if (tBtn) tBtn.disabled = false;
+  }
+}
+
+// ─── Export ────────────────────────────────
+function exportTxt() {
+  if (!lastResults) return;
+  let out = lastQuestion + '\n' + '─'.repeat(60) + '\n\n';
+  (lastResults.perspectives || []).forEach(p => {
+    out += (p.rolle || p.role || '') + '\n' + (p.kernanalyse || p.text || '') + '\n\n';
+  });
+  const blob = new Blob([out], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'literatentisch-' + Date.now() + '.txt';
+  a.click();
+}
+
+function exportPDF() {
+  if (!lastResults || typeof jspdf === 'undefined') return;
+  const { jsPDF } = jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  let y = 20;
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('LiTERATEN TiSCH', 20, y); y += 10;
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'italic');
+  const qLines = doc.splitTextToSize(lastQuestion, 170);
+  doc.text(qLines, 20, y); y += qLines.length * 6 + 6;
+  (lastResults.perspectives || []).forEach(p => {
+    if (y > 260) { doc.addPage(); y = 20; }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text(p.rolle || p.role || '', 20, y); y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    const lines = doc.splitTextToSize(p.kernanalyse || p.text || '', 170);
+    doc.text(lines, 20, y); y += lines.length * 5 + 8;
+  });
+  doc.save('literatentisch-' + Date.now() + '.pdf');
+}
+
+// ─── History ───────────────────────────────
+const HISTORY_KEY = 'tisch_history_v1';
+const HISTORY_MAX = 50;
+
+function historyLoad() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e) { return []; }
+}
+function historySave(arr) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); } catch(e) {}
+}
+function historyAdd(entry) {
+  const arr = historyLoad();
+  arr.unshift({ ...entry, ts: Date.now() });
+  historySave(arr);
+  historyRenderList();
+}
+function historyDelete(ts) {
+  historySave(historyLoad().filter(e => e.ts !== ts));
+  historyRenderList();
+}
+function historyClear() {
+  historySave([]);
+  historyRenderList();
+}
+function historyExport() {
+  const blob = new Blob([JSON.stringify(historyLoad(), null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'literatentisch-verlauf-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+function historyToggle() {
+  const panel = document.getElementById('historyPanel');
+  const overlay = document.getElementById('historyOverlay');
+  if (!panel) return;
+  const open = panel.classList.toggle('open');
+  overlay.classList.toggle('open', open);
+  if (open) historyRenderList();
+}
+function historyRenderList() {
+  const list = document.getElementById('historyList');
+  if (!list) return;
+  const arr = historyLoad();
+  if (!arr.length) {
+    list.innerHTML = '<div class="history-empty">Noch keine gespeicherten Anfragen.</div>';
+    return;
+  }
+  list.innerHTML = arr.map(e => {
+    const d = new Date(e.ts);
+    const dateStr = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'2-digit' }) + ' ' +
+                    d.toLocaleTimeString('de-DE', { hour:'2-digit', minute:'2-digit' });
+    const chips = (e.perspectives || []).map(p =>
+      `<span class="history-persp-chip">${escapeHtml(p.rolle || p.role || '')}</span>`
+    ).join('');
+    return `<div class="history-item">
+      <div class="history-item-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div class="history-item-meta">
+          <div class="history-item-question">${escapeHtml(e.question || '')}</div>
+          <div class="history-item-info"><span>${dateStr}</span></div>
+        </div>
+        <button class="history-item-delete" onclick="event.stopPropagation();historyDelete(${e.ts})" aria-label="Löschen">×</button>
+      </div>
+      <div class="history-item-body"><div>${chips}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// Init
+updateTexts();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
