@@ -1964,6 +1964,93 @@ html[data-stil] body {
 }
 #roundTableSection.visible { display: block; }
 
+/* =============================================
+   THREE.JS 3D TABLE
+============================================= */
+.rt-3d-wrap {
+  position: relative;
+  width: 100%;
+  height: min(72vw, 620px);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: #0a0a0f;
+  box-shadow: 0 12px 64px rgba(0,0,0,0.6);
+  cursor: grab;
+}
+.rt-3d-wrap:active { cursor: grabbing; }
+#rtThreeCanvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+#rtLabels {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.rt-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: all;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+.rt-label-name {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1.5px solid;
+  background: rgba(10,10,15,0.82);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  line-height: 1.3;
+  text-shadow: none;
+}
+.rt-label-snippet {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: rgba(220,218,212,0.75);
+  max-width: 120px;
+  line-height: 1.4;
+  margin-top: 3px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.rt-ctrl-bar {
+  position: absolute;
+  bottom: 14px; right: 14px;
+  display: flex; gap: 6px;
+  z-index: 10;
+}
+.rt-ctrl-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(20,20,28,0.75);
+  color: rgba(220,218,212,0.8);
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.15s;
+  line-height: 1;
+}
+.rt-ctrl-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(30,30,40,0.9);
+}
+
 .round-table-wrap {
   display: flex;
   flex-direction: column;
@@ -3456,36 +3543,22 @@ html[data-stil] body {
 
     <!-- I. PERSPEKTIVEN -->
     <!-- V5.5 — RUNDER TISCH (rendered dynamically) -->
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <section id="roundTableSection">
       <div class="round-table-wrap">
-        <!-- 3D Viewport -->
-        <div class="rt-viewport" id="rtViewport">
-          <div class="rt-scene">
-            <div class="rt-stage" id="rtStage">
-              <div class="round-table-canvas" id="roundTableCanvas"
-                   aria-label="3D Tisch — klicke auf eine Perspektive oder Verbindungslinie">
-                <!-- SVG for connection lines (behind seats) -->
-                <svg id="rtConnSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;"></svg>
-                <!-- Table circle -->
-                <div class="rt-table-circle" style="z-index:2;">
-                  <div class="rt-table-logo">
-                    <svg width="28" height="20" viewBox="0 0 48 32" fill="none" aria-hidden="true">
-                      <rect x="4" y="6" width="40" height="4" rx="2" fill="currentColor"/>
-                      <rect x="10" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
-                      <rect x="34.5" y="10" width="3.5" height="14" rx="1.75" fill="currentColor" opacity="0.55"/>
-                    </svg>
-                    <span class="rt-table-logo-text">TEAM TiSCH</span>
-                  </div>
-                </div>
-                <!-- Seats rendered by JS, z-index:3 -->
-              </div>
-            </div>
-          </div>
-          <!-- Zoom controls -->
-          <div class="rt-zoom-btns">
-            <button class="rt-zoom-btn" onclick="rtZoom(0.15)" aria-label="Zoom in">+</button>
-            <button class="rt-zoom-btn" onclick="rtZoom(-0.15)" aria-label="Zoom out">−</button>
-            <button class="rt-zoom-btn" onclick="rtReset()" aria-label="Reset" style="font-size:11px;letter-spacing:0.03em;">&#x21BA;</button>
+        <div class="rt-3d-wrap">
+          <!-- Three.js canvas injected here by JS -->
+          <canvas id="rtThreeCanvas"></canvas>
+          <!-- HTML label overlays -->
+          <div id="rtLabels"></div>
+          <!-- Controls -->
+          <div class="rt-ctrl-bar">
+            <button class="rt-ctrl-btn" id="rtBtnOrbit" onclick="rtToggleOrbit()" title="Drehen">&#x21BA;</button>
+            <button class="rt-ctrl-btn" onclick="rtZoom3d(0.8)" title="Zoom +">+</button>
+            <button class="rt-ctrl-btn" onclick="rtZoom3d(1.25)" title="Zoom −">−</button>
+            <button class="rt-ctrl-btn" onclick="rtResetCam()" title="Reset">&#x2302;</button>
           </div>
         </div>
       </div>
@@ -6014,236 +6087,347 @@ function renderCardConnectionsTeam(perspectives, edges) {
 }
 
 // =============================================
-// 3D TABLE — Zoom / Pan
+// THREE.JS 3D TABLE ENGINE
 // =============================================
-let _rtScale = 1, _rtDrag = false, _rtDragX = 0, _rtDragY = 0, _rtTX = 0, _rtTY = 0;
+let _rt3d = null; // { scene, camera, renderer, animId, perspectives, edges, labels }
 
-function _rtApplyTransform() {
-  const stage = document.getElementById('rtStage');
-  if (!stage) return;
-  stage.style.transform = `rotateX(28deg) scale(${_rtScale}) translate(${_rtTX}px, ${_rtTY}px)`;
+function rtToggleOrbit() {}
+function rtZoom3d(factor) {
+  if (!_rt3d) return;
+  _rt3d.camera.position.multiplyScalar(factor);
+  _rt3d.camera.position.clampLength(3, 28);
 }
-
-function rtZoom(delta) {
-  _rtScale = Math.max(0.4, Math.min(2.8, _rtScale + delta));
-  _rtApplyTransform();
+function rtResetCam() {
+  if (!_rt3d) return;
+  _rt3d.camera.position.set(0, 11, 16);
+  _rt3d.camera.lookAt(0, 0, 0);
+  _rt3d.targetLookAt = new THREE.Vector3(0,0,0);
 }
-
-function rtReset() {
-  _rtScale = 1; _rtTX = 0; _rtTY = 0;
-  _rtApplyTransform();
-}
-
-(function initRtPanZoom() {
-  document.addEventListener('DOMContentLoaded', () => {
-    const vp = document.getElementById('rtViewport');
-    if (!vp) return;
-    vp.addEventListener('wheel', e => {
-      e.preventDefault();
-      rtZoom(e.deltaY < 0 ? 0.08 : -0.08);
-    }, { passive: false });
-    vp.addEventListener('mousedown', e => {
-      if (e.button !== 0) return;
-      _rtDrag = true; _rtDragX = e.clientX; _rtDragY = e.clientY;
-    });
-    window.addEventListener('mousemove', e => {
-      if (!_rtDrag) return;
-      _rtTX += (e.clientX - _rtDragX) / _rtScale * 0.5;
-      _rtTY += (e.clientY - _rtDragY) / _rtScale * 0.5;
-      _rtDragX = e.clientX; _rtDragY = e.clientY;
-      _rtApplyTransform();
-    });
-    window.addEventListener('mouseup', () => { _rtDrag = false; });
-    // Touch
-    let _lastTouchDist = 0;
-    vp.addEventListener('touchstart', e => {
-      if (e.touches.length === 2) {
-        _lastTouchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-      }
-    });
-    vp.addEventListener('touchmove', e => {
-      if (e.touches.length === 2) {
-        const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-        rtZoom((d - _lastTouchDist) * 0.004);
-        _lastTouchDist = d;
-      }
-    });
-  });
-})();
 
 function renderRoundTable(perspectives) {
   const section = document.getElementById('roundTableSection');
-  const canvas  = document.getElementById('roundTableCanvas');
-  if (!section || !canvas || !perspectives || perspectives.length === 0) return;
-
-  // Remove old seats
-  canvas.querySelectorAll('.rt-seat').forEach(el => el.remove());
-
-  const n = perspectives.length;
-  // Layout: seats are placed in a circle around the table
-  // We use percent-based positioning on the canvas
-  const cx = 50, cy = 50; // center %
-  const r  = 37;           // radius % from center to card center
-
-  // Angle offset: start at top (-90°), distribute evenly
-  perspectives.forEach((p, idx) => {
-    const angle = (idx / n) * 360 - 90; // degrees, start top
-    const rad   = (angle * Math.PI) / 180;
-    const x     = cx + r * Math.cos(rad); // %
-    const y     = cy + r * Math.sin(rad); // %
-
-    // Role display
-    let rawRole = p.rolle || '';
-    let displayRole = rawRole.replace(/^\[(custom|method)\]/, '').trim();
-
-    const color   = getMethodColor(rawRole);
-    const colorBg = hexToRgba(color, 0.12);
-    const svgIcon = getMethodIcon(displayRole);
-
-    // Snippet: first ~60 chars of kernanalyse
-    // Use einfach_gesagt as table card text (concise summary on the table surface)
-  const tableText = p.einfach_gesagt || p.kernanalyse || '';
-  // Extract first sentence or first 90 chars as thesis card text
-  const firstSentEnd = Math.min(
-    tableText.indexOf('.') > 10 ? tableText.indexOf('.') + 1 : 999,
-    tableText.indexOf('!') > 10 ? tableText.indexOf('!') + 1 : 999,
-    tableText.indexOf('?') > 10 ? tableText.indexOf('?') + 1 : 999,
-    90
-  );
-  const snippet = tableText.slice(0, Math.min(firstSentEnd, 90)).trim() + (tableText.length > 90 ? '…' : '');
-
-    // Build icon HTML
-    let iconHTML = svgIcon
-      ? `<span style="display:flex;align-items:center;justify-content:center;width:14px;height:14px;">${svgIcon}</span>`
-      : `<span>${displayRole.slice(0,1)}</span>`;
-
-    const seat = document.createElement('div');
-    seat.className = 'rt-seat';
-    seat.style.cssText = `
-      left: ${x}%;
-      top:  ${y}%;
-      transform: translate(-50%, -50%);
-      --chip-color: ${color};
-      --chip-bg: ${colorBg};
-      gap: 8px;
-    `;
-    seat.setAttribute('title', displayRole);
-    seat.setAttribute('role', 'button');
-    seat.setAttribute('tabindex', '0');
-    seat.setAttribute('aria-label', `Perspektive: ${displayRole}`);
-
-    // Determine if card goes "inward" (toward center) or "outward"
-    // Cards always face the center, chair is on the outside
-    seat.innerHTML = `
-      <div class="rt-chair" style="color:${color};border-color:${hexToRgba(color,0.4)};background:${colorBg};">
-        <span style="display:flex;width:13px;height:13px;">${svgIcon ? svgIcon.replace('viewBox', 'style="width:13px;height:13px;stroke:'+color+';fill:'+(displayRole==='Risiko'||displayRole==='Risk'?color:'none')+';" viewBox') : displayRole.slice(0,1)}</span>
-      </div>
-      <div class="rt-card" style="border-color:${hexToRgba(color,0.3)};">
-        <div class="rt-card-role" style="color:${color};">${displayRole}</div>
-        <div class="rt-card-snippet">${escapeHtml(snippet)}</div>
-      </div>
-    `;
-
-    // Click to open modal
-    seat.addEventListener('click', () => openRtModal(p, displayRole, color, colorBg, svgIcon));
-    seat.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openRtModal(p, displayRole, color, colorBg, svgIcon); }});
-
-    canvas.appendChild(seat);
-  });
-
+  if (!section || !perspectives || perspectives.length === 0) return;
   section.classList.add('visible');
-
-  // Draw connection lines after seats are in DOM (needs layout)
-  if (window._currentTeamEdges && window._currentTeamEdges.length > 0) {
-    setTimeout(() => renderRtConnections(perspectives, window._currentTeamEdges), 80);
-  }
+  // Defer to let Three.js load
+  setTimeout(() => _initThreeTable(perspectives, window._currentTeamEdges || []), 60);
 }
 
-function renderRtConnections(perspectives, edges) {
-  const canvas = document.getElementById('roundTableCanvas');
-  const svg    = document.getElementById('rtConnSvg');
-  if (!canvas || !svg) return;
-  while (svg.firstChild) svg.removeChild(svg.firstChild);
+function _initThreeTable(perspectives, edges) {
+  if (typeof THREE === 'undefined') return;
 
-  const seats = canvas.querySelectorAll('.rt-seat');
-  if (seats.length < 2) return;
+  const wrap = document.querySelector('.rt-3d-wrap');
+  const canvas = document.getElementById('rtThreeCanvas');
+  const labelsEl = document.getElementById('rtLabels');
+  if (!wrap || !canvas || !labelsEl) return;
 
-  // Build role → {x%, y%} position map
-  const rolePos = {};
-  perspectives.forEach((p, i) => {
-    const role = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
-    if (seats[i]) {
-      // Get position from inline style (left/top as %)
-      const s = seats[i];
-      rolePos[role] = {
-        x: parseFloat(s.style.left),
-        y: parseFloat(s.style.top)
-      };
+  // Destroy old scene
+  if (_rt3d) {
+    cancelAnimationFrame(_rt3d.animId);
+    _rt3d.renderer.dispose();
+    _rt3d.labels.forEach(l => l.remove());
+  }
+  labelsEl.innerHTML = '';
+
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+
+  // ── Scene ──
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x080810);
+  scene.fog = new THREE.Fog(0x080810, 22, 45);
+
+  // ── Camera ──
+  const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+  camera.position.set(0, 11, 16);
+  camera.lookAt(0, 0, 0);
+
+  // ── Renderer ──
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // ── Lights ──
+  const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+  scene.add(ambient);
+
+  const dirLight = new THREE.DirectionalLight(0xfff4e0, 1.4);
+  dirLight.position.set(8, 18, 10);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width  = 2048;
+  dirLight.shadow.mapSize.height = 2048;
+  dirLight.shadow.camera.near = 0.5;
+  dirLight.shadow.camera.far  = 60;
+  dirLight.shadow.camera.left = -14;
+  dirLight.shadow.camera.right = 14;
+  dirLight.shadow.camera.top = 14;
+  dirLight.shadow.camera.bottom = -14;
+  dirLight.shadow.radius = 4;
+  scene.add(dirLight);
+
+  const fillLight = new THREE.PointLight(0x4466aa, 0.6, 30);
+  fillLight.position.set(-8, 6, -6);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.PointLight(0xc8993a, 0.5, 25);
+  rimLight.position.set(0, 10, -12);
+  scene.add(rimLight);
+
+  // ── Floor / Ground ──
+  const floorGeo = new THREE.PlaneGeometry(60, 60);
+  const floorMat = new THREE.MeshLambertMaterial({ color: 0x05050a });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -1.05;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // ── Table surface ──
+  // Hexagonal polygon table
+  const tableR = 5.2;
+  const tableShape = new THREE.Shape();
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 - Math.PI / 6;
+    const x = Math.cos(a) * tableR;
+    const z = Math.sin(a) * tableR;
+    if (i === 0) tableShape.moveTo(x, z);
+    else tableShape.lineTo(x, z);
+  }
+  tableShape.closePath();
+
+  const tableExtSettings = { depth: 0.22, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.05, bevelSegments: 3 };
+  const tableGeo = new THREE.ExtrudeGeometry(tableShape, tableExtSettings);
+  tableGeo.rotateX(-Math.PI / 2);
+
+  // Rich wood material
+  const tableMat = new THREE.MeshStandardMaterial({
+    color: 0x6b3a1f,
+    roughness: 0.38,
+    metalness: 0.08,
+    envMapIntensity: 0.6,
+  });
+  const tableMesh = new THREE.Mesh(tableGeo, tableMat);
+  tableMesh.position.y = -0.22;
+  tableMesh.castShadow = true;
+  tableMesh.receiveShadow = true;
+  scene.add(tableMesh);
+
+  // Table edge ring (chrome border)
+  const edgeGeo = new THREE.TorusGeometry(tableR + 0.04, 0.06, 8, 60);
+  const edgeMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.2, metalness: 0.9 });
+  const edgeMesh = new THREE.Mesh(edgeGeo, edgeMat);
+  edgeMesh.rotation.x = Math.PI / 2;
+  edgeMesh.position.y = 0.03;
+  scene.add(edgeMesh);
+
+  // Table legs (4 cylindrical)
+  const legGeo = new THREE.CylinderGeometry(0.18, 0.22, 1.1, 12);
+  const legMat = new THREE.MeshStandardMaterial({ color: 0x4a2a10, roughness: 0.5, metalness: 0.1 });
+  [[-3.5, 3.5], [3.5, 3.5], [-3.5, -3.5], [3.5, -3.5]].forEach(([x, z]) => {
+    const leg = new THREE.Mesh(legGeo, legMat);
+    leg.position.set(x, -0.78, z);
+    leg.castShadow = true;
+    scene.add(leg);
+  });
+
+  // ── Seat pillars on table ──
+  const n = perspectives.length;
+  const radius = 4.4;
+  const seatPositions = [];
+
+  perspectives.forEach((p, idx) => {
+    const angle  = (idx / n) * Math.PI * 2 - Math.PI / 2;
+    const sx = Math.cos(angle) * radius;
+    const sz = Math.sin(angle) * radius;
+    seatPositions.push({ x: sx, z: sz, angle });
+
+    // Small seat pillar
+    const pillarGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.3, 8);
+    const color = ROLE_COLORS[p.rolle.replace(/^\[(custom|method)\]/, '').trim()] || '#c8993a';
+    const pillarMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(color),
+      emissive: new THREE.Color(color),
+      emissiveIntensity: 0.4,
+      roughness: 0.3, metalness: 0.5
+    });
+    const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+    pillar.position.set(sx, 0.18, sz);
+    scene.add(pillar);
+
+    // Glow sphere at top of pillar
+    const glowGeo = new THREE.SphereGeometry(0.14, 12, 12);
+    const glowMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(color) });
+    const glowSphere = new THREE.Mesh(glowGeo, glowMat);
+    glowSphere.position.set(sx, 0.42, sz);
+    scene.add(glowSphere);
+  });
+
+  // ── Connection lines on table surface ──
+  const VALENCE_COLOR = { positive: 0x4CAF50, ambivalent: 0xFFC107, negative: 0xF44336 };
+  const lineObjects = [];
+
+  if (edges.length > 0) {
+    edges.forEach(edge => {
+      const idxA = perspectives.findIndex(p => p.rolle.replace(/^\[(custom|method)\]/, '').trim() === edge.roleA);
+      const idxB = perspectives.findIndex(p => p.rolle.replace(/^\[(custom|method)\]/, '').trim() === edge.roleB);
+      if (idxA < 0 || idxB < 0) return;
+      const posA = seatPositions[idxA];
+      const posB = seatPositions[idxB];
+      if (!posA || !posB) return;
+
+      const color3 = new THREE.Color(VALENCE_COLOR[edge.valence] || 0xFFC107);
+      const mag = edge.magnitude;
+      const width = mag > 0.8 ? 3 : mag > 0.55 ? 2 : 1.2;
+
+      // Bezier curve on table surface with slight arc
+      const startV = new THREE.Vector3(posA.x, 0.06, posA.z);
+      const endV   = new THREE.Vector3(posB.x, 0.06, posB.z);
+      const midV   = new THREE.Vector3(
+        (posA.x + posB.x) * 0.5 * 0.72,
+        0.06 + mag * 0.3,
+        (posA.z + posB.z) * 0.5 * 0.72
+      );
+      const curve = new THREE.QuadraticBezierCurve3(startV, midV, endV);
+      const points = curve.getPoints(28);
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const lineMat = new THREE.LineBasicMaterial({
+        color: color3,
+        linewidth: width, // note: only works on some platforms; we use multiple passes
+        transparent: true,
+        opacity: mag > 0.7 ? 0.95 : mag > 0.4 ? 0.65 : 0.35
+      });
+      const line = new THREE.Line(lineGeo, lineMat);
+      scene.add(line);
+
+      lineObjects.push({ line, lineMat, mag, color3, edge });
+    });
+  }
+
+  // ── HTML Labels ──
+  const labelEls = [];
+
+  perspectives.forEach((p, idx) => {
+    const rawRole   = p.rolle.replace(/^\[(custom|method)\]/, '').trim();
+    const color     = ROLE_COLORS[rawRole] || '#c8993a';
+    const snippet   = (p.kernanalyse || '').slice(0, 75).trim();
+    const pos       = seatPositions[idx];
+
+    const label = document.createElement('div');
+    label.className = 'rt-label';
+    label.innerHTML = `
+      <div class="rt-label-name" style="color:${color};border-color:${color};">${escapeHtml(rawRole)}</div>
+      <div class="rt-label-snippet">${escapeHtml(snippet)}${p.kernanalyse && p.kernanalyse.length > 75 ? '…' : ''}</div>
+    `;
+    label.addEventListener('click', () => openRtModal(p, rawRole, color, color + '22', null));
+    labelsEl.appendChild(label);
+    labelEls.push({ el: label, worldPos: new THREE.Vector3(pos.x, 0.8, pos.z) });
+  });
+
+  // ── Orbit / Pan state ──
+  let isPointerDown = false;
+  let lastX = 0, lastY = 0;
+  let spherical = { theta: 0, phi: Math.PI / 3.8, radius: 18 };
+  const target = new THREE.Vector3(0, 0, 0);
+  let autoRotate = true;
+
+  function updateCamera() {
+    camera.position.x = target.x + spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+    camera.position.y = target.y + spherical.radius * Math.cos(spherical.phi);
+    camera.position.z = target.z + spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+    camera.lookAt(target);
+  }
+  updateCamera();
+
+  canvas.addEventListener('pointerdown', e => { isPointerDown = true; lastX = e.clientX; lastY = e.clientY; autoRotate = false; });
+  window.addEventListener('pointerup', () => { isPointerDown = false; });
+  canvas.addEventListener('pointermove', e => {
+    if (!isPointerDown) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    spherical.theta -= dx * 0.008;
+    spherical.phi = Math.max(0.2, Math.min(Math.PI / 2.1, spherical.phi + dy * 0.006));
+    lastX = e.clientX; lastY = e.clientY;
+    updateCamera();
+  });
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    spherical.radius = Math.max(6, Math.min(32, spherical.radius + e.deltaY * 0.04));
+    updateCamera();
+  }, { passive: false });
+
+  // Touch pinch
+  let lastTouchDist = 0;
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 2)
+      lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  });
+  canvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 2) {
+      const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      spherical.radius = Math.max(6, Math.min(32, spherical.radius - (d - lastTouchDist) * 0.06));
+      lastTouchDist = d; updateCamera();
     }
   });
 
-  const VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
-  const W = canvas.offsetWidth || 600;
-  const H = canvas.offsetHeight || 600;
-
-  // ALL edges (no magnitude threshold — weak ones just thinner)
-  edges.forEach(edge => {
-    const posA = rolePos[edge.roleA];
-    const posB = rolePos[edge.roleB];
-    if (!posA || !posB) return;
-
-    const x1 = posA.x / 100 * W;
-    const y1 = posA.y / 100 * H;
-    const x2 = posB.x / 100 * W;
-    const y2 = posB.y / 100 * H;
-
-    const color = VALENCE_COLOR[edge.valence] || '#FFC107';
-    const mag   = edge.magnitude;
-    const sw    = mag > 0.8 ? 4 : mag > 0.6 ? 2.8 : mag > 0.35 ? 1.8 : 1;
-    const anim  = mag > 0.8 ? 'pulse-strong' : mag > 0.55 ? 'pulse-medium' : 'pulse-soft';
-    const dur   = mag > 0.8 ? '1.0s' : mag > 0.55 ? '1.6s' : '3s';
-    const opacity = mag > 0.6 ? 1 : mag > 0.35 ? 0.65 : 0.35;
-
-    // Midpoint slightly toward center for a gentle curve
-    const cx = (x1 + x2) / 2 + (W/2 - (x1+x2)/2) * 0.18;
-    const cy = (y1 + y2) / 2 + (H/2 - (y1+y2)/2) * 0.18;
-    const pathD = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
-
-    // Glow layer
-    const glow = document.createElementNS('http://www.w3.org/2000/svg','path');
-    glow.setAttribute('d', pathD); glow.setAttribute('fill','none');
-    glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', sw * 4);
-    glow.setAttribute('stroke-linecap','round'); glow.setAttribute('stroke-opacity','0.15');
-    glow.style.animation = `${anim} ${dur} ease-in-out infinite`;
-    glow.style.color = color; glow.style.pointerEvents = 'none';
-    svg.appendChild(glow);
-
-    // Core line
-    const line = document.createElementNS('http://www.w3.org/2000/svg','path');
-    line.setAttribute('d', pathD); line.setAttribute('fill','none');
-    line.setAttribute('stroke', color); line.setAttribute('stroke-width', sw);
-    line.setAttribute('stroke-linecap','round');
-    line.setAttribute('stroke-opacity', String(opacity));
-    line.style.animation = `${anim} ${dur} ease-in-out infinite`;
-    line.style.color = color; line.style.pointerEvents = 'none';
-    svg.appendChild(line);
-
-    // Hit area — wide, fully clickable
-    const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
-    hit.setAttribute('d', pathD); hit.setAttribute('fill','none');
-    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','22');
-    hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke';
-    const edgeCopy = { ...edge, color };
-    hit.addEventListener('click', ev => {
-      ev.stopPropagation();
-      openEdgePanelTeam(edge.roleA, edge.roleB, edge.valence, edge.summary, color);
-    });
-    svg.appendChild(hit);
+  // Resize
+  const resizeObs = new ResizeObserver(() => {
+    const nW = wrap.clientWidth, nH = wrap.clientHeight;
+    renderer.setSize(nW, nH);
+    camera.aspect = nW / nH;
+    camera.updateProjectionMatrix();
   });
+  resizeObs.observe(wrap);
 
-  svg.style.pointerEvents = 'none'; // only hit areas catch events
+  // ── Project 3D → 2D for labels ──
+  function updateLabels() {
+    const vec = new THREE.Vector3();
+    labelEls.forEach(({ el, worldPos }) => {
+      vec.copy(worldPos);
+      vec.project(camera);
+      const x = (vec.x *  0.5 + 0.5) * wrap.clientWidth;
+      const y = (vec.y * -0.5 + 0.5) * wrap.clientHeight;
+      el.style.left = x + 'px';
+      el.style.top  = y + 'px';
+      // Hide if behind camera
+      el.style.opacity = vec.z < 1 ? '1' : '0';
+    });
+  }
+
+  // ── Pulse animation for lines ──
+  let _animT = 0;
+
+  // ── Render loop ──
+  let animId;
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    _animT += 0.016;
+
+    if (autoRotate) {
+      spherical.theta += 0.003;
+      updateCamera();
+    }
+
+    // Pulse lines
+    lineObjects.forEach(({ lineMat, mag }) => {
+      const base   = mag > 0.7 ? 0.95 : mag > 0.4 ? 0.65 : 0.35;
+      const amp    = mag * 0.3;
+      const speed  = mag > 0.8 ? 2.2 : mag > 0.55 ? 1.4 : 0.8;
+      lineMat.opacity = base - amp * 0.5 + amp * 0.5 * Math.sin(_animT * speed * Math.PI * 2);
+    });
+
+    renderer.render(scene, camera);
+    updateLabels();
+  }
+  animate();
+
+  _rt3d = { scene, camera, renderer, animId, perspectives, edges, labels: labelEls.map(l => l.el) };
 }
 
+function renderRtConnections() {} // no-op: handled inside _initThreeTable
+
+// dummy stubs for old CSS table
+function renderRoundTable_OLD_UNUSED() {}
 function openRtModal(p, displayRole, color, colorBg, svgIcon) {
   const overlay = document.getElementById('rtModalOverlay');
   const icon    = document.getElementById('rtModalIcon');
