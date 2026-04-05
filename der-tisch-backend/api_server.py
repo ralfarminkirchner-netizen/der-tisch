@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from kintegrity import KintegrityRequest, KintegrityResponse, kintegrity_synthesize
+from kintegrity import KintegrityRequest, KintegrityResponse, MoonfingersResponse, kintegrity_synthesize
 from pydantic import BaseModel
 from typing import List, Optional
 import anthropic
@@ -38,8 +38,35 @@ async def serve_literatentisch():
 async def serve_expertentisch():
     return FileResponse(Path(__file__).parent / "expertentisch.html")
 
-@app.post("/api/kintegrity/synthesize", response_model=KintegrityResponse)
+@app.post("/api/kintegrity/synthesize")
 async def api_kintegrity_synthesize(req: KintegrityRequest):
+    try:
+        return await kintegrity_synthesize(req)
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}")
+
+@app.post("/api/kintegrity/moonfingers", response_model=MoonfingersResponse)
+async def api_kintegrity_moonfingers(req: KintegrityRequest):
+    req.profile = "moonfingers_profile"
+    try:
+        return await kintegrity_synthesize(req)
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}")
+
+@app.post("/api/kintegrity/einsein")
+async def api_kintegrity_einsein(req: KintegrityRequest):
+    req.profile = "einsein_profile"
+    try:
+        return await kintegrity_synthesize(req)
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}")
+
+@app.post("/api/kintegrity/brainstorm-spiral")
+async def api_kintegrity_brainstorm_spiral(req: KintegrityRequest):
+    req.profile = "brainstorm_spiral_profile"
     try:
         return await kintegrity_synthesize(req)
     except Exception as e:
