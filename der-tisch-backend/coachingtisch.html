@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!--
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0E0A1F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="COACHiNG TiSCH">
+<title>COACHiNG TiSCH — Perspektiven für Transformation</title>
+<meta name="description" content="COACHiNG TiSCH: 8 professionelle Coaching-Perspektiven — Life, Executive, Systemisch, Sport, Beziehung, Karriere, NLP und Therapeutisch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── Variables ───────────────────────────────────────────── */
+:root {
+  --bg:           #0E0A1F;
+  --bg-2:         #120D28;
+  --surface:      #1A1436;
+  --surface-2:    #151030;
+  --surface-off:  #1E1840;
+  --text:         #EEE8FF;
+  --muted:        #9B8EC4;
+  --faint:        #5A4E82;
+  --border:       #2A2248;
+  --border-2:     #3D3260;
+  --accent:       #7C5CBF;   /* Indigo/Violett */
+  --accent-2:     #D4A843;   /* Gold */
+  --accent-dim:   rgba(124,92,191,0.13);
+  --accent-glow:  rgba(124,92,191,0.3);
+  --gold-dim:     rgba(212,168,67,0.12);
+  --green:        #5CBA82;
+  --amber:        #D4A843;
+  --red:          #CF6060;
+  --r-card:       14px;
+  --r-btn:        10px;
+  --shadow:       0 2px 16px rgba(0,0,0,0.55);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.65);
+  --trans:        0.18s ease;
+  --font:         'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Hintergrund: sanfte Spiralen / Kreise ──────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(124,92,191,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(212,168,67,0.04) 0%, transparent 70%),
+    var(--bg);
+  pointer-events: none;
+}
+
+/* ─── Nav ─────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(14,10,31,0.94);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  min-height: 72px; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.nav-logo { display: flex; flex-direction: column; line-height: 1; user-select: none; text-decoration: none; gap: 2px; }
+.nav-logo-pre { font-size: 9px; letter-spacing: 0.22em; color: var(--faint); text-transform: uppercase; font-weight: 600; }
+.nav-logo-mark { height: clamp(38px, 5.5vw, 54px); width: auto; display: block; }
+
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.toggle-group {
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--surface-off); border: 1px solid var(--border); border-radius: 10px;
+}
+.tgl-btn {
+  border: none; background: transparent; padding: 5px 10px; border-radius: 7px;
+  font-family: inherit; font-size: 11px; font-weight: 600; color: var(--muted);
+  cursor: pointer; transition: all var(--trans); white-space: nowrap; letter-spacing: 0.03em;
+}
+.tgl-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.35); }
+.tgl-btn:hover:not(.active) { color: var(--text); }
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all var(--trans);
+}
+.icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ─── Main ────────────────────────────────────────────────── */
+main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+/* ─── Hero ────────────────────────────────────────────────── */
+.hero {
+  min-height: calc(100vh - 72px);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 28px 0 36px; text-align: center;
+}
+.hero-logo-svg { width: min(92vw, 760px); height: auto; display: block; margin: 0 auto 20px; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-dim); border: 1px solid rgba(124,92,191,0.35);
+  border-radius: 100px; padding: 5px 16px;
+  font-size: 11px; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 22px;
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  animation: pulse-dot 2.5s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.6)} }
+
+.hero-sub {
+  font-size: 15px; color: var(--muted); margin-bottom: 36px;
+  line-height: 1.7; max-width: 540px;
+}
+
+/* ─── Coaching-Modus Selector ────────────────────────────── */
+.mode-selector {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 18px;
+}
+.mode-btn {
+  display: flex; align-items: center; gap: 6px;
+  border: 1.5px solid var(--border); background: var(--surface-2); border-radius: 10px;
+  padding: 8px 14px; font-family: inherit; font-size: 12px; font-weight: 600;
+  color: var(--muted); cursor: pointer; transition: all var(--trans);
+}
+.mode-btn:hover { border-color: var(--border-2); color: var(--text); }
+.mode-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.mode-icon { font-size: 15px; }
+
+/* ─── Perspektiven ────────────────────────────────────────── */
+.perspektiven-selector {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 18px 20px; margin-bottom: 12px;
+  box-shadow: var(--shadow); width: 100%; max-width: 680px;
+}
+.perspektiven-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px;
+}
+.perspektiven-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.auto-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-dim); border: 1px solid rgba(124,92,191,0.3);
+  border-radius: 100px; padding: 3px 10px;
+  font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em;
+}
+.perspektiven-sub-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+.perspektiven-sub-tab {
+  border: 1px solid var(--border); background: transparent; border-radius: 8px;
+  padding: 5px 12px; font-family: inherit; font-size: 12px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all var(--trans);
+}
+.perspektiven-sub-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.perspektiven-sub-tab:hover:not(.active) { color: var(--text); border-color: var(--border-2); }
+
+.perspektiven-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px;
+}
+.persp-btn {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--border); background: transparent; border-radius: 9px;
+  padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all var(--trans); text-align: left;
+}
+.persp-btn:hover { border-color: var(--border-2); color: var(--text); }
+.persp-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.persp-icon { font-size: 15px; flex-shrink: 0; }
+
+.selected-perspektiven { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; margin-top: 10px; }
+.perspektiven-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-dim); border: 1px solid rgba(124,92,191,0.35);
+  border-radius: 100px; padding: 4px 10px;
+  font-size: 12px; font-weight: 600; color: var(--accent);
+}
+.perspektiven-chip-remove {
+  background: none; border: none; cursor: pointer; color: var(--accent);
+  font-size: 14px; line-height: 1; padding: 0; opacity: 0.65; transition: opacity var(--trans);
+}
+.perspektiven-chip-remove:hover { opacity: 1; }
+.perspektiven-chip-placeholder { font-size: 12px; color: var(--faint); font-style: italic; }
+
+.custom-input {
+  width: 100%; border: 1px solid var(--border); border-radius: 9px;
+  padding: 8px 12px; font-family: inherit; font-size: 13px; color: var(--text);
+  background: var(--surface-2); outline: none; transition: border-color var(--trans);
+}
+.custom-input:focus { border-color: var(--accent); }
+.custom-input::placeholder { color: var(--faint); }
+
+/* ─── Input ───────────────────────────────────────────────── */
+.input-wrap { width: 100%; max-width: 680px; }
+.question-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 18px;
+  padding: 18px 22px; font-family: inherit; font-size: 15px; color: var(--text);
+  background: var(--surface); resize: none; outline: none;
+  min-height: 80px; max-height: none; line-height: 1.6;
+  box-shadow: var(--shadow); transition: border-color var(--trans), box-shadow var(--trans);
+  margin-bottom: 10px; display: block;
+}
+.question-input::placeholder { color: var(--faint); }
+.question-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow); }
+
+/* ─── Action Row ──────────────────────────────────────────── */
+.action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: white; border: none; border-radius: var(--r-btn);
+  padding: 13px 28px; font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all var(--trans); letter-spacing: -0.01em;
+}
+.btn-primary:hover { background: #9370D8; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,92,191,0.45); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn-primary svg { width: 17px; height: 17px; }
+
+.btn-examples {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  border-radius: var(--r-btn); padding: 12px 18px; font-family: inherit; font-size: 13px;
+  cursor: pointer; transition: all var(--trans);
+}
+.btn-examples:hover { border-color: var(--border-2); color: var(--text); }
+.btn-examples svg { width: 14px; height: 14px; }
+
+/* ─── Chips ───────────────────────────────────────────────── */
+.chips-toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; justify-content: center; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 680px; margin-bottom: 16px; }
+.chip {
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  border-radius: 100px; padding: 6px 14px; font-family: inherit; font-size: 12px;
+  cursor: pointer; transition: all var(--trans);
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ─── Loading ─────────────────────────────────────────────── */
+.loading-wrap { display: none; flex-direction: column; align-items: center; padding: 60px 0; gap: 16px; }
+.loading-wrap.visible { display: flex; }
+.loading-spiral {
+  width: 64px; height: 64px; position: relative;
+}
+.loading-spiral::before, .loading-spiral::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 3px solid transparent;
+}
+.loading-spiral::before {
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+}
+.loading-spiral::after {
+  border-bottom-color: var(--accent-2);
+  animation: spin 1.6s linear infinite reverse;
+  inset: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+/* ─── Results ─────────────────────────────────────────────── */
+.results-wrap { display: none; padding: 32px 0 60px; }
+.results-wrap.visible { display: block; }
+.results-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+.results-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.results-meta { font-size: 12px; color: var(--faint); margin-top: 3px; }
+
+.perspective-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.perspective-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-card); padding: 20px;
+  box-shadow: var(--shadow); transition: border-color var(--trans);
+}
+.perspective-card:hover { border-color: var(--border-2); }
+.card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.card-icon {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  border: 1.5px solid var(--border);
+}
+.card-role { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
+.card-body { font-size: 14px; line-height: 1.7; color: var(--muted); }
+
+/* ─── kiNTEGRiTY ──────────────────────────────────────────── */
+.kintegrity-wrap { margin: 0 0 28px; display: none; }
+.kintegrity-wrap.visible { display: block; }
+.integrity-field {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-top: 3px solid var(--accent-2); border-radius: var(--r-card);
+  padding: 18px 22px; width: 100%; min-height: 90px;
+  font-family: inherit; font-size: 14px; color: var(--text);
+  resize: vertical; outline: none;
+}
+.integrity-field:focus { border-color: var(--accent); }
+.kintegrity-run-btn {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 10px;
+  background: var(--gold-dim); border: 1px solid rgba(212,168,67,0.3);
+  color: var(--accent-2); border-radius: 8px; padding: 7px 16px;
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: all var(--trans); font-family: inherit;
+}
+.kintegrity-run-btn:hover { background: rgba(212,168,67,0.2); }
+.kintegrity-panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 16px; }
+.kintegrity-panel { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.kintegrity-panel-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.kintegrity-panel-content { font-size: 13px; line-height: 1.65; color: var(--muted); }
+
+/* ─── Synthese ────────────────────────────────────────────── */
+.synthese-card {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-off) 100%);
+  border: 1.5px solid var(--border); border-top: 3px solid var(--accent);
+  border-radius: var(--r-card); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-lg);
+}
+.synthese-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.synthese-content { font-size: 15px; line-height: 1.75; color: var(--text); }
+
+/* ─── Action Buttons ──────────────────────────────────────── */
+.results-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  border-radius: 9px; padding: 9px 18px; font-family: inherit; font-size: 13px;
+  cursor: pointer; transition: all var(--trans);
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.btn-secondary svg { width: 14px; height: 14px; }
+
+/* ─── History Panel ───────────────────────────────────────── */
+.history-panel {
+  position: fixed; inset-y: 0; right: 0; width: 380px; max-width: 100vw;
+  background: var(--surface); border-left: 1px solid var(--border);
+  z-index: 500; transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.history-panel.open { transform: translateX(0); }
+.history-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.history-title { font-size: 15px; font-weight: 700; }
+.history-body { flex: 1; overflow-y: auto; padding: 16px; }
+.history-empty { color: var(--faint); font-size: 13px; text-align: center; padding: 40px 0; }
+.history-item { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: border-color var(--trans); }
+.history-item:hover { border-color: var(--border-2); }
+.history-item-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item-meta { font-size: 11px; color: var(--faint); }
+.history-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 499; }
+.history-overlay.open { display: block; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+@media (max-width: 600px) {
+  nav { padding: 0 14px; }
+  main { padding: 0 12px; }
+  .hero { padding: 16px 0 28px; }
+  .perspective-cards { grid-template-columns: 1fr; }
+  .perspektiven-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .history-panel { width: 100vw; }
+  .question-input { font-size: 14px; }
+  .mode-selector { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── Navigation ───────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" aria-label="COACHiNG TiSCH" href="/coachingtisch.html" style="text-decoration:none;">
+    <span class="nav-logo-pre">COACHiNG</span>
+    <svg class="nav-logo-mark" viewBox="0 0 130 54" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TiSCH">
+      <!-- Tischplatte -->
+      <rect x="4" y="10" width="122" height="9" fill="#7C5CBF" rx="1"/>
+      <!-- Bein links -->
+      <rect x="30" y="19" width="8" height="32" fill="#7C5CBF"/>
+      <!-- Bein rechts -->
+      <rect x="92" y="19" width="8" height="32" fill="#7C5CBF"/>
+      <!-- T -->
+      <text x="4" y="50" font-family="'Inter',sans-serif" font-size="26" font-weight="700" fill="currentColor" letter-spacing="-0.5">T</text>
+      <!-- iSCH -->
+      <text x="103" y="50" font-family="'Inter',sans-serif" font-size="26" font-weight="700" fill="currentColor" letter-spacing="-0.5"><tspan fill="#7C5CBF">i</tspan>SCH</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <div class="toggle-group" role="group" aria-label="Sprache">
+      <button class="tgl-btn active" id="btn-de" onclick="setLang('de')">DE</button>
+      <button class="tgl-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="toggle-group" role="group" aria-label="Ton">
+      <button class="tgl-btn active" id="btn-achtsam" onclick="setTone('achtsam')">achtsam</button>
+      <button class="tgl-btn" id="btn-direkt" onclick="setTone('direkt')">direkt</button>
+    </div>
+    <button class="icon-btn" onclick="toggleHistory()" aria-label="Verlauf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── History ────────────────────────────────────────────── -->
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+<aside class="history-panel" id="historyPanel">
+  <div class="history-header">
+    <span class="history-title">Verlauf</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-secondary" onclick="exportHistory()" style="padding:5px 10px;font-size:11px;">Export</button>
+      <button class="icon-btn" onclick="toggleHistory()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="history-body" id="historyBody"></div>
+</aside>
+
+<main>
+<section class="hero">
+
+  <!-- ─── Hero Logo: COACHiNG TiSCH — Doppel-T + symbolische i-Punkte ── -->
+  <div style="text-align:center;margin:0 auto 18px;width:100%;">
+    <svg class="hero-logo-svg" viewBox="0 0 760 230" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="COACHiNG TiSCH">
+
+      <!-- ── Hintergrund-Aura ── -->
+      <defs>
+        <radialGradient id="aura-l" cx="30%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#7C5CBF" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#7C5CBF" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="aura-r" cx="70%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#D4A843" stop-opacity="0.06"/>
+          <stop offset="100%" stop-color="#D4A843" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="760" height="230" fill="url(#aura-l)"/>
+      <rect x="0" y="0" width="760" height="230" fill="url(#aura-r)"/>
+
+      <!-- ── Silhouetten links: Coach-Gespräch ── -->
+
+      <!-- Zwei Menschen sitzen sich gegenüber (Coaching-Dyade) -->
+      <g transform="translate(10,90)" opacity="0.25">
+        <!-- Person links (Coach) — Stuhl + Körper -->
+        <ellipse cx="22" cy="12" rx="10" ry="10" fill="#7C5CBF"/>
+        <path d="M12 22 Q12 50 22 52 Q32 50 32 22" fill="#7C5CBF" opacity="0.8"/>
+        <!-- Stuhl -->
+        <rect x="6" y="48" width="32" height="4" rx="2" fill="#7C5CBF" opacity="0.6"/>
+        <line x1="8" y1="52" x2="8" y2="68" stroke="#7C5CBF" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="52" x2="36" y2="68" stroke="#7C5CBF" stroke-width="3" stroke-linecap="round"/>
+        <!-- Arm ausgestreckt (aktives Zuhören) -->
+        <path d="M32 30 Q46 28 50 32" fill="none" stroke="#7C5CBF" stroke-width="3" stroke-linecap="round"/>
+      </g>
+
+      <!-- Person rechts (Coachee) -->
+      <g transform="translate(82,86)" opacity="0.22">
+        <ellipse cx="22" cy="12" rx="10" ry="10" fill="#D4A843"/>
+        <path d="M12 22 Q12 50 22 52 Q32 50 32 22" fill="#D4A843" opacity="0.8"/>
+        <rect x="6" y="48" width="32" height="4" rx="2" fill="#D4A843" opacity="0.6"/>
+        <line x1="8" y1="52" x2="8" y2="68" stroke="#D4A843" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="52" x2="36" y2="68" stroke="#D4A843" stroke-width="3" stroke-linecap="round"/>
+        <!-- Sprechblase -->
+        <path d="M32 18 L52 14 L52 28 L40 28 L36 34 L36 28 L32 28Z" fill="#D4A843" opacity="0.45"/>
+        <!-- Text in Blase -->
+        <line x1="38" y1="19" x2="50" y2="19" stroke="#0E0A1F" stroke-width="1.5" opacity="0.5"/>
+        <line x1="38" y1="23" x2="50" y2="23" stroke="#0E0A1F" stroke-width="1.5" opacity="0.5"/>
+      </g>
+
+      <!-- Notizbuch links -->
+      <g transform="translate(148,106)" opacity="0.25">
+        <rect x="0" y="0" width="34" height="46" rx="3" fill="#7C5CBF" opacity="0.8"/>
+        <rect x="0" y="0" width="5" height="46" rx="2" fill="#5A3FA0" opacity="0.9"/>
+        <!-- Spiralbindung -->
+        <circle cx="2" cy="8" r="2" fill="#0E0A1F" opacity="0.5"/>
+        <circle cx="2" cy="16" r="2" fill="#0E0A1F" opacity="0.5"/>
+        <circle cx="2" cy="24" r="2" fill="#0E0A1F" opacity="0.5"/>
+        <circle cx="2" cy="32" r="2" fill="#0E0A1F" opacity="0.5"/>
+        <circle cx="2" cy="40" r="2" fill="#0E0A1F" opacity="0.5"/>
+        <!-- Linien -->
+        <line x1="9" y1="12" x2="28" y2="12" stroke="#0E0A1F" stroke-width="1.5" opacity="0.4"/>
+        <line x1="9" y1="18" x2="28" y2="18" stroke="#0E0A1F" stroke-width="1.5" opacity="0.4"/>
+        <line x1="9" y1="24" x2="28" y2="24" stroke="#0E0A1F" stroke-width="1.5" opacity="0.4"/>
+        <line x1="9" y1="30" x2="22" y2="30" stroke="#0E0A1F" stroke-width="1.5" opacity="0.4"/>
+      </g>
+
+      <!-- ── Silhouetten rechts ── -->
+
+      <!-- Kompass (Orientierung, Ziel) -->
+      <g transform="translate(580,90)" opacity="0.28">
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#D4A843" stroke-width="3"/>
+        <circle cx="32" cy="32" r="22" fill="none" stroke="#D4A843" stroke-width="1.5" opacity="0.4"/>
+        <!-- N S W E -->
+        <text x="30" y="8" font-family="sans-serif" font-size="7" fill="#D4A843" opacity="0.7">N</text>
+        <text x="30" y="60" font-family="sans-serif" font-size="7" fill="#D4A843" opacity="0.7">S</text>
+        <text x="6" y="34" font-family="sans-serif" font-size="7" fill="#D4A843" opacity="0.7">W</text>
+        <text x="54" y="34" font-family="sans-serif" font-size="7" fill="#D4A843" opacity="0.7">E</text>
+        <!-- Kompass-Nadel -->
+        <polygon points="32,10 28,32 32,34 36,32" fill="#D4A843" opacity="0.9"/>
+        <polygon points="32,54 28,32 32,30 36,32" fill="#7C5CBF" opacity="0.7"/>
+        <circle cx="32" cy="32" r="3" fill="#D4A843"/>
+      </g>
+
+      <!-- Spiegel (Selbstreflexion) -->
+      <g transform="translate(648,88)" opacity="0.25">
+        <!-- Rahmen -->
+        <rect x="4" y="0" width="44" height="54" rx="22" fill="none" stroke="#7C5CBF" stroke-width="3.5"/>
+        <!-- Spiegelfläche — schimmert -->
+        <rect x="8" y="4" width="36" height="46" rx="18" fill="#7C5CBF" opacity="0.18"/>
+        <!-- Highlight -->
+        <path d="M14 10 Q20 8 22 16" fill="none" stroke="#7C5CBF" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+        <!-- Griff -->
+        <rect x="23" y="54" width="6" height="20" rx="3" fill="#7C5CBF" opacity="0.7"/>
+      </g>
+
+      <!-- Spirale (Transformation / systemisches Denken) -->
+      <g transform="translate(706,95)" opacity="0.24">
+        <path d="M26 26 Q26 8 14 8 Q2 8 2 20 Q2 32 14 32 Q24 32 24 22 Q24 12 16 12 Q8 12 8 20 Q8 26 14 26"
+          fill="none" stroke="#D4A843" stroke-width="3" stroke-linecap="round"/>
+        <!-- Pfeil am Ende -->
+        <path d="M14 26 L8 22 L12 28" fill="none" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+
+      <!-- ── Tagline ── -->
+      <text x="380" y="62" font-family="'Inter','Helvetica Neue',sans-serif" font-size="9.5" font-weight="600" fill="#7C5CBF" letter-spacing="0.22em" text-anchor="middle">PERSPEKTIVEN FÜR TRANSFORMATION</text>
+
+      <!-- ── Doppel-T Tischplatte ── -->
+      <!-- Linker Balken: COACHiNG-Seite x=186..386 -->
+      <rect x="186" y="74" width="200" height="12" fill="#7C5CBF" rx="1"/>
+      <!-- Rechter Balken: TiSCH-Seite x=386..574 -->
+      <rect x="386" y="74" width="188" height="12" fill="#7C5CBF" rx="1"/>
+      <!-- Naht (Gold) -->
+      <rect x="382" y="74" width="8" height="12" fill="#D4A843" opacity="0.8"/>
+
+      <!-- Linkes T-Bein -->
+      <rect x="262" y="86" width="12" height="82" fill="#7C5CBF"/>
+      <!-- Rechtes T-Bein -->
+      <rect x="480" y="86" width="12" height="82" fill="#7C5CBF"/>
+
+      <!-- "COACH" rechtsbündig am linken Bein -->
+      <text x="259" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="52" font-weight="300" fill="currentColor" letter-spacing="-1" text-anchor="end">COACH</text>
+
+      <!-- "iNG" nach linkem Bein — i = Herz -->
+      <!-- Herz-Symbol als i-Punkt -->
+      <g transform="translate(272,110)">
+        <!-- Herz -->
+        <path d="M10 16 C10 16 0 10 0 4 C0 1 2 0 5 0 C7 0 9 1 10 3 C11 1 13 0 15 0 C18 0 20 1 20 4 C20 10 10 16 10 16Z" fill="#CF6060" opacity="0.92"/>
+      </g>
+      <!-- "NG" nach Herz -->
+      <text x="296" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="52" font-weight="300" fill="currentColor" letter-spacing="-1">NG</text>
+
+      <!-- "iSCH" nach rechtem Bein — i = Gold-Kompass-Punkt -->
+      <g transform="translate(493,110)">
+        <circle cx="10" cy="10" r="9" fill="none" stroke="#D4A843" stroke-width="2.5"/>
+        <circle cx="10" cy="10" r="3" fill="#D4A843"/>
+        <line x1="10" y1="2" x2="10" y2="5" stroke="#D4A843" stroke-width="2"/>
+        <line x1="10" y1="15" x2="10" y2="18" stroke="#D4A843" stroke-width="2"/>
+        <line x1="2" y1="10" x2="5" y2="10" stroke="#D4A843" stroke-width="2"/>
+        <line x1="15" y1="10" x2="18" y2="10" stroke="#D4A843" stroke-width="2"/>
+      </g>
+      <!-- "SCH" -->
+      <text x="517" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="52" font-weight="300" fill="currentColor" letter-spacing="-1">SCH</text>
+
+    </svg>
+  </div>
+
+  <!-- Badge -->
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    <span id="badge-text">8 Coaching-Perspektiven · KI-gestützt</span>
+  </div>
+
+  <!-- Coaching-Kontext wählen -->
+  <div class="mode-selector" id="modeSelector">
+    <button class="mode-btn selected" data-mode="alle" onclick="selectMode(this)">
+      <span class="mode-icon">✦</span> <span>Alle Bereiche</span>
+    </button>
+    <button class="mode-btn" data-mode="personal" onclick="selectMode(this)">
+      <span class="mode-icon">🌱</span> <span>Persönlich</span>
+    </button>
+    <button class="mode-btn" data-mode="beruf" onclick="selectMode(this)">
+      <span class="mode-icon">💼</span> <span>Beruf & Leadership</span>
+    </button>
+    <button class="mode-btn" data-mode="beziehung" onclick="selectMode(this)">
+      <span class="mode-icon">💞</span> <span>Beziehung</span>
+    </button>
+    <button class="mode-btn" data-mode="sport" onclick="selectMode(this)">
+      <span class="mode-icon">🏆</span> <span>Sport</span>
+    </button>
+  </div>
+
+  <p class="hero-sub" id="hero-sub">
+    Life Coach, Executive Coach, Systemischer Coach, Sportcoach, Beziehungscoach, Karrierecoach, NLP-Coach und Therapeutischer Coach analysieren deine Frage aus ihren Perspektiven.
+  </p>
+
+  <!-- Input -->
+  <div class="input-wrap">
+    <textarea
+      class="question-input"
+      id="questionInput"
+      rows="3"
+      placeholder="Was möchtest du coachen, verändern oder verstehen?"
+      maxlength="1200"
+    ></textarea>
+
+    <!-- Perspektiven -->
+    <div class="perspektiven-selector">
+      <div class="perspektiven-header">
+        <span class="perspektiven-title" id="persp-label">Perspektiven</span>
+        <span class="auto-badge" id="auto-badge">
+          <svg viewBox="0 0 12 12" fill="currentColor" width="10" height="10"><path d="M6 1l1.5 3H11l-2.8 2 1 3L6 7.2 2.8 9l1-3L1 4h3.5z"/></svg>
+          KI-Auto aktiv
+        </span>
+      </div>
+      <div class="perspektiven-sub-tabs">
+        <button class="perspektiven-sub-tab active" id="tab-auto" onclick="setPerspMode('auto')">+ KI-Auto</button>
+        <button class="perspektiven-sub-tab" id="tab-list" onclick="setPerspMode('list')">Aus Liste wählen</button>
+        <button class="perspektiven-sub-tab" id="tab-custom" onclick="setPerspMode('custom')">Eigene</button>
+      </div>
+      <div id="mode-auto">
+        <p style="font-size:12px;color:var(--faint);font-style:italic;">KI wählt passende Coaching-Perspektiven für deine Frage.</p>
+      </div>
+      <div id="mode-list" style="display:none;">
+        <div class="perspektiven-grid" id="perspektivenGrid"></div>
+        <div class="selected-perspektiven" id="selectedPerspektiven">
+          <span class="perspektiven-chip-placeholder">Noch keine gewählt — KI wählt automatisch</span>
+        </div>
+      </div>
+      <div id="mode-custom" style="display:none;">
+        <input type="text" class="custom-input" id="customPerspInput"
+          placeholder="z.B. Trauerbegleitung, Burnout-Coach, Elterncoach..."
+          maxlength="200">
+        <p style="font-size:11px;color:var(--faint);margin-top:6px;">Kommagetrennt</p>
+      </div>
+    </div>
+
+    <!-- Chips -->
+    <div class="chips-toggle-row">
+      <button class="btn-examples" id="chipsToggleBtn" onclick="toggleChips()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        <span id="chipsToggleText">Beispiele</span>
+      </button>
+    </div>
+    <div class="chips-wrap" id="chipsWrap" style="display:none;"></div>
+
+    <div class="action-row">
+      <button class="btn-primary" id="submitBtn" onclick="submitQuestion()">
+        <span id="btn-text">Am Tisch fragen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ─── Loading ──────────────────────────────────────────────── -->
+<div class="loading-wrap" id="loadingWrap">
+  <div class="loading-spiral"></div>
+  <p class="loading-text" id="loading-text">Die Coaches denken mit…</p>
+</div>
+
+<!-- ─── Results ──────────────────────────────────────────────── -->
+<div class="results-wrap" id="resultsWrap">
+  <div class="results-header">
+    <div>
+      <div class="results-title" id="resultsTitle"></div>
+      <div class="results-meta" id="resultsMeta"></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        <span id="back-text">Neue Frage</span>
+      </button>
+      <button class="btn-secondary" onclick="copyResults()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span id="copy-text">Kopieren</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="perspective-cards" id="perspectiveCards"></div>
+
+  <div class="kintegrity-wrap" id="kintegrityWrap">
+    <div style="border-top:1px solid var(--border);padding-top:20px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;">kiNTEGRiTY — Integritätsprüfung</div>
+      <textarea class="integrity-field" id="integrityField"
+        placeholder="Notiere was in der Synthese unbedingt erhalten bleiben soll…"
+        rows="3" style="display:block;width:100%;background:var(--surface);border-color:var(--border);"></textarea>
+    </div>
+    <button class="kintegrity-run-btn" onclick="runKintegrity()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Synthese prüfen
+    </button>
+    <div class="kintegrity-panels" id="kintegrityPanels"></div>
+  </div>
+
+  <div class="synthese-card" id="syntheseCard" style="display:none;">
+    <div class="synthese-label" id="synthese-label">SYNTHESE</div>
+    <div class="synthese-content" id="syntheseContent"></div>
+  </div>
+</div>
+</main>
+
+<script>
+// ─── State ───────────────────────────────────────────────────
+const API = window.location.origin;
+let lang = 'de', tone = 'achtsam', perspMode = 'auto';
+let selectedPerspektiven = [];
+let lastResults = null, lastQuestion = '';
+let chipsVisible = false;
+let activeMode = 'alle';
+
+// ─── Perspektiven ─────────────────────────────────────────────
+const PERSPEKTIVEN = [
+  { id: 'lifecoach',    icon: '🌱', de: 'Life Coach',            en: 'Life Coach',            color: '#7C5CBF' },
+  { id: 'executive',    icon: '💼', de: 'Executive Coach',        en: 'Executive Coach',       color: '#5DADE2' },
+  { id: 'systemisch',   icon: '🕸️', de: 'Systemischer Coach',     en: 'Systemic Coach',        color: '#D4A843' },
+  { id: 'sportcoach',   icon: '🏆', de: 'Sportcoach',             en: 'Sports Coach',          color: '#2ECC71' },
+  { id: 'beziehung',    icon: '💞', de: 'Beziehungscoach',        en: 'Relationship Coach',    color: '#CF6060' },
+  { id: 'karriere',     icon: '🎯', de: 'Karrierecoach',          en: 'Career Coach',          color: '#E67E22' },
+  { id: 'nlp',          icon: '🧠', de: 'NLP & Mentalcoach',      en: 'NLP & Mental Coach',    color: '#9B59B6' },
+  { id: 'therapeutisch',icon: '🪞', de: 'Therapeutischer Coach',  en: 'Therapeutic Coach',     color: '#1ABC9C' },
+  { id: 'burnout',      icon: '🔋', de: 'Burnout-Coach',          en: 'Burnout Coach',         color: '#E74C3C' },
+  { id: 'eltern',       icon: '👨‍👩‍👧', de: 'Eltern-Coach',          en: 'Parenting Coach',       color: '#27AE60' },
+  { id: 'gesundheit',   icon: '🌿', de: 'Health Coach',           en: 'Health Coach',          color: '#16A085' },
+  { id: 'sinn',         icon: '✨', de: 'Sinn & Werte Coach',     en: 'Purpose & Values Coach',color: '#A855F7' },
+];
+
+// Beispiele je Modus
+const CHIPS_DE = {
+  alle: [
+    'Ich komme nicht voran, obwohl ich alles versuche.',
+    'Wie finde ich meine Stärken heraus?',
+    'Ich will ein besserer Zuhörer werden.',
+    'Wie setzt man gesunde Grenzen?',
+    'Procrastination — was steckt wirklich dahinter?',
+    'Wie überwindet man innere Blockaden?',
+    'Ich möchte meinen Sinn im Leben finden.',
+    'Wie gehe ich mit Konflikten im Team um?',
+    'Was bedeutet Erfolg wirklich für mich?',
+  ],
+  personal: [
+    'Ich will mutiger werden — wie?',
+    'Wie stärke ich mein Selbstwertgefühl?',
+    'Alte Muster durchbrechen — wo anfangen?',
+    'Ich zweifle ständig an mir selbst.',
+    'Wie lerne ich loszulassen?',
+  ],
+  beruf: [
+    'Ich will Führungskraft werden — was brauche ich?',
+    'Wie kommuniziere ich klarer und direkter?',
+    'Mein Team ist demotiviert — was tun?',
+    'Wie treffe ich schwierige Entscheidungen?',
+    'Work-Life-Balance: Wo ist meine Grenze?',
+  ],
+  beziehung: [
+    'Wie verbessere ich die Kommunikation in meiner Partnerschaft?',
+    'Vertrauen nach einem Vertrauensbruch aufbauen?',
+    'Wie spreche ich schwierige Themen an?',
+    'Immer wieder die gleichen Konflikte — warum?',
+  ],
+  sport: [
+    'Wettkampfangst überwinden — wie?',
+    'Mentale Stärke im entscheidenden Moment?',
+    'Wie motiviere ich mein Team nach einer Niederlage?',
+    'Slump überwinden — was hilft wirklich?',
+  ],
+};
+
+const CHIPS_EN = {
+  alle: [
+    "I'm stuck, even though I try everything.",
+    'How do I find out what my strengths are?',
+    'I want to become a better listener.',
+    'How do I set healthy boundaries?',
+    "Procrastination — what's really behind it?",
+    'How do you overcome inner blocks?',
+    'I want to find purpose in my life.',
+  ],
+  personal: [
+    'I want to be more courageous.',
+    'How do I strengthen my self-worth?',
+    'I doubt myself constantly.',
+  ],
+  beruf: [
+    'I want to become a leader — what do I need?',
+    'How do I communicate more clearly?',
+    'My team is demotivated — what can I do?',
+  ],
+  beziehung: [
+    'How do I improve communication in my relationship?',
+    'How do I rebuild trust after a breach?',
+  ],
+  sport: [
+    'How do I overcome competition anxiety?',
+    'Mental strength in the decisive moment?',
+  ],
+};
+
+// ─── Init ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderPerspektivenGrid();
+  renderChips();
+  loadHistory();
+  document.getElementById('questionInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitQuestion();
+  });
+});
+
+function selectMode(btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  activeMode = btn.dataset.mode;
+  renderChips();
+  // Update placeholder
+  const placeholders = {
+    alle: 'Was möchtest du coachen, verändern oder verstehen?',
+    personal: 'Was möchtest du in dir selbst verändern oder entwickeln?',
+    beruf: 'Welche Führungs- oder Karrierefrage beschäftigt dich?',
+    beziehung: 'Was möchtest du in deiner Beziehung oder mit anderen verbessern?',
+    sport: 'Welche sportliche oder mentale Herausforderung steht an?',
+  };
+  document.getElementById('questionInput').placeholder = placeholders[activeMode] || placeholders['alle'];
+}
+
+function renderPerspektivenGrid() {
+  const grid = document.getElementById('perspektivenGrid');
+  grid.innerHTML = PERSPEKTIVEN.map(p => `
+    <button class="persp-btn ${selectedPerspektiven.includes(p.id) ? 'selected' : ''}"
+      onclick="togglePerspektive('${p.id}')">
+      <span class="persp-icon">${p.icon}</span>
+      <span>${lang === 'de' ? p.de : p.en}</span>
+    </button>
+  `).join('');
+}
+
+function togglePerspektive(id) {
+  const idx = selectedPerspektiven.indexOf(id);
+  if (idx === -1) selectedPerspektiven.push(id);
+  else selectedPerspektiven.splice(idx, 1);
+  renderPerspektivenGrid();
+  renderSelectedChips();
+}
+
+function renderSelectedChips() {
+  const container = document.getElementById('selectedPerspektiven');
+  if (!selectedPerspektiven.length) {
+    container.innerHTML = `<span class="perspektiven-chip-placeholder">${lang === 'de' ? 'Noch keine gewählt — KI wählt automatisch' : 'None selected — AI picks automatically'}</span>`;
+    return;
+  }
+  container.innerHTML = selectedPerspektiven.map(id => {
+    const p = PERSPEKTIVEN.find(x => x.id === id);
+    return `<span class="perspektiven-chip">${p ? (lang === 'de' ? p.de : p.en) : id}
+      <button class="perspektiven-chip-remove" onclick="togglePerspektive('${id}')">×</button>
+    </span>`;
+  }).join('');
+}
+
+function setPerspMode(mode) {
+  perspMode = mode;
+  document.querySelectorAll('.perspektiven-sub-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(`tab-${mode}`).classList.add('active');
+  document.getElementById('mode-auto').style.display = mode === 'auto' ? '' : 'none';
+  document.getElementById('mode-list').style.display = mode === 'list' ? '' : 'none';
+  document.getElementById('mode-custom').style.display = mode === 'custom' ? '' : 'none';
+  document.getElementById('auto-badge').style.display = mode === 'auto' ? '' : 'none';
+}
+
+function renderChips() {
+  const map = lang === 'de' ? CHIPS_DE : CHIPS_EN;
+  const chips = map[activeMode] || map['alle'];
+  document.getElementById('chipsWrap').innerHTML = chips.map(c =>
+    `<button class="chip" onclick="useChip(this)">${c}</button>`
+  ).join('');
+}
+
+function useChip(btn) {
+  document.getElementById('questionInput').value = btn.textContent;
+}
+
+function toggleChips() {
+  chipsVisible = !chipsVisible;
+  document.getElementById('chipsWrap').style.display = chipsVisible ? 'flex' : 'none';
+  document.getElementById('chipsToggleText').textContent = chipsVisible
+    ? (lang === 'de' ? 'Ausblenden' : 'Hide')
+    : (lang === 'de' ? 'Beispiele' : 'Examples');
+}
+
+// ─── Language ─────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.documentElement.lang = l;
+  document.getElementById('btn-de').classList.toggle('active', l === 'de');
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-achtsam').textContent = l === 'de' ? 'achtsam' : 'mindful';
+  document.getElementById('btn-direkt').textContent = l === 'de' ? 'direkt' : 'direct';
+  document.getElementById('hero-sub').textContent = l === 'de'
+    ? 'Life Coach, Executive Coach, Systemischer Coach, Sportcoach, Beziehungscoach, Karrierecoach, NLP-Coach und Therapeutischer Coach analysieren deine Frage aus ihren Perspektiven.'
+    : 'Life coach, executive coach, systemic coach, sports coach, relationship coach, career coach, NLP coach and therapeutic coach analyse your question from their perspectives.';
+  document.getElementById('badge-text').textContent = l === 'de' ? '8 Coaching-Perspektiven · KI-gestützt' : '8 Coaching Perspectives · AI-powered';
+  document.getElementById('btn-text').textContent = l === 'de' ? 'Am Tisch fragen' : 'Ask the table';
+  document.getElementById('loading-text').textContent = l === 'de' ? 'Die Coaches denken mit…' : 'Coaches are reflecting…';
+  document.getElementById('back-text').textContent = l === 'de' ? 'Neue Frage' : 'New question';
+  document.getElementById('copy-text').textContent = l === 'de' ? 'Kopieren' : 'Copy';
+  document.getElementById('synthese-label').textContent = l === 'de' ? 'SYNTHESE' : 'SYNTHESIS';
+  document.getElementById('persp-label').textContent = l === 'de' ? 'Perspektiven' : 'Perspectives';
+  renderChips();
+  renderPerspektivenGrid();
+}
+
+function setTone(t) {
+  tone = t;
+  document.getElementById('btn-achtsam').classList.toggle('active', t === 'achtsam');
+  document.getElementById('btn-direkt').classList.toggle('active', t === 'direkt');
+}
+
+// ─── Submit ────────────────────────────────────────────────────
+async function submitQuestion() {
+  const q = document.getElementById('questionInput').value.trim();
+  if (q.length < 10) { document.getElementById('questionInput').focus(); return; }
+
+  lastQuestion = q;
+  document.getElementById('submitBtn').disabled = true;
+  document.querySelector('.hero').style.display = 'none';
+  document.getElementById('loadingWrap').classList.add('visible');
+  document.getElementById('resultsWrap').classList.remove('visible');
+
+  let perspectives = [];
+  if (perspMode === 'auto' || (perspMode === 'list' && !selectedPerspektiven.length)) {
+    perspectives = PERSPEKTIVEN.slice(0, 8).map(p => lang === 'de' ? p.de : p.en);
+  } else if (perspMode === 'list') {
+    perspectives = selectedPerspektiven.map(id => {
+      const p = PERSPEKTIVEN.find(x => x.id === id);
+      return p ? (lang === 'de' ? p.de : p.en) : id;
+    });
+  } else {
+    const raw = document.getElementById('customPerspInput').value;
+    perspectives = raw.split(',').map(s => s.trim()).filter(Boolean);
+    if (!perspectives.length) perspectives = PERSPEKTIVEN.slice(0, 6).map(p => lang === 'de' ? p.de : p.en);
+  }
+
+  const payload = { question: q, perspectives, stil: 'therapeutisch', register: '', tone, lang, app: 'coachingtisch' };
+
+  const _ctrl0 = new AbortController();
+  const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
+
+  try {
+    const res = await fetch(API + '/api/ask', {
+      signal: _ctrl0.signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    clearTimeout(_tid0);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderResults(data, q, perspectives);
+  } catch (err) {
+    clearTimeout(_tid0);
+    document.getElementById('loadingWrap').classList.remove('visible');
+    document.querySelector('.hero').style.display = '';
+    document.getElementById('submitBtn').disabled = false;
+    alert(lang === 'de' ? `Fehler: ${err.message}` : `Error: ${err.message}`);
+  }
+}
+
+// ─── Render ────────────────────────────────────────────────────
+function renderResults(data, question, perspectives) {
+  lastResults = data;
+  document.getElementById('loadingWrap').classList.remove('visible');
+  document.getElementById('submitBtn').disabled = false;
+
+  document.getElementById('resultsTitle').textContent = question.length > 80 ? question.slice(0,80)+'…' : question;
+  document.getElementById('resultsMeta').textContent = lang === 'de'
+    ? `${perspectives.length} Perspektiven analysiert`
+    : `${perspectives.length} perspectives analysed`;
+
+  const cards = document.getElementById('perspectiveCards');
+  cards.innerHTML = '';
+  (data.perspectives || []).forEach((p, i) => {
+    const def = PERSPEKTIVEN.find(x => (lang==='de'?x.de:x.en).toLowerCase() === (p.role||'').toLowerCase());
+    const color = def ? def.color : `hsl(${i*42%360},60%,60%)`;
+    const icon = def ? def.icon : '🔮';
+    const card = document.createElement('div');
+    card.className = 'perspective-card';
+    card.style.borderTopColor = color;
+    card.style.borderTopWidth = '3px';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-icon" style="background:${color}18;border-color:${color}40;">${icon}</div>
+        <div>
+          <div class="card-role" style="color:${color}">${p.role||''}</div>
+          <div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div>
+        </div>
+      </div>
+      <div class="card-body">${p.kernanalyse||''}</div>
+    `;
+    cards.appendChild(card);
+  });
+
+  if (data.synthese) {
+    document.getElementById('syntheseContent').textContent = data.synthese;
+    document.getElementById('syntheseCard').style.display = '';
+  }
+  document.getElementById('kintegrityWrap').classList.add('visible');
+  document.getElementById('integrityField').value = '';
+  document.getElementById('kintegrityPanels').innerHTML = '';
+
+  document.getElementById('resultsWrap').classList.add('visible');
+  document.getElementById('resultsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  saveToHistory(question, data, perspectives);
+}
+
+// ─── kiNTEGRiTY ────────────────────────────────────────────────
+async function runKintegrity() {
+  if (!lastResults) return;
+  const payload = { question: lastQuestion, perspectives_result: lastResults, integrity_notes: document.getElementById('integrityField').value.trim(), profile: 'coachingtisch_profile', lang };
+  document.getElementById('kintegrityPanels').innerHTML = `<p style="font-size:13px;color:var(--faint);">${lang==='de'?'Prüfe…':'Checking…'}</p>`;
+  const _ctrl = new AbortController();
+  const _tid = setTimeout(() => _ctrl.abort(), 120000);
+  try {
+    const res = await fetch(API + '/api/kintegrity/synthesize', { signal: _ctrl.signal, method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    clearTimeout(_tid);
+    const data = await res.json();
+    document.getElementById('kintegrityPanels').innerHTML = [
+      { key:'synthese', label:'Synthese', color:'var(--accent)' },
+      { key:'grosses_aber', label:'DAS GROßE ABER', color:'var(--amber)' },
+      { key:'fraglich', label:'Fraglich', color:'var(--red)' },
+    ].map(p => `<div class="kintegrity-panel"><div class="kintegrity-panel-label" style="color:${p.color}">${p.label}</div><div class="kintegrity-panel-content">${data[p.key]||'—'}</div></div>`).join('');
+  } catch(err) {
+    clearTimeout(_tid);
+    document.getElementById('kintegrityPanels').innerHTML = `<p style="color:var(--red);font-size:13px;">Fehler: ${err.message}</p>`;
+  }
+}
+
+function copyResults() {
+  if (!lastResults) return;
+  const txt = (lastResults.perspectives||[]).map(p=>`${p.role}:\n${p.kernanalyse}`).join('\n\n');
+  navigator.clipboard.writeText(lastQuestion+'\n\n'+txt);
+}
+
+// ─── History ───────────────────────────────────────────────────
+const HISTORY_KEY = 'tisch_history_v1';
+function saveToHistory(q, data, perspectives) {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+  h.unshift({ id: Date.now(), ts: new Date().toISOString(), app: 'COACHiNG TiSCH', question: q, perspectives, result: data });
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0, 50)));
+}
+function loadHistory() {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x => x.app === 'COACHiNG TiSCH');
+  const body = document.getElementById('historyBody');
+  body.innerHTML = h.length === 0
+    ? `<div class="history-empty">${lang==='de'?'Noch keine Einträge':'No entries yet'}</div>`
+    : h.map(e => `<div class="history-item" onclick="restoreHistory(${e.id})"><div class="history-item-q">${e.question}</div><div class="history-item-meta">${new Date(e.ts).toLocaleDateString('de-DE')} · ${(e.perspectives||[]).length} Perspektiven</div></div>`).join('');
+}
+function restoreHistory(id) {
+  const e = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').find(x=>x.id===id);
+  if (!e) return;
+  lastQuestion = e.question;
+  document.getElementById('questionInput').value = e.question;
+  renderResults(e.result, e.question, e.perspectives||[]);
+  toggleHistory();
+}
+function exportHistory() {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+  const b = new Blob([JSON.stringify(h,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(b);
+  a.download=`coachingtisch-${new Date().toISOString().slice(0,10)}.json`; a.click();
+}
+function toggleHistory() {
+  const p = document.getElementById('historyPanel');
+  const o = document.getElementById('historyOverlay');
+  const open = p.classList.contains('open');
+  p.classList.toggle('open', !open);
+  o.classList.toggle('open', !open);
+  if (!open) loadHistory();
+}
+</script>
+</body>
+</html>

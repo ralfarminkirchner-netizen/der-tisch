@@ -71,6 +71,19 @@ PROFILES = {
         "tone":                        "klar und ausgewogen",
         "special_rules": []
     },
+    "coachingtisch_profile": {
+        "compression_strength":        0.45,
+        "reformulation_conservatism":  0.88,
+        "redundancy_reduction":        0.55,
+        "conflict_visibility":         0.80,
+        "must_keep_sensitivity":       0.95,
+        "tone":                        "empathisch-klar",
+        "special_rules": [
+            "Bewahre die emotionale Nuance jeder Perspektive",
+            "Zeige konstruktive Spannungen zwischen Coaching-Ansätzen auf",
+            "Priorisiere handlungsrelevante Erkenntnisse"
+        ]
+    },
     "trainingstisch_profile": {
         "compression_strength":        0.50,
         "reformulation_conservatism":  0.70,
