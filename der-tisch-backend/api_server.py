@@ -46,6 +46,10 @@ async def serve_trainingstisch():
 async def serve_coachingtisch():
     return FileResponse(Path(__file__).parent / "coachingtisch.html")
 
+@app.get("/medizintisch.html")
+async def serve_medizintisch():
+    return FileResponse(Path(__file__).parent / "medizintisch.html")
+
 @app.post("/api/kintegrity/synthesize", response_model=KintegrityResponse)
 async def api_kintegrity_synthesize(req: KintegrityRequest):
     try:

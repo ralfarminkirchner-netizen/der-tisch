@@ -71,6 +71,19 @@ PROFILES = {
         "tone":                        "klar und ausgewogen",
         "special_rules": []
     },
+    "medizintisch_profile": {
+        "compression_strength":        0.50,
+        "reformulation_conservatism":  0.80,
+        "redundancy_reduction":        0.60,
+        "conflict_visibility":         0.90,
+        "must_keep_sensitivity":       0.95,
+        "tone":                        "klinisch-verständlich",
+        "special_rules": [
+            "Behalte Fachbegriffe, aber erkläre sie kurz",
+            "Zeige unterschiedliche Behandlungsansätze klar auf",
+            "Betone den Haftungshinweis: kein Ersatz für Arztbesuch"
+        ]
+    },
     "coachingtisch_profile": {
         "compression_strength":        0.45,
         "reformulation_conservatism":  0.88,

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!--
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A1E2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MEDiZiN TiSCH">
+<title>MEDiZiN TiSCH — Medizinische Perspektiven am Tisch</title>
+<meta name="description" content="MEDiZiN TiSCH: Hausarzt, Psychosomatik, Ernährungsmedizin, Naturheilkunde, Psychiatrie und mehr analysieren deine medizinische Frage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #0A1E2E;
+  --bg-2:        #0D2438;
+  --surface:     #122840;
+  --surface-2:   #0F2236;
+  --surface-off: #163050;
+  --text:        #E8F4F8;
+  --muted:       #7DAEC4;
+  --faint:       #3A6A82;
+  --border:      #1E3D55;
+  --border-2:    #2A5270;
+  --accent:      #4ECDC4;   /* Mint/Teal */
+  --accent-2:    #E85D75;   /* Medizin-Rot */
+  --accent-dim:  rgba(78,205,196,0.12);
+  --accent-glow: rgba(78,205,196,0.28);
+  --red-dim:     rgba(232,93,117,0.12);
+  --green:       #4ECDC4;
+  --amber:       #F4A261;
+  --red:         #E85D75;
+  --r-card:      14px;
+  --r-btn:       10px;
+  --shadow:      0 2px 16px rgba(0,0,0,0.5);
+  --shadow-lg:   0 8px 40px rgba(0,0,0,0.6);
+  --trans:       0.18s ease;
+  --font:        'Inter', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Hintergrund: feine anatomische Grid-Linien ──────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(78,205,196,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 80%, rgba(232,93,117,0.04) 0%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 44px, rgba(78,205,196,0.025) 44px, rgba(78,205,196,0.025) 45px),
+    repeating-linear-gradient(90deg, transparent, transparent 44px, rgba(78,205,196,0.018) 44px, rgba(78,205,196,0.018) 45px),
+    var(--bg);
+  pointer-events: none;
+}
+
+/* ── Nav ────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(10,30,46,0.94); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  min-height: 72px; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.nav-logo { display: flex; flex-direction: column; line-height: 1; text-decoration: none; gap: 2px; }
+.nav-logo-pre { font-size: 9px; letter-spacing: 0.22em; color: var(--faint); text-transform: uppercase; font-weight: 600; }
+.nav-logo-mark { height: clamp(36px, 5vw, 52px); width: auto; display: block; }
+
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.toggle-group { display: flex; gap: 2px; padding: 3px; background: var(--surface-off); border: 1px solid var(--border); border-radius: 10px; }
+.tgl-btn { border: none; background: transparent; padding: 5px 10px; border-radius: 7px; font-family: inherit; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all var(--trans); white-space: nowrap; }
+.tgl-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.35); }
+.tgl-btn:hover:not(.active) { color: var(--text); }
+.icon-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--trans); }
+.icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ── Main ───────────────────────────────────────────────── */
+main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+/* ── Hero ───────────────────────────────────────────────── */
+.hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 28px 0 36px; text-align: center; }
+.hero-logo-svg { width: min(92vw, 760px); height: auto; display: block; margin: 0 auto 20px; }
+
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--accent-dim); border: 1px solid rgba(78,205,196,0.3); border-radius: 100px; padding: 5px 16px; font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 22px; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2.5s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.6)} }
+
+.hero-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.7; max-width: 540px; }
+
+/* ── Kontext-Modi ───────────────────────────────────────── */
+.mode-selector { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+.mode-btn { display: flex; align-items: center; gap: 6px; border: 1.5px solid var(--border); background: var(--surface-2); border-radius: 10px; padding: 8px 14px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all var(--trans); }
+.mode-btn:hover { border-color: var(--border-2); color: var(--text); }
+.mode-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ── Perspektiven ───────────────────────────────────────── */
+.perspektiven-selector { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; max-width: 680px; }
+.perspektiven-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
+.perspektiven-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.auto-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-dim); border: 1px solid rgba(78,205,196,0.3); border-radius: 100px; padding: 3px 10px; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; }
+.perspektiven-sub-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+.perspektiven-sub-tab { border: 1px solid var(--border); background: transparent; border-radius: 8px; padding: 5px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all var(--trans); }
+.perspektiven-sub-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.perspektiven-sub-tab:hover:not(.active) { color: var(--text); border-color: var(--border-2); }
+.perspektiven-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; }
+.persp-btn { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); background: transparent; border-radius: 9px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all var(--trans); text-align: left; }
+.persp-btn:hover { border-color: var(--border-2); color: var(--text); }
+.persp-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.selected-perspektiven { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; margin-top: 10px; }
+.perspektiven-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-dim); border: 1px solid rgba(78,205,196,0.35); border-radius: 100px; padding: 4px 10px; font-size: 12px; font-weight: 600; color: var(--accent); }
+.perspektiven-chip-remove { background: none; border: none; cursor: pointer; color: var(--accent); font-size: 14px; line-height: 1; padding: 0; opacity: 0.65; transition: opacity var(--trans); }
+.perspektiven-chip-remove:hover { opacity: 1; }
+.perspektiven-chip-placeholder { font-size: 12px; color: var(--faint); font-style: italic; }
+.custom-input { width: 100%; border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; font-family: inherit; font-size: 13px; color: var(--text); background: var(--surface-2); outline: none; transition: border-color var(--trans); }
+.custom-input:focus { border-color: var(--accent); }
+.custom-input::placeholder { color: var(--faint); }
+
+/* ── Haftungshinweis ─────────────────────────────────────── */
+.disclaimer { background: rgba(232,93,117,0.08); border: 1px solid rgba(232,93,117,0.2); border-radius: 10px; padding: 10px 16px; font-size: 12px; color: var(--muted); margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px; max-width: 680px; width: 100%; text-align: left; }
+.disclaimer-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── Input ──────────────────────────────────────────────── */
+.input-wrap { width: 100%; max-width: 680px; }
+.question-input { width: 100%; border: 1.5px solid var(--border); border-radius: 18px; padding: 18px 22px; font-family: inherit; font-size: 15px; color: var(--text); background: var(--surface); resize: none; outline: none; min-height: 80px; max-height: none; line-height: 1.6; box-shadow: var(--shadow); transition: border-color var(--trans), box-shadow var(--trans); margin-bottom: 10px; display: block; }
+.question-input::placeholder { color: var(--faint); }
+.question-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow); }
+
+/* ── Buttons ────────────────────────────────────────────── */
+.action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #061822; border: none; border-radius: var(--r-btn); padding: 13px 28px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all var(--trans); }
+.btn-primary:hover { background: #62E4DC; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(78,205,196,0.4); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn-primary svg { width: 17px; height: 17px; }
+.btn-examples { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: var(--r-btn); padding: 12px 18px; font-family: inherit; font-size: 13px; cursor: pointer; transition: all var(--trans); }
+.btn-examples:hover { border-color: var(--border-2); color: var(--text); }
+.btn-examples svg { width: 14px; height: 14px; }
+.btn-secondary { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 9px; padding: 9px 18px; font-family: inherit; font-size: 13px; cursor: pointer; transition: all var(--trans); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.btn-secondary svg { width: 14px; height: 14px; }
+
+/* ── Chips ──────────────────────────────────────────────── */
+.chips-toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; justify-content: center; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 680px; margin-bottom: 16px; }
+.chip { border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 100px; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer; transition: all var(--trans); }
+.chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ── Loading ─────────────────────────────────────────────── */
+.loading-wrap { display: none; flex-direction: column; align-items: center; padding: 60px 0; gap: 16px; }
+.loading-wrap.visible { display: flex; }
+.loading-ekg { width: 120px; height: 48px; }
+.loading-ekg path { animation: ekg-draw 1.8s linear infinite; stroke-dasharray: 200; stroke-dashoffset: 200; }
+@keyframes ekg-draw { 0%{stroke-dashoffset:200} 60%{stroke-dashoffset:0} 100%{stroke-dashoffset:0;opacity:0} }
+.loading-text { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+/* ── Results ─────────────────────────────────────────────── */
+.results-wrap { display: none; padding: 32px 0 60px; }
+.results-wrap.visible { display: block; }
+.results-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+.results-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.results-meta { font-size: 12px; color: var(--faint); margin-top: 3px; }
+.results-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+.perspective-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.perspective-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-card); padding: 20px; box-shadow: var(--shadow); transition: border-color var(--trans); }
+.perspective-card:hover { border-color: var(--border-2); }
+.card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.card-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1.5px solid var(--border); }
+.card-role { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
+.card-body { font-size: 14px; line-height: 1.7; color: var(--muted); }
+
+/* ── kiNTEGRiTY ─────────────────────────────────────────── */
+.kintegrity-wrap { margin: 0 0 28px; display: none; }
+.kintegrity-wrap.visible { display: block; }
+.integrity-field { background: var(--surface); border: 1.5px solid var(--border); border-top: 3px solid var(--accent); border-radius: var(--r-card); padding: 18px 22px; width: 100%; min-height: 90px; font-family: inherit; font-size: 14px; color: var(--text); resize: vertical; outline: none; display: block; }
+.integrity-field:focus { border-color: var(--accent); }
+.kintegrity-run-btn { display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; background: var(--accent-dim); border: 1px solid rgba(78,205,196,0.3); color: var(--accent); border-radius: 8px; padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all var(--trans); font-family: inherit; }
+.kintegrity-run-btn:hover { background: rgba(78,205,196,0.22); }
+.kintegrity-panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 16px; }
+.kintegrity-panel { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.kintegrity-panel-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.kintegrity-panel-content { font-size: 13px; line-height: 1.65; color: var(--muted); }
+
+/* ── Synthese ────────────────────────────────────────────── */
+.synthese-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-off) 100%); border: 1.5px solid var(--border); border-top: 3px solid var(--accent); border-radius: var(--r-card); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-lg); }
+.synthese-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.synthese-content { font-size: 15px; line-height: 1.75; color: var(--text); }
+
+/* ── History ─────────────────────────────────────────────── */
+.history-panel { position: fixed; inset-y: 0; right: 0; width: 380px; max-width: 100vw; background: var(--surface); border-left: 1px solid var(--border); z-index: 500; transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
+.history-panel.open { transform: translateX(0); }
+.history-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.history-title { font-size: 15px; font-weight: 700; }
+.history-body { flex: 1; overflow-y: auto; padding: 16px; }
+.history-empty { color: var(--faint); font-size: 13px; text-align: center; padding: 40px 0; }
+.history-item { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: border-color var(--trans); }
+.history-item:hover { border-color: var(--border-2); }
+.history-item-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item-meta { font-size: 11px; color: var(--faint); }
+.history-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 499; }
+.history-overlay.open { display: block; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+@media (max-width: 600px) {
+  nav { padding: 0 14px; }
+  main { padding: 0 12px; }
+  .hero { padding: 16px 0 28px; }
+  .perspective-cards { grid-template-columns: 1fr; }
+  .perspektiven-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .history-panel { width: 100vw; }
+  .question-input { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" aria-label="MEDiZiN TiSCH" href="/medizintisch.html" style="text-decoration:none;">
+    <span class="nav-logo-pre">MEDiZiN</span>
+    <svg class="nav-logo-mark" viewBox="0 0 120 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TiSCH">
+      <!-- Tischplatte -->
+      <rect x="4" y="9" width="112" height="9" fill="#4ECDC4" rx="1"/>
+      <!-- Bein links -->
+      <rect x="28" y="18" width="8" height="31" fill="#4ECDC4"/>
+      <!-- Bein rechts -->
+      <rect x="84" y="18" width="8" height="31" fill="#4ECDC4"/>
+      <!-- T -->
+      <text x="4" y="48" font-family="'Inter',sans-serif" font-size="25" font-weight="700" fill="currentColor" letter-spacing="-0.5">T</text>
+      <!-- i klein: Kreuz (Medizin) -->
+      <line x1="95" y1="22" x2="95" y2="32" stroke="#E85D75" stroke-width="3" stroke-linecap="round"/>
+      <line x1="90" y1="27" x2="100" y2="27" stroke="#E85D75" stroke-width="3" stroke-linecap="round"/>
+      <!-- SCH -->
+      <text x="102" y="48" font-family="'Inter',sans-serif" font-size="25" font-weight="700" fill="currentColor" letter-spacing="-0.5">SCH</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <div class="toggle-group">
+      <button class="tgl-btn active" id="btn-de" onclick="setLang('de')">DE</button>
+      <button class="tgl-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="toggle-group">
+      <button class="tgl-btn active" id="btn-achtsam" onclick="setTone('achtsam')">achtsam</button>
+      <button class="tgl-btn" id="btn-direkt" onclick="setTone('direkt')">direkt</button>
+    </div>
+    <button class="icon-btn" onclick="toggleHistory()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+<aside class="history-panel" id="historyPanel">
+  <div class="history-header">
+    <span class="history-title">Verlauf</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-secondary" onclick="exportHistory()" style="padding:5px 10px;font-size:11px;">Export</button>
+      <button class="icon-btn" onclick="toggleHistory()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="history-body" id="historyBody"></div>
+</aside>
+
+<main>
+<section class="hero">
+
+  <!-- ── Hero Logo: MEDiZiN TiSCH ──────────────────────── -->
+  <div style="text-align:center;margin:0 auto 18px;width:100%;">
+    <svg class="hero-logo-svg" viewBox="0 0 760 230" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MEDiZiN TiSCH">
+
+      <!-- Hintergrund-Aura -->
+      <defs>
+        <radialGradient id="med-aura" cx="50%" cy="60%" r="55%">
+          <stop offset="0%" stop-color="#4ECDC4" stop-opacity="0.06"/>
+          <stop offset="100%" stop-color="#4ECDC4" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="760" height="230" fill="url(#med-aura)"/>
+
+      <!-- ── Silhouetten links ── -->
+
+      <!-- Stethoskop (groß, prominent) -->
+      <g transform="translate(8,80)" opacity="0.28">
+        <circle cx="22" cy="10" r="10" fill="none" stroke="#4ECDC4" stroke-width="4"/>
+        <circle cx="22" cy="10" r="5" fill="none" stroke="#4ECDC4" stroke-width="2.5" opacity="0.5"/>
+        <circle cx="54" cy="10" r="10" fill="none" stroke="#4ECDC4" stroke-width="4"/>
+        <circle cx="54" cy="10" r="5" fill="none" stroke="#4ECDC4" stroke-width="2.5" opacity="0.5"/>
+        <path d="M10 10 Q4 10 4 24 Q4 56 38 56 Q72 56 72 24 Q72 10 66 10" fill="none" stroke="#4ECDC4" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="38" cy="60" r="14" fill="#4ECDC4" opacity="0.85"/>
+        <circle cx="38" cy="60" r="8" fill="#0A1E2E" opacity="0.6"/>
+        <circle cx="38" cy="60" r="3" fill="#4ECDC4"/>
+      </g>
+
+      <!-- EKG-Kurve (animiert via SVG) -->
+      <g transform="translate(108,100)" opacity="0.3">
+        <path d="M0 24 L14 24 L20 6 L26 42 L32 2 L38 42 L44 24 L100 24"
+          fill="none" stroke="#E85D75" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Pulse dot -->
+        <circle cx="100" cy="24" r="4" fill="#E85D75" opacity="0.8"/>
+      </g>
+
+      <!-- Mikroskop -->
+      <g transform="translate(148,78)" opacity="0.24">
+        <ellipse cx="16" cy="14" rx="8" ry="12" fill="none" stroke="#4ECDC4" stroke-width="3.5"/>
+        <line x1="16" y1="26" x2="16" y2="52" stroke="#4ECDC4" stroke-width="4"/>
+        <ellipse cx="16" cy="54" rx="14" ry="5" fill="#4ECDC4" opacity="0.8"/>
+        <line x1="16" y1="52" x2="6" y2="64" stroke="#4ECDC4" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="0" y1="64" x2="32" y2="64" stroke="#4ECDC4" stroke-width="3"/>
+        <!-- Objektiv -->
+        <ellipse cx="16" cy="46" rx="10" ry="4" fill="#4ECDC4" opacity="0.6"/>
+        <!-- Tubus arm -->
+        <line x1="8" y1="20" x2="2" y2="36" stroke="#4ECDC4" stroke-width="3" stroke-linecap="round"/>
+      </g>
+
+      <!-- ── Silhouetten rechts ── -->
+
+      <!-- Pflanze/Naturheilkunde -->
+      <g transform="translate(582,82)" opacity="0.26">
+        <!-- Blatt 1 -->
+        <path d="M22 70 C22 70 4 52 6 30 C8 10 22 2 22 2 C22 2 36 10 38 30 C40 52 22 70 22 70Z" fill="#4ECDC4" opacity="0.8"/>
+        <!-- Mittelrippe -->
+        <line x1="22" y1="68" x2="22" y2="6" stroke="#0A1E2E" stroke-width="2" opacity="0.5"/>
+        <!-- Seitenrippen -->
+        <line x1="22" y1="30" x2="10" y2="22" stroke="#0A1E2E" stroke-width="1.5" opacity="0.4"/>
+        <line x1="22" y1="38" x2="34" y2="30" stroke="#0A1E2E" stroke-width="1.5" opacity="0.4"/>
+        <line x1="22" y1="46" x2="12" y2="40" stroke="#0A1E2E" stroke-width="1.5" opacity="0.4"/>
+        <!-- Stiel -->
+        <line x1="22" y1="70" x2="22" y2="84" stroke="#4ECDC4" stroke-width="3" stroke-linecap="round"/>
+        <!-- Blatt 2 (links, kleiner) -->
+        <path d="M14 60 C14 60 0 48 2 34 C4 22 14 18 14 18 C14 18 20 26 18 38 C16 50 14 60 14 60Z" fill="#4ECDC4" opacity="0.55" transform="translate(-4,4)"/>
+      </g>
+
+      <!-- Reagenzglas / Laborröhre -->
+      <g transform="translate(638,76)" opacity="0.26">
+        <rect x="10" y="0" width="16" height="60" rx="8" fill="#4ECDC4" opacity="0.7"/>
+        <line x1="4" y1="10" x2="32" y2="10" stroke="#4ECDC4" stroke-width="3.5"/>
+        <ellipse cx="18" cy="60" rx="8" ry="8" fill="#4ECDC4" opacity="0.9"/>
+        <!-- Flüssigkeit innen -->
+        <rect x="12" y="40" width="12" height="22" rx="6" fill="#4ECDC4" opacity="0.5"/>
+        <!-- Blasen -->
+        <circle cx="15" cy="44" r="2" fill="rgba(255,255,255,0.3)"/>
+        <circle cx="21" cy="50" r="1.5" fill="rgba(255,255,255,0.3)"/>
+      </g>
+
+      <!-- Anatomie-Umriss (Körper simpel) -->
+      <g transform="translate(682,72)" opacity="0.22">
+        <!-- Kopf -->
+        <ellipse cx="26" cy="14" rx="14" ry="14" fill="none" stroke="#4ECDC4" stroke-width="3"/>
+        <!-- Körper -->
+        <path d="M12 28 Q4 36 6 58 L12 56 L12 76 L18 76 L18 56 L26 56 L26 76 L32 76 L32 56 L38 56 L40 28 Q28 32 12 28Z" fill="#4ECDC4" opacity="0.6"/>
+        <!-- Arme -->
+        <line x1="6" y1="36" x2="0" y2="58" stroke="#4ECDC4" stroke-width="3" stroke-linecap="round"/>
+        <line x1="40" y1="36" x2="46" y2="58" stroke="#4ECDC4" stroke-width="3" stroke-linecap="round"/>
+        <!-- Herz (Anatomie) -->
+        <path d="M19 38 C19 38 15 34 17 30 C19 26 23 28 23 31 C23 28 27 26 29 30 C31 34 27 38 23 42 C23 42 19 38 19 38Z" fill="#E85D75" opacity="0.7"/>
+      </g>
+
+      <!-- ── Tagline ── -->
+      <text x="380" y="62" font-family="'Inter','Helvetica Neue',sans-serif" font-size="9.5" font-weight="600" fill="#4ECDC4" letter-spacing="0.22em" text-anchor="middle">MEDIZINISCHE PERSPEKTIVEN AM TiSCH</text>
+
+      <!-- ── Doppel-T Tischplatte ── -->
+      <!-- Linker Balken: MEDiZiN x=188..388 -->
+      <rect x="188" y="74" width="200" height="12" fill="#4ECDC4" rx="1"/>
+      <!-- Rechter Balken: TiSCH x=388..576 -->
+      <rect x="388" y="74" width="188" height="12" fill="#4ECDC4" rx="1"/>
+      <!-- Naht: Rot (Medizin-Kreuz) -->
+      <rect x="384" y="74" width="8" height="12" fill="#E85D75" opacity="0.9"/>
+
+      <!-- Linkes Bein -->
+      <rect x="260" y="86" width="12" height="82" fill="#4ECDC4"/>
+      <!-- Rechtes Bein -->
+      <rect x="475" y="86" width="12" height="82" fill="#4ECDC4"/>
+
+      <!-- "MEDI" rechtsbündig am linken Bein -->
+      <text x="257" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="52" font-weight="300" fill="currentColor" letter-spacing="-1" text-anchor="end">MEDI</text>
+
+      <!-- i₁ = Medizin-Kreuz (zwischen MEDI und ZIN) -->
+      <g transform="translate(267,116)">
+        <rect x="4" y="0" width="8" height="24" rx="4" fill="#E85D75" opacity="0.95"/>
+        <rect x="0" y="8" width="16" height="8" rx="4" fill="#E85D75" opacity="0.95"/>
+      </g>
+
+      <!-- "ZIN" nach linkem Bein -->
+      <text x="293" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="52" font-weight="300" fill="currentColor" letter-spacing="-1">ZIN</text>
+
+      <!-- i₂ = EKG-Herzschlag (nach rechtem Bein) -->
+      <g transform="translate(490,126)">
+        <path d="M0 12 L6 12 L9 3 L12 22 L15 0 L18 22 L21 12 L30 12"
+          fill="none" stroke="#E85D75" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+
+      <!-- "SCH" nach rechtem Bein -->
+      <text x="526" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="52" font-weight="300" fill="currentColor" letter-spacing="-1">SCH</text>
+
+    </svg>
+  </div>
+
+  <!-- Badge -->
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    <span id="badge-text">10 Medizin-Perspektiven · KI-gestützt</span>
+  </div>
+
+  <!-- Haftungshinweis -->
+  <div class="disclaimer">
+    <span class="disclaimer-icon">ℹ️</span>
+    <span id="disclaimer-text">Kein Ersatz für ärztliche Beratung. Die Perspektiven dienen der Orientierung und Reflexion — nicht der Diagnose oder Behandlung.</span>
+  </div>
+
+  <!-- Kontext-Modi -->
+  <div class="mode-selector" id="modeSelector">
+    <button class="mode-btn selected" data-mode="alle" onclick="selectMode(this)">
+      <span>✦</span> <span>Alle Fragen</span>
+    </button>
+    <button class="mode-btn" data-mode="symptome" onclick="selectMode(this)">
+      <span>🔍</span> <span>Symptome</span>
+    </button>
+    <button class="mode-btn" data-mode="chronisch" onclick="selectMode(this)">
+      <span>📅</span> <span>Chronisch</span>
+    </button>
+    <button class="mode-btn" data-mode="mental" onclick="selectMode(this)">
+      <span>🧠</span> <span>Mental Health</span>
+    </button>
+    <button class="mode-btn" data-mode="praevention" onclick="selectMode(this)">
+      <span>🛡️</span> <span>Prävention</span>
+    </button>
+  </div>
+
+  <p class="hero-sub" id="hero-sub">Hausarzt, Internist, Psychosomatik, Psychiatrie, Ernährungsmedizin, Naturheilkunde, Schmerzmedizin, Orthopädie, Neurologie und Integrativmedizin analysieren deine Frage aus verschiedenen Perspektiven.</p>
+
+  <!-- Input -->
+  <div class="input-wrap">
+    <textarea class="question-input" id="questionInput" rows="3"
+      placeholder="Welche medizinische Frage, Symptom oder gesundheitliche Herausforderung beschäftigt dich?"
+      maxlength="1200"></textarea>
+
+    <!-- Perspektiven -->
+    <div class="perspektiven-selector">
+      <div class="perspektiven-header">
+        <span class="perspektiven-title" id="persp-label">Perspektiven</span>
+        <span class="auto-badge" id="auto-badge">
+          <svg viewBox="0 0 12 12" fill="currentColor" width="10" height="10"><path d="M6 1l1.5 3H11l-2.8 2 1 3L6 7.2 2.8 9l1-3L1 4h3.5z"/></svg>
+          KI-Auto aktiv
+        </span>
+      </div>
+      <div class="perspektiven-sub-tabs">
+        <button class="perspektiven-sub-tab active" id="tab-auto" onclick="setPerspMode('auto')">+ KI-Auto</button>
+        <button class="perspektiven-sub-tab" id="tab-list" onclick="setPerspMode('list')">Aus Liste</button>
+        <button class="perspektiven-sub-tab" id="tab-custom" onclick="setPerspMode('custom')">Eigene</button>
+      </div>
+      <div id="mode-auto">
+        <p style="font-size:12px;color:var(--faint);font-style:italic;">KI wählt passende medizinische Perspektiven für deine Frage.</p>
+      </div>
+      <div id="mode-list" style="display:none;">
+        <div class="perspektiven-grid" id="perspektivenGrid"></div>
+        <div class="selected-perspektiven" id="selectedPerspektiven">
+          <span class="perspektiven-chip-placeholder">Noch keine gewählt — KI wählt automatisch</span>
+        </div>
+      </div>
+      <div id="mode-custom" style="display:none;">
+        <input type="text" class="custom-input" id="customPerspInput"
+          placeholder="z.B. Schlafmedizin, Dermatologie, Gastroenterologie..."
+          maxlength="200">
+        <p style="font-size:11px;color:var(--faint);margin-top:6px;">Kommagetrennt</p>
+      </div>
+    </div>
+
+    <div class="chips-toggle-row">
+      <button class="btn-examples" id="chipsToggleBtn" onclick="toggleChips()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        <span id="chipsToggleText">Beispiele</span>
+      </button>
+    </div>
+    <div class="chips-wrap" id="chipsWrap" style="display:none;"></div>
+
+    <div class="action-row">
+      <button class="btn-primary" id="submitBtn" onclick="submitQuestion()">
+        <span id="btn-text">Am Tisch fragen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── Loading ──────────────────────────────────────────────── -->
+<div class="loading-wrap" id="loadingWrap">
+  <svg class="loading-ekg" viewBox="0 0 200 60">
+    <path d="M0 30 L30 30 L42 8 L50 52 L58 4 L66 52 L74 30 L200 30"
+      fill="none" stroke="#4ECDC4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+      stroke-dasharray="300" stroke-dashoffset="300">
+      <animate attributeName="stroke-dashoffset" values="300;0;0" dur="2s" keyTimes="0;0.6;1" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;1;0" dur="2s" keyTimes="0;0.7;1" repeatCount="indefinite"/>
+    </path>
+  </svg>
+  <p class="loading-text" id="loading-text">Die Perspektiven analysieren…</p>
+</div>
+
+<!-- ── Results ──────────────────────────────────────────────── -->
+<div class="results-wrap" id="resultsWrap">
+  <div class="results-header">
+    <div>
+      <div class="results-title" id="resultsTitle"></div>
+      <div class="results-meta" id="resultsMeta"></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        <span id="back-text">Neue Frage</span>
+      </button>
+      <button class="btn-secondary" onclick="copyResults()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span id="copy-text">Kopieren</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="perspective-cards" id="perspectiveCards"></div>
+
+  <div class="kintegrity-wrap" id="kintegrityWrap">
+    <div style="border-top:1px solid var(--border);padding-top:20px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;">kiNTEGRiTY — Integritätsprüfung</div>
+      <textarea class="integrity-field" id="integrityField"
+        placeholder="Wichtige Aspekte notieren, die in der Synthese erhalten bleiben sollen…"
+        rows="3"></textarea>
+    </div>
+    <button class="kintegrity-run-btn" onclick="runKintegrity()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Synthese prüfen
+    </button>
+    <div class="kintegrity-panels" id="kintegrityPanels"></div>
+  </div>
+
+  <div class="synthese-card" id="syntheseCard" style="display:none;">
+    <div class="synthese-label" id="synthese-label">SYNTHESE</div>
+    <div class="synthese-content" id="syntheseContent"></div>
+  </div>
+</div>
+</main>
+
+<script>
+const API = window.location.origin;
+let lang = 'de', tone = 'achtsam', perspMode = 'auto';
+let selectedPerspektiven = [], lastResults = null, lastQuestion = '';
+let chipsVisible = false, activeMode = 'alle';
+
+const PERSPEKTIVEN = [
+  { id: 'hausarzt',     icon: '👨‍⚕️', de: 'Hausarzt / Allgemeinmedizin', en: 'General Practitioner', color: '#4ECDC4' },
+  { id: 'internist',    icon: '🫀',  de: 'Internist',                   en: 'Internist',            color: '#5DADE2' },
+  { id: 'psychosomatik',icon: '🧩',  de: 'Psychosomatik',               en: 'Psychosomatics',       color: '#9B59B6' },
+  { id: 'psychiatrie',  icon: '🧠',  de: 'Psychiatrie',                 en: 'Psychiatry',           color: '#8E44AD' },
+  { id: 'ernaehrmed',   icon: '🥗',  de: 'Ernährungsmedizin',           en: 'Nutritional Medicine', color: '#27AE60' },
+  { id: 'naturheilkunde',icon: '🌿', de: 'Naturheilkunde',              en: 'Naturopathy',          color: '#2ECC71' },
+  { id: 'schmerzmed',   icon: '⚡',  de: 'Schmerzmedizin',              en: 'Pain Medicine',        color: '#E85D75' },
+  { id: 'orthopaedie',  icon: '🦴',  de: 'Orthopädie',                  en: 'Orthopaedics',         color: '#F39C12' },
+  { id: 'neurologie',   icon: '🔬',  de: 'Neurologie',                  en: 'Neurology',            color: '#3498DB' },
+  { id: 'integrativ',   icon: '☯️',  de: 'Integrativmedizin',           en: 'Integrative Medicine', color: '#1ABC9C' },
+  { id: 'sportmed',     icon: '🏃',  de: 'Sportmedizin',                en: 'Sports Medicine',      color: '#E67E22' },
+  { id: 'praevention',  icon: '🛡️',  de: 'Präventivmedizin',            en: 'Preventive Medicine',  color: '#16A085' },
+];
+
+const CHIPS_DE = {
+  alle: [
+    'Ich bin ständig erschöpft — was kann das sein?',
+    'Rücken- und Nackenschmerzen trotz Physiotherapie?',
+    'Bauchschmerzen ohne Befund — was steckt dahinter?',
+    'Ich schlafe schlecht seit Monaten.',
+    'Kopfschmerzen immer zum gleichen Zeitpunkt.',
+    'Gewichtszunahme trotz gesunder Ernährung?',
+    'Was ist der Unterschied zwischen Burnout und Depression?',
+    'Wie stärkt man das Immunsystem nachhaltig?',
+    'Schilddrüse — was muss ich wissen?',
+  ],
+  symptome: [
+    'Ich habe seit Wochen Schwindel — was könnte das sein?',
+    'Herzklopfen ohne körperliche Anstrengung?',
+    'Tinnitus seit dem letzten Konzert.',
+    'Kribbeln in den Fingern morgens beim Aufwachen.',
+    'Verdauungsprobleme nach dem Essen.',
+  ],
+  chronisch: [
+    'Leben mit Rheuma — was hilft langfristig?',
+    'Fibromyalgie — welche Behandlungsansätze gibt es?',
+    'Diabetes Typ 2 selbst positiv beeinflussen?',
+    'Chronische Migräne — was sind die besten Ansätze?',
+    'Morbus Crohn — Ernährung und Lebensstil?',
+  ],
+  mental: [
+    'Angststörung — was hilft neben Therapie?',
+    'Burnout und Wiedereinstieg — wie gelingt der?',
+    'Depression und Schlaf — welcher Zusammenhang?',
+    'ADHS im Erwachsenenalter — Diagnose und Wege?',
+    'Trauma und körperliche Symptome.',
+  ],
+  praevention: [
+    'Was sind die wichtigsten Vorsorgeuntersuchungen?',
+    'Wie erkenne ich erste Anzeichen von Herzproblemen?',
+    'Prävention von Typ-2-Diabetes — was wirklich hilft.',
+    'Krebsvorsorge — welche Checks wann?',
+  ],
+};
+
+const CHIPS_EN = {
+  alle: [
+    "I'm constantly exhausted — what could it be?",
+    'Back and neck pain despite physiotherapy?',
+    'Abdominal pain with no findings — what could be behind it?',
+    "I've been sleeping badly for months.",
+    'Headaches always at the same time.',
+  ],
+  symptome: ["Dizziness for weeks — what could it be?", 'Heart palpitations without exertion?'],
+  chronisch: ['Living with rheumatism — what helps long term?', 'Fibromyalgia — what treatments are available?'],
+  mental: ['Anxiety disorder — what helps besides therapy?', 'Burnout and returning to work.'],
+  praevention: ['What are the most important check-ups?', 'How do I recognise early signs of heart problems?'],
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPerspektivenGrid(); renderChips(); loadHistory();
+  document.getElementById('questionInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitQuestion();
+  });
+});
+
+function selectMode(btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  activeMode = btn.dataset.mode;
+  renderChips();
+  const ph = {
+    alle: 'Welche medizinische Frage, Symptom oder gesundheitliche Herausforderung beschäftigt dich?',
+    symptome: 'Welches Symptom oder welche Beschwerden beschäftigen dich?',
+    chronisch: 'Welche chronische Erkrankung oder langfristige Herausforderung?',
+    mental: 'Welche Frage zur mentalen Gesundheit, Psyche oder Psychosomatik?',
+    praevention: 'Wie kann ich Krankheiten vorbeugen oder meine Gesundheit stärken?',
+  };
+  document.getElementById('questionInput').placeholder = ph[activeMode] || ph['alle'];
+}
+
+function renderPerspektivenGrid() {
+  document.getElementById('perspektivenGrid').innerHTML = PERSPEKTIVEN.map(p => `
+    <button class="persp-btn ${selectedPerspektiven.includes(p.id)?'selected':''}" onclick="togglePerspektive('${p.id}')">
+      <span style="font-size:15px">${p.icon}</span>
+      <span>${lang==='de'?p.de:p.en}</span>
+    </button>`).join('');
+}
+
+function togglePerspektive(id) {
+  const i = selectedPerspektiven.indexOf(id);
+  if (i === -1) selectedPerspektiven.push(id); else selectedPerspektiven.splice(i, 1);
+  renderPerspektivenGrid(); renderSelectedChips();
+}
+
+function renderSelectedChips() {
+  const c = document.getElementById('selectedPerspektiven');
+  if (!selectedPerspektiven.length) { c.innerHTML = `<span class="perspektiven-chip-placeholder">${lang==='de'?'Noch keine gewählt':'None selected'}</span>`; return; }
+  c.innerHTML = selectedPerspektiven.map(id => {
+    const p = PERSPEKTIVEN.find(x => x.id===id);
+    return `<span class="perspektiven-chip">${p?(lang==='de'?p.de:p.en):id}<button class="perspektiven-chip-remove" onclick="togglePerspektive('${id}')">×</button></span>`;
+  }).join('');
+}
+
+function setPerspMode(mode) {
+  perspMode = mode;
+  document.querySelectorAll('.perspektiven-sub-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(`tab-${mode}`).classList.add('active');
+  ['auto','list','custom'].forEach(m => document.getElementById(`mode-${m}`).style.display = m===mode?'':'none');
+  document.getElementById('auto-badge').style.display = mode==='auto'?'':'none';
+}
+
+function renderChips() {
+  const map = lang==='de' ? CHIPS_DE : CHIPS_EN;
+  const chips = map[activeMode] || map['alle'];
+  document.getElementById('chipsWrap').innerHTML = chips.map(c =>
+    `<button class="chip" onclick="document.getElementById('questionInput').value=this.textContent">${c}</button>`
+  ).join('');
+}
+
+function toggleChips() {
+  chipsVisible = !chipsVisible;
+  document.getElementById('chipsWrap').style.display = chipsVisible ? 'flex' : 'none';
+  document.getElementById('chipsToggleText').textContent = chipsVisible ? (lang==='de'?'Ausblenden':'Hide') : (lang==='de'?'Beispiele':'Examples');
+}
+
+function setLang(l) {
+  lang = l;
+  document.documentElement.lang = l;
+  document.getElementById('btn-de').classList.toggle('active', l==='de');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-achtsam').textContent = l==='de'?'achtsam':'mindful';
+  document.getElementById('btn-direkt').textContent = l==='de'?'direkt':'direct';
+  document.getElementById('hero-sub').textContent = l==='de'
+    ? 'Hausarzt, Internist, Psychosomatik, Psychiatrie, Ernährungsmedizin, Naturheilkunde, Schmerzmedizin, Orthopädie, Neurologie und Integrativmedizin analysieren deine Frage.'
+    : 'GP, internist, psychosomatics, psychiatry, nutritional medicine, naturopathy, pain medicine, orthopaedics, neurology and integrative medicine analyse your question.';
+  document.getElementById('badge-text').textContent = l==='de'?'10 Medizin-Perspektiven · KI-gestützt':'10 Medical Perspectives · AI-powered';
+  document.getElementById('disclaimer-text').textContent = l==='de'
+    ? 'Kein Ersatz für ärztliche Beratung. Die Perspektiven dienen der Orientierung und Reflexion — nicht der Diagnose oder Behandlung.'
+    : 'Not a substitute for medical advice. Perspectives serve orientation and reflection — not diagnosis or treatment.';
+  document.getElementById('btn-text').textContent = l==='de'?'Am Tisch fragen':'Ask the table';
+  document.getElementById('loading-text').textContent = l==='de'?'Die Perspektiven analysieren…':'Analysing perspectives…';
+  document.getElementById('back-text').textContent = l==='de'?'Neue Frage':'New question';
+  document.getElementById('copy-text').textContent = l==='de'?'Kopieren':'Copy';
+  document.getElementById('synthese-label').textContent = l==='de'?'SYNTHESE':'SYNTHESIS';
+  document.getElementById('persp-label').textContent = l==='de'?'Perspektiven':'Perspectives';
+  renderChips(); renderPerspektivenGrid();
+}
+
+function setTone(t) {
+  tone = t;
+  document.getElementById('btn-achtsam').classList.toggle('active', t==='achtsam');
+  document.getElementById('btn-direkt').classList.toggle('active', t==='direkt');
+}
+
+async function submitQuestion() {
+  const q = document.getElementById('questionInput').value.trim();
+  if (q.length < 10) { document.getElementById('questionInput').focus(); return; }
+  lastQuestion = q;
+  document.getElementById('submitBtn').disabled = true;
+  document.querySelector('.hero').style.display = 'none';
+  document.getElementById('loadingWrap').classList.add('visible');
+  document.getElementById('resultsWrap').classList.remove('visible');
+
+  let perspectives = [];
+  if (perspMode==='auto' || (perspMode==='list' && !selectedPerspektiven.length)) {
+    perspectives = PERSPEKTIVEN.slice(0,8).map(p => lang==='de'?p.de:p.en);
+  } else if (perspMode==='list') {
+    perspectives = selectedPerspektiven.map(id => { const p=PERSPEKTIVEN.find(x=>x.id===id); return p?(lang==='de'?p.de:p.en):id; });
+  } else {
+    const raw = document.getElementById('customPerspInput').value;
+    perspectives = raw.split(',').map(s=>s.trim()).filter(Boolean);
+    if (!perspectives.length) perspectives = PERSPEKTIVEN.slice(0,6).map(p=>lang==='de'?p.de:p.en);
+  }
+
+  const payload = { question: q, perspectives, stil: 'akademisch', register: 'fachsprache', tone, lang, app: 'medizintisch' };
+  const _ctrl = new AbortController();
+  const _tid = setTimeout(() => _ctrl.abort(), 120000);
+  try {
+    const res = await fetch(API + '/api/ask', { signal: _ctrl.signal, method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    clearTimeout(_tid);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    renderResults(await res.json(), q, perspectives);
+  } catch(err) {
+    clearTimeout(_tid);
+    document.getElementById('loadingWrap').classList.remove('visible');
+    document.querySelector('.hero').style.display = '';
+    document.getElementById('submitBtn').disabled = false;
+    alert(lang==='de'?`Fehler: ${err.message}`:`Error: ${err.message}`);
+  }
+}
+
+function renderResults(data, question, perspectives) {
+  lastResults = data;
+  document.getElementById('loadingWrap').classList.remove('visible');
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('resultsTitle').textContent = question.length>80?question.slice(0,80)+'…':question;
+  document.getElementById('resultsMeta').textContent = lang==='de'?`${perspectives.length} Perspektiven analysiert`:`${perspectives.length} perspectives analysed`;
+
+  const cards = document.getElementById('perspectiveCards');
+  cards.innerHTML = '';
+  (data.perspectives||[]).forEach((p,i) => {
+    const def = PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===(p.role||'').toLowerCase());
+    const color = def ? def.color : `hsl(${i*38%360},55%,55%)`;
+    const icon = def ? def.icon : '🏥';
+    const card = document.createElement('div');
+    card.className = 'perspective-card';
+    card.style.borderTopColor = color; card.style.borderTopWidth = '3px';
+    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;">${icon}</div><div><div class="card-role" style="color:${color}">${p.role||''}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
+    cards.appendChild(card);
+  });
+
+  if (data.synthese) { document.getElementById('syntheseContent').textContent=data.synthese; document.getElementById('syntheseCard').style.display=''; }
+  document.getElementById('kintegrityWrap').classList.add('visible');
+  document.getElementById('integrityField').value='';
+  document.getElementById('kintegrityPanels').innerHTML='';
+  document.getElementById('resultsWrap').classList.add('visible');
+  document.getElementById('resultsWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  saveToHistory(question, data, perspectives);
+}
+
+async function runKintegrity() {
+  if (!lastResults) return;
+  const payload = { question: lastQuestion, perspectives_result: lastResults, integrity_notes: document.getElementById('integrityField').value.trim(), profile: 'medizintisch_profile', lang };
+  document.getElementById('kintegrityPanels').innerHTML = `<p style="font-size:13px;color:var(--faint);">${lang==='de'?'Prüfe…':'Checking…'}</p>`;
+  const _ctrl = new AbortController(); const _tid = setTimeout(()=>_ctrl.abort(),120000);
+  try {
+    const res = await fetch(API+'/api/kintegrity/synthesize',{signal:_ctrl.signal,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    clearTimeout(_tid);
+    const d = await res.json();
+    document.getElementById('kintegrityPanels').innerHTML = [
+      {key:'synthese',label:'Synthese',color:'var(--accent)'},
+      {key:'grosses_aber',label:'DAS GROßE ABER',color:'var(--amber)'},
+      {key:'fraglich',label:'Fraglich',color:'var(--red)'},
+    ].map(p=>`<div class="kintegrity-panel"><div class="kintegrity-panel-label" style="color:${p.color}">${p.label}</div><div class="kintegrity-panel-content">${d[p.key]||'—'}</div></div>`).join('');
+  } catch(err) { clearTimeout(_tid); document.getElementById('kintegrityPanels').innerHTML=`<p style="color:var(--red);font-size:13px;">Fehler: ${err.message}</p>`; }
+}
+
+function copyResults() {
+  if (!lastResults) return;
+  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${p.role}:\n${p.kernanalyse}`).join('\n\n'));
+}
+
+const HISTORY_KEY = 'tisch_history_v1';
+function saveToHistory(q,data,perspectives) {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+  h.unshift({id:Date.now(),ts:new Date().toISOString(),app:'MEDiZiN TiSCH',question:q,perspectives,result:data});
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(h.slice(0,50)));
+}
+function loadHistory() {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x.app==='MEDiZiN TiSCH');
+  document.getElementById('historyBody').innerHTML = h.length===0
+    ? `<div class="history-empty">${lang==='de'?'Noch keine Einträge':'No entries yet'}</div>`
+    : h.map(e=>`<div class="history-item" onclick="restoreHistory(${e.id})"><div class="history-item-q">${e.question}</div><div class="history-item-meta">${new Date(e.ts).toLocaleDateString('de-DE')} · ${(e.perspectives||[]).length} Perspektiven</div></div>`).join('');
+}
+function restoreHistory(id) {
+  const e=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').find(x=>x.id===id);
+  if(!e)return; lastQuestion=e.question;
+  document.getElementById('questionInput').value=e.question;
+  renderResults(e.result,e.question,e.perspectives||[]); toggleHistory();
+}
+function exportHistory() {
+  const b=new Blob([JSON.stringify(JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`medizintisch-${new Date().toISOString().slice(0,10)}.json`; a.click();
+}
+function toggleHistory() {
+  const p=document.getElementById('historyPanel'),o=document.getElementById('historyOverlay');
+  const open=p.classList.contains('open');
+  p.classList.toggle('open',!open); o.classList.toggle('open',!open);
+  if(!open) loadHistory();
+}
+</script>
+</body>
+</html>
