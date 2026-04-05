@@ -1,14 +1,9 @@
 """
 kiNTEGRiTY — Shared Core Synthesis Module
-Integrity-preserving condensation, synthesis, differentiation, and structured
-separation engine for the entire MiNDLAXY app family.
-
-Used by: TiSCH-Familie (TEAM, iNTEGRATiON, DER, EXPERTiSEN, LiTERATUR),
-         MOONFiNGERS, BRaiNSTORM SPiRAL, EiN SEiN, and others.
+Integrity-preserving condensation engine for the TiSCH family.
 """
 from __future__ import annotations
-from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Optional
 from pydantic import BaseModel, Field
 import anthropic, os, json
 
@@ -67,62 +62,6 @@ PROFILES = {
             "Literarische Formulierungen nicht glätten",
         ]
     },
-    # ── MOONFiNGERS ──────────────────────────────────────────
-    # Kontemplativ-differenzierend: maximale Differenzsensibilität,
-    # Originalsprache heiliger Texte bewahren, Brücken nur bei
-    # nachgewiesener struktureller Invarianz.
-    "moonfingers_profile": {
-        "compression_strength":        0.35,
-        "reformulation_conservatism":  0.90,
-        "redundancy_reduction":        0.40,
-        "conflict_visibility":         0.95,
-        "must_keep_sensitivity":       0.95,
-        "tone":                        "kontemplativ-differenzierend",
-        "special_rules": [
-            "Traditionen nie gleichsetzen ohne explizite strukturelle Begründung",
-            "Oberflächliche Wortähnlichkeit als solche markieren",
-            "Inkommensurabilitäten benennen und bewahren, nicht wegerklären",
-            "Brücken nur bei nachgewiesener struktureller Invarianz",
-            "Erfahrungsdimensionen phänomenologisch beschreiben, nicht interpretativ einebnen",
-            "Metaphern verschiedener Traditionen nicht automatisch gleichsetzen",
-            "Bei Vergleichen immer die Vergleichsebene explizit benennen",
-        ]
-    },
-    # ── EiN SEiN ──────────────────────────────────────────────
-    # Explorativ-kartografisch: für die Erkundung der Geschichte
-    # des Seins; bewahrt historische Kontexte und Verbindungen.
-    "einsein_profile": {
-        "compression_strength":        0.50,
-        "reformulation_conservatism":  0.75,
-        "redundancy_reduction":        0.55,
-        "conflict_visibility":         0.80,
-        "must_keep_sensitivity":       0.90,
-        "tone":                        "explorativ-kartografisch",
-        "special_rules": [
-            "Historische Kontexte und Epochenzuordnungen bewahren",
-            "Verbindungen zwischen Traditionen explizit benennen und begründen",
-            "Gamification-relevante Entdeckungen hervorheben",
-            "Fog-of-War-Status respektieren: noch nicht Entdecktes nicht vorwegnehmen",
-        ]
-    },
-    # ── BRaiNSTORM SPiRAL ─────────────────────────────────────
-    # Generativ-spiralförmig: maximale Offenheit für neue Ideen,
-    # Reibung als produktive Kraft, Synthese ohne Schließung.
-    "brainstorm_spiral_profile": {
-        "compression_strength":        0.30,
-        "reformulation_conservatism":  0.85,
-        "redundancy_reduction":        0.35,
-        "conflict_visibility":         0.70,
-        "must_keep_sensitivity":       0.95,
-        "tone":                        "generativ-spiralförmig",
-        "special_rules": [
-            "Originalformulierungen maximal bewahren — Ideen sind heilig",
-            "Keine vorzeitige Schließung von Widersprüchen",
-            "Reibung zwischen Ideen als produktive Kraft sichtbar machen",
-            "Synthesepotenzial und Novelty-Score für Ideenpaare ausweisen",
-            "Ghost-Ideen (implizite, noch nicht formulierte) benennen",
-        ]
-    },
     "default_profile": {
         "compression_strength":        0.60,
         "reformulation_conservatism":  0.70,
@@ -131,6 +70,19 @@ PROFILES = {
         "must_keep_sensitivity":       0.85,
         "tone":                        "klar und ausgewogen",
         "special_rules": []
+    },
+    "trainingstisch_profile": {
+        "compression_strength":        0.50,
+        "reformulation_conservatism":  0.70,
+        "redundancy_reduction":        0.60,
+        "conflict_visibility":         0.88,
+        "must_keep_sensitivity":       0.92,
+        "tone":                        "sportlich-präzise",
+        "special_rules": [
+            "Priorisiere praktisch umsetzbare Empfehlungen",
+            "Behalte sportartspezifische Fachbegriffe bei",
+            "Zeige Widersprüche zwischen Perspektiven klar auf"
+        ]
     },
 }
 
@@ -163,74 +115,6 @@ class KintegrityResponse(BaseModel):
     provenance: List[ProvenanceEntry]
     must_keep_honored: bool
     confidence: float
-
-
-# ============================================================
-# MOONFiNGERS-SPECIFIC MODELS
-# ============================================================
-class RelationType(str, Enum):
-    """The 12 MOONFiNGERS relation types."""
-    STRUCTURAL_PROXIMITY        = "structural_proximity"
-    ANALOGY                     = "analogy"
-    CONTRAST                    = "contrast"
-    TENSION                     = "tension"
-    TRANSLATABILITY             = "translatability"
-    PARTIAL_TRANSLATABILITY     = "partial_translatability"
-    BRIDGE_VIA_THIRD            = "bridge_via_third"
-    INCOMMENSURABLE             = "incommensurable"
-    SAME_METAPHOR_DIFF_ONTOLOGY = "same_metaphor_different_ontology"
-    SIMILAR_EFFECT_DIFF_LOGIC   = "similar_effect_different_logic"
-    SAME_QUESTION_DIFF_ANSWER   = "same_question_different_answer"
-    SAME_PRAXIS_DIFF_FRAMING    = "same_praxis_different_framing"
-
-class ComparisonLevel(str, Enum):
-    """The level at which a comparison operates."""
-    FUNCTIONAL   = "funktional"
-    ONTOLOGICAL  = "ontologisch"
-    LINGUISTIC   = "sprachlich"
-    HISTORICAL   = "historisch"
-    EXPERIENTIAL = "erfahrungsbezogen"
-    METAPHORICAL = "metaphorisch"
-    STRUCTURAL   = "strukturell"
-    PARTIAL      = "teilweise"
-    NONE         = "nicht vergleichbar"
-
-class BridgeStatus(str, Enum):
-    CONFIRMED   = "gesichert"
-    PLAUSIBLE   = "plausibel"
-    EXPLORATIVE = "explorativ"
-    CONTESTED   = "strittig"
-
-class BridgeAnalysis(BaseModel):
-    """Deep analysis of a bridge between two entities."""
-    entity_a: str
-    entity_b: str
-    relation_type: str           # one of RelationType values
-    comparison_level: str        # one of ComparisonLevel values
-    confidence: float = 0.5
-    status: str = "explorativ"   # one of BridgeStatus values
-    justification: str = ""
-    translation_risk: str = ""
-    limitations: str = ""
-
-class Incommensurability(BaseModel):
-    """Documents a genuine incommensurability between entities."""
-    entities: List[str]
-    reason: str
-    why_not_resolvable: str = ""
-
-class MoonfingersResponse(BaseModel):
-    """Extended kiNTEGRiTY response for MOONFiNGERS with bridge analysis."""
-    synthesis: str
-    aber_section: str
-    questionable: str
-    redundancies_removed: List[str]
-    provenance: List[ProvenanceEntry]
-    must_keep_honored: bool
-    confidence: float
-    bridge_analysis: List[BridgeAnalysis] = []
-    incommensurabilities: List[Incommensurability] = []
-    open_questions: List[str] = []
 
 # ============================================================
 # PROMPT BUILDER
@@ -266,38 +150,6 @@ Must-Keep-Sensitivität: {must_keep_s:.0%}
 === ENDE MUST-KEEP ===
 """
 
-    # MOONFiNGERS extended output schema
-    is_moonfingers = req.profile == "moonfingers_profile"
-    extra_fields = ""
-    extra_instructions = ""
-    if is_moonfingers:
-        extra_fields = """,
-  "bridge_analysis": [
-    {{
-      "entity_a": "...",
-      "entity_b": "...",
-      "relation_type": "structural_proximity|analogy|contrast|tension|translatability|partial_translatability|bridge_via_third|incommensurable|same_metaphor_different_ontology|similar_effect_different_logic|same_question_different_answer|same_praxis_different_framing",
-      "comparison_level": "funktional|ontologisch|sprachlich|historisch|erfahrungsbezogen|metaphorisch|strukturell|teilweise|nicht vergleichbar",
-      "confidence": 0.8,
-      "status": "gesichert|plausibel|explorativ|strittig",
-      "justification": "...",
-      "translation_risk": "...",
-      "limitations": "..."
-    }}
-  ],
-  "incommensurabilities": [
-    {{"entities": ["...", "..."], "reason": "...", "why_not_resolvable": "..."}}
-  ],
-  "open_questions": ["..."]"""
-        extra_instructions = """
-
-MOONFiNGERS-SPEZIFISCH:
-6. Für jedes Paar von Eingabeblöcken: Prüfe die Art der Verbindung
-   (strukturelle Nähe, Analogie, Kontrast, Spannung, Übersetzbarkeit, etc.)
-7. Identifiziere echte Inkommensurabilitäten — und begründe, warum sie nicht auflösbar sind
-8. Benenne offene Fragen, die das System nicht beantworten kann
-9. Brücken nur bei nachgewiesener struktureller Invarianz, nicht bei Wortähnlichkeit"""
-
     system_prompt = f"""Du bist kiNTEGRiTY — eine integritätswahrende Synthese-Engine.
 Du fasst NICHT einfach zusammen. Du destillierst strukturiert:
 
@@ -320,7 +172,7 @@ KERNREGELN:
 2. Was widersprüchlich ist, ist nicht automatisch falsch — separat ausweisen
 3. Inkommensurabel ≠ falsch ≠ wertlos
 4. Das Syntheseresultat ist KEIN Endresultat, sondern editierbares Arbeitsmaterial
-5. Faktisch Fragwürdiges SEPARAT ausweisen, nicht löschen{extra_instructions}
+5. Faktisch Fragwürdiges SEPARAT ausweisen, nicht löschen
 
 AUSGABE: Antworte NUR mit einem JSON-Objekt, keine Prosa davor oder danach.
 JSON-Schema:
@@ -331,7 +183,7 @@ JSON-Schema:
   "redundancies_removed": ["...", "..."],
   "provenance": [{{"synthesis_passage": "...", "source_ids": ["id1"]}}],
   "must_keep_honored": true,
-  "confidence": 0.85{extra_fields}
+  "confidence": 0.85
 }}"""
 
     user_content = f"""AUSGANGSFRAGE / KONTEXT: {req.question or '(nicht angegeben)'}
@@ -350,24 +202,15 @@ Gib NUR das JSON zurück."""
 # ============================================================
 # MAIN SYNTHESIS FUNCTION
 # ============================================================
-async def kintegrity_synthesize(
-    req: KintegrityRequest,
-) -> Union[KintegrityResponse, MoonfingersResponse]:
-    """
-    Run kiNTEGRiTY synthesis. Returns MoonfingersResponse when
-    profile == 'moonfingers_profile', else standard KintegrityResponse.
-    """
+async def kintegrity_synthesize(req: KintegrityRequest) -> KintegrityResponse:
     import asyncio
 
     system_prompt, user_content = build_kintegrity_prompt(req)
 
-    # MOONFiNGERS needs more tokens for bridge analysis
-    max_tokens = 4096 if req.profile == "moonfingers_profile" else 2400
-
     def _call():
         msg = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=max_tokens,
+            max_tokens=2400,
             system=system_prompt,
             messages=[{"role": "user", "content": user_content}]
         )
@@ -400,7 +243,7 @@ async def kintegrity_synthesize(
         for p in data.get("provenance", [])
     ]
 
-    base_kwargs = dict(
+    return KintegrityResponse(
         synthesis=data.get("synthesis", ""),
         aber_section=data.get("aber_section", ""),
         questionable=data.get("questionable", ""),
@@ -409,22 +252,3 @@ async def kintegrity_synthesize(
         must_keep_honored=data.get("must_keep_honored", True),
         confidence=float(data.get("confidence", 0.8)),
     )
-
-    # MOONFiNGERS: return extended response with bridge analysis
-    if req.profile == "moonfingers_profile":
-        bridges = [
-            BridgeAnalysis(**b) for b in data.get("bridge_analysis", [])
-            if isinstance(b, dict)
-        ]
-        incomm = [
-            Incommensurability(**i) for i in data.get("incommensurabilities", [])
-            if isinstance(i, dict)
-        ]
-        return MoonfingersResponse(
-            **base_kwargs,
-            bridge_analysis=bridges,
-            incommensurabilities=incomm,
-            open_questions=data.get("open_questions", []),
-        )
-
-    return KintegrityResponse(**base_kwargs)
