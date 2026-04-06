@@ -71,6 +71,20 @@ PROFILES = {
         "tone":                        "klar und ausgewogen",
         "special_rules": []
     },
+    "familientisch_profile": {
+        "compression_strength":        0.42,
+        "reformulation_conservatism":  0.90,
+        "redundancy_reduction":        0.50,
+        "conflict_visibility":         0.88,
+        "must_keep_sensitivity":       0.96,
+        "tone":                        "empathisch-systemisch",
+        "special_rules": [
+            "Bewahre emotionale Nuancen und Beziehungsdynamiken",
+            "Zeige Muster und Wiederholungen über Generationen auf",
+            "Ressourcenorientiert: Staerken der Familie hervorheben",
+            "Kein Schuldzuweisen, systemische Perspektive halten"
+        ]
+    },
     "juristisch_profile": {
         "compression_strength":        0.55,
         "reformulation_conservatism":  0.85,

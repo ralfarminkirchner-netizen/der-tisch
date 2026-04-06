@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAMiLiEN TiSCH — Familiäre Perspektiven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --accent: #C4622D;
+  --accent-dim: rgba(196,98,45,0.12);
+  --accent-glow: rgba(196,98,45,0.28);
+  --bg: #100A06;
+  --surface: #1A100A;
+  --text: #F5EDE6;
+  --muted: #9A7A6A;
+  --faint: #4A3028;
+  --border: #2A1810;
+  --font: 'Inter', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-svg{flex-shrink:0}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.nav-btn svg{flex-shrink:0}
+
+/* HERO */
+.hero{text-align:center;padding:48px 24px 36px;position:relative;overflow:hidden}
+.hero-tagline{font-size:11px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
+.hero-svg-wrap{position:relative;display:flex;align-items:center;justify-content:center;max-width:780px;margin:0 auto}
+.hero-svg-wrap svg.hero-main{width:100%;max-width:760px;height:auto}
+.hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
+
+/* MODE TABS */
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
+.mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
+.mode-tab:not(.active):hover{color:var(--text)}
+
+/* SECTION CONTAINERS */
+.mode-section{display:none}
+.mode-section.active{display:block}
+
+/* PERSPEKTIVEN MODE */
+.container{max-width:860px;margin:0 auto;padding:0 20px}
+.section{padding:32px 0}
+
+/* FILTER BUTTONS */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;justify-content:center}
+.filter-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:12px;letter-spacing:.05em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* EXAMPLE CHIPS */
+.chips-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
+.chip{padding:7px 14px;border:1px solid var(--faint);border-radius:16px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent}
+.chip:hover{border-color:var(--accent);color:var(--text);background:var(--accent-dim)}
+
+/* INPUT AREA */
+.input-wrap{position:relative;margin-bottom:20px}
+.input-wrap textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 52px 16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;max-height:200px;outline:none;transition:border-color .2s;line-height:1.6}
+.input-wrap textarea::placeholder{color:var(--muted)}
+.input-wrap textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.input-wrap .send-btn{position:absolute;right:12px;bottom:14px;background:var(--accent);border:none;color:#fff;width:34px;height:34px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s}
+.input-wrap .send-btn:hover{opacity:.85}
+.input-wrap .send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* PERSPECTIVE GRID */
+.persp-grid-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+.persp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:24px}
+.persp-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.persp-card.active{border-color:var(--accent);background:var(--accent-dim);color:var(--text)}
+.persp-card:hover:not(.active){border-color:var(--faint);color:var(--text)}
+.persp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* CONTROLS ROW */
+.controls-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+.ctrl-group{display:flex;gap:4px}
+.ctrl-btn{padding:7px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;letter-spacing:.04em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.ctrl-btn:hover,.ctrl-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.ctrl-sep{width:1px;background:var(--border);margin:0 4px;align-self:stretch}
+
+/* RESULTS */
+.results{margin-top:28px}
+.results-header{font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;transition:border-color .3s}
+.result-card:hover{border-color:var(--faint)}
+.result-card-header{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.result-card-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.result-card-title{flex:1;font-size:14px;font-weight:600;color:var(--text)}
+.result-card-badge{font-size:10px;letter-spacing:.08em;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:10px}
+.result-card-chevron{color:var(--muted);transition:transform .3s}
+.result-card.open .result-card-chevron{transform:rotate(180deg)}
+.result-card-body{padding:0 16px 0;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.result-card.open .result-card-body{max-height:2000px;padding:0 16px 16px}
+.result-card-body p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:10px}
+.result-card-body p:last-child{margin-bottom:0}
+.streaming-text{color:var(--muted);font-size:14px;line-height:1.7}
+
+/* LOADER */
+.loader{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;padding:20px 0}
+.loader-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 1.2s infinite}
+.loader-dot:nth-child(2){animation-delay:.2s}
+.loader-dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+/* KINTEGRITAT */
+.kintegrity{margin-top:32px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.kintegrity-title{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.kintegrity-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.kintegrity-items{display:flex;flex-wrap:wrap;gap:8px}
+.kintegrity-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px}
+.kintegrity-item svg{color:var(--accent);flex-shrink:0}
+
+/* HISTORY PANEL */
+.history-panel{position:fixed;top:0;right:0;width:320px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:200;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:20px}
+.history-panel.open{transform:translateX(0)}
+.history-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.history-panel-title{font-size:13px;letter-spacing:.1em;color:var(--text);text-transform:uppercase}
+.history-close{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px}
+.history-item{padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:border-color .2s}
+.history-item:hover{border-color:var(--accent)}
+.history-item-q{font-size:13px;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item-meta{font-size:11px;color:var(--muted)}
+.history-empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 0}
+
+/* AUFSTELLUNG MODE */
+.aufstellung-wrap{max-width:960px;margin:0 auto;padding:0 20px 40px}
+.canvas-container{position:relative;width:100%;height:520px;background:#0C0805;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+#aufstellungCanvas{width:100%;height:100%;display:block;cursor:grab}
+#aufstellungCanvas:active{cursor:grabbing}
+.figure-labels{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+.figure-label{position:absolute;transform:translate(-50%,-100%);padding:3px 8px;background:rgba(16,10,6,0.85);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none}
+.aufstellung-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.auf-btn{display:flex;align-items:center;gap:6px;padding:9px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.auf-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.auf-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.auf-btn.primary:hover{opacity:.88}
+.auf-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.aufstellung-info{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;font-size:13px;color:var(--muted);line-height:1.6}
+.aufstellung-info strong{color:var(--text)}
+.selected-info{margin-bottom:16px}
+.selected-info input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
+.selected-info input:focus{border-color:var(--accent)}
+.selected-info-label{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.rel-type-row{display:flex;gap:8px;margin-top:10px}
+.rel-type-btn{padding:6px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.rel-type-btn:hover,.rel-type-btn.active{border-color:var(--accent);color:var(--accent)}
+.aufstellung-results{margin-top:20px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);margin-bottom:16px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.active{opacity:1;pointer-events:all}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .persp-grid{grid-template-columns:repeat(2,1fr)}
+  .canvas-container{height:380px}
+  .controls-row{flex-direction:column;align-items:flex-start}
+  .hero{padding:32px 16px 24px}
+  nav{padding:0 16px}
+  .mode-tabs{margin:16px 12px 0}
+  .aufstellung-controls{gap:6px}
+  .auf-btn{font-size:12px;padding:8px 10px}
+}
+@media(max-width:400px){
+  .persp-grid{grid-template-columns:1fr}
+}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ERROR */
+.error-card{background:rgba(196,98,45,0.08);border:1px solid rgba(196,98,45,0.3);border-radius:10px;padding:16px;color:var(--accent);font-size:14px;margin-top:16px}
+
+/* SELECT ALL */
+.select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+</style>
+</head>
+<body>
+
+<!-- HISTORY OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeHistory()"></div>
+
+<!-- HISTORY PANEL -->
+<div class="history-panel" id="historyPanel">
+  <div class="history-panel-header">
+    <span class="history-panel-title">Verlauf</span>
+    <button class="history-close" onclick="closeHistory()">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <!-- Nav Logo SVG -->
+    <svg class="nav-logo-svg" width="100" height="36" viewBox="0 0 100 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="9" font-family="Inter,sans-serif" font-size="7" font-weight="500" letter-spacing="2" fill="#9A7A6A" text-anchor="middle">FAMiLiEN</text>
+      <!-- Table top bar -->
+      <rect x="10" y="13" width="80" height="5" rx="1.5" fill="#C4622D" opacity="0.85"/>
+      <!-- Left leg -->
+      <rect x="24" y="18" width="5" height="14" rx="1" fill="#9A7A6A"/>
+      <!-- Right leg -->
+      <rect x="71" y="18" width="5" height="14" rx="1" fill="#9A7A6A"/>
+      <!-- TISCH text with colored i -->
+      <text x="50" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#F5EDE6" text-anchor="middle">T</text>
+      <text x="56" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#C4622D" text-anchor="middle">i</text>
+      <text x="62" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#F5EDE6" text-anchor="middle">SCH</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <button class="nav-btn active" id="langBtn" onclick="toggleLang()">DE</button>
+    <button class="nav-btn" id="toneBtn" onclick="toggleTone()">
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L10 18M6 6l4-4 4 4"/></svg>
+      <span id="toneBtnLabel">achtsam</span>
+    </button>
+    <button class="nav-btn" onclick="openHistory()">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 13"/></svg>
+      Verlauf
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tagline">FAMILIÄRE PERSPEKTIVEN AM TiSCH</div>
+  <div class="hero-svg-wrap">
+    <!-- Left silhouettes -->
+    <svg style="position:absolute;left:0;top:50%;transform:translateY(-50%);width:140px;height:200px;opacity:0.28" viewBox="0 0 140 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- House -->
+      <rect x="20" y="70" width="44" height="32" stroke="#C4622D" stroke-width="1.5" rx="1"/>
+      <polyline points="16,72 42,50 68,72" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="36" y="85" width="12" height="17" stroke="#C4622D" stroke-width="1.2" rx="1"/>
+      <!-- Parent adults -->
+      <circle cx="30" cy="120" r="5" stroke="#C4622D" stroke-width="1.5"/>
+      <line x1="30" y1="125" x2="30" y2="148" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="30" y1="135" x2="22" y2="143" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="30" y1="135" x2="38" y2="143" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="30" y1="148" x2="24" y2="162" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="30" y1="148" x2="36" y2="162" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Child -->
+      <circle cx="50" cy="126" r="4" stroke="#C4622D" stroke-width="1.5"/>
+      <line x1="50" y1="130" x2="50" y2="150" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50" y1="140" x2="44" y2="146" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50" y1="140" x2="56" y2="146" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50" y1="150" x2="45" y2="162" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50" y1="150" x2="55" y2="162" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Parent 2 -->
+      <circle cx="70" cy="120" r="5" stroke="#C4622D" stroke-width="1.5"/>
+      <line x1="70" y1="125" x2="70" y2="148" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="135" x2="62" y2="143" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="135" x2="78" y2="143" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="148" x2="64" y2="162" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="148" x2="76" y2="162" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Heart -->
+      <path d="M42,28 C42,24 46,22 50,26 C54,22 58,24 58,28 C58,33 50,39 50,39 C50,39 42,33 42,28Z" stroke="#C4622D" stroke-width="1.5"/>
+    </svg>
+
+    <!-- Main Hero SVG -->
+    <svg class="hero-main" viewBox="0 0 760 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left T crossbar (full left half) -->
+      <rect x="40" y="54" width="340" height="22" rx="3" fill="#C4622D" opacity="0.85"/>
+      <!-- Right T crossbar (full right half) -->
+      <rect x="380" y="54" width="340" height="22" rx="3" fill="#C4622D" opacity="0.85"/>
+      <!-- Seam highlight at center -->
+      <rect x="374" y="54" width="12" height="22" rx="2" fill="#C4622D"/>
+      <!-- Left T leg -->
+      <rect x="218" y="76" width="22" height="90" rx="3" fill="#9A7A6A" opacity="0.7"/>
+      <!-- Right T leg -->
+      <rect x="520" y="76" width="22" height="90" rx="3" fill="#9A7A6A" opacity="0.7"/>
+
+      <!-- Left T text: "FAMiLi" left of leg -->
+      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" fill="#F5EDE6" letter-spacing="2">
+        <tspan x="48" y="102">F</tspan>
+        <tspan>A</tspan>
+        <tspan>M</tspan>
+        <tspan fill="#C4622D">i</tspan>
+        <tspan fill="#F5EDE6">L</tspan>
+        <tspan fill="#C4622D">i</tspan>
+      </text>
+      <!-- "EN" right of left leg -->
+      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" fill="#F5EDE6" letter-spacing="2">
+        <tspan x="248" y="102">EN</tspan>
+      </text>
+      <!-- Right T: "T" left of right leg -->
+      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" fill="#F5EDE6" letter-spacing="2">
+        <tspan x="426" y="102">T</tspan>
+      </text>
+      <!-- "iSCH" right of right leg -->
+      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" letter-spacing="2">
+        <tspan x="548" y="102" fill="#C4622D">i</tspan>
+        <tspan fill="#F5EDE6">SCH</tspan>
+      </text>
+
+      <!-- Decorative baseline dots -->
+      <circle cx="380" cy="178" r="3" fill="#C4622D" opacity="0.5"/>
+      <circle cx="360" cy="178" r="2" fill="#C4622D" opacity="0.3"/>
+      <circle cx="400" cy="178" r="2" fill="#C4622D" opacity="0.3"/>
+    </svg>
+
+    <!-- Right silhouettes -->
+    <svg style="position:absolute;right:0;top:50%;transform:translateY(-50%);width:140px;height:200px;opacity:0.26" viewBox="0 0 140 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Family tree -->
+      <line x1="70" y1="170" x2="70" y2="130" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="150" x2="40" y2="120" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="150" x2="100" y2="120" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="40" y1="120" x2="25" y2="100" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="40" y1="120" x2="55" y2="100" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="100" y1="120" x2="85" y2="100" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="100" y1="120" x2="115" y2="100" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Connected circles (family network) -->
+      <circle cx="35" cy="45" r="7" stroke="#C4622D" stroke-width="1.5"/>
+      <circle cx="60" cy="35" r="7" stroke="#C4622D" stroke-width="1.5"/>
+      <circle cx="85" cy="45" r="7" stroke="#C4622D" stroke-width="1.5"/>
+      <circle cx="60" cy="60" r="7" stroke="#C4622D" stroke-width="1.5"/>
+      <line x1="41" y1="42" x2="53" y2="38" stroke="#C4622D" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="67" y1="38" x2="79" y2="42" stroke="#C4622D" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="38" y1="51" x2="54" y2="58" stroke="#C4622D" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="67" y1="58" x2="82" y2="51" stroke="#C4622D" stroke-width="1" stroke-dasharray="3,2"/>
+      <!-- Compass rose (orientation) -->
+      <circle cx="112" cy="60" r="12" stroke="#C4622D" stroke-width="1.2"/>
+      <line x1="112" y1="50" x2="112" y2="54" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="112" y1="66" x2="112" y2="70" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="102" y1="60" x2="106" y2="60" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="118" y1="60" x2="122" y2="60" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="112,52 113.5,57 112,58.5 110.5,57" fill="#C4622D"/>
+    </svg>
+  </div>
+  <div class="hero-sub">Multiperspektivische KI-Analyse für das Familienleben</div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-perspektiven" onclick="setMode('perspektiven')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+      Perspektiven
+    </button>
+    <button class="mode-tab" id="tab-aufstellung" onclick="setMode('aufstellung')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="10" rx="1"/><rect x="7" y="4" width="6" height="14" rx="1"/><rect x="12" y="10" width="6" height="8" rx="1"/></svg>
+      FAMiLiENAUFSTELLUNG
+    </button>
+  </div>
+</section>
+
+<!-- ==================== PERSPEKTIVEN MODE ==================== -->
+<div class="mode-section active" id="mode-perspektiven">
+  <div class="container">
+    <div class="section">
+
+      <!-- Filter row -->
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Alle Themen
+        </button>
+        <button class="filter-btn" data-filter="erziehung" onclick="setFilter(this,'erziehung')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg>
+          Erziehung
+        </button>
+        <button class="filter-btn" data-filter="beziehung" onclick="setFilter(this,'beziehung')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+          Beziehungen
+        </button>
+        <button class="filter-btn" data-filter="generationen" onclick="setFilter(this,'generationen')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>
+          Generationen
+        </button>
+        <button class="filter-btn" data-filter="krise" onclick="setFilter(this,'krise')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+          Krise
+        </button>
+      </div>
+
+      <!-- Example chips -->
+      <div class="chips-label" id="chipsLabel">Themen am TiSCH</div>
+      <div class="chips" id="chipsContainer">
+        <button class="chip" onclick="useChip(this)">Mein Kind macht, was es will — wie setze ich Grenzen?</button>
+        <button class="chip" onclick="useChip(this)">Meine Eltern verstehen mich nicht.</button>
+        <button class="chip" onclick="useChip(this)">Geschwisterkonflikt — wie vermitteln?</button>
+        <button class="chip" onclick="useChip(this)">Ich fühle mich in meiner Familie unsichtbar.</button>
+        <button class="chip" onclick="useChip(this)">Wie spreche ich Trennung mit Kindern an?</button>
+        <button class="chip" onclick="useChip(this)">Meine Mutter mischt sich ständig ein.</button>
+        <button class="chip" onclick="useChip(this)">Teenager-Phase: Nähe und Autonomie balancieren.</button>
+        <button class="chip" onclick="useChip(this)">Unser Familienalltag ist Chaos.</button>
+        <button class="chip" onclick="useChip(this)">Wie gehen wir mit einem Todesfall in der Familie um?</button>
+        <button class="chip" onclick="useChip(this)">Patchwork-Familie: Wie gelingt das Zusammenwachsen?</button>
+      </div>
+
+      <!-- Input -->
+      <div class="input-wrap">
+        <textarea id="questionInput" placeholder="Beschreiben Sie Ihre familiäre Situation..." rows="3"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendQuestion()">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-row">
+        <div class="ctrl-group" id="toneGroup">
+          <button class="ctrl-btn active" data-tone="achtsam" onclick="setTone(this)">achtsam</button>
+          <button class="ctrl-btn" data-tone="direkt" onclick="setTone(this)">direkt</button>
+          <button class="ctrl-btn" data-tone="ressourcen" onclick="setTone(this)">ressourcenorientiert</button>
+        </div>
+      </div>
+
+      <!-- Perspective grid -->
+      <div class="select-all-row">
+        <div class="persp-grid-label">Perspektiven auswählen</div>
+        <button class="select-all-btn" onclick="toggleAllPerspectives()">Alle / Keine</button>
+      </div>
+      <div class="persp-grid" id="perspGrid"></div>
+
+      <!-- Results -->
+      <div class="results" id="resultsArea" style="display:none">
+        <div class="results-header" id="resultsHeader">Antworten am TiSCH</div>
+        <div id="resultsList"></div>
+        <!-- kiNTEGRiTY -->
+        <div class="kintegrity">
+          <div class="kintegrity-title">kiNTEGRiTY</div>
+          <div class="kintegrity-items">
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+              Keine Diagnose
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="7" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg>
+              Keine Therapie-Ersatz
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+              Multiperspektivisch
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg>
+              Vertraulich
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== AUFSTELLUNG MODE ==================== -->
+<div class="mode-section" id="mode-aufstellung">
+  <div class="aufstellung-wrap">
+
+    <div class="aufstellung-info">
+      <strong>FAMiLiENAUFSTELLUNG</strong> — Platzieren Sie Familienmitglieder auf dem dreidimensionalen Tisch. Ziehen Sie Figuren, benennen Sie sie, und zeichnen Sie Beziehungen. Die KI analysiert anschließend die Konstellation aus systemischer Perspektive.
+    </div>
+
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="aufstellungCanvas"></canvas>
+      <div class="figure-labels" id="figureLabels"></div>
+    </div>
+
+    <div class="aufstellung-controls">
+      <button class="auf-btn" onclick="addFigure('male')">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="4"/><path d="M4 19v-2a6 6 0 0112 0v2"/></svg>
+        + Erwachsen-M
+      </button>
+      <button class="auf-btn" onclick="addFigure('female')">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="4"/><path d="M4 19v-2a6 6 0 0112 0v2"/></svg>
+        + Erwachsen-F
+      </button>
+      <button class="auf-btn" onclick="addFigure('child')">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M6 18v-1a4 4 0 018 0v1"/></svg>
+        + Kind
+      </button>
+      <button class="auf-btn" onclick="addFigure('elderly')">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="5" r="3"/><path d="M6 18v-2a4 4 0 018 0v2"/><line x1="7" y1="14" x2="5" y2="18"/></svg>
+        + Ältere
+      </button>
+      <button class="auf-btn" id="circleBtn" onclick="toggleCircle()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7" stroke-dasharray="3,2"/></svg>
+        Kreis zeigen
+      </button>
+      <button class="auf-btn" id="connectBtn" onclick="toggleConnectMode()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="16" x2="16" y2="4"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="4" r="2"/></svg>
+        Verbindung
+      </button>
+      <button class="auf-btn" onclick="clearScene()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/><path d="M8 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        Leeren
+      </button>
+      <button class="auf-btn primary" onclick="analyseAufstellung()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Analyse starten
+      </button>
+    </div>
+
+    <!-- Selected figure info -->
+    <div class="selected-info" id="selectedInfo" style="display:none">
+      <div class="selected-info-label" id="selectedLabel">Ausgewählte Figur</div>
+      <input type="text" id="figureNameInput" placeholder="Name eingeben..." onchange="updateFigureName()">
+      <div class="rel-type-row" id="relTypeRow">
+        <span style="font-size:12px;color:var(--muted);align-self:center">Verbindungstyp:</span>
+        <button class="rel-type-btn active" data-rel="nah" onclick="setRelType(this)">Nah</button>
+        <button class="rel-type-btn" data-rel="distanziert" onclick="setRelType(this)">Distanziert</button>
+        <button class="rel-type-btn" data-rel="konfliktreich" onclick="setRelType(this)">Konfliktreich</button>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#4A7FA8"></div> Erwachsen-M</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#C4622D"></div> Erwachsen-F</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8FBC8A"></div> Kind</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9A8A7A"></div> Ältere</div>
+    </div>
+
+    <!-- Aufstellung results -->
+    <div class="aufstellung-results" id="aufstellungResults"></div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// GLOBALS & CONFIG
+// ============================================================
+let currentLang = 'de';
+let currentTone = 'achtsam';
+let currentFilter = 'all';
+let activePerspectives = new Set();
+let isLoading = false;
+let historyData = [];
+let currentMode = 'perspektiven';
+
+const PERSPEKTIVEN = [
+  { id: 'systemisch',     icon: 'network',  de: 'Systemische Therapeutin',      en: 'Systemic Therapist',         color: '#C4622D', filters: ['all','beziehung'] },
+  { id: 'bindung',        icon: 'heart',    de: 'Bindungsexpertin',              en: 'Attachment Expert',          color: '#D4845A', filters: ['all','beziehung'] },
+  { id: 'erziehung',      icon: 'seedling', de: 'Erziehungsberaterin',           en: 'Parenting Counsellor',       color: '#B85C2A', filters: ['all','erziehung'] },
+  { id: 'paar',           icon: 'compass',  de: 'Paartherapeutin',               en: 'Couples Therapist',          color: '#A84E20', filters: ['all','beziehung'] },
+  { id: 'trauma',         icon: 'shield',   de: 'Traumaexpertin',                en: 'Trauma Expert',              color: '#C87050', filters: ['all','krise'] },
+  { id: 'kind',           icon: 'sprout',   de: 'Kind-Perspektive',              en: 'Child Perspective',          color: '#E0956A', filters: ['all','erziehung'] },
+  { id: 'grosseltern',    icon: 'scroll',   de: 'Großeltern & Generationen',     en: 'Grandparents & Generations', color: '#9A5A3A', filters: ['all','generationen'] },
+  { id: 'konflikt',       icon: 'zap',      de: 'Konfliktmediation',             en: 'Conflict Mediation',         color: '#CC7040', filters: ['all','krise'] },
+  { id: 'kommunikation',  icon: 'network',  de: 'Kommunikationsexpertin',        en: 'Communication Expert',       color: '#B86840', filters: ['all','beziehung'] },
+  { id: 'identitaet',     icon: 'mirror',   de: 'Identität & Rolle',             en: 'Identity & Role',            color: '#D07850', filters: ['all','erziehung','beziehung'] },
+];
+
+const SVG_ICONS = {
+  network: `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>`,
+  heart:   `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>`,
+  seedling:`<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg>`,
+  compass: `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/><polygon points="10 16 11.5 11 10 9.5 8.5 11" fill="currentColor" stroke="none" opacity="0.4"/></svg>`,
+  shield:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>`,
+  sprout:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20V10"/><path d="M10 10c0 0-4-3-4-7 2 0 4 2 4 4 0-2 2-4 4-4 0 4-4 7-4 7z"/></svg>`,
+  scroll:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>`,
+  zap:     `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>`,
+  mirror:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="10" height="13" rx="5"/><line x1="10" y1="15" x2="10" y2="19"/><line x1="7" y1="19" x2="13" y2="19"/></svg>`,
+};
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderPerspGrid();
+  loadHistory();
+  // Select all by default
+  PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
+  renderPerspGrid();
+
+  // Keyboard send
+  document.getElementById('questionInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendQuestion();
+  });
+});
+
+// ============================================================
+// MODE SWITCH
+// ============================================================
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+  document.getElementById('tab-' + mode).classList.add('active');
+  if (mode === 'aufstellung' && !threeInit) {
+    setTimeout(initThreeJS, 100);
+  }
+}
+
+// ============================================================
+// LANGUAGE & TONE
+// ============================================================
+function toggleLang() {
+  currentLang = currentLang === 'de' ? 'en' : 'de';
+  document.getElementById('langBtn').textContent = currentLang.toUpperCase();
+  renderPerspGrid();
+  updateChips();
+}
+
+function toggleTone() {
+  const tones = ['achtsam', 'direkt', 'ressourcen'];
+  const idx = tones.indexOf(currentTone);
+  currentTone = tones[(idx + 1) % tones.length];
+  document.getElementById('toneBtnLabel').textContent = currentTone;
+  // Sync ctrl buttons
+  document.querySelectorAll('[data-tone]').forEach(b => {
+    b.classList.toggle('active', b.dataset.tone === currentTone);
+  });
+}
+
+function setTone(btn) {
+  currentTone = btn.dataset.tone;
+  document.querySelectorAll('[data-tone]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('toneBtnLabel').textContent = currentTone;
+}
+
+// ============================================================
+// FILTER
+// ============================================================
+function setFilter(btn, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPerspGrid();
+  updateChips();
+}
+
+function updateChips() {
+  // Chips stay the same, just language label
+  document.getElementById('chipsLabel').textContent = currentLang === 'de' ? 'Themen am TiSCH' : 'Topics at the TiSCH';
+}
+
+// ============================================================
+// PERSPECTIVE GRID
+// ============================================================
+function renderPerspGrid() {
+  const grid = document.getElementById('perspGrid');
+  grid.innerHTML = '';
+  PERSPEKTIVEN.filter(p => currentFilter === 'all' || p.filters.includes(currentFilter)).forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'persp-card' + (activePerspectives.has(p.id) ? ' active' : '');
+    card.innerHTML = `
+      <div class="persp-dot" style="background:${p.color}"></div>
+      ${SVG_ICONS[p.icon] || ''}
+      <span>${currentLang === 'de' ? p.de : p.en}</span>
+    `;
+    card.addEventListener('click', () => {
+      if (activePerspectives.has(p.id)) activePerspectives.delete(p.id);
+      else activePerspectives.add(p.id);
+      card.classList.toggle('active');
+    });
+    grid.appendChild(card);
+  });
+}
+
+function toggleAllPerspectives() {
+  const all = PERSPEKTIVEN.every(p => activePerspectives.has(p.id));
+  if (all) activePerspectives.clear();
+  else PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
+  renderPerspGrid();
+}
+
+// ============================================================
+// CHIPS
+// ============================================================
+function useChip(el) {
+  document.getElementById('questionInput').value = el.textContent.trim();
+  document.getElementById('questionInput').focus();
+}
+
+// ============================================================
+// SEND QUESTION
+// ============================================================
+async function sendQuestion() {
+  const input = document.getElementById('questionInput');
+  const question = input.value.trim();
+  if (!question || isLoading) return;
+  if (activePerspectives.size === 0) { showToast('Bitte mindestens eine Perspektive auswählen.'); return; }
+
+  const selectedPersp = PERSPEKTIVEN.filter(p => activePerspectives.has(p.id));
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  const resultsArea = document.getElementById('resultsArea');
+  const resultsList = document.getElementById('resultsList');
+  resultsArea.style.display = 'block';
+  resultsList.innerHTML = '';
+
+  // Show loading
+  const loader = document.createElement('div');
+  loader.className = 'loader';
+  loader.innerHTML = `<div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang==='de'?'Der TiSCH bereitet Antworten vor...':'The TiSCH is preparing responses...'}</span>`;
+  resultsList.appendChild(loader);
+
+  resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question,
+      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      stil: 'therapeutisch',
+      register: 'familiensystem',
+      tone: currentTone,
+      lang: currentLang,
+      app: 'FAMiLiEN TiSCH'
+    };
+
+    const resp = await fetch(window.location.origin + '/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    loader.remove();
+
+    if (!resp.ok) throw new Error('API error ' + resp.status);
+
+    // Try streaming
+    const contentType = resp.headers.get('content-type') || '';
+    if (contentType.includes('text/event-stream') || contentType.includes('stream')) {
+      await handleStream(resp, selectedPersp, resultsList);
+    } else {
+      const data = await resp.json();
+      renderResults(data, selectedPersp, resultsList);
+    }
+
+    // Save to history
+    saveHistory({ question, perspectives: selectedPersp.map(p => p.id), lang: currentLang, time: Date.now() });
+
+  } catch (err) {
+    loader.remove();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'error-card';
+    errDiv.textContent = currentLang === 'de'
+      ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.'
+      : 'The TiSCH is currently unavailable. Please try again later.';
+    resultsList.appendChild(errDiv);
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+}
+
+async function handleStream(resp, perspectives, container) {
+  // Build cards first
+  const cards = {};
+  perspectives.forEach(p => {
+    const card = createResultCard(p);
+    container.appendChild(card);
+    cards[p.id] = card.querySelector('.streaming-text');
+  });
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (!line.trim() || !line.startsWith('data:')) continue;
+      try {
+        const jsonStr = line.replace(/^data:\s*/, '');
+        if (jsonStr === '[DONE]') continue;
+        const obj = JSON.parse(jsonStr);
+        const perspId = obj.perspective || obj.id;
+        const text = obj.text || obj.content || '';
+        if (perspId && cards[perspId]) {
+          cards[perspId].textContent += text;
+        }
+      } catch(e) {}
+    }
+  }
+}
+
+function renderResults(data, perspectives, container) {
+  // Support both array and object responses
+  const responses = Array.isArray(data) ? data : (data.responses || data.answers || []);
+  if (responses.length === 0) {
+    // Fallback: show raw data per perspective
+    perspectives.forEach(p => {
+      const card = createResultCard(p);
+      card.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
+      container.appendChild(card);
+    });
+    return;
+  }
+  responses.forEach((r, i) => {
+    const p = perspectives[i] || perspectives[0];
+    const card = createResultCard(p);
+    card.querySelector('.streaming-text').textContent = r.text || r.content || r.answer || '';
+    container.appendChild(card);
+  });
+}
+
+function createResultCard(p) {
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:${p.color}22;color:${p.color}">${SVG_ICONS[p.icon]||''}</div>
+      <div class="result-card-title">${currentLang==='de'?p.de:p.en}</div>
+      <div class="result-card-badge">${p.id}</div>
+      <div class="result-card-chevron">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
+      </div>
+    </div>
+    <div class="result-card-body"><p class="streaming-text"></p></div>
+  `;
+  // Auto-open first card
+  setTimeout(() => card.classList.add('open'), 50);
+  return card;
+}
+
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+const HISTORY_KEY = 'tisch_history_v1';
+
+function loadHistory() {
+  try {
+    historyData = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  } catch { historyData = []; }
+}
+
+function saveHistory(entry) {
+  historyData.unshift({ ...entry, app: 'FAMiLiEN TiSCH' });
+  if (historyData.length > 50) historyData = historyData.slice(0, 50);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
+}
+
+function openHistory() {
+  document.getElementById('historyPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+  renderHistoryList();
+}
+
+function closeHistory() {
+  document.getElementById('historyPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function renderHistoryList() {
+  const list = document.getElementById('historyList');
+  const items = historyData.filter(h => h.app === 'FAMiLiEN TiSCH');
+  if (items.length === 0) {
+    list.innerHTML = '<div class="history-empty">Noch keine Einträge</div>';
+    return;
+  }
+  list.innerHTML = items.map((h, i) => `
+    <div class="history-item" onclick="loadHistoryItem(${i})">
+      <div class="history-item-q">${h.question || '—'}</div>
+      <div class="history-item-meta">${new Date(h.time).toLocaleDateString('de-DE')} · ${(h.perspectives||[]).length} Perspektiven</div>
+    </div>
+  `).join('');
+}
+
+function loadHistoryItem(i) {
+  const items = historyData.filter(h => h.app === 'FAMiLiEN TiSCH');
+  const h = items[i];
+  if (!h) return;
+  document.getElementById('questionInput').value = h.question || '';
+  closeHistory();
+  if (currentMode !== 'perspektiven') setMode('perspektiven');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// THREE.JS — FAMILIENAUFSTELLUNG
+// ============================================================
+let threeInit = false;
+let scene, camera, renderer, aufCanvas;
+let figures = [];
+let relationships = [];
+let selectedFigure = null;
+let connectMode = false;
+let connectFirst = null;
+let showCircle = true;
+let autoRotate = true;
+let circleMesh = null;
+let isDragging3D = false;
+let lastX = 0, lastY = 0;
+let phi = Math.PI / 3, theta = 0, radius3d = 18;
+let raycaster, mouse;
+let dragFigure = null;
+let isDraggingFigure = false;
+let clock;
+let currentRelType = 'nah';
+
+function initThreeJS() {
+  if (threeInit) return;
+  threeInit = true;
+
+  aufCanvas = document.getElementById('aufstellungCanvas');
+  const container = document.getElementById('canvasContainer');
+
+  // Setup renderer
+  renderer = new THREE.WebGLRenderer({ canvas: aufCanvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0C0805);
+  scene.fog = new THREE.Fog(0x0C0805, 30, 60);
+
+  camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+  updateCamera3D();
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0xF5EDE6, 0.4);
+  scene.add(ambient);
+  const dirLight = new THREE.DirectionalLight(0xFFD5A8, 1.2);
+  dirLight.position.set(8, 14, 8);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  scene.add(dirLight);
+  const fillLight = new THREE.PointLight(0xC4622D, 0.4, 30);
+  fillLight.position.set(-6, 6, -6);
+  scene.add(fillLight);
+
+  // Floor
+  const floorGeo = new THREE.PlaneGeometry(40, 40);
+  const floorMat = new THREE.MeshLambertMaterial({ color: 0x080503 });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Table top
+  const tableGeo = new THREE.CylinderGeometry(4, 4, 0.2, 64);
+  const tableMat = new THREE.MeshLambertMaterial({ color: 0x5C3A1E });
+  const table = new THREE.Mesh(tableGeo, tableMat);
+  table.position.y = 0;
+  table.receiveShadow = true;
+  table.castShadow = true;
+  scene.add(table);
+
+  // Table edge ring
+  const edgeGeo = new THREE.TorusGeometry(4, 0.06, 8, 64);
+  const edgeMat = new THREE.MeshLambertMaterial({ color: 0x7A4A28 });
+  const edge = new THREE.Mesh(edgeGeo, edgeMat);
+  edge.position.y = 0.1;
+  scene.add(edge);
+
+  // Table leg
+  const legGeo = new THREE.CylinderGeometry(0.15, 0.2, 3, 12);
+  const legMat = new THREE.MeshLambertMaterial({ color: 0x4A2A10 });
+  const leg = new THREE.Mesh(legGeo, legMat);
+  leg.position.y = -1.6;
+  scene.add(leg);
+
+  // Circle on table
+  createCircleMesh();
+
+  // Raycaster
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
+  clock = new THREE.Clock();
+
+  // Event listeners
+  setupOrbitControls();
+  setupFigureDrag();
+
+  // Resize
+  window.addEventListener('resize', onResize3D);
+
+  // Start with a few default figures
+  setTimeout(() => {
+    addFigure('male');
+    addFigure('female');
+    addFigure('child');
+  }, 200);
+
+  animate();
+}
+
+function createCircleMesh() {
+  if (circleMesh) scene.remove(circleMesh);
+  const pts = [];
+  for (let i = 0; i <= 128; i++) {
+    const a = (i / 128) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(a) * 2.8, 0.12, Math.sin(a) * 2.8));
+  }
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color: 0xC4622D, opacity: 0.5, transparent: true });
+  circleMesh = new THREE.Line(geo, mat);
+  scene.add(circleMesh);
+}
+
+function updateCamera3D() {
+  if (!camera) return;
+  camera.position.set(
+    radius3d * Math.sin(phi) * Math.sin(theta),
+    radius3d * Math.cos(phi),
+    radius3d * Math.sin(phi) * Math.cos(theta)
+  );
+  camera.lookAt(0, 0, 0);
+}
+
+function setupOrbitControls() {
+  aufCanvas.addEventListener('mousedown', e => {
+    if (isDraggingFigure) return;
+    isDragging3D = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    autoRotate = false;
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging3D = false;
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging3D || isDraggingFigure) return;
+    theta -= (e.clientX - lastX) * 0.01;
+    phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.clientY - lastY) * 0.01));
+    lastX = e.clientX;
+    lastY = e.clientY;
+    updateCamera3D();
+  });
+  aufCanvas.addEventListener('wheel', e => {
+    radius3d = Math.max(8, Math.min(30, radius3d + e.deltaY * 0.02));
+    updateCamera3D();
+    e.preventDefault();
+  }, { passive: false });
+
+  // Touch support
+  let lastTouchX = 0, lastTouchY = 0, lastTouchDist = 0;
+  aufCanvas.addEventListener('touchstart', e => {
+    autoRotate = false;
+    if (e.touches.length === 1) {
+      lastTouchX = e.touches[0].clientX;
+      lastTouchY = e.touches[0].clientY;
+    } else if (e.touches.length === 2) {
+      lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  });
+  aufCanvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) {
+      theta -= (e.touches[0].clientX - lastTouchX) * 0.01;
+      phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.touches[0].clientY - lastTouchY) * 0.01));
+      lastTouchX = e.touches[0].clientX;
+      lastTouchY = e.touches[0].clientY;
+      updateCamera3D();
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      radius3d = Math.max(8, Math.min(30, radius3d - (dist - lastTouchDist) * 0.05));
+      lastTouchDist = dist;
+      updateCamera3D();
+    }
+    e.preventDefault();
+  }, { passive: false });
+}
+
+function setupFigureDrag() {
+  const tablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -0.15);
+
+  aufCanvas.addEventListener('mousedown', e => {
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+
+    // Check figure click
+    const meshes = figures.map(f => f.body);
+    const hits = raycaster.intersectObjects(meshes);
+    if (hits.length > 0) {
+      const hit = hits[0].object;
+      const fig = figures.find(f => f.body === hit || f.head === hit);
+      if (fig) {
+        if (connectMode) {
+          handleConnectClick(fig);
+        } else {
+          selectFigure(fig);
+          dragFigure = fig;
+          isDraggingFigure = true;
+          isDragging3D = false;
+        }
+      }
+    } else {
+      if (!connectMode) selectFigure(null);
+    }
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!isDraggingFigure || !dragFigure) return;
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const pt = new THREE.Vector3();
+    raycaster.ray.intersectPlane(tablePlane, pt);
+    if (pt) {
+      // Clamp to table
+      const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+      if (dist > 3.6) {
+        const angle = Math.atan2(pt.z, pt.x);
+        pt.x = Math.cos(angle) * 3.6;
+        pt.z = Math.sin(angle) * 3.6;
+      }
+      dragFigure.group.position.x = pt.x;
+      dragFigure.group.position.z = pt.z;
+      updateRelationshipLines();
+      updateLabels();
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (isDraggingFigure) {
+      isDraggingFigure = false;
+      dragFigure = null;
+    }
+  });
+}
+
+function handleConnectClick(fig) {
+  if (!connectFirst) {
+    connectFirst = fig;
+    fig.body.material.emissive.setHex(0x444400);
+    showToast('Zweite Figur auswählen...');
+  } else if (connectFirst !== fig) {
+    addRelationship(connectFirst, fig, currentRelType);
+    connectFirst.body.material.emissive.setHex(0);
+    connectFirst = null;
+    showToast('Verbindung erstellt.');
+  }
+}
+
+// Figure type configs
+const FIGURE_TYPES = {
+  male:    { color: 0x4A7FA8, bodyH: 1.2, headR: 0.28 },
+  female:  { color: 0xC4622D, bodyH: 1.1, headR: 0.26 },
+  child:   { color: 0x8FBC8A, bodyH: 0.8, headR: 0.22 },
+  elderly: { color: 0x9A8A7A, bodyH: 1.0, headR: 0.25 },
+};
+
+let figureCounter = 0;
+
+function addFigure(type) {
+  if (!threeInit) initThreeJS();
+  const cfg = FIGURE_TYPES[type];
+  const group = new THREE.Group();
+
+  // Body
+  const bodyGeo = new THREE.CylinderGeometry(0.18, 0.18, cfg.bodyH, 12);
+  const bodyMat = new THREE.MeshLambertMaterial({ color: cfg.color });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = cfg.bodyH / 2 + 0.11;
+  body.castShadow = true;
+  group.add(body);
+
+  // Head
+  const headGeo = new THREE.SphereGeometry(cfg.headR, 16, 12);
+  const headMat = new THREE.MeshLambertMaterial({ color: cfg.color });
+  const head = new THREE.Mesh(headGeo, headMat);
+  head.position.y = cfg.bodyH + 0.11 + cfg.headR + 0.05;
+  head.castShadow = true;
+  group.add(head);
+
+  // Distribute around circle
+  const n = figures.length;
+  const angle = (n / Math.max(8, n + 1)) * Math.PI * 2;
+  const r = 1.8 + (n % 3) * 0.4;
+  group.position.set(Math.cos(angle) * r, 0, Math.sin(angle) * r);
+
+  scene.add(group);
+
+  const figId = ++figureCounter;
+  const fig = {
+    id: figId,
+    type,
+    name: getDefaultName(type, figId),
+    group,
+    body,
+    head,
+    color: cfg.color,
+    selected: false
+  };
+  figures.push(fig);
+  updateLabels();
+  return fig;
+}
+
+function getDefaultName(type, id) {
+  const names = {
+    male: ['Vater', 'Sohn', 'Großvater', 'Onkel'],
+    female: ['Mutter', 'Tochter', 'Großmutter', 'Tante'],
+    child: ['Kind 1', 'Kind 2', 'Kind 3', 'Kind 4'],
+    elderly: ['Oma', 'Opa', 'Urgroßmutter', 'Urgroßvater'],
+  };
+  const arr = names[type] || ['Person'];
+  return arr[(id - 1) % arr.length];
+}
+
+function selectFigure(fig) {
+  // Deselect all
+  figures.forEach(f => {
+    f.selected = false;
+    f.body.material.emissive = new THREE.Color(0);
+    f.head.material.emissive = new THREE.Color(0);
+  });
+  selectedFigure = fig;
+  if (fig) {
+    fig.selected = true;
+    fig.body.material.emissive = new THREE.Color(0.3, 0.15, 0.0);
+    fig.head.material.emissive = new THREE.Color(0.3, 0.15, 0.0);
+    document.getElementById('selectedInfo').style.display = 'block';
+    document.getElementById('selectedLabel').textContent = fig.name + ' (' + fig.type + ')';
+    document.getElementById('figureNameInput').value = fig.name;
+    document.getElementById('relTypeRow').style.display = connectMode ? 'flex' : 'none';
+  } else {
+    document.getElementById('selectedInfo').style.display = 'none';
+  }
+}
+
+function updateFigureName() {
+  if (!selectedFigure) return;
+  selectedFigure.name = document.getElementById('figureNameInput').value;
+  document.getElementById('selectedLabel').textContent = selectedFigure.name + ' (' + selectedFigure.type + ')';
+  updateLabels();
+}
+
+function updateLabels() {
+  const labelsDiv = document.getElementById('figureLabels');
+  labelsDiv.innerHTML = '';
+  if (!camera || !renderer) return;
+  const canvas = renderer.domElement;
+  const rect = canvas.getBoundingClientRect();
+
+  figures.forEach(fig => {
+    const worldPos = new THREE.Vector3();
+    fig.head.getWorldPosition(worldPos);
+    worldPos.y += 0.5;
+    const projected = worldPos.clone().project(camera);
+    const x = (projected.x * 0.5 + 0.5) * canvas.clientWidth;
+    const y = (-projected.y * 0.5 + 0.5) * canvas.clientHeight;
+    if (projected.z < 1) {
+      const label = document.createElement('div');
+      label.className = 'figure-label';
+      label.textContent = fig.name;
+      label.style.left = x + 'px';
+      label.style.top = y + 'px';
+      labelsDiv.appendChild(label);
+    }
+  });
+}
+
+function addRelationship(figA, figB, type) {
+  // Remove existing if any
+  const existing = relationships.findIndex(r => (r.a === figA && r.b === figB) || (r.a === figB && r.b === figA));
+  if (existing >= 0) {
+    scene.remove(relationships[existing].line);
+    relationships.splice(existing, 1);
+  }
+
+  const colors = { nah: 0x8FBC8A, distanziert: 0x7A7A7A, konfliktreich: 0xCC4444 };
+  const dashed = { nah: false, distanziert: true, konfliktreich: false };
+
+  const pts = [figA.group.position.clone().setY(0.5), figB.group.position.clone().setY(0.5)];
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color: colors[type] || 0x888888, opacity: 0.8, transparent: true, linewidth: 2 });
+  const line = new THREE.Line(geo, mat);
+  scene.add(line);
+  relationships.push({ a: figA, b: figB, type, line });
+}
+
+function updateRelationshipLines() {
+  relationships.forEach(r => {
+    const pts = [r.a.group.position.clone().setY(0.5), r.b.group.position.clone().setY(0.5)];
+    r.line.geometry.setFromPoints(pts);
+    r.line.geometry.needsUpdate = true;
+  });
+}
+
+function toggleCircle() {
+  showCircle = !showCircle;
+  if (circleMesh) circleMesh.visible = showCircle;
+  document.getElementById('circleBtn').classList.toggle('active', showCircle);
+}
+
+function toggleConnectMode() {
+  connectMode = !connectMode;
+  connectFirst = null;
+  document.getElementById('connectBtn').classList.toggle('active', connectMode);
+  document.getElementById('relTypeRow').style.display = connectMode && selectedFigure ? 'flex' : 'none';
+  showToast(connectMode ? 'Verbindungsmodus: Figur A anklicken...' : 'Verbindungsmodus deaktiviert');
+}
+
+function setRelType(btn) {
+  currentRelType = btn.dataset.rel;
+  document.querySelectorAll('.rel-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function clearScene() {
+  figures.forEach(f => scene.remove(f.group));
+  relationships.forEach(r => scene.remove(r.line));
+  figures = [];
+  relationships = [];
+  selectedFigure = null;
+  figureCounter = 0;
+  connectFirst = null;
+  updateLabels();
+  document.getElementById('selectedInfo').style.display = 'none';
+  document.getElementById('aufstellungResults').innerHTML = '';
+}
+
+function onResize3D() {
+  const container = document.getElementById('canvasContainer');
+  if (!container || !renderer || !camera) return;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (!renderer) return;
+  if (autoRotate) {
+    theta += 0.003;
+    updateCamera3D();
+  }
+  if (!isDraggingFigure) updateLabels();
+  renderer.render(scene, camera);
+}
+
+// ============================================================
+// AUFSTELLUNG ANALYSIS
+// ============================================================
+async function analyseAufstellung() {
+  if (figures.length === 0) { showToast('Bitte erst Figuren hinzufügen.'); return; }
+
+  // Build description
+  const center = new THREE.Vector3(0, 0, 0);
+  const figDescs = figures.map(f => {
+    const pos = f.group.position;
+    const dist = Math.sqrt(pos.x * pos.x + pos.z * pos.z).toFixed(2);
+    const angle = ((Math.atan2(pos.z, pos.x) * 180 / Math.PI + 360) % 360).toFixed(0);
+    return `${f.name} (${f.type}): Abstand vom Zentrum ${dist}, Winkel ${angle}°`;
+  });
+  const relDescs = relationships.map(r => `${r.a.name} ↔ ${r.b.name}: ${r.type}`);
+
+  const question = `Familienaufstellung mit ${figures.length} Figuren:\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
+
+  const resultsDiv = document.getElementById('aufstellungResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
+
+  try {
+    const payload = {
+      question,
+      perspectives: [
+        { id: 'systemisch', role: 'Systemische Therapeutin' },
+        { id: 'bindung', role: 'Bindungsexpertin' },
+        { id: 'konflikt', role: 'Konfliktmediation' }
+      ],
+      stil: 'therapeutisch',
+      register: 'familienaufstellung',
+      tone: currentTone,
+      lang: currentLang,
+      app: 'FAMiLiEN TiSCH'
+    };
+
+    const resp = await fetch(window.location.origin + '/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    const text = data.answer || data.text || (Array.isArray(data) ? data[0]?.text : '') || JSON.stringify(data);
+
+    resultsDiv.innerHTML = `
+      <div class="result-card open">
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(196,98,45,0.15);color:#C4622D">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+          </div>
+          <div class="result-card-title">Systemische Analyse der Aufstellung</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><p class="streaming-text">${escapeHTML(text)}</p></div>
+      </div>
+      <div class="kintegrity" style="margin-top:16px">
+        <div class="kintegrity-title">kiNTEGRiTY</div>
+        <div class="kintegrity-items">
+          <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> Keine Diagnose</div>
+          <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Reflexionsangebot</div>
+        </div>
+      </div>
+    `;
+
+    saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
+  }
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>
