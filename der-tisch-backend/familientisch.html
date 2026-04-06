@@ -141,7 +141,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 #aufstellungCanvas{width:100%;height:100%;display:block;cursor:grab}
 #aufstellungCanvas:active{cursor:grabbing}
 .figure-labels{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
-.figure-label{position:absolute;transform:translate(-50%,-100%);padding:3px 8px;background:rgba(16,10,6,0.85);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none}
+.figure-label{position:absolute;transform:translate(-50%,-100%);padding:4px 10px;background:rgba(16,10,6,0.92);border:1px solid rgba(196,98,45,0.4);border-radius:5px;font-size:13px;font-weight:600;color:#F5EDE6;white-space:nowrap;pointer-events:none;letter-spacing:0.02em}
 .aufstellung-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
 .auf-btn{display:flex;align-items:center;gap:6px;padding:9px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
 .auf-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
@@ -1289,15 +1289,25 @@ function addRelationship(figA, figB, type) {
     relationships.splice(existing, 1);
   }
 
-  const colors = { nah: 0x8FBC8A, distanziert: 0x7A7A7A, konfliktreich: 0xCC4444 };
-  const dashed = { nah: false, distanziert: true, konfliktreich: false };
+  // Bright glow colors — saturated + light
+  const colors = { nah: 0x4DFFA0, distanziert: 0xAABBCC, konfliktreich: 0xFF4466 };
+  const glowColors = { nah: 0x1A8C5A, distanziert: 0x445566, konfliktreich: 0x882233 };
 
   const pts = [figA.group.position.clone().setY(0.5), figB.group.position.clone().setY(0.5)];
+
+  // Glow layer (wide, semi-transparent background)
+  const geoGlow = new THREE.BufferGeometry().setFromPoints(pts);
+  const matGlow = new THREE.LineBasicMaterial({ color: glowColors[type] || 0x445566, opacity: 0.35, transparent: true });
+  const lineGlow = new THREE.Line(geoGlow, matGlow);
+  scene.add(lineGlow);
+
+  // Core line (bright, saturated)
   const geo = new THREE.BufferGeometry().setFromPoints(pts);
-  const mat = new THREE.LineBasicMaterial({ color: colors[type] || 0x888888, opacity: 0.8, transparent: true, linewidth: 2 });
+  const mat = new THREE.LineBasicMaterial({ color: colors[type] || 0xAABBCC, opacity: 0.95, transparent: true });
   const line = new THREE.Line(geo, mat);
   scene.add(line);
-  relationships.push({ a: figA, b: figB, type, line });
+
+  relationships.push({ a: figA, b: figB, type, line, lineGlow });
 }
 
 function updateRelationshipLines() {
@@ -1305,6 +1315,10 @@ function updateRelationshipLines() {
     const pts = [r.a.group.position.clone().setY(0.5), r.b.group.position.clone().setY(0.5)];
     r.line.geometry.setFromPoints(pts);
     r.line.geometry.needsUpdate = true;
+    if (r.lineGlow) {
+      r.lineGlow.geometry.setFromPoints(pts);
+      r.lineGlow.geometry.needsUpdate = true;
+    }
   });
 }
 
