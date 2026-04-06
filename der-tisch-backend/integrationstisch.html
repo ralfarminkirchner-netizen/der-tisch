@@ -2342,7 +2342,7 @@ html[data-theme="light"] .perspective-card {
             <div class="methods-chips" id="methodsChips"></div>
             <p class="methods-hint" id="methodsHint"></p>
             <div class="kind-persp-wrap" id="kindPerspWrap">
-              <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp">☀ Kind-Perspektive konfigurieren</button>
+              <button class="kind-persp-btn" id="kindPerspBtn" onclick="openKindModal()" data-testid="btn-kind-persp"><span style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="10" r="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="14.4" y1="14.4" x2="15.8" y2="15.8"/><line x1="4.2" y1="15.8" x2="5.6" y2="14.4"/><line x1="14.4" y1="5.6" x2="15.8" y2="4.2"/></svg></span> Kind-Perspektive konfigurieren</button>
               <span class="kind-persp-active-label hidden" id="kindPerspActiveLabel"></span>
             </div>
           </div>
@@ -5204,7 +5204,8 @@ function printSelection() {
     html += '<h2>' + (de ? s.titleDe : s.titleEn) + '</h2>' + clone.innerHTML;
   });
 
-  html += '</body></html>';;
+  html += '<script src="/notizbuch.js"></script>
+</body></html>';;
   win.document.write(html);
   win.document.close();
   win.focus();
@@ -5890,7 +5891,7 @@ function itRenderCustomSlots() {
     chip.style.cssText = 'border-color:' + color + ';color:' + color + ';background:' + color + '18;';
     chip.innerHTML =
       '<span class="slot-name">' + escapeHtml(slot.name || 'Ohne Namen') + '</span>' +
-      '<span class="slot-edit-icon" onclick="itEditSlot(" + JSON.stringify(slot.id) + ")" title="Bearbeiten">✎</span>' +
+      '<span class="slot-edit-icon" onclick="itEditSlot(" + JSON.stringify(slot.id) + ")" title="Bearbeiten"><span style="display:inline-flex;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></span></span>' +
       '<span class="slot-del-icon" onclick="itDeleteSlot(" + JSON.stringify(slot.id) + ")" title="Löschen">×</span>';
     chip.addEventListener('click', function(e) {
       if (e.target.classList.contains('slot-edit-icon') || e.target.classList.contains('slot-del-icon')) return;

@@ -3408,7 +3408,7 @@ html[data-stil] body {
             </div>
             <div class="slot-field">
               <label>Symbol / Emoji</label>
-              <input type="text" id="slotFieldSymbol" placeholder="z.B. ⚡ oder 🔬" maxlength="4">
+              <input type="text" id="slotFieldSymbol" placeholder="z.B. <span style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg></span> oder <span style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="8" r="4"/><line x1="10" y1="12" x2="10" y2="17"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="7" y1="4" x2="4" y2="7"/></svg></span>" maxlength="4">
             </div>
             <div class="slot-field">
               <label>Typ</label>
@@ -4140,7 +4140,7 @@ function openEdgePanelTeam(roleA, roleB, valence, summary, color) {
   var panel = document.getElementById('edgePanelTeam');
   if (!panel) return;
   document.getElementById('edgePanelRolesTeam').textContent = roleA + ' ↔ ' + roleB;
-  var valenceLabel = { positive: '✓ Brücke', ambivalent: '⚡ Übersetzungsfehler', negative: '✗ Echter Widerspruch' };
+  var valenceLabel = { positive: '✓ Brücke', ambivalent: '<span style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg></span> Übersetzungsfehler', negative: '✗ Echter Widerspruch' };
   document.getElementById('edgePanelBodyTeam').innerHTML =
     '<div class="edge-valence-badge" style="color:' + (color||'#c8993a') + '">' + (valenceLabel[valence]||valence) + '</div>' +
     (summary ? '<p class="edge-summary">' + summary + '</p>' : '<p class="edge-summary edge-no-data">Kein direkter Bezug in den Reibungsdaten.</p>');
@@ -4700,23 +4700,23 @@ const roleConfig = {
   'Tiefenpsychologisch': { iconClass: 'role-tiefenpsy',     icon: 'Ψ' },
   'Empirisch-Rational':  { iconClass: 'role-empirisch',     icon: '≡' },
   'Philosophisch':       { iconClass: 'role-philosophisch', icon: 'Φ' },
-  'Ethisch':             { iconClass: 'role-ethisch',       icon: '⚖' },
+  'Ethisch':             { iconClass: 'role-ethisch',       icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>' },
   'Abwägung':            { iconClass: 'role-abwaegung',     icon: '⇌' },
   'Strategisch':         { iconClass: 'role-strategisch',   icon: '⌖' },
-  'Risiko':              { iconClass: 'role-risiko',        icon: '⚡' },
+  'Risiko':              { iconClass: 'role-risiko',        icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>' },
   'Systemic':            { iconClass: 'role-systemisch',    icon: '↻' },
   'Depth-psychological': { iconClass: 'role-tiefenpsy',     icon: 'Ψ' },
   'Empirical-Rational':  { iconClass: 'role-empirisch',     icon: '≡' },
   'Philosophical':       { iconClass: 'role-philosophisch', icon: 'Φ' },
-  'Ethical':             { iconClass: 'role-ethisch',       icon: '⚖' },
+  'Ethical':             { iconClass: 'role-ethisch',       icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>' },
   'Weighing':            { iconClass: 'role-abwaegung',     icon: '⇌' },
   'Strategic':           { iconClass: 'role-strategisch',   icon: '⌖' },
-  'Risk':                { iconClass: 'role-risiko',        icon: '⚡' },
-  'Pädagogisch':         { iconClass: 'role-paedagogisch',   icon: '✦' },
+  'Risk':                { iconClass: 'role-risiko',        icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>' },
+  'Pädagogisch':         { iconClass: 'role-paedagogisch',   icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z"/></svg>' },
   'Neurodivergent':      { iconClass: 'role-neurodivergent', icon: '∞' },
-  'Pedagogical':         { iconClass: 'role-paedagogisch',   icon: '✦' },
-  'Aus Kinderaugen':     { iconClass: 'role-kinderaugen',     icon: '☀' },
-  "Child's Eyes":        { iconClass: 'role-kinderaugen',     icon: '☀' },
+  'Pedagogical':         { iconClass: 'role-paedagogisch',   icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z"/></svg>' },
+  'Aus Kinderaugen':     { iconClass: 'role-kinderaugen',     icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="10" r="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="14.4" y1="14.4" x2="15.8" y2="15.8"/><line x1="4.2" y1="15.8" x2="5.6" y2="14.4"/><line x1="14.4" y1="5.6" x2="15.8" y2="4.2"/></svg>' },
+  "Child's Eyes":        { iconClass: 'role-kinderaugen',     icon: '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="10" r="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="14.4" y1="14.4" x2="15.8" y2="15.8"/><line x1="4.2" y1="15.8" x2="5.6" y2="14.4"/><line x1="14.4" y1="5.6" x2="15.8" y2="4.2"/></svg>' },
 };
 
 function escapeHtml(str) {
@@ -5192,6 +5192,7 @@ function printSelection() {
   </div>
 </div>
 
+<script src="/notizbuch.js"></script>
 </body></html>`;
   win.document.write(html);
   win.document.close();
@@ -6917,7 +6918,7 @@ function renderArenaPairs() {
       <div class="arena-pair-body">
         <div class="arena-pair-name">${escapeHtml(p.name || p.id)}</div>
         <div class="arena-pair-desc">${escapeHtml(p.beschreibung || '')}</div>
-        ${p.kernkonflikt ? `<div class="arena-pair-konter">⚡ ${escapeHtml(p.kernkonflikt)}</div>` : ''}
+        ${p.kernkonflikt ? `<div class="arena-pair-konter"><span style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg></span> ${escapeHtml(p.kernkonflikt)}</div>` : ''}
       </div>
     </div>`;
   }).join('');

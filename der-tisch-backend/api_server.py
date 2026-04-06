@@ -66,6 +66,10 @@ async def serve_tisch_hub():
 async def serve_wiki_tooltip():
     return FileResponse(Path(__file__).parent / "wiki-tooltip.js", media_type="application/javascript")
 
+@app.get("/notizbuch.js")
+async def serve_notizbuch():
+    return FileResponse(Path(__file__).parent / "notizbuch.js", media_type="application/javascript")
+
 @app.post("/api/kintegrity/synthesize", response_model=KintegrityResponse)
 async def api_kintegrity_synthesize(req: KintegrityRequest):
     try:
