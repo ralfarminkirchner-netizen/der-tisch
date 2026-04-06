@@ -574,19 +574,19 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
   <!-- Coaching-Kontext wählen -->
   <div class="mode-selector" id="modeSelector">
     <button class="mode-btn selected" data-mode="alle" onclick="selectMode(this)">
-      <span class="mode-icon">✦</span> <span>Alle Bereiche</span>
+      <span class="mode-icon"><span style="display:inline-flex;align-items:center;margin-right:4px;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z"/></svg></span> <span>Alle Bereiche</span>
     </button>
     <button class="mode-btn" data-mode="personal" onclick="selectMode(this)">
-      <span class="mode-icon">🌱</span> <span>Persönlich</span>
+      <span class="mode-icon" style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg></span> <span>Persönlich</span>
     </button>
     <button class="mode-btn" data-mode="beruf" onclick="selectMode(this)">
-      <span class="mode-icon">💼</span> <span>Beruf & Leadership</span>
+      <span class="mode-icon" style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect x="2" y="7" width="16" height="13" rx="2"/><path d="M6 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="2" y1="13" x2="18" y2="13"/></svg></span> <span>Beruf & Leadership</span>
     </button>
     <button class="mode-btn" data-mode="beziehung" onclick="selectMode(this)">
-      <span class="mode-icon">💞</span> <span>Beziehung</span>
+      <span class="mode-icon" style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 12s-4-7-10-7S0 12 0 12s4 7 10 7 10-7 10-7z"/></svg></span> <span>Beziehung</span>
     </button>
     <button class="mode-btn" data-mode="sport" onclick="selectMode(this)">
-      <span class="mode-icon">🏆</span> <span>Sport</span>
+      <span class="mode-icon" style="display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M6 2h8v8a4 4 0 01-8 0V2z"/><path d="M6 4H3a3 3 0 003 3"/><path d="M14 4h3a3 3 0 01-3 3"/><line x1="10" y1="14" x2="10" y2="18"/><line x1="7" y1="18" x2="13" y2="18"/></svg></span> <span>Sport</span>
     </button>
   </div>
 
@@ -713,18 +713,18 @@ let activeMode = 'alle';
 
 // ─── Perspektiven ─────────────────────────────────────────────
 const PERSPEKTIVEN = [
-  { id: 'lifecoach',    icon: '🌱', de: 'Life Coach',            en: 'Life Coach',            color: '#7C5CBF' },
-  { id: 'executive',    icon: '💼', de: 'Executive Coach',        en: 'Executive Coach',       color: '#5DADE2' },
-  { id: 'systemisch',   icon: '🕸️', de: 'Systemischer Coach',     en: 'Systemic Coach',        color: '#D4A843' },
-  { id: 'sportcoach',   icon: '🏆', de: 'Sportcoach',             en: 'Sports Coach',          color: '#2ECC71' },
-  { id: 'beziehung',    icon: '💞', de: 'Beziehungscoach',        en: 'Relationship Coach',    color: '#CF6060' },
-  { id: 'karriere',     icon: '🎯', de: 'Karrierecoach',          en: 'Career Coach',          color: '#E67E22' },
-  { id: 'nlp',          icon: '🧠', de: 'NLP & Mentalcoach',      en: 'NLP & Mental Coach',    color: '#9B59B6' },
-  { id: 'therapeutisch',icon: '🪞', de: 'Therapeutischer Coach',  en: 'Therapeutic Coach',     color: '#1ABC9C' },
-  { id: 'burnout',      icon: '🔋', de: 'Burnout-Coach',          en: 'Burnout Coach',         color: '#E74C3C' },
-  { id: 'eltern',       icon: '👨‍👩‍👧', de: 'Eltern-Coach',          en: 'Parenting Coach',       color: '#27AE60' },
-  { id: 'gesundheit',   icon: '🌿', de: 'Health Coach',           en: 'Health Coach',          color: '#16A085' },
-  { id: 'sinn',         icon: '✨', de: 'Sinn & Werte Coach',     en: 'Purpose & Values Coach',color: '#A855F7' },
+  { id: 'lifecoach',    icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg>', de: 'Life Coach',            en: 'Life Coach',            color: '#7C5CBF' },
+  { id: 'executive',    icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect x="2" y="7" width="16" height="13" rx="2"/><path d="M6 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="2" y1="13" x2="18" y2="13"/></svg>', de: 'Executive Coach',        en: 'Executive Coach',       color: '#5DADE2' },
+  { id: 'systemisch',   icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>', de: 'Systemischer Coach',     en: 'Systemic Coach',        color: '#D4A843' },
+  { id: 'sportcoach',   icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M6 2h8v8a4 4 0 01-8 0V2z"/><path d="M6 4H3a3 3 0 003 3"/><path d="M14 4h3a3 3 0 01-3 3"/><line x1="10" y1="14" x2="10" y2="18"/><line x1="7" y1="18" x2="13" y2="18"/></svg>', de: 'Sportcoach',             en: 'Sports Coach',          color: '#2ECC71' },
+  { id: 'beziehung',    icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 12s-4-7-10-7S0 12 0 12s4 7 10 7 10-7 10-7z"/></svg>', de: 'Beziehungscoach',        en: 'Relationship Coach',    color: '#CF6060' },
+  { id: 'karriere',     icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>', de: 'Karrierecoach',          en: 'Career Coach',          color: '#E67E22' },
+  { id: 'nlp',          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M13 3a4 4 0 014 4v1a3 3 0 013 3 3 3 0 01-3 3v1a4 4 0 01-8 0v-1a3 3 0 01-3-3 3 3 0 013-3v-1a4 4 0 014-4z"/></svg>', de: 'NLP & Mentalcoach',      en: 'NLP & Mental Coach',    color: '#9B59B6' },
+  { id: 'therapeutisch',icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect x="5" y="2" width="10" height="13" rx="5"/><line x1="10" y1="15" x2="10" y2="19"/><line x1="7" y1="19" x2="13" y2="19"/></svg>', de: 'Therapeutischer Coach',  en: 'Therapeutic Coach',     color: '#1ABC9C' },
+  { id: 'burnout',      icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>', de: 'Burnout-Coach',          en: 'Burnout Coach',         color: '#E74C3C' },
+  { id: 'eltern',       icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="5" cy="6" r="2"/><circle cx="15" cy="6" r="2"/><circle cx="10" cy="3" r="2"/><path d="M5 8v6M15 8v6M10 5v9"/><line x1="3" y1="14" x2="17" y2="14"/></svg>', de: 'Eltern-Coach',          en: 'Parenting Coach',       color: '#27AE60' },
+  { id: 'gesundheit',   icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M10 8c0 0-4-3-4-6 0 2 2 3 4 4 2-1 4-2 4-4 0 3-4 6-4 6z"/></svg>', de: 'Health Coach',           en: 'Health Coach',          color: '#16A085' },
+  { id: 'sinn',         icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z"/></svg>', de: 'Sinn & Werte Coach',     en: 'Purpose & Values Coach',color: '#A855F7' },
 ];
 
 // Beispiele je Modus
@@ -981,7 +981,7 @@ function renderResults(data, question, perspectives) {
   (data.perspectives || []).forEach((p, i) => {
     const def = PERSPEKTIVEN.find(x => (lang==='de'?x.de:x.en).toLowerCase() === (p.role||'').toLowerCase());
     const color = def ? def.color : `hsl(${i*42%360},60%,60%)`;
-    const icon = def ? def.icon : '🔮';
+    const icon = def ? def.icon : '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/><polygon points="10 16 11.5 11 10 9.5 8.5 11" fill="currentColor" stroke="none" opacity="0.4"/></svg>';
     const card = document.createElement('div');
     card.className = 'perspective-card';
     card.style.borderTopColor = color;
