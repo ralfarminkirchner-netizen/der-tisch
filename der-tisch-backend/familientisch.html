@@ -599,8 +599,17 @@ function setMode(mode) {
   document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('mode-' + mode).classList.add('active');
   document.getElementById('tab-' + mode).classList.add('active');
-  if (mode === 'aufstellung' && !threeInit) {
-    setTimeout(initThreeJS, 100);
+  if (mode === 'aufstellung') {
+    setTimeout(() => {
+      if (!threeInit) initThreeJS();
+      // Force resize so canvas fills the now-visible container
+      if (renderer && aufCanvas) {
+        const container = document.getElementById('canvasContainer');
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+      }
+    }, 100);
   }
 }
 
@@ -903,6 +912,7 @@ function showToast(msg) {
 // THREE.JS — FAMILIENAUFSTELLUNG
 // ============================================================
 let threeInit = false;
+let animStarted = false;
 let scene, camera, renderer, aufCanvas;
 let figures = [];
 let relationships = [];
@@ -1009,7 +1019,7 @@ function initThreeJS() {
     addFigure('child');
   }, 200);
 
-  animate();
+  startAnimateOnce();
 }
 
 function createCircleMesh() {
@@ -1089,7 +1099,8 @@ function setupOrbitControls() {
 }
 
 function setupFigureDrag() {
-  const tablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -0.15);
+  // Plane at y=0 (table surface where figures sit); radius=4 table cylinder
+  const tablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 
   aufCanvas.addEventListener('mousedown', e => {
     const rect = aufCanvas.getBoundingClientRect();
@@ -1097,8 +1108,8 @@ function setupFigureDrag() {
     mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
 
-    // Check figure click
-    const meshes = figures.map(f => f.body);
+    // Check figure click — include both body and head meshes
+    const meshes = figures.flatMap(f => [f.body, f.head]);
     const hits = raycaster.intersectObjects(meshes);
     if (hits.length > 0) {
       const hit = hits[0].object;
@@ -1374,6 +1385,12 @@ function animate() {
   }
   if (!isDraggingFigure) updateLabels();
   renderer.render(scene, camera);
+}
+
+function startAnimateOnce() {
+  if (animStarted) return;
+  animStarted = true;
+  animate();
 }
 
 // ============================================================

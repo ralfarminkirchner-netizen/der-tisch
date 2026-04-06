@@ -953,28 +953,65 @@ const API = '';
 
 // ─── 50+ Fachbereiche ──────────────────────
 const FACHBEREICHE = [
-  {name:'Allgemeinmedizin',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="3" x2="10" y2="17"/><line x1="3" y1="10" x2="17" y2="10"/></svg>'},{name:'Neurologie',icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M13 3a4 4 0 014 4v1a3 3 0 013 3 3 3 0 01-3 3v1a4 4 0 01-8 0v-1a3 3 0 01-3-3 3 3 0 013-3v-1a4 4 0 014-4z"/></svg>'},{name:'Psychiatrie',icon:'🧬'},
-  {name:'Psychologie',icon:'💭'},{name:'Psychotherapie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h2l2-2 2 2 2-2 2 2"/><path d="M3 8l2 4h10l2-4"/><path d="M7 8V6a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>'},{name:'Krisenpsychologie',icon:'🆘'},
-  {name:'Entwicklungspsychologie',icon:'👶'},{name:'Kognitionswissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="8" r="4"/><line x1="10" y1="12" x2="10" y2="17"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="7" y1="4" x2="4" y2="7"/></svg>'},
-  {name:'Bewusstseinsforschung',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z"/></svg>'},{name:'Pharmakologie',icon:'💊'},
-  {name:'Epidemiologie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="3" y1="17" x2="17" y2="17"/><rect x="4" y="11" width="3" height="6"/><rect x="9" y="7" width="3" height="10"/><rect x="14" y="4" width="3" height="13"/></svg>'},{name:'Medizinethik',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>'},{name:'Pflegewissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v6a4 4 0 008 0v-1"/><circle cx="17" cy="9" r="2"/></svg>'},
-  {name:'Sportmedizin',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="13" cy="4" r="2"/><path d="M8 16l2-5 2 3 3-6"/><path d="M5 20l3-4 5 4"/><line x1="5" y1="9" x2="9" y2="9"/></svg>'},{name:'Ernährungswissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 3s-8 0-12 6c-2 3-2 7-2 7s4 0 7-2c3-2 5-5 7-11z"/><path d="M5 16l-2 3"/></svg>'},
-  {name:'Philosophie',icon:'🦉'},{name:'Ethik',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>'},{name:'Phänomenologie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 10 Q10 5 6 5 Q2 5 2 9 Q2 13 6 13 Q9 13 9 10 Q9 7 7 7"/></svg>'},
-  {name:'Erkenntnistheorie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M1 10S4 4 10 4s9 6 9 6-3 6-9 6-9-6-9-6z"/><circle cx="10" cy="10" r="3"/></svg>'},{name:'Narratologie',icon:'📖'},
-  {name:'Verfassungsrecht',icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>'},{name:'Strafrecht',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>'},{name:'Arbeitsrecht',icon:'🔨'},
-  {name:'Internationales Recht',icon:'🌐'},{name:'Medienrecht',icon:'📱'},
-  {name:'Volkswirtschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polyline points="3 17 8 10 13 13 18 5"/><line x1="3" y1="17" x2="18" y2="17"/></svg>'},{name:'Verhaltensökonomie',icon:'🧮'},{name:'Finanzwesen',icon:'💰'},
-  {name:'Soziologie',icon:'👥'},{name:'Politikwissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect x="3" y="3" width="14" height="17" rx="1"/><rect x="7" y="8" width="2" height="3"/><rect x="11" y="8" width="2" height="3"/><rect x="7" y="14" width="2" height="6"/><rect x="11" y="14" width="2" height="6"/><line x1="3" y1="7" x2="17" y2="7"/></svg>'},
-  {name:'Kulturwissenschaft',icon:'🎭'},{name:'Religionswissenschaft',icon:'🕊️'},
-  {name:'Geschichte',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><line x1="7" y1="4" x2="7" y2="18"/><line x1="10" y1="8" x2="16" y2="8"/><line x1="10" y1="12" x2="16" y2="12"/></svg>'},{name:'Anthropologie',icon:'🌍'},
-  {name:'Linguistik',icon:'💬'},{name:'Kommunikationswissenschaft',icon:'📡'},
-  {name:'Pädagogik',icon:'🎓'},{name:'Sonderpädagogik',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg>'},
-  {name:'Physik',icon:'⚛️'},{name:'Quantenphysik',icon:'🌊'},{name:'Mathematik',icon:'🔢'},
-  {name:'Statistik',icon:'📉'},{name:'Informatik',icon:'💻'},{name:'KI-Forschung',icon:'🤖'},
-  {name:'Biologie',icon:'🧬'},{name:'Evolutionsbiologie',icon:'🦎'},{name:'Genetik',icon:'🧫'},
-  {name:'Umweltwissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M10 8c0 0-4-3-4-6 0 2 2 3 4 4 2-1 4-2 4-4 0 3-4 6-4 6z"/></svg>'},{name:'Klimaforschung',icon:'🌡️'},
-  {name:'Systemtheorie',icon:'🔄'},{name:'Architektur',icon:'🏗️'},{name:'Stadtplanung',icon:'🏙️'},
-  {name:'Forensik',icon:'🔎'},{name:'Philosophie des Geistes',icon:'🌐'},
+  {name:'Allgemeinmedizin',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="3" x2="10" y2="17"/><line x1="3" y1="10" x2="17" y2="10"/></svg>',wikiDE:'Allgemeinmedizin',wikiEN:'General_practice'},{name:'Neurologie',icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M13 3a4 4 0 014 4v1a3 3 0 013 3 3 3 0 01-3 3v1a4 4 0 01-8 0v-1a3 3 0 01-3-3 3 3 0 013-3v-1a4 4 0 014-4z"/></svg>',wikiDE:'Neurologie',wikiEN:'Neurology'},{name:'Psychiatrie',icon:'🧬',wikiDE:'Psychiatrie',wikiEN:'Psychiatry'},
+  {name:'Psychologie',icon:'💭',wikiDE:'Psychologie',wikiEN:'Psychology'},{name:'Psychotherapie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h2l2-2 2 2 2-2 2 2"/><path d="M3 8l2 4h10l2-4"/><path d="M7 8V6a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>',wikiDE:'Psychotherapie',wikiEN:'Psychotherapy'},{name:'Krisenpsychologie',icon:'🆘',wikiDE:'Krisenintervention',wikiEN:'Crisis_intervention'},
+  {name:'Entwicklungspsychologie',icon:'👶',wikiDE:'Entwicklungspsychologie',wikiEN:'Developmental_psychology'},{name:'Kognitionswissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="8" r="4"/><line x1="10" y1="12" x2="10" y2="17"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="7" y1="4" x2="4" y2="7"/></svg>',wikiDE:'Kognitionswissenschaft',wikiEN:'Cognitive_science'},
+  {name:'Bewusstseinsforschung',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z"/></svg>',wikiDE:'Bewusstsein',wikiEN:'Consciousness'},{name:'Pharmakologie',icon:'💊',wikiDE:'Pharmakologie',wikiEN:'Pharmacology'},
+  {name:'Epidemiologie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="3" y1="17" x2="17" y2="17"/><rect x="4" y="11" width="3" height="6"/><rect x="9" y="7" width="3" height="10"/><rect x="14" y="4" width="3" height="13"/></svg>',wikiDE:'Epidemiologie',wikiEN:'Epidemiology'},{name:'Medizinethik',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>',wikiDE:'Medizinethik',wikiEN:'Medical_ethics'},{name:'Pflegewissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v6a4 4 0 008 0v-1"/><circle cx="17" cy="9" r="2"/></svg>',wikiDE:'Pflegewissenschaft',wikiEN:'Nursing_science'},
+  {name:'Sportmedizin',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="13" cy="4" r="2"/><path d="M8 16l2-5 2 3 3-6"/><path d="M5 20l3-4 5 4"/><line x1="5" y1="9" x2="9" y2="9"/></svg>',wikiDE:'Sportmedizin',wikiEN:'Sports_medicine'},{name:'Ernährungswissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 3s-8 0-12 6c-2 3-2 7-2 7s4 0 7-2c3-2 5-5 7-11z"/><path d="M5 16l-2 3"/></svg>',wikiDE:'Ernährungswissenschaft',wikiEN:'Nutritional_science'},
+  {name:'Philosophie',icon:'🦉',wikiDE:'Philosophie',wikiEN:'Philosophy'},{name:'Ethik',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>',wikiDE:'Ethik',wikiEN:'Ethics'},{name:'Phänomenologie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 10 Q10 5 6 5 Q2 5 2 9 Q2 13 6 13 Q9 13 9 10 Q9 7 7 7"/></svg>',wikiDE:'Phänomenologie',wikiEN:'Phenomenology_(philosophy)'},
+  {name:'Erkenntnistheorie',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M1 10S4 4 10 4s9 6 9 6-3 6-9 6-9-6-9-6z"/><circle cx="10" cy="10" r="3"/></svg>',wikiDE:'Erkenntnistheorie',wikiEN:'Epistemology'},{name:'Narratologie',icon:'📖',wikiDE:'Narratologie',wikiEN:'Narratology'},
+  {name:'Verfassungsrecht',icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>',wikiDE:'Verfassungsrecht',wikiEN:'Constitutional_law'},{name:'Strafrecht',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>',wikiDE:'Strafrecht',wikiEN:'Criminal_law'},{name:'Arbeitsrecht',icon:'🔨',wikiDE:'Arbeitsrecht',wikiEN:'Labour_law'},
+  {name:'Internationales Recht',icon:'🌐',wikiDE:'Internationales_Recht',wikiEN:'International_law'},{name:'Medienrecht',icon:'📱',wikiDE:'Medienrecht',wikiEN:'Media_law'},
+  {name:'Volkswirtschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polyline points="3 17 8 10 13 13 18 5"/><line x1="3" y1="17" x2="18" y2="17"/></svg>',wikiDE:'Volkswirtschaftslehre',wikiEN:'Economics'},{name:'Verhaltensökonomie',icon:'🧮',wikiDE:'Verhaltensökonomik',wikiEN:'Behavioral_economics'},{name:'Finanzwesen',icon:'💰',wikiDE:'Finanzwesen',wikiEN:'Finance'},
+  {name:'Soziologie',icon:'👥',wikiDE:'Soziologie',wikiEN:'Sociology'},{name:'Politikwissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><rect x="3" y="3" width="14" height="17" rx="1"/><rect x="7" y="8" width="2" height="3"/><rect x="11" y="8" width="2" height="3"/><rect x="7" y="14" width="2" height="6"/><rect x="11" y="14" width="2" height="6"/><line x1="3" y1="7" x2="17" y2="7"/></svg>',wikiDE:'Politikwissenschaft',wikiEN:'Political_science'},
+  {name:'Kulturwissenschaft',icon:'🎭',wikiDE:'Kulturwissenschaft',wikiEN:'Cultural_studies'},{name:'Religionswissenschaft',icon:'🕊️',wikiDE:'Religionswissenschaft',wikiEN:'Religious_studies'},
+  {name:'Geschichte',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><line x1="7" y1="4" x2="7" y2="18"/><line x1="10" y1="8" x2="16" y2="8"/><line x1="10" y1="12" x2="16" y2="12"/></svg>',wikiDE:'Geschichtswissenschaft',wikiEN:'Historiography'},{name:'Anthropologie',icon:'🌍',wikiDE:'Anthropologie',wikiEN:'Anthropology'},
+  {name:'Linguistik',icon:'💬',wikiDE:'Linguistik',wikiEN:'Linguistics'},{name:'Kommunikationswissenschaft',icon:'📡',wikiDE:'Kommunikationswissenschaft',wikiEN:'Communication_studies'},
+  {name:'Pädagogik',icon:'🎓',wikiDE:'Pädagogik',wikiEN:'Pedagogy'},{name:'Sonderpädagogik',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg>',wikiDE:'Sonderpädagogik',wikiEN:'Special_education'},
+  {name:'Physik',icon:'⚛️',wikiDE:'Physik',wikiEN:'Physics'},{name:'Quantenphysik',icon:'🌊',wikiDE:'Quantenphysik',wikiEN:'Quantum_mechanics'},{name:'Mathematik',icon:'🔢',wikiDE:'Mathematik',wikiEN:'Mathematics'},
+  {name:'Statistik',icon:'📉',wikiDE:'Statistik',wikiEN:'Statistics'},{name:'Informatik',icon:'💻',wikiDE:'Informatik',wikiEN:'Computer_science'},{name:'KI-Forschung',icon:'🤖',wikiDE:'Künstliche_Intelligenz',wikiEN:'Artificial_intelligence'},
+  {name:'Biologie',icon:'🧬',wikiDE:'Biologie',wikiEN:'Biology'},{name:'Evolutionsbiologie',icon:'🦎',wikiDE:'Evolutionsbiologie',wikiEN:'Evolutionary_biology'},{name:'Genetik',icon:'🧫',wikiDE:'Genetik',wikiEN:'Genetics'},
+  {name:'Umweltwissenschaft',icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 18V8"/><path d="M10 8c0 0-4-3-4-6 0 2 2 3 4 4 2-1 4-2 4-4 0 3-4 6-4 6z"/></svg>',wikiDE:'Umweltwissenschaft',wikiEN:'Environmental_science'},{name:'Klimaforschung',icon:'🌡️',wikiDE:'Klimaforschung',wikiEN:'Climatology'},
+  {name:'Systemtheorie',icon:'🔄',wikiDE:'Systemtheorie',wikiEN:'Systems_theory'},{name:'Architektur',icon:'🏗️',wikiDE:'Architektur',wikiEN:'Architecture'},{name:'Stadtplanung',icon:'🏙️',wikiDE:'Stadtplanung',wikiEN:'Urban_planning'},
+  {name:'Forensik',icon:'🔎',wikiDE:'Forensik',wikiEN:'Forensic_science'},{name:'Philosophie des Geistes',icon:'🌐',wikiDE:'Philosophie_des_Geistes',wikiEN:'Philosophy_of_mind'},
+
+  // ─── Additional disciplines ───────────────────────────
+  {name:'Neurowissenschaft',icon:'🧠',wikiDE:'Neurowissenschaft',wikiEN:'Neuroscience'},
+  {name:'Klimawissenschaft',icon:'🌍',wikiDE:'Klimawissenschaft',wikiEN:'Climate_science'},
+  {name:'Meeresbiologie',icon:'🐋',wikiDE:'Meeresbiologie',wikiEN:'Marine_biology'},
+  {name:'Epigenetik',icon:'🔬',wikiDE:'Epigenetik',wikiEN:'Epigenetics'},
+  {name:'Robotik',icon:'🤖',wikiDE:'Robotik',wikiEN:'Robotics'},
+  {name:'Quanteninformatik',icon:'💡',wikiDE:'Quanteninformatik',wikiEN:'Quantum_computing'},
+  {name:'Spieltheorie',icon:'♟️',wikiDE:'Spieltheorie',wikiEN:'Game_theory'},
+  {name:'Komplexitätswissenschaft',icon:'🌐',wikiDE:'Komplexitätstheorie',wikiEN:'Complexity_science'},
+  {name:'Systembiologie',icon:'🔄',wikiDE:'Systembiologie',wikiEN:'Systems_biology'},
+  {name:'Bioethik',icon:'🌱',wikiDE:'Bioethik',wikiEN:'Bioethics'},
+  {name:'Wissenschaftsphilosophie',icon:'🔭',wikiDE:'Wissenschaftstheorie',wikiEN:'Philosophy_of_science'},
+  {name:'Sprachphilosophie',icon:'💬',wikiDE:'Sprachphilosophie',wikiEN:'Philosophy_of_language'},
+  {name:'Politische Philosophie',icon:'🏛️',wikiDE:'Politische_Philosophie',wikiEN:'Political_philosophy'},
+  {name:'Ontologie',icon:'📐',wikiDE:'Ontologie',wikiEN:'Ontology'},
+  {name:'Kulturanthropologie',icon:'🌍',wikiDE:'Kulturanthropologie',wikiEN:'Cultural_anthropology'},
+  {name:'Sozialpsychologie',icon:'👥',wikiDE:'Sozialpsychologie',wikiEN:'Social_psychology'},
+  {name:'Kriminologie',icon:'🔍',wikiDE:'Kriminologie',wikiEN:'Criminology'},
+  {name:'Demographie',icon:'📊',wikiDE:'Demographie',wikiEN:'Demography'},
+  {name:'Raumplanung',icon:'🗺️',wikiDE:'Raumplanung',wikiEN:'Spatial_planning'},
+  {name:'Landschaftsarchitektur',icon:'🌳',wikiDE:'Landschaftsarchitektur',wikiEN:'Landscape_architecture'},
+  {name:'Restaurierungswissenschaft',icon:'🏺',wikiDE:'Restaurierungswissenschaft',wikiEN:'Conservation_science'},
+  {name:'Paläontologie',icon:'🦕',wikiDE:'Paläontologie',wikiEN:'Palaeontology'},
+  {name:'Geologie',icon:'🪨',wikiDE:'Geologie',wikiEN:'Geology'},
+  {name:'Ozeanographie',icon:'🌊',wikiDE:'Ozeanographie',wikiEN:'Oceanography'},
+  {name:'Meteorologie',icon:'⛅',wikiDE:'Meteorologie',wikiEN:'Meteorology'},
+  {name:'Glaziologie',icon:'❄️',wikiDE:'Glaziologie',wikiEN:'Glaciology'},
+  {name:'Vulkanologie',icon:'🌋',wikiDE:'Vulkanologie',wikiEN:'Volcanology'},
+  {name:'Seismologie',icon:'📈',wikiDE:'Seismologie',wikiEN:'Seismology'},
+  {name:'Toxikologie',icon:'⚗️',wikiDE:'Toxikologie',wikiEN:'Toxicology'},
+  {name:'Immunologie',icon:'🛡️',wikiDE:'Immunologie',wikiEN:'Immunology'},
+  {name:'Virologie',icon:'🦠',wikiDE:'Virologie',wikiEN:'Virology'},
+  {name:'Onkologie',icon:'🔬',wikiDE:'Onkologie',wikiEN:'Oncology'},
+  {name:'Kardiologie',icon:'❤️',wikiDE:'Kardiologie',wikiEN:'Cardiology'},
+  {name:'Dermatologie',icon:'🧴',wikiDE:'Dermatologie',wikiEN:'Dermatology'},
+  {name:'Ophthalmologie',icon:'👁️',wikiDE:'Ophthalmologie',wikiEN:'Ophthalmology'},
 ];
 
 // Agent colors per Fachbereich (rotating palette)
@@ -1085,17 +1122,28 @@ function buildFachbereicheGrid() {
     btn.className = 'fachbereich-btn';
     btn.dataset.name = fb.name;
     btn.dataset.index = i;
+    if (fb.wikiDE) btn.dataset.wiki = fb.wikiDE;
     btn.innerHTML = `<span class="fb-icon">${fb.icon}</span>${fb.name}`;
     btn.onclick = () => toggleFachbereich(fb, btn);
     if (selectedFachbereiche.find(s => s.name === fb.name)) btn.classList.add('selected');
     grid.appendChild(btn);
   });
+  // Attach wiki tooltips after render
+  if (typeof attachWikiTooltips === 'function') attachWikiTooltips();
 }
 
 function filterFachbereiche() {
   const q = (document.getElementById('fb-search')?.value || '').toLowerCase();
   document.querySelectorAll('.fachbereich-btn').forEach(btn => {
     btn.style.display = btn.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+
+// Attach Wikipedia tooltips to all fachbereich buttons after render
+function attachWikiTooltips() {
+  document.querySelectorAll('.fachbereich-btn[data-wiki]').forEach(btn => {
+    if (window.TiSCHWiki) TiSCHWiki.attach(btn, btn.dataset.wiki);
   });
 }
 
@@ -1477,5 +1525,6 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+<script src="/wiki-tooltip.js"></script>
 </body>
 </html>

@@ -58,6 +58,14 @@ async def serve_juristisch():
 async def serve_familientisch():
     return FileResponse(Path(__file__).parent / "familientisch.html")
 
+@app.get("/tisch-hub.html")
+async def serve_tisch_hub():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html")
+
+@app.get("/wiki-tooltip.js")
+async def serve_wiki_tooltip():
+    return FileResponse(Path(__file__).parent / "wiki-tooltip.js", media_type="application/javascript")
+
 @app.post("/api/kintegrity/synthesize", response_model=KintegrityResponse)
 async def api_kintegrity_synthesize(req: KintegrityRequest):
     try:
@@ -2106,69 +2114,6 @@ async def hook_pandora_logic(payload: PandoraLogicPayload):
     """Pandora_Logic: Trigger when idea cloud reaches maximum density."""
     # HOOKPOINT — trigger logic pending
     return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
-
-# ═══════════════════════════════════════════════════════════════
-# MOONFiNGERS — Notebook & Content API
-# ═══════════════════════════════════════════════════════════════
-from moonfingers_store import (
-    init_db as mf_init_db,
-    get_notes, create_note, update_note, delete_note,
-    get_bookmarks, get_user_content, add_user_content, delete_user_content,
-    export_notebook, NoteCreate, NoteUpdate, NoteResponse,
-    UserContentCreate, UserContentResponse,
-)
-
-@app.on_event("startup")
-async def moonfingers_startup():
-    await mf_init_db()
-
-@app.get("/api/moonfingers/notes", response_model=list[NoteResponse])
-async def api_mf_get_notes(entity_id: str = None):
-    return await get_notes(entity_id=entity_id)
-
-@app.post("/api/moonfingers/notes", response_model=NoteResponse, status_code=201)
-async def api_mf_create_note(body: NoteCreate):
-    return await create_note(entity_id=body.entity_id, content=body.content)
-
-@app.put("/api/moonfingers/notes/{note_id}", response_model=NoteResponse)
-async def api_mf_update_note(note_id: int, body: NoteUpdate):
-    try:
-        return await update_note(note_id=note_id, content=body.content, is_bookmark=body.is_bookmark)
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
-
-@app.delete("/api/moonfingers/notes/{note_id}")
-async def api_mf_delete_note(note_id: int):
-    deleted = await delete_note(note_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail=f"Note {note_id} not found")
-    return {"deleted": True, "id": note_id}
-
-@app.get("/api/moonfingers/bookmarks", response_model=list[NoteResponse])
-async def api_mf_get_bookmarks():
-    return await get_bookmarks()
-
-@app.get("/api/moonfingers/content/{entity_id}", response_model=list[UserContentResponse])
-async def api_mf_get_content(entity_id: str):
-    return await get_user_content(entity_id=entity_id)
-
-@app.post("/api/moonfingers/content", response_model=UserContentResponse, status_code=201)
-async def api_mf_add_content(body: UserContentCreate):
-    try:
-        return await add_user_content(entity_id=body.entity_id, content_type=body.content_type, content=body.content, title=body.title)
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
-
-@app.delete("/api/moonfingers/content/{content_id}")
-async def api_mf_delete_content(content_id: int):
-    deleted = await delete_user_content(content_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail=f"Content {content_id} not found")
-    return {"deleted": True, "id": content_id}
-
-@app.get("/api/moonfingers/export")
-async def api_mf_export():
-    return await export_notebook()
 
 if __name__ == "__main__":
     import uvicorn

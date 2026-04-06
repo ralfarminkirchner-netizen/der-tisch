@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TiSCH Familie — Zehn spezialisierte KI-Tische. Eine Frage, unendlich viele Perspektiven.">
+  <title>TiSCH HUB — KI-gestützte Multiperspektiv-Analyse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #070707;
+      color: #F0EDE8;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,7,7,0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-brand {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: rgba(240,237,232,0.4);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: rgba(240,237,232,0.35);
+      transition: color 0.18s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+      color: rgba(240,237,232,0.75);
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+    }
+
+    .hero h1 {
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      color: #F0EDE8;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: rgba(240,237,232,0.55);
+      max-width: 480px;
+      margin: 0 auto 48px;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: #C9A84C;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: rgba(240,237,232,0.35);
+      text-transform: uppercase;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* SECTION LABEL */
+    .section-label {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: rgba(240,237,232,0.3);
+      text-transform: uppercase;
+      padding: 48px 24px 24px;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* APP CARD */
+    .app-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.22s cubic-bezier(0.25,0.46,0.45,0.94),
+                  box-shadow 0.22s cubic-bezier(0.25,0.46,0.45,0.94);
+      cursor: pointer;
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent);
+    }
+
+    .card-accent-bar {
+      height: 3px;
+      background: var(--accent);
+    }
+
+    .card-body {
+      padding: 22px 24px 24px;
+    }
+
+    .card-index {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      opacity: 0.6;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .app-name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: rgba(240,237,232,0.5);
+      margin-bottom: 16px;
+    }
+
+    .examples {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .examples li {
+      font-size: 12px;
+      color: rgba(240,237,232,0.38);
+      padding: 3px 0;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .examples li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      opacity: 0.6;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      transition: gap 0.18s;
+    }
+
+    .app-card:hover .card-cta {
+      gap: 10px;
+    }
+
+    .card-cta svg {
+      transition: transform 0.18s;
+    }
+
+    .app-card:hover .card-cta svg {
+      transform: translateX(3px);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: rgba(240,237,232,0.3);
+      font-size: 12px;
+    }
+
+    footer a {
+      color: rgba(240,237,232,0.4);
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+
+    footer a:hover {
+      color: rgba(240,237,232,0.7);
+    }
+
+    .footer-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: rgba(240,237,232,0.5);
+      margin-bottom: 8px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px 60px;
+      }
+
+      .hero {
+        padding: 48px 16px 40px;
+      }
+
+      .nav-links {
+        gap: 10px;
+      }
+
+      .stats-row {
+        gap: 20px;
+      }
+
+      .stat-divider {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* SUBTLE GLOW on body bg */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">TiSCH FAMILIE</div>
+  <div class="nav-links">
+    <a href="/">Team</a>
+    <a href="/der-tisch.html">Der</a>
+    <a href="/integrationstisch.html">Integration</a>
+    <a href="/literatentisch.html">Literatur</a>
+    <a href="/expertentisch.html">Experten</a>
+    <a href="/trainingstisch.html">Training</a>
+    <a href="/coachingtisch.html">Coaching</a>
+    <a href="/medizintisch.html">Medizin</a>
+    <a href="/juristisch.html">Juris</a>
+    <a href="/familientisch.html">Familie</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <!-- Giant TiSCH logo SVG — T as table (horizontal bar + two legs) in gold -->
+  <svg viewBox="0 0 320 100" style="width:clamp(200px,50vw,320px);height:auto;display:block;margin:0 auto 32px" aria-label="TiSCH Logo" role="img">
+    <!-- Tagline above -->
+    <text x="160" y="14" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#C9A84C" letter-spacing="0.22em" text-anchor="middle">EINE FAMILIE. ZEHN TISCHE.</text>
+    <!-- Table bar -->
+    <rect x="20" y="22" width="280" height="14" fill="#C9A84C" rx="2"/>
+    <!-- Left leg -->
+    <rect x="72" y="36" width="14" height="58" fill="#C9A84C"/>
+    <!-- Right leg -->
+    <rect x="234" y="36" width="14" height="58" fill="#C9A84C"/>
+    <!-- T -->
+    <text x="28" y="90" font-family="Inter,sans-serif" font-size="54" font-weight="300" fill="white" text-anchor="start">T</text>
+    <!-- iSCH -->
+    <text x="252" y="90" font-family="Inter,sans-serif" font-size="54" font-weight="300" fill="white" text-anchor="start"><tspan fill="#C9A84C">i</tspan>SCH</text>
+  </svg>
+
+  <h1>KI-gestützte Multiperspektiv-Analyse</h1>
+  <p>Zehn spezialisierte Tische. Eine Frage — unendlich viele Perspektiven.</p>
+
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-number">10</div>
+      <div class="stat-label">Tische</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-number">80+</div>
+      <div class="stat-label">Disziplinen</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-number">∞</div>
+      <div class="stat-label">Perspektiven</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Alle Tische im Überblick</div>
+
+<!-- GRID -->
+<div class="grid">
+
+  <!-- 1. TEAM TiSCH -->
+  <a class="app-card" href="/" style="--accent:#C9A84C">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 01</div>
+      <div class="app-name">TEAM T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Mehrere Perspektiven. Eine Frage.</div>
+      <ul class="examples">
+        <li>Wie baue ich ein Remote-Team effektiv auf?</li>
+        <li>Was macht eine Strategie wirklich zukunftsfähig?</li>
+        <li>Wie entwickle ich eine starke Unternehmenskultur?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 2. DER TiSCH -->
+  <a class="app-card" href="/der-tisch.html" style="--accent:#E8614A">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 02</div>
+      <div class="app-name">DER T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Multiperspektiv. Ehrlich.</div>
+      <ul class="examples">
+        <li>Soll ich den Job wechseln?</li>
+        <li>Wie treffe ich schwierige Entscheidungen?</li>
+        <li>Was halte ich von meiner eigenen Situation wirklich?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 3. iNTEGRATiONS TiSCH -->
+  <a class="app-card" href="/integrationstisch.html" style="--accent:#3A6F73">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 03</div>
+      <div class="app-name"><span style="color:var(--accent)">i</span>NTEGRAT<span style="color:var(--accent)">i</span>ONS T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Systeme verbinden.</div>
+      <ul class="examples">
+        <li>Wie integriere ich Salesforce mit meinem ERP?</li>
+        <li>Was ist die beste API-Strategie für uns?</li>
+        <li>Wie optimiere ich unsere IT-Prozesse?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 4. LiTERATUR TiSCH -->
+  <a class="app-card" href="/literatentisch.html" style="--accent:#C87941">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 04</div>
+      <div class="app-name">L<span style="color:var(--accent)">i</span>TERATUR T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Acht Stimmen. Ein Text.</div>
+      <ul class="examples">
+        <li>Was wollte Kafka wirklich sagen?</li>
+        <li>Wie analysiere ich ein Gedicht tiefgreifend?</li>
+        <li>Welcher Autor passt zu meinem Stil?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 5. EXPERTiSEN TiSCH -->
+  <a class="app-card" href="/expertentisch.html" style="--accent:#2C5F8A">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 05</div>
+      <div class="app-name">EXPERT<span style="color:var(--accent)">i</span>SEN T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">80+ Disziplinen.</div>
+      <ul class="examples">
+        <li>Was sagt die Quantenphysik dazu?</li>
+        <li>Erkläre mir Spieltheorie einfach.</li>
+        <li>Wie funktioniert Neuroplastizität?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 6. TRAiNiNGS TiSCH -->
+  <a class="app-card" href="/trainingstisch.html" style="--accent:#2ECC5A">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 06</div>
+      <div class="app-name">TRA<span style="color:var(--accent)">i</span>N<span style="color:var(--accent)">i</span>NGS T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Professionelles Training.</div>
+      <ul class="examples">
+        <li>Wie baue ich einen Marathonplan auf?</li>
+        <li>Was ist optimales Recovery für Athleten?</li>
+        <li>Wie verbessere ich meine Sprintzeit?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 7. COACHiNG TiSCH -->
+  <a class="app-card" href="/coachingtisch.html" style="--accent:#7C5CBF">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 07</div>
+      <div class="app-name">COACH<span style="color:var(--accent)">i</span>NG T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Perspektiven für Transformation.</div>
+      <ul class="examples">
+        <li>Wie finde ich meinen Lebenssinn?</li>
+        <li>Wie verbessere ich meine Beziehungen?</li>
+        <li>Was blockiert mich in meiner Karriere?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 8. MEDiZiN TiSCH -->
+  <a class="app-card" href="/medizintisch.html" style="--accent:#4ECDC4">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 08</div>
+      <div class="app-name">MED<span style="color:var(--accent)">i</span>Z<span style="color:var(--accent)">i</span>N T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Medizinische Perspektiven.</div>
+      <ul class="examples">
+        <li>Was könnten diese Symptome bedeuten?</li>
+        <li>Wie kann ich Burnout vorbeugen?</li>
+        <li>Was ist evidenzbasierte Prävention?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 9. JURiS TiSCH -->
+  <a class="app-card" href="/juristisch.html" style="--accent:#C9A84C">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 09</div>
+      <div class="app-name">JUR<span style="color:var(--accent)">i</span>S T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Rechtsfragen am Tisch.</div>
+      <ul class="examples">
+        <li>Was steht in meinem Arbeitsvertrag wirklich?</li>
+        <li>Wie löse ich einen Mietstreit?</li>
+        <li>Was sind meine Rechte als Verbraucher?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- 10. FAMiLiEN TiSCH -->
+  <a class="app-card" href="/familientisch.html" style="--accent:#C4622D">
+    <div class="card-accent-bar"></div>
+    <div class="card-body">
+      <div class="card-index">Tisch 10</div>
+      <div class="app-name">FAM<span style="color:var(--accent)">i</span>L<span style="color:var(--accent)">i</span>EN T<span style="color:var(--accent)">i</span>SCH</div>
+      <div class="tagline">Familie + Aufstellung.</div>
+      <ul class="examples">
+        <li>Wie erkenne ich toxische Familiendynamiken?</li>
+        <li>Was steckt hinter Erziehungsmustern?</li>
+        <li>Wie setze ich gesunde Grenzen in der Familie?</li>
+      </ul>
+      <div class="card-cta">
+        Zum Tisch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">T<span style="color:#C9A84C">i</span>SCH FAM<span style="color:#C9A84C">i</span>L<span style="color:#C9A84C">i</span>E</div>
+    <p>Zehn spezialisierte KI-Tische &mdash; gebaut für tiefes, multiperspektivisches Denken.</p>
+    <p style="margin-top:10px;">
+      <a href="/">Team TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="/der-tisch.html">Der TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="/expertentisch.html">Experten TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="/medizintisch.html">Medizin TiSCH</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

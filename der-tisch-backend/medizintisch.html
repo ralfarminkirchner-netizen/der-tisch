@@ -175,7 +175,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .perspective-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-card); padding: 20px; box-shadow: var(--shadow); transition: border-color var(--trans); }
 .perspective-card:hover { border-color: var(--border-2); }
 .card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-.card-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1.5px solid var(--border); }
+.card-icon { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1.5px solid var(--border); }
 .card-role { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
 .card-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
 .card-body { font-size: 14px; line-height: 1.7; color: var(--muted); }
@@ -575,6 +575,70 @@ const PERSPEKTIVEN = [
   { id: 'praevention',  icon: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>',  de: 'Präventivmedizin',            en: 'Preventive Medicine',  color: '#16A085' },
 ];
 
+// ─── Portrait SVGs ───────────────────────────────────────────
+const PORTRAITS = {
+  'hausarzt': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M16 21 Q14 27 18 29 Q22 31 24 27" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <circle cx="24" cy="27" r="2" stroke="currentColor" stroke-width="1"/>
+  </svg>`,
+  'internist': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <ellipse cx="20" cy="26" rx="5" ry="3" stroke="currentColor" stroke-width="1"/>
+    <path d="M15 26 Q13 22 17 20 Q20 19 23 20 Q27 22 25 26" stroke="currentColor" stroke-width="1" fill="none"/>
+  </svg>`,
+  'psychosomatik': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M20 22 Q16 26 20 30 Q24 26 20 22" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <line x1="20" y1="22" x2="20" y2="19" stroke="currentColor" stroke-width="1"/>
+  </svg>`,
+  'psychiatrie': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M14 21 Q10 25 12 30 Q16 34 20 32 Q24 34 28 30 Q30 25 26 21" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <line x1="20" y1="21" x2="20" y2="26" stroke="currentColor" stroke-width="1"/>
+    <circle cx="20" cy="27" r="1.5" fill="currentColor"/>
+  </svg>`,
+  'naturheilkunde': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M20 19v10" stroke="currentColor" stroke-width="1.2"/>
+    <path d="M20 22 Q16 20 15 17 Q18 17 20 19" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M20 25 Q24 23 25 20 Q22 20 20 22" stroke="currentColor" stroke-width="1" fill="none"/>
+  </svg>`,
+  'ernaehrungsmedizin': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M16 20 Q12 22 13 26 Q15 30 20 30 Q25 30 27 26 Q28 22 24 20" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <line x1="20" y1="20" x2="20" y2="24" stroke="currentColor" stroke-width="1"/>
+  </svg>`,
+  'schmerzmedizin': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M22 19 L17 25 L21 25 L18 32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
+  'default': `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M8 38v-5a12 12 0 0124 0v5" stroke="currentColor" stroke-width="1.5"/>
+  </svg>`
+};
+
+function getPortrait(role) {
+  if (!role) return PORTRAITS['default'];
+  const r = role.toLowerCase();
+  if (r.includes('hausarzt') || r.includes('allgemein') || r.includes('general practitioner')) return PORTRAITS['hausarzt'];
+  if (r.includes('internist')) return PORTRAITS['internist'];
+  if (r.includes('psychosomatik') || r.includes('psychosomatic')) return PORTRAITS['psychosomatik'];
+  if (r.includes('psychiatrie') || r.includes('psychiatry')) return PORTRAITS['psychiatrie'];
+  if (r.includes('naturheil') || r.includes('naturopath')) return PORTRAITS['naturheilkunde'];
+  if (r.includes('ernährungs') || r.includes('ernaehr') || r.includes('nutri')) return PORTRAITS['ernaehrungsmedizin'];
+  if (r.includes('schmerz') || r.includes('pain')) return PORTRAITS['schmerzmedizin'];
+  return PORTRAITS['default'];
+}
+
 const CHIPS_DE = {
   alle: [
     'Ich bin ständig erschöpft — was kann das sein?',
@@ -776,10 +840,11 @@ function renderResults(data, question, perspectives) {
     const def = PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===(p.role||'').toLowerCase());
     const color = def ? def.color : `hsl(${i*38%360},55%,55%)`;
     const icon = def ? def.icon : '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v6a4 4 0 008 0v-1"/><circle cx="17" cy="9" r="2"/></svg>';
+    const portrait = getPortrait(p.role);
     const card = document.createElement('div');
     card.className = 'perspective-card';
     card.style.borderTopColor = color; card.style.borderTopWidth = '3px';
-    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;">${icon}</div><div><div class="card-role" style="color:${color}">${p.role||''}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
+    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">${portrait}</div><div><div class="card-role" style="color:${color}">${p.role||''}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
     cards.appendChild(card);
   });
 
