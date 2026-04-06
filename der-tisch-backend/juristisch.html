@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!--
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0D0D0D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="JURiS TiSCH">
+<title>JURiS TiSCH — Rechtsfragen am Tisch</title>
+<meta name="description" content="JURiS TiSCH: Anwalt, Richter, Notar, Rechtsberater, Mediator und mehr — juristische Perspektiven auf deine Rechtsfrage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:           #0D0D0D;
+  --bg-2:         #111111;
+  --surface:      #191919;
+  --surface-2:    #141414;
+  --surface-off:  #1E1E1E;
+  --text:         #F0EDE8;
+  --muted:        #9A9080;
+  --faint:        #4A4438;
+  --border:       #282420;
+  --border-2:     #3A3428;
+  --accent:       #C9A84C;   /* Gold */
+  --accent-2:     #8B1A1A;   /* Justitia-Rot (subtil) */
+  --accent-dim:   rgba(201,168,76,0.1);
+  --accent-glow:  rgba(201,168,76,0.25);
+  --gold-mid:     #A8894A;
+  --green:        #6B9E6B;
+  --amber:        #C9A84C;
+  --red:          #C05050;
+  --r-card:       14px;
+  --r-btn:        10px;
+  --shadow:       0 2px 16px rgba(0,0,0,0.7);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.8);
+  --trans:        0.18s ease;
+  --font:         'Inter', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Hintergrund: feine Pergament-Textur ─────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 70%),
+    repeating-linear-gradient(
+      0deg, transparent, transparent 72px,
+      rgba(201,168,76,0.018) 72px, rgba(201,168,76,0.018) 73px
+    ),
+    var(--bg);
+  pointer-events: none;
+}
+
+/* ── Nav ─────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(13,13,13,0.96); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  min-height: 72px; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.nav-logo { display: flex; flex-direction: column; line-height: 1; text-decoration: none; gap: 2px; }
+.nav-logo-pre { font-size: 9px; letter-spacing: 0.22em; color: var(--faint); text-transform: uppercase; font-weight: 600; }
+.nav-logo-mark { height: clamp(36px, 5vw, 52px); width: auto; display: block; }
+
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.toggle-group { display: flex; gap: 2px; padding: 3px; background: var(--surface-off); border: 1px solid var(--border); border-radius: 10px; }
+.tgl-btn { border: none; background: transparent; padding: 5px 10px; border-radius: 7px; font-family: inherit; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all var(--trans); white-space: nowrap; }
+.tgl-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.tgl-btn:hover:not(.active) { color: var(--text); }
+.icon-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--trans); }
+.icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ── Main ────────────────────────────────────────────────── */
+main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+/* ── Hero ────────────────────────────────────────────────── */
+.hero { min-height: calc(100vh - 72px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 28px 0 36px; text-align: center; }
+.hero-logo-svg { width: min(92vw, 740px); height: auto; display: block; margin: 0 auto 20px; }
+
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--accent-dim); border: 1px solid rgba(201,168,76,0.3); border-radius: 100px; padding: 5px 16px; font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 22px; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 3s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.7; max-width: 540px; }
+
+/* ── Haftungshinweis ─────────────────────────────────────── */
+.disclaimer { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.18); border-radius: 10px; padding: 10px 16px; font-size: 12px; color: var(--muted); margin-bottom: 16px; display: flex; align-items: flex-start; gap: 8px; max-width: 680px; width: 100%; text-align: left; line-height: 1.5; }
+
+/* ── Kontext-Modi ────────────────────────────────────────── */
+.mode-selector { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+.mode-btn { display: flex; align-items: center; gap: 6px; border: 1.5px solid var(--border); background: var(--surface-2); border-radius: 10px; padding: 8px 14px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all var(--trans); }
+.mode-btn:hover { border-color: var(--border-2); color: var(--text); }
+.mode-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ── Perspektiven ────────────────────────────────────────── */
+.perspektiven-selector { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; max-width: 680px; }
+.perspektiven-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
+.perspektiven-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.auto-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-dim); border: 1px solid rgba(201,168,76,0.3); border-radius: 100px; padding: 3px 10px; font-size: 10px; font-weight: 700; color: var(--accent); }
+.perspektiven-sub-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+.perspektiven-sub-tab { border: 1px solid var(--border); background: transparent; border-radius: 8px; padding: 5px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all var(--trans); }
+.perspektiven-sub-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.perspektiven-sub-tab:hover:not(.active) { color: var(--text); border-color: var(--border-2); }
+.perspektiven-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; }
+.persp-btn { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); background: transparent; border-radius: 9px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all var(--trans); text-align: left; }
+.persp-btn:hover { border-color: var(--border-2); color: var(--text); }
+.persp-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.selected-perspektiven { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; margin-top: 10px; }
+.perspektiven-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-dim); border: 1px solid rgba(201,168,76,0.3); border-radius: 100px; padding: 4px 10px; font-size: 12px; font-weight: 600; color: var(--accent); }
+.perspektiven-chip-remove { background: none; border: none; cursor: pointer; color: var(--accent); font-size: 14px; line-height: 1; padding: 0; opacity: 0.6; transition: opacity var(--trans); }
+.perspektiven-chip-remove:hover { opacity: 1; }
+.perspektiven-chip-placeholder { font-size: 12px; color: var(--faint); font-style: italic; }
+.custom-input { width: 100%; border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; font-family: inherit; font-size: 13px; color: var(--text); background: var(--surface-2); outline: none; transition: border-color var(--trans); }
+.custom-input:focus { border-color: var(--accent); }
+.custom-input::placeholder { color: var(--faint); }
+
+/* ── Input ───────────────────────────────────────────────── */
+.input-wrap { width: 100%; max-width: 680px; }
+.question-input { width: 100%; border: 1.5px solid var(--border); border-radius: 18px; padding: 18px 22px; font-family: inherit; font-size: 15px; color: var(--text); background: var(--surface); resize: none; outline: none; min-height: 80px; max-height: none; line-height: 1.6; box-shadow: var(--shadow); transition: border-color var(--trans), box-shadow var(--trans); margin-bottom: 10px; display: block; }
+.question-input::placeholder { color: var(--faint); }
+.question-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow); }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #0D0D0D; border: none; border-radius: var(--r-btn); padding: 13px 28px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all var(--trans); letter-spacing: 0.01em; }
+.btn-primary:hover { background: #DDB95A; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,0.4); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-primary svg { width: 17px; height: 17px; }
+.btn-examples { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: var(--r-btn); padding: 12px 18px; font-family: inherit; font-size: 13px; cursor: pointer; transition: all var(--trans); }
+.btn-examples:hover { border-color: var(--border-2); color: var(--text); }
+.btn-secondary { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 9px; padding: 9px 18px; font-family: inherit; font-size: 13px; cursor: pointer; transition: all var(--trans); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.btn-secondary svg { width: 14px; height: 14px; }
+
+/* ── Chips ───────────────────────────────────────────────── */
+.chips-toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; justify-content: center; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 680px; margin-bottom: 16px; }
+.chip { border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 100px; padding: 6px 14px; font-family: inherit; font-size: 12px; cursor: pointer; transition: all var(--trans); }
+.chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ── Loading ─────────────────────────────────────────────── */
+.loading-wrap { display: none; flex-direction: column; align-items: center; padding: 60px 0; gap: 20px; }
+.loading-wrap.visible { display: flex; }
+.loading-scales { width: 72px; height: 72px; position: relative; }
+.loading-scales svg { animation: scales-tip 2s ease-in-out infinite; }
+@keyframes scales-tip { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(5deg)} 75%{transform:rotate(-5deg)} }
+.loading-text { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+/* ── Results ─────────────────────────────────────────────── */
+.results-wrap { display: none; padding: 32px 0 60px; }
+.results-wrap.visible { display: block; }
+.results-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+.results-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.results-meta { font-size: 12px; color: var(--faint); margin-top: 3px; }
+.results-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.perspective-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.perspective-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-card); padding: 20px; box-shadow: var(--shadow); transition: border-color var(--trans); }
+.perspective-card:hover { border-color: var(--border-2); }
+.card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.card-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1.5px solid var(--border); }
+.card-role { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
+.card-body { font-size: 14px; line-height: 1.7; color: var(--muted); }
+
+/* ── kiNTEGRiTY ──────────────────────────────────────────── */
+.kintegrity-wrap { margin: 0 0 28px; display: none; }
+.kintegrity-wrap.visible { display: block; }
+.integrity-field { background: var(--surface); border: 1.5px solid var(--border); border-top: 3px solid var(--accent); border-radius: var(--r-card); padding: 18px 22px; width: 100%; min-height: 90px; font-family: inherit; font-size: 14px; color: var(--text); resize: vertical; outline: none; display: block; }
+.integrity-field:focus { border-color: var(--accent); }
+.kintegrity-run-btn { display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; background: var(--accent-dim); border: 1px solid rgba(201,168,76,0.28); color: var(--accent); border-radius: 8px; padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all var(--trans); font-family: inherit; }
+.kintegrity-run-btn:hover { background: rgba(201,168,76,0.2); }
+.kintegrity-panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 16px; }
+.kintegrity-panel { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.kintegrity-panel-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.kintegrity-panel-content { font-size: 13px; line-height: 1.65; color: var(--muted); }
+
+/* ── Synthese ─────────────────────────────────────────────── */
+.synthese-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-off) 100%); border: 1.5px solid var(--border); border-top: 3px solid var(--accent); border-radius: var(--r-card); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-lg); }
+.synthese-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.synthese-content { font-size: 15px; line-height: 1.75; color: var(--text); }
+
+/* ── History ─────────────────────────────────────────────── */
+.history-panel { position: fixed; inset-y: 0; right: 0; width: 380px; max-width: 100vw; background: var(--surface); border-left: 1px solid var(--border); z-index: 500; transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
+.history-panel.open { transform: translateX(0); }
+.history-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.history-title { font-size: 15px; font-weight: 700; }
+.history-body { flex: 1; overflow-y: auto; padding: 16px; }
+.history-empty { color: var(--faint); font-size: 13px; text-align: center; padding: 40px 0; }
+.history-item { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: border-color var(--trans); }
+.history-item:hover { border-color: var(--border-2); }
+.history-item-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item-meta { font-size: 11px; color: var(--faint); }
+.history-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 499; }
+.history-overlay.open { display: block; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+@media (max-width: 600px) {
+  nav { padding: 0 14px; }
+  main { padding: 0 12px; }
+  .hero { padding: 16px 0 28px; }
+  .perspective-cards { grid-template-columns: 1fr; }
+  .perspektiven-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .history-panel { width: 100vw; }
+  .question-input { font-size: 14px; }
+  .mode-selector { gap: 5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ────────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" aria-label="JURiS TiSCH" href="/juristisch.html" style="text-decoration:none;">
+    <span class="nav-logo-pre">JURiS</span>
+    <!-- Nav-Logo: T mit Sockel (Rundtisch von der Seite) -->
+    <svg class="nav-logo-mark" viewBox="0 0 96 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TiSCH">
+      <!-- Tischplatte -->
+      <rect x="2" y="6" width="92" height="9" fill="#C9A84C" rx="1"/>
+      <!-- Bein (mittig) -->
+      <rect x="44" y="15" width="8" height="26" fill="#C9A84C"/>
+      <!-- Sockel (breit, flach, leicht abgerundet) -->
+      <rect x="20" y="41" width="56" height="7" fill="#C9A84C" rx="3"/>
+      <!-- i -->
+      <text x="55" y="37" font-family="'Inter',sans-serif" font-size="20" font-weight="700" fill="currentColor"><tspan fill="#C9A84C">i</tspan>SCH</text>
+      <!-- kleines T links -->
+      <text x="2" y="37" font-family="'Inter',sans-serif" font-size="20" font-weight="700" fill="currentColor">T</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <div class="toggle-group">
+      <button class="tgl-btn active" id="btn-de" onclick="setLang('de')">DE</button>
+      <button class="tgl-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="toggle-group">
+      <button class="tgl-btn active" id="btn-achtsam" onclick="setTone('achtsam')">achtsam</button>
+      <button class="tgl-btn" id="btn-direkt" onclick="setTone('direkt')">direkt</button>
+    </div>
+    <button class="icon-btn" onclick="toggleHistory()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+<aside class="history-panel" id="historyPanel">
+  <div class="history-header">
+    <span class="history-title">Verlauf</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-secondary" onclick="exportHistory()" style="padding:5px 10px;font-size:11px;">Export</button>
+      <button class="icon-btn" onclick="toggleHistory()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="history-body" id="historyBody"></div>
+</aside>
+
+<main>
+<section class="hero">
+
+  <!-- ── Hero Logo: JURiS TiSCH — ein großes T mit Sockel ── -->
+  <div style="text-align:center;margin:0 auto 18px;width:100%;">
+    <svg class="hero-logo-svg" viewBox="0 0 740 250" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JURiS TiSCH">
+
+      <defs>
+        <!-- Gold-Glanz Gradient für die Tischplatte -->
+        <linearGradient id="gold-platte" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#DDB95A"/>
+          <stop offset="40%" stop-color="#C9A84C"/>
+          <stop offset="100%" stop-color="#A8894A"/>
+        </linearGradient>
+        <!-- Sockel-Gradient -->
+        <linearGradient id="gold-sockel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C9A84C"/>
+          <stop offset="100%" stop-color="#8B6E30"/>
+        </linearGradient>
+        <!-- Subtile Aura -->
+        <radialGradient id="juris-aura" cx="50%" cy="45%" r="45%">
+          <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.05"/>
+          <stop offset="100%" stop-color="#C9A84C" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <rect x="0" y="0" width="740" height="250" fill="url(#juris-aura)"/>
+
+      <!-- ── Silhouetten links ── -->
+
+      <!-- Waage der Justitia (groß, prominent) -->
+      <g transform="translate(18,60)" opacity="0.26">
+        <!-- Stab -->
+        <line x1="34" y1="8" x2="34" y2="110" stroke="#C9A84C" stroke-width="4"/>
+        <!-- Sockel -->
+        <rect x="16" y="110" width="36" height="6" rx="3" fill="#C9A84C" opacity="0.8"/>
+        <!-- Querbalken -->
+        <line x1="2" y1="8" x2="66" y2="8" stroke="#C9A84C" stroke-width="4"/>
+        <!-- Balkenspitze Mitte -->
+        <circle cx="34" cy="4" r="5" fill="#C9A84C"/>
+        <!-- Linke Kette -->
+        <line x1="6" y1="8" x2="0" y2="30" stroke="#C9A84C" stroke-width="2.5"/>
+        <line x1="6" y1="8" x2="18" y2="30" stroke="#C9A84C" stroke-width="2.5"/>
+        <!-- Linke Schale -->
+        <path d="M-3 30 Q9 42 21 30Z" fill="#C9A84C" opacity="0.9"/>
+        <!-- Rechte Kette -->
+        <line x1="62" y1="8" x2="50" y2="30" stroke="#C9A84C" stroke-width="2.5"/>
+        <line x1="62" y1="8" x2="74" y2="30" stroke="#C9A84C" stroke-width="2.5"/>
+        <!-- Rechte Schale (leicht tiefer — Abwägung) -->
+        <path d="M47 35 Q59 48 71 35Z" fill="#C9A84C" opacity="0.9"/>
+        <!-- Gewicht auf rechter Schale -->
+        <ellipse cx="59" cy="48" rx="7" ry="4" fill="#C9A84C" opacity="0.6"/>
+      </g>
+
+      <!-- Paragrafen-Zeichen -->
+      <g transform="translate(114,62)" opacity="0.24">
+        <text x="0" y="70" font-family="'Inter',sans-serif" font-size="82" font-weight="700" fill="#C9A84C">§</text>
+      </g>
+
+      <!-- ── Silhouetten rechts ── -->
+
+      <!-- Hammer (Richterhammer / Gavel) -->
+      <g transform="translate(570,72)" opacity="0.26">
+        <!-- Hammerkopf -->
+        <rect x="0" y="0" width="50" height="24" rx="5" fill="#C9A84C" opacity="0.85"/>
+        <!-- Hammer-Hals -->
+        <rect x="20" y="24" width="12" height="6" rx="2" fill="#C9A84C" opacity="0.7"/>
+        <!-- Stiel (diagonal) -->
+        <line x1="26" y1="30" x2="56" y2="70" stroke="#C9A84C" stroke-width="8" stroke-linecap="round"/>
+        <!-- Schlagblock -->
+        <rect x="0" y="74" width="66" height="6" rx="3" fill="#C9A84C" opacity="0.5"/>
+      </g>
+
+      <!-- Gesetzesband/Buch -->
+      <g transform="translate(644,68)" opacity="0.24">
+        <rect x="0" y="0" width="28" height="86" rx="3" fill="#C9A84C" opacity="0.8"/>
+        <!-- Buchrücken Deko -->
+        <line x1="0" y1="12" x2="28" y2="12" stroke="#0D0D0D" stroke-width="2" opacity="0.4"/>
+        <line x1="0" y1="74" x2="28" y2="74" stroke="#0D0D0D" stroke-width="2" opacity="0.4"/>
+        <!-- Goldschnitt oben -->
+        <rect x="0" y="0" width="28" height="5" rx="2" fill="#DDB95A" opacity="0.6"/>
+        <!-- Titel-Prägung -->
+        <text x="4" y="48" font-family="'Inter',sans-serif" font-size="9" font-weight="700" fill="#0D0D0D" opacity="0.5">§§</text>
+        <line x1="4" y1="54" x2="24" y2="54" stroke="#0D0D0D" stroke-width="1.5" opacity="0.3"/>
+        <line x1="4" y1="60" x2="20" y2="60" stroke="#0D0D0D" stroke-width="1.5" opacity="0.3"/>
+      </g>
+
+      <!-- Siegel / Stempel -->
+      <g transform="translate(692,80)" opacity="0.22">
+        <circle cx="24" cy="28" r="26" fill="none" stroke="#C9A84C" stroke-width="3.5"/>
+        <circle cx="24" cy="28" r="19" fill="none" stroke="#C9A84C" stroke-width="2" opacity="0.5"/>
+        <!-- Sterne im Kreis -->
+        <text x="15" y="32" font-family="sans-serif" font-size="10" fill="#C9A84C" opacity="0.7">✦</text>
+        <line x1="8" y1="28" x2="40" y2="28" stroke="#C9A84C" stroke-width="1.5" opacity="0.5"/>
+        <text x="13" y="26" font-family="'Inter',sans-serif" font-size="7" fill="#C9A84C" opacity="0.6" letter-spacing="1">IURIS</text>
+        <!-- Stempel-Griff oben -->
+        <rect x="18" y="0" width="12" height="8" rx="4" fill="#C9A84C" opacity="0.6"/>
+        <rect x="20" y="6" width="8" height="6" rx="1" fill="#C9A84C" opacity="0.5"/>
+      </g>
+
+      <!-- ── Tagline ── -->
+      <text x="370" y="60" font-family="'Inter','Helvetica Neue',sans-serif" font-size="9.5" font-weight="600" fill="#C9A84C" letter-spacing="0.22em" text-anchor="middle">RECHTSFRAGEN AM TiSCH</text>
+
+      <!-- ══════════════════════════════════════════════════
+           GROSSES T MIT SOCKEL — Rundes Standtisch-Profil
+           Das zentrale, singuläre Design-Element
+      ════════════════════════════════════════════════════ -->
+
+      <!-- T-Querbalken (Tischplatte) — voll breite, mit Gold-Glanz -->
+      <rect x="150" y="70" width="440" height="16" fill="url(#gold-platte)" rx="2"/>
+      <!-- Platte-Überhang Schatten (Tiefe) -->
+      <rect x="150" y="84" width="440" height="4" fill="#8B6E30" opacity="0.4" rx="0"/>
+
+      <!-- T-Bein (Mittelstiel, elegant schmal) -->
+      <rect x="353" y="86" width="14" height="100" fill="#C9A84C"/>
+      <!-- Bein-Verjüngung unten (Seite-Ansicht-Effekt) -->
+      <path d="M353 160 L353 186 L367 186 L367 160Z" fill="#A8894A" opacity="0.6"/>
+
+      <!-- Sockel (Fußplatte, breit, flach, abgerundet — Rundtisch-Fuß) -->
+      <!-- Außen-Ellipse (3D-Andeutung) -->
+      <ellipse cx="360" cy="200" rx="88" ry="10" fill="#8B6E30" opacity="0.3"/>
+      <!-- Hauptsockel -->
+      <rect x="272" y="188" width="176" height="14" fill="url(#gold-sockel)" rx="6"/>
+      <!-- Sockel-Highlight oben -->
+      <rect x="272" y="188" width="176" height="4" fill="#DDB95A" opacity="0.25" rx="4"/>
+
+      <!-- ── JURiS rechts vom Bein → Text hängt unter der Platte ── -->
+      <!-- "JUR" linksbündig, endet kurz vor Bein -->
+      <text x="290" y="163" font-family="'Inter','Helvetica Neue',sans-serif" font-size="54" font-weight="300" fill="currentColor" letter-spacing="-1" text-anchor="end">JUR</text>
+
+      <!-- i = Gold-Paragraf-Symbol kompakt -->
+      <g transform="translate(296,106)">
+        <!-- Paragraf mini -->
+        <text x="0" y="52" font-family="'Inter',sans-serif" font-size="44" font-weight="300" fill="#C9A84C">i</text>
+      </g>
+
+      <!-- "S" nach dem i -->
+      <text x="328" y="163" font-family="'Inter','Helvetica Neue',sans-serif" font-size="54" font-weight="300" fill="currentColor" letter-spacing="-1">S</text>
+
+      <!-- "TiSCH" nach dem Bein -->
+      <!-- T -->
+      <text x="380" y="163" font-family="'Inter','Helvetica Neue',sans-serif" font-size="54" font-weight="300" fill="currentColor" letter-spacing="-1">T</text>
+      <!-- i = kleiner Paragraf -->
+      <g transform="translate(416,108)">
+        <text x="0" y="52" font-family="'Inter',sans-serif" font-size="44" font-weight="300" fill="#C9A84C">i</text>
+      </g>
+      <!-- SCH -->
+      <text x="440" y="163" font-family="'Inter','Helvetica Neue',sans-serif" font-size="54" font-weight="300" fill="currentColor" letter-spacing="-1">SCH</text>
+
+    </svg>
+  </div>
+
+  <!-- Badge -->
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    <span id="badge-text">9 Rechtsperspektiven · KI-gestützt</span>
+  </div>
+
+  <!-- Haftungshinweis -->
+  <div class="disclaimer">
+    <span style="font-size:14px;flex-shrink:0;margin-top:1px;">⚖️</span>
+    <span id="disclaimer-text">Kein Ersatz für anwaltliche Rechtsberatung. Die Perspektiven dienen der Orientierung und rechtlichen Einordnung — nicht der Rechtsberatung im Einzelfall.</span>
+  </div>
+
+  <!-- Kontext-Modi -->
+  <div class="mode-selector" id="modeSelector">
+    <button class="mode-btn selected" data-mode="alle" onclick="selectMode(this)">✦ Alle Fragen</button>
+    <button class="mode-btn" data-mode="zivil" onclick="selectMode(this)">📄 Zivilrecht</button>
+    <button class="mode-btn" data-mode="arbeitsrecht" onclick="selectMode(this)">💼 Arbeitsrecht</button>
+    <button class="mode-btn" data-mode="familienrecht" onclick="selectMode(this)">👨‍👩‍👧 Familienrecht</button>
+    <button class="mode-btn" data-mode="strafrecht" onclick="selectMode(this)">⚖️ Strafrecht</button>
+    <button class="mode-btn" data-mode="verwaltung" onclick="selectMode(this)">🏛️ Öffentl. Recht</button>
+  </div>
+
+  <p class="hero-sub" id="hero-sub">Rechtsanwalt, Richter, Notar, Staatsanwalt, Mediator, Rechtsprofessor, Verwaltungsjurist und Verbraucherschutzexperte analysieren deine Rechtsfrage.</p>
+
+  <div class="input-wrap">
+    <textarea class="question-input" id="questionInput" rows="3"
+      placeholder="Welche Rechtsfrage, rechtliche Situation oder juristisches Problem beschäftigt dich?"
+      maxlength="1200"></textarea>
+
+    <div class="perspektiven-selector">
+      <div class="perspektiven-header">
+        <span class="perspektiven-title" id="persp-label">Perspektiven</span>
+        <span class="auto-badge" id="auto-badge">
+          <svg viewBox="0 0 12 12" fill="currentColor" width="10" height="10"><path d="M6 1l1.5 3H11l-2.8 2 1 3L6 7.2 2.8 9l1-3L1 4h3.5z"/></svg>
+          KI-Auto aktiv
+        </span>
+      </div>
+      <div class="perspektiven-sub-tabs">
+        <button class="perspektiven-sub-tab active" id="tab-auto" onclick="setPerspMode('auto')">+ KI-Auto</button>
+        <button class="perspektiven-sub-tab" id="tab-list" onclick="setPerspMode('list')">Aus Liste</button>
+        <button class="perspektiven-sub-tab" id="tab-custom" onclick="setPerspMode('custom')">Eigene</button>
+      </div>
+      <div id="mode-auto"><p style="font-size:12px;color:var(--faint);font-style:italic;">KI wählt die passenden juristischen Perspektiven für deine Frage.</p></div>
+      <div id="mode-list" style="display:none;">
+        <div class="perspektiven-grid" id="perspektivenGrid"></div>
+        <div class="selected-perspektiven" id="selectedPerspektiven"><span class="perspektiven-chip-placeholder">Noch keine gewählt</span></div>
+      </div>
+      <div id="mode-custom" style="display:none;">
+        <input type="text" class="custom-input" id="customPerspInput" placeholder="z.B. Steuerrecht, Erbrecht, Datenschutzrecht..." maxlength="200">
+        <p style="font-size:11px;color:var(--faint);margin-top:6px;">Kommagetrennt</p>
+      </div>
+    </div>
+
+    <div class="chips-toggle-row">
+      <button class="btn-examples" id="chipsToggleBtn" onclick="toggleChips()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        <span id="chipsToggleText">Beispiele</span>
+      </button>
+    </div>
+    <div class="chips-wrap" id="chipsWrap" style="display:none;"></div>
+
+    <div class="action-row">
+      <button class="btn-primary" id="submitBtn" onclick="submitQuestion()">
+        <span id="btn-text">Am Tisch fragen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── Loading ────────────────────────────────────────────── -->
+<div class="loading-wrap" id="loadingWrap">
+  <div class="loading-scales">
+    <svg viewBox="0 0 72 72" fill="none" width="72" height="72">
+      <line x1="36" y1="10" x2="36" y2="60" stroke="#C9A84C" stroke-width="3"/>
+      <line x1="8" y1="10" x2="64" y2="10" stroke="#C9A84C" stroke-width="3"/>
+      <circle cx="36" cy="6" r="5" fill="#C9A84C"/>
+      <line x1="12" y1="10" x2="4" y2="30" stroke="#C9A84C" stroke-width="2.5"/>
+      <line x1="12" y1="10" x2="26" y2="30" stroke="#C9A84C" stroke-width="2.5"/>
+      <path d="M1 30 Q15 42 29 30Z" fill="#C9A84C" opacity="0.85"/>
+      <line x1="60" y1="10" x2="46" y2="34" stroke="#C9A84C" stroke-width="2.5"/>
+      <line x1="60" y1="10" x2="70" y2="34" stroke="#C9A84C" stroke-width="2.5"/>
+      <path d="M43 34 Q58 46 71 34Z" fill="#C9A84C" opacity="0.85"/>
+      <rect x="24" y="60" width="24" height="5" rx="2" fill="#C9A84C" opacity="0.7"/>
+    </svg>
+  </div>
+  <p class="loading-text" id="loading-text">Die Juristen beraten…</p>
+</div>
+
+<!-- ── Results ────────────────────────────────────────────── -->
+<div class="results-wrap" id="resultsWrap">
+  <div class="results-header">
+    <div>
+      <div class="results-title" id="resultsTitle"></div>
+      <div class="results-meta" id="resultsMeta"></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        <span id="back-text">Neue Frage</span>
+      </button>
+      <button class="btn-secondary" onclick="copyResults()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span id="copy-text">Kopieren</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="perspective-cards" id="perspectiveCards"></div>
+
+  <div class="kintegrity-wrap" id="kintegrityWrap">
+    <div style="border-top:1px solid var(--border);padding-top:20px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;">kiNTEGRiTY — Integritätsprüfung</div>
+      <textarea class="integrity-field" id="integrityField" placeholder="Wichtige Aspekte notieren, die in der juristischen Synthese erhalten bleiben sollen…" rows="3"></textarea>
+    </div>
+    <button class="kintegrity-run-btn" onclick="runKintegrity()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Synthese prüfen
+    </button>
+    <div class="kintegrity-panels" id="kintegrityPanels"></div>
+  </div>
+
+  <div class="synthese-card" id="syntheseCard" style="display:none;">
+    <div class="synthese-label" id="synthese-label">SYNTHESE</div>
+    <div class="synthese-content" id="syntheseContent"></div>
+  </div>
+</div>
+</main>
+
+<script>
+const API = window.location.origin;
+let lang = 'de', tone = 'achtsam', perspMode = 'auto';
+let selectedPerspektiven = [], lastResults = null, lastQuestion = '';
+let chipsVisible = false, activeMode = 'alle';
+
+const PERSPEKTIVEN = [
+  { id: 'anwalt',        icon: '⚖️',  de: 'Rechtsanwalt',          en: 'Lawyer',                color: '#C9A84C' },
+  { id: 'richter',       icon: '🪬',  de: 'Richter',               en: 'Judge',                 color: '#DDB95A' },
+  { id: 'notar',         icon: '📜',  de: 'Notar',                 en: 'Notary',                color: '#B8963A' },
+  { id: 'staatsanwalt',  icon: '🔍',  de: 'Staatsanwalt',          en: 'Prosecutor',            color: '#A87830' },
+  { id: 'mediator',      icon: '🤝',  de: 'Mediator',              en: 'Mediator',              color: '#6B9E8A' },
+  { id: 'rechtsprof',    icon: '📚',  de: 'Rechtsprofessor',       en: 'Law Professor',         color: '#8B7A5A' },
+  { id: 'verwaltung',    icon: '🏛️',  de: 'Verwaltungsjurist',     en: 'Administrative Lawyer', color: '#7A8B9A' },
+  { id: 'verbraucher',   icon: '🛡️',  de: 'Verbraucherschutz',     en: 'Consumer Protection',  color: '#5A8A6A' },
+  { id: 'steuerberater', icon: '🧾',  de: 'Steuerberater',         en: 'Tax Advisor',           color: '#9A8A5A' },
+  { id: 'datenschutz',   icon: '🔒',  de: 'Datenschutzrecht',      en: 'Data Protection',       color: '#5A7A9A' },
+  { id: 'arbeitsrecht',  icon: '💼',  de: 'Arbeitsrechtler',       en: 'Employment Lawyer',     color: '#8A6A5A' },
+  { id: 'familienrecht', icon: '👨‍👩‍👧',  de: 'Familienrechtler',      en: 'Family Lawyer',         color: '#9A6A8A' },
+];
+
+const CHIPS_DE = {
+  alle: [
+    'Mein Vermieter kündigt — was sind meine Rechte?',
+    'Ich wurde ungerechtfertigt abgemahnt.',
+    'Was bedeutet eine Vollmacht genau?',
+    'Scheidung: Was passiert mit dem Gemeineigentum?',
+    'Mein Chef zahlt Überstunden nicht aus.',
+    'Online-Kauf: Wann kann ich widerrufen?',
+    'Was ist der Unterschied zwischen GmbH und UG?',
+    'Kann ich meinen Namen rechtlich ändern?',
+    'Wie läuft ein Erbschaftsstreit ab?',
+  ],
+  zivil: [
+    'Vertragsbruch — was kann ich verlangen?',
+    'Schadensersatz nach Unfall — wie vorgehen?',
+    'Mein Nachbar baut zu nah an meinem Grundstück.',
+    'Reklamation abgelehnt — was nun?',
+    'Ich wurde Opfer eines Betrugs.',
+  ],
+  arbeitsrecht: [
+    'Wurde ich zu Unrecht gekündigt?',
+    'Muss ich unbezahlte Überstunden leisten?',
+    'Zeugnis enthält falsche Aussagen.',
+    'Mobbing am Arbeitsplatz — welche Schritte?',
+    'Befristeter Vertrag nicht verlängert — Klage?',
+  ],
+  familienrecht: [
+    'Wer bekommt das Sorgerecht?',
+    'Unterhalt nach Trennung — wie berechnen?',
+    'Scheidung einreichen — was brauche ich?',
+    'Erbrecht ohne Testament — wer erbt was?',
+  ],
+  strafrecht: [
+    'Anzeige erstattet — was passiert jetzt?',
+    'Unterschied zwischen Diebstahl und Betrug?',
+    'Notwehr — wann ist sie legal?',
+    'Ich wurde Opfer einer Straftat.',
+  ],
+  verwaltung: [
+    'Baugenehmigung abgelehnt — Widerspruch?',
+    'Führerscheinentzug anfechten?',
+    'Asylrecht — welche Schritte?',
+    'Kommunale Abgaben — Rechtmäßigkeit prüfen.',
+  ],
+};
+
+const CHIPS_EN = {
+  alle: [
+    'My landlord is giving notice — what are my rights?',
+    'I was unfairly warned at work.',
+    'What does a power of attorney mean exactly?',
+    'Divorce: what happens to shared property?',
+    'My employer is not paying overtime.',
+  ],
+  zivil: ['Breach of contract — what can I demand?', 'Damages after an accident.'],
+  arbeitsrecht: ['Was I wrongfully dismissed?', 'Am I required to work unpaid overtime?'],
+  familienrecht: ['Who gets custody?', 'Child support after separation.'],
+  strafrecht: ['I filed a complaint — what happens now?', 'Self-defence — when is it legal?'],
+  verwaltung: ['Building permit denied — appeal?', 'Challenge driving licence withdrawal?'],
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPerspektivenGrid(); renderChips(); loadHistory();
+  document.getElementById('questionInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitQuestion();
+  });
+});
+
+function selectMode(btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected'); activeMode = btn.dataset.mode; renderChips();
+  const ph = {
+    alle: 'Welche Rechtsfrage, rechtliche Situation oder juristisches Problem beschäftigt dich?',
+    zivil: 'Welche zivilrechtliche Frage (Verträge, Schäden, Eigentum)?',
+    arbeitsrecht: 'Welche Frage zu Kündigung, Vertrag oder Arbeitsrecht?',
+    familienrecht: 'Welche Frage zu Sorgerecht, Scheidung oder Erbschaft?',
+    strafrecht: 'Welche strafrechtliche Frage oder Situation?',
+    verwaltung: 'Welche Frage zum öffentlichen Recht oder Verwaltung?',
+  };
+  document.getElementById('questionInput').placeholder = ph[activeMode] || ph['alle'];
+}
+
+function renderPerspektivenGrid() {
+  document.getElementById('perspektivenGrid').innerHTML = PERSPEKTIVEN.map(p => `
+    <button class="persp-btn ${selectedPerspektiven.includes(p.id)?'selected':''}" onclick="togglePerspektive('${p.id}')">
+      <span style="font-size:15px">${p.icon}</span><span>${lang==='de'?p.de:p.en}</span>
+    </button>`).join('');
+}
+function togglePerspektive(id) {
+  const i = selectedPerspektiven.indexOf(id);
+  if (i===-1) selectedPerspektiven.push(id); else selectedPerspektiven.splice(i,1);
+  renderPerspektivenGrid(); renderSelectedChips();
+}
+function renderSelectedChips() {
+  const c = document.getElementById('selectedPerspektiven');
+  if (!selectedPerspektiven.length) { c.innerHTML=`<span class="perspektiven-chip-placeholder">Noch keine gewählt</span>`; return; }
+  c.innerHTML = selectedPerspektiven.map(id => { const p=PERSPEKTIVEN.find(x=>x.id===id); return `<span class="perspektiven-chip">${p?(lang==='de'?p.de:p.en):id}<button class="perspektiven-chip-remove" onclick="togglePerspektive('${id}')">×</button></span>`; }).join('');
+}
+function setPerspMode(mode) {
+  perspMode = mode;
+  document.querySelectorAll('.perspektiven-sub-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`tab-${mode}`).classList.add('active');
+  ['auto','list','custom'].forEach(m=>document.getElementById(`mode-${m}`).style.display=m===mode?'':'none');
+  document.getElementById('auto-badge').style.display=mode==='auto'?'':'none';
+}
+function renderChips() {
+  const map = lang==='de'?CHIPS_DE:CHIPS_EN;
+  document.getElementById('chipsWrap').innerHTML=(map[activeMode]||map['alle']).map(c=>
+    `<button class="chip" onclick="document.getElementById('questionInput').value=this.textContent">${c}</button>`).join('');
+}
+function toggleChips() {
+  chipsVisible=!chipsVisible;
+  document.getElementById('chipsWrap').style.display=chipsVisible?'flex':'none';
+  document.getElementById('chipsToggleText').textContent=chipsVisible?(lang==='de'?'Ausblenden':'Hide'):(lang==='de'?'Beispiele':'Examples');
+}
+function setLang(l) {
+  lang=l; document.documentElement.lang=l;
+  document.getElementById('btn-de').classList.toggle('active',l==='de');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.getElementById('btn-achtsam').textContent=l==='de'?'achtsam':'mindful';
+  document.getElementById('btn-direkt').textContent=l==='de'?'direkt':'direct';
+  document.getElementById('hero-sub').textContent=l==='de'
+    ?'Rechtsanwalt, Richter, Notar, Staatsanwalt, Mediator, Rechtsprofessor, Verwaltungsjurist und Verbraucherschutzexperte analysieren deine Rechtsfrage.'
+    :'Lawyer, judge, notary, prosecutor, mediator, law professor, administrative lawyer and consumer protection expert analyse your legal question.';
+  document.getElementById('badge-text').textContent=l==='de'?'9 Rechtsperspektiven · KI-gestützt':'9 Legal Perspectives · AI-powered';
+  document.getElementById('disclaimer-text').textContent=l==='de'
+    ?'Kein Ersatz für anwaltliche Rechtsberatung. Die Perspektiven dienen der Orientierung und rechtlichen Einordnung — nicht der Rechtsberatung im Einzelfall.'
+    :'Not a substitute for legal advice. Perspectives serve orientation and legal classification — not individual legal counsel.';
+  document.getElementById('btn-text').textContent=l==='de'?'Am Tisch fragen':'Ask the table';
+  document.getElementById('loading-text').textContent=l==='de'?'Die Juristen beraten…':'Consulting the lawyers…';
+  document.getElementById('back-text').textContent=l==='de'?'Neue Frage':'New question';
+  document.getElementById('copy-text').textContent=l==='de'?'Kopieren':'Copy';
+  document.getElementById('synthese-label').textContent=l==='de'?'SYNTHESE':'SYNTHESIS';
+  document.getElementById('persp-label').textContent=l==='de'?'Perspektiven':'Perspectives';
+  renderChips(); renderPerspektivenGrid();
+}
+function setTone(t) {
+  tone=t;
+  document.getElementById('btn-achtsam').classList.toggle('active',t==='achtsam');
+  document.getElementById('btn-direkt').classList.toggle('active',t==='direkt');
+}
+async function submitQuestion() {
+  const q=document.getElementById('questionInput').value.trim();
+  if(q.length<10){document.getElementById('questionInput').focus();return;}
+  lastQuestion=q;
+  document.getElementById('submitBtn').disabled=true;
+  document.querySelector('.hero').style.display='none';
+  document.getElementById('loadingWrap').classList.add('visible');
+  document.getElementById('resultsWrap').classList.remove('visible');
+  let perspectives=[];
+  if(perspMode==='auto'||(perspMode==='list'&&!selectedPerspektiven.length)){
+    perspectives=PERSPEKTIVEN.slice(0,8).map(p=>lang==='de'?p.de:p.en);
+  } else if(perspMode==='list'){
+    perspectives=selectedPerspektiven.map(id=>{const p=PERSPEKTIVEN.find(x=>x.id===id);return p?(lang==='de'?p.de:p.en):id;});
+  } else {
+    const raw=document.getElementById('customPerspInput').value;
+    perspectives=raw.split(',').map(s=>s.trim()).filter(Boolean);
+    if(!perspectives.length) perspectives=PERSPEKTIVEN.slice(0,6).map(p=>lang==='de'?p.de:p.en);
+  }
+  const payload={question:q,perspectives,stil:'juristisch',register:'fachsprache',tone,lang,app:'juristisch'};
+  const _ctrl=new AbortController(); const _tid=setTimeout(()=>_ctrl.abort(),120000);
+  try {
+    const res=await fetch(API+'/api/ask',{signal:_ctrl.signal,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    clearTimeout(_tid);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    renderResults(await res.json(),q,perspectives);
+  } catch(err) {
+    clearTimeout(_tid);
+    document.getElementById('loadingWrap').classList.remove('visible');
+    document.querySelector('.hero').style.display='';
+    document.getElementById('submitBtn').disabled=false;
+    alert(lang==='de'?`Fehler: ${err.message}`:`Error: ${err.message}`);
+  }
+}
+function renderResults(data,question,perspectives) {
+  lastResults=data;
+  document.getElementById('loadingWrap').classList.remove('visible');
+  document.getElementById('submitBtn').disabled=false;
+  document.getElementById('resultsTitle').textContent=question.length>80?question.slice(0,80)+'…':question;
+  document.getElementById('resultsMeta').textContent=lang==='de'?`${perspectives.length} Perspektiven analysiert`:`${perspectives.length} perspectives analysed`;
+  const cards=document.getElementById('perspectiveCards'); cards.innerHTML='';
+  (data.perspectives||[]).forEach((p,i)=>{
+    const def=PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===(p.role||'').toLowerCase());
+    const color=def?def.color:`hsl(${40+i*15},55%,55%)`;
+    const icon=def?def.icon:'⚖️';
+    const card=document.createElement('div'); card.className='perspective-card';
+    card.style.borderTopColor=color; card.style.borderTopWidth='3px';
+    card.innerHTML=`<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;">${icon}</div><div><div class="card-role" style="color:${color}">${p.role||''}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
+    cards.appendChild(card);
+  });
+  if(data.synthese){document.getElementById('syntheseContent').textContent=data.synthese;document.getElementById('syntheseCard').style.display='';}
+  document.getElementById('kintegrityWrap').classList.add('visible');
+  document.getElementById('integrityField').value=''; document.getElementById('kintegrityPanels').innerHTML='';
+  document.getElementById('resultsWrap').classList.add('visible');
+  document.getElementById('resultsWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  saveToHistory(question,data,perspectives);
+}
+async function runKintegrity() {
+  if(!lastResults) return;
+  const payload={question:lastQuestion,perspectives_result:lastResults,integrity_notes:document.getElementById('integrityField').value.trim(),profile:'juristisch_profile',lang};
+  document.getElementById('kintegrityPanels').innerHTML=`<p style="font-size:13px;color:var(--faint);">${lang==='de'?'Prüfe…':'Checking…'}</p>`;
+  const _ctrl=new AbortController(); const _tid=setTimeout(()=>_ctrl.abort(),120000);
+  try {
+    const res=await fetch(API+'/api/kintegrity/synthesize',{signal:_ctrl.signal,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    clearTimeout(_tid); const d=await res.json();
+    document.getElementById('kintegrityPanels').innerHTML=[
+      {key:'synthese',label:'Synthese',color:'var(--accent)'},
+      {key:'grosses_aber',label:'DAS GROßE ABER',color:'var(--amber)'},
+      {key:'fraglich',label:'Fraglich',color:'var(--red)'},
+    ].map(p=>`<div class="kintegrity-panel"><div class="kintegrity-panel-label" style="color:${p.color}">${p.label}</div><div class="kintegrity-panel-content">${d[p.key]||'—'}</div></div>`).join('');
+  } catch(err){clearTimeout(_tid);document.getElementById('kintegrityPanels').innerHTML=`<p style="color:var(--red);font-size:13px;">Fehler: ${err.message}</p>`;}
+}
+function copyResults() {
+  if(!lastResults) return;
+  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${p.role}:\n${p.kernanalyse}`).join('\n\n'));
+}
+const HISTORY_KEY='tisch_history_v1';
+function saveToHistory(q,data,perspectives){
+  const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+  h.unshift({id:Date.now(),ts:new Date().toISOString(),app:'JURiS TiSCH',question:q,perspectives,result:data});
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(h.slice(0,50)));
+}
+function loadHistory(){
+  const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x.app==='JURiS TiSCH');
+  document.getElementById('historyBody').innerHTML=h.length===0
+    ?`<div class="history-empty">${lang==='de'?'Noch keine Einträge':'No entries yet'}</div>`
+    :h.map(e=>`<div class="history-item" onclick="restoreHistory(${e.id})"><div class="history-item-q">${e.question}</div><div class="history-item-meta">${new Date(e.ts).toLocaleDateString('de-DE')} · ${(e.perspectives||[]).length} Perspektiven</div></div>`).join('');
+}
+function restoreHistory(id){
+  const e=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').find(x=>x.id===id);
+  if(!e)return; lastQuestion=e.question;
+  document.getElementById('questionInput').value=e.question;
+  renderResults(e.result,e.question,e.perspectives||[]); toggleHistory();
+}
+function exportHistory(){
+  const b=new Blob([JSON.stringify(JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`juristisch-${new Date().toISOString().slice(0,10)}.json`; a.click();
+}
+function toggleHistory(){
+  const p=document.getElementById('historyPanel'),o=document.getElementById('historyOverlay');
+  const open=p.classList.contains('open');
+  p.classList.toggle('open',!open); o.classList.toggle('open',!open);
+  if(!open) loadHistory();
+}
+</script>
+</body>
+</html>

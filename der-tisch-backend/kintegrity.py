@@ -71,6 +71,19 @@ PROFILES = {
         "tone":                        "klar und ausgewogen",
         "special_rules": []
     },
+    "juristisch_profile": {
+        "compression_strength":        0.55,
+        "reformulation_conservatism":  0.85,
+        "redundancy_reduction":        0.60,
+        "conflict_visibility":         0.92,
+        "must_keep_sensitivity":       0.96,
+        "tone":                        "juristisch-präzise",
+        "special_rules": [
+            "Behalte Fachbegriffe und Paragrafen-Referenzen bei",
+            "Zeige widersprechende Rechtspositionen klar auf",
+            "Betone: kein Ersatz für individuelle Rechtsberatung"
+        ]
+    },
     "medizintisch_profile": {
         "compression_strength":        0.50,
         "reformulation_conservatism":  0.80,
