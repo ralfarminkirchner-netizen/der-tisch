@@ -1,18 +1,28 @@
 #!/usr/bin/env python3
 """Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
-   Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
+   Version 7.0: Shared Core Session-Logging + myCEL Pattern-Store aktiviert.
 """
 import asyncio
+import contextlib
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from kintegrity import KintegrityRequest, KintegrityResponse, kintegrity_synthesize
 from pydantic import BaseModel
 from typing import List, Optional
 import anthropic
+import shared_core_store
 
-app = FastAPI(title="TiSCH API")
+# ---------------------------------------------------------------------------
+# Lifespan: Shared Core DB beim Start initialisieren
+# ---------------------------------------------------------------------------
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    await shared_core_store.init_db()
+    yield
+
+app = FastAPI(title="TiSCH API", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = anthropic.Anthropic()
 
@@ -1211,6 +1221,7 @@ class QueryRequest(BaseModel):
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
     register: str = ""  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
+    source_app: str = ""  # z.B. "DER-TiSCH", "LiTERATUR-TiSCH" — optional, für Shared Core Logging
 
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
@@ -1262,10 +1273,11 @@ class TableRequest(BaseModel):
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
     # Reibungsintensität: "standard" | "eskaliert" | "maximal"
     reibungsintensitaet: str = "standard"               # eskaliert = Antagonisten-Modus, kein Weichzeichnen
+    source_app: str = ""  # z.B. "EiGENER-TiSCH", "FAMiLiEN-TiSCH" — optional, für Shared Core Logging
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "TiSCH API", "version": "6.0", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"]}
+    return {"status": "ok", "service": "TiSCH API", "version": "7.0", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"], "shared_core": "active"}
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
@@ -1283,7 +1295,19 @@ async def ask_the_table(req: QueryRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        # Shared Core: Session automatisch speichern (fire-and-forget)
+        asyncio.create_task(shared_core_store.save_session(
+            source_app=req.source_app or "DER-TiSCH-FULL",
+            question=req.question,
+            lang=req.lang,
+            stil=stil,
+            tone=tone,
+            perspectives=[p.model_dump() for p in perspectives],
+            friction=friction.model_dump(),
+            integration=integration.model_dump(),
+        ))
+        return result
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -1374,7 +1398,19 @@ async def ask_simple(req: QueryRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, q, lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, q, lang, stil, tone)
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        # Shared Core: Session automatisch speichern (fire-and-forget)
+        asyncio.create_task(shared_core_store.save_session(
+            source_app=req.source_app or "DER-TiSCH",
+            question=q,
+            lang=lang,
+            stil=stil,
+            tone=tone,
+            perspectives=[p.model_dump() for p in perspectives],
+            friction=friction.model_dump(),
+            integration=integration.model_dump(),
+        ))
+        return result
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -1568,7 +1604,19 @@ async def ask_the_custom_table(req: TableRequest):
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, reibung, tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
 
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        # Shared Core: Session automatisch speichern (fire-and-forget)
+        asyncio.create_task(shared_core_store.save_session(
+            source_app=req.source_app or "EiGENER-TiSCH",
+            question=req.question,
+            lang=req.lang,
+            stil=stil,
+            tone=tone,
+            perspectives=[p.model_dump() for p in perspectives],
+            friction=friction.model_dump(),
+            integration=integration.model_dump(),
+        ))
+        return result
 
     except HTTPException:
         raise
@@ -2097,15 +2145,17 @@ async def hook_ki_ntegrity(payload: KiNtegrityPayload):
 
 @app.get("/api/hooks/mycel/patterns", tags=["ecosystem"])
 async def hook_mycel_read():
-    """myCEL: Read from Muster-Ordner (pattern directory)."""
-    # HOOKPOINT — returns empty pattern store until connected
-    return {"status": "hookpoint_ready", "hook": "myCEL", "patterns": []}
+    """myCEL: Alle gespeicherten Muster aus dem Shared Core lesen."""
+    patterns = await shared_core_store.read_patterns()
+    return {"status": "ok", "hook": "myCEL", "patterns": patterns, "count": len(patterns)}
 
 @app.post("/api/hooks/mycel/patterns", tags=["ecosystem"])
 async def hook_mycel_write(payload: MycelPayload):
-    """myCEL: Write to Muster-Ordner (pattern directory)."""
-    # HOOKPOINT — write operation pending
-    return {"status": "hookpoint_ready", "hook": "myCEL", "operation": payload.operation, "key": payload.pattern_key}
+    """myCEL: Muster in den Shared Core schreiben/aktualisieren."""
+    if not payload.pattern_key:
+        return {"status": "error", "detail": "pattern_key required"}
+    await shared_core_store.write_pattern(payload.pattern_key, payload.data)
+    return {"status": "ok", "hook": "myCEL", "operation": "write", "key": payload.pattern_key}
 
 @app.post("/api/hooks/brainstormz", tags=["ecosystem"])
 async def hook_brainstormz(payload: BrainstormzPayload):
@@ -2118,6 +2168,60 @@ async def hook_pandora_logic(payload: PandoraLogicPayload):
     """Pandora_Logic: Trigger when idea cloud reaches maximum density."""
     # HOOKPOINT — trigger logic pending
     return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
+
+
+# =============================================
+# SHARED CORE — Session-Zugriff (intern)
+# =============================================
+
+@app.get("/api/sessions", tags=["shared-core"])
+async def get_sessions(
+    app_filter: Optional[str] = Query(None, alias="app"),
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+    key: str = Query("", description="SHARED_CORE_KEY"),
+):
+    """Gespeicherte Sessions abrufen.
+    Interner Endpoint — key=SHARED_CORE_KEY erforderlich.
+    Optional: ?app=DER-TiSCH für App-Filter.
+    """
+    if key != shared_core_store.SHARED_CORE_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized — SHARED_CORE_KEY required.")
+    sessions = await shared_core_store.get_sessions(
+        source_app=app_filter, limit=limit, offset=offset
+    )
+    total = await shared_core_store.get_session_count(source_app=app_filter)
+    stats = await shared_core_store.get_app_stats()
+    return {
+        "total": total,
+        "returned": len(sessions),
+        "offset": offset,
+        "app_stats": stats,
+        "sessions": sessions,
+    }
+
+
+@app.get("/api/sessions/export", tags=["shared-core"])
+async def export_sessions(
+    since: Optional[str] = Query(None, description="ISO-Zeitstempel — nur Sessions nach diesem Datum"),
+    key: str = Query("", description="SHARED_CORE_KEY"),
+):
+    """Vollständiger Export für Vault-Sync (alle Sessions + alle Muster).
+    Interner Endpoint — key=SHARED_CORE_KEY erforderlich.
+    """
+    if key != shared_core_store.SHARED_CORE_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized — SHARED_CORE_KEY required.")
+    return await shared_core_store.export_for_vault(since=since)
+
+
+@app.get("/api/sessions/patterns", tags=["shared-core"])
+async def get_patterns(key: str = Query("", description="SHARED_CORE_KEY")):
+    """Alle erkannten Muster aus dem myCEL-Pattern-Store abrufen."""
+    if key != shared_core_store.SHARED_CORE_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized — SHARED_CORE_KEY required.")
+    patterns = await shared_core_store.read_patterns()
+    return {"pattern_count": len(patterns), "patterns": patterns}
+
 
 if __name__ == "__main__":
     import uvicorn
