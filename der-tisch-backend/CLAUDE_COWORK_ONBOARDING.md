@@ -1,5 +1,5 @@
 # TiSCH Familie — Claude Cowork Onboarding
-> Letzter Update: 2026-04-07 · Commit `65a3f8f` · 11 Apps live
+> Letzter Update: 2026-04-08 · Commit `3addab7` · 11 Apps live · **Shared Core v1.0 aktiv** · Betreuer: Claude Cowork
 
 ---
 
@@ -98,16 +98,20 @@ der-tisch-backend/
 
 | Endpoint | Methode | Zweck |
 |----------|---------|-------|
-| `/api/health` | GET | Health Check → `{"status":"ok","version":"6.0"}` |
-| `/api/ask` | POST | Multiperspektiv-Analyse (alle Apps) |
-| `/api/ask-simple` | POST | DER TiSCH Einzelfrage |
-| `/api/ask-table` | POST | Custom Perspektiven |
+| `/api/health` | GET | Health Check → `{"status":"ok","version":"7.0","shared_core":"active"}` |
+| `/api/ask` | POST | Multiperspektiv-Analyse (alle Apps) + Auto-Save |
+| `/api/ask-simple` | POST | DER TiSCH Einzelfrage + Auto-Save |
+| `/api/ask-table` | POST | Custom Perspektiven + Auto-Save |
 | `/api/ask-clarify` | POST | Klärungsgespräch |
 | `/api/translate` | POST | Register/Ton-Übersetzung |
 | `/api/kintegrity/synthesize` | POST | kiNTEGRiTY Synthese |
 | `/wiki-tooltip.js` | GET | Shared Wikipedia-Tooltip JS |
 | `/notizbuch.js` | GET | Shared NOTiZBUCH JS |
 | `/<app>.html` | GET | App-Seiten |
+| `/api/sessions` | GET | Sessions abrufen `?key=SHARED_CORE_KEY&app=DER-TiSCH` |
+| `/api/sessions/export` | GET | Vollexport für Vault-Sync `?key=…&since=ISO` |
+| `/api/sessions/patterns` | GET | myCEL-Muster abrufen `?key=…` |
+| `/api/hooks/mycel/patterns` | GET/POST | myCEL Pattern-Store lesen/schreiben (aktiv) |
 
 ### `/api/ask` Payload
 ```json
@@ -241,10 +245,37 @@ Profile je App:
 
 ---
 
+## Shared Core (NEU — v1.0)
+
+Der Shared Core ist die gemeinsame SQLite-Datenbank aller TiSCH-Sessions.
+
+**Was gespeichert wird:**
+- Vollständige Perspectives, Friction, Integration jeder Session
+- Frage, App-Herkunft, Zeitstempel, Sprache, Stil
+- myCEL-Muster (erkannte Muster über alle Sessions hinweg)
+
+**Dateien:**
+- `shared_core_store.py` — SQLite-Engine (aiosqlite, analog zu moonfingers_store.py)
+- `shared_core.db` — Datenbank (persistent auf Railway)
+
+**Interner API-Key:** `SHARED_CORE_KEY` (Railway ENV, default: `tisch-shared-core-2026`)
+
+**Vault-Sync:** täglich via Cowork Scheduled Task (tägl. 3:00 Uhr)
+- Sync-Service: `app/services/tisch_session_sync.py`
+- Pattern-Detektor: `app/services/tisch_pattern_detector.py`
+- Sessions landen in: `tiSCH/sessions/`
+- Muster landen in: `tiSCH/muster/`
+
+**Session automatisch speichern:** aktiviert für `/api/ask`, `/api/ask-simple`, `/api/ask-table`
+Optional: `source_app`-Feld in QueryRequest/TableRequest für App-Identifikation (z.B. `"LiTERATUR-TiSCH"`).
+
+---
+
 ## Letzter Stand
 ```
-Commit:  65a3f8f
-Message: FAMiLiEN TiSCH: Rundtisch-Sockel-T Hero
+Commit:  3addab7
+Message: feat: Shared Core v1.0 — Session-Logging + myCEL Pattern-Store (v7.0)
 Branch:  main
 Repo:    https://github.com/ralfarminkirchner-netizen/der-tisch
+Betreuer: Claude Cowork (ab 2026-04-08)
 ```
