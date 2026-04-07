@@ -1,0 +1,24 @@
+{
+  "appId": "app.tisch.der",
+  "appName": "DER TiSCH",
+  "webDir": "www",
+  "server": {
+    "url": "https://der-tisch-production.up.railway.app/der-tisch.html",
+    "cleartext": false
+  },
+  "android": {
+    "backgroundColor": "#FAFAF8"
+  },
+  "ios": {
+    "backgroundColor": "#FAFAF8",
+    "contentInset": "automatic"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#FAFAF8",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
+  }
+}

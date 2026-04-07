@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Der Tisch",
+    "slug": "der-tisch",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0e0d0b"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dertisch.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0e0d0b"
+      },
+      "package": "com.dertisch.app"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
   StyleSheet, KeyboardAvoidingView, Platform, Animated,
@@ -13,39 +13,9 @@ const EXAMPLES = [
   "Soll ich den sicheren Job behalten, obwohl er mich innerlich abstumpft?",
   "Warum kann ich mich nicht entscheiden, obwohl ich alle Fakten kenne?",
   "Ich helfe immer allen — aber fühle mich dabei oft ausgenutzt. Was steckt dahinter?",
-  "Klimawandel — was kann ich persönlich tun?",
-  "Ist KI eine Bedrohung oder eine Chance?",
 ];
 
-// Agent accent colors — matching web app
-const AGENT_COLORS = {
-  "Philosophisch":      "#7B52D4",
-  "Tiefenpsychologisch":"#5C3D9E",
-  "Systemisch":         "#2E8B57",
-  "Empirisch-Rational": "#2980B9",
-  "Therapeutisch":      "#3498DB",
-  "Achtsam":            "#17A89B",
-  "Ethisch":            "#D35400",
-  "Strategisch":        "#1E7A8C",
-  "Pädagogisch":        "#E67E22",
-  "Juridisch":          "#922B21",
-  "Spirituell":         "#8E44AD",
-  "Narrativ":           "#2471A3",
-  "Neurodivergent":     "#A8D530",
-  "Ökonomisch":         "#27AE60",
-  "Biografisch":        "#B7950B",
-  "Kulturell":          "#7A9E50",
-};
-
-function getAgentColor(role) {
-  if (AGENT_COLORS[role]) return AGENT_COLORS[role];
-  for (const [key, color] of Object.entries(AGENT_COLORS)) {
-    if (role && role.includes(key)) return color;
-  }
-  return colors.amber;
-}
-
-// TiSCH Logo mark
+// SVG-equivalent table logo as Unicode/text mark
 function TableLogo() {
   return (
     <View style={styles.logoMark}>
@@ -63,97 +33,18 @@ function TableLogo() {
   );
 }
 
-// KI-Auto Expert Preview card
-function ExpertPreviewCard({ experts, loading }) {
-  if (!loading && (!experts || experts.length === 0)) return null;
-
-  return (
-    <View style={styles.expertPreviewCard}>
-      <Text style={styles.expertPreviewLabel}>
-        {loading ? "KI wählt Perspektiven…" : "Diese Stimmen kommen an den Tisch"}
-      </Text>
-      {loading ? (
-        <View style={styles.expertPreviewLoading}>
-          <ActivityIndicator size="small" color={colors.amber} />
-          <Text style={styles.expertPreviewLoadingText}>Analysiere Frage…</Text>
-        </View>
-      ) : (
-        <View style={styles.expertChips}>
-          {experts.map((e, i) => {
-            const color = getAgentColor(e.role);
-            return (
-              <View key={i} style={[styles.expertChip, { borderColor: color + "55" }]}>
-                <View style={[styles.expertChipDot, { backgroundColor: color }]} />
-                <Text style={[styles.expertChipText, { color }]}>{e.role}</Text>
-              </View>
-            );
-          })}
-        </View>
-      )}
-    </View>
-  );
-}
-
 export default function HomeScreen({ navigation }) {
   const [question, setQuestion] = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const inputRef = useRef(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // KI-Auto expert preview state
-  const [previewExperts, setPreviewExperts]       = useState([]);
-  const [previewLoading, setPreviewLoading]       = useState(false);
-  const [previewQuestion, setPreviewQuestion]     = useState("");
-
-  const inputRef    = useRef(null);
-  const fadeAnim    = useRef(new Animated.Value(0)).current;
-  const previewTimer= useRef(null);
-
-  useEffect(() => {
+  React.useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1, duration: 800, useNativeDriver: true,
     }).start();
   }, []);
-
-  // Debounced expert preview: fires 1.2s after user stops typing
-  useEffect(() => {
-    if (previewTimer.current) clearTimeout(previewTimer.current);
-
-    const q = question.trim();
-    if (!q || q.length < 12) {
-      setPreviewExperts([]);
-      setPreviewLoading(false);
-      setPreviewQuestion("");
-      return;
-    }
-    if (q === previewQuestion) return; // already previewed this question
-
-    setPreviewLoading(true);
-
-    previewTimer.current = setTimeout(async () => {
-      try {
-        // Use ask-simple to get a quick preview of which agents would be chosen
-        const res = await fetch("https://der-tisch-production.up.railway.app/api/ask-simple", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: q, lang: "de", stil: "alltag", tone: "achtsam", register: "" }),
-        });
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        const experts = (data.perspectives || []).map((p) => ({
-          role: (p.rolle || p.role || "Experte").replace(/^\[(custom|method)\]/, "").trim(),
-          snippet: (p.kernanalyse || "").slice(0, 80),
-        }));
-        setPreviewExperts(experts);
-        setPreviewQuestion(q);
-      } catch (e) {
-        setPreviewExperts([]);
-      } finally {
-        setPreviewLoading(false);
-      }
-    }, 1200);
-
-    return () => clearTimeout(previewTimer.current);
-  }, [question]);
 
   const submit = async () => {
     const q = question.trim();
@@ -175,8 +66,6 @@ export default function HomeScreen({ navigation }) {
     inputRef.current?.focus();
   };
 
-  const hasPreview = previewExperts.length > 0 || previewLoading;
-
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
@@ -194,7 +83,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.eyebrow}>EPISTEMISCHER PERSPEKTIVENRAUM</Text>
             <Text style={styles.title}>Der Tisch</Text>
             <Text style={styles.subtitle}>
-              Keine absolute Wahrheit. Mehrere Methoden, die gleichzeitig denken —
+              Keine absolute Wahrheit. Vier Methoden, die gleichzeitig denken —
               gefolgt von schonungsloser Reibung und ehrlicher Integration.
             </Text>
           </Animated.View>
@@ -227,28 +116,23 @@ export default function HomeScreen({ navigation }) {
               {loading ? (
                 <ActivityIndicator size="small" color={colors.bg} />
               ) : (
-                <Text style={styles.submitBtnText}>Am Tisch fragen</Text>
+                <Text style={styles.submitBtnText}>Untersuchen</Text>
               )}
             </TouchableOpacity>
           </View>
-
-          {/* KI-Auto Expert Preview */}
-          {!loading && hasPreview && (
-            <ExpertPreviewCard experts={previewExperts} loading={previewLoading} />
-          )}
 
           {/* Loading state */}
           {loading && (
             <View style={styles.loadingCard}>
               <View style={styles.loadingDots}>
-                {(previewExperts.length > 0 ? previewExperts.map(e => e.role) : ["Systemisch", "Tiefenpsychologisch", "Empirisch-Rational", "Philosophisch"]).map((label, i) => (
+                {["Systemisch", "Tiefenpsychologisch", "Empirisch-Rational", "Philosophisch"].map((label, i) => (
                   <View key={i} style={styles.loadingAgent}>
-                    <ActivityIndicator size="small" color={getAgentColor(label)} />
+                    <ActivityIndicator size="small" color={colors.amber} />
                     <Text style={styles.loadingAgentText}>{label}</Text>
                   </View>
                 ))}
               </View>
-              <Text style={styles.loadingHint}>Perspektiven werden erarbeitet…</Text>
+              <Text style={styles.loadingHint}>Vier Agenten denken parallel…</Text>
             </View>
           )}
 
@@ -282,115 +166,180 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
-  scroll: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
+  safe: {
+    flex: 1,
+    backgroundColor: colors.bg,
+  },
+  scroll: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xxl,
+  },
 
   // Logo
-  logoMark:    { alignItems: "center", marginBottom: spacing.md },
-  logoTabletop:{ width: 36, height: 4, backgroundColor: colors.textSecondary, borderRadius: 2 },
-  logoLegs:    { flexDirection: "row", justifyContent: "space-between", width: 28, marginTop: 2 },
-  logoLeg:     { width: 3, height: 10, backgroundColor: colors.textSecondary, borderRadius: 1 },
-  logoDots:    { flexDirection: "row", gap: 4, marginTop: 6 },
-  logoDot:     { width: 6, height: 6, borderRadius: 3 },
+  logoMark: {
+    alignItems: "center",
+    marginBottom: spacing.md,
+  },
+  logoTabletop: {
+    width: 36, height: 4,
+    backgroundColor: colors.textSecondary,
+    borderRadius: 2,
+  },
+  logoLegs: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 28,
+    marginTop: 2,
+  },
+  logoLeg: {
+    width: 3, height: 10,
+    backgroundColor: colors.textSecondary,
+    borderRadius: 1,
+  },
+  logoDots: {
+    flexDirection: "row",
+    gap: 4,
+    marginTop: 6,
+  },
+  logoDot: {
+    width: 6, height: 6,
+    borderRadius: 3,
+  },
 
   // Hero
-  hero: { alignItems: "center", paddingTop: spacing.xxl, paddingBottom: spacing.xl },
-  eyebrow: { fontSize: typography.xs, letterSpacing: 2, color: colors.amber, fontWeight: "600", marginBottom: spacing.sm },
-  title:   { fontSize: typography.hero, color: colors.textPrimary, fontWeight: "700", marginBottom: spacing.md, letterSpacing: -0.5 },
-  subtitle:{ fontSize: typography.small, color: colors.textSecondary, textAlign: "center", lineHeight: 22, maxWidth: 320 },
+  hero: {
+    alignItems: "center",
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.xl,
+  },
+  eyebrow: {
+    fontSize: typography.xs,
+    letterSpacing: 2,
+    color: colors.amber,
+    fontWeight: "600",
+    marginBottom: spacing.sm,
+  },
+  title: {
+    fontSize: typography.hero,
+    color: colors.textPrimary,
+    fontWeight: "700",
+    marginBottom: spacing.md,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: typography.small,
+    color: colors.textSecondary,
+    textAlign: "center",
+    lineHeight: 22,
+    maxWidth: 320,
+  },
 
   // Input
   inputCard: {
-    backgroundColor: colors.bgCard, borderRadius: radius.lg,
-    borderWidth: 1, borderColor: colors.border,
-    padding: spacing.md, marginBottom: spacing.md,
-  },
-  input: {
-    fontSize: typography.body, color: colors.textPrimary,
-    minHeight: 80, textAlignVertical: "top", lineHeight: 24, marginBottom: spacing.md,
-  },
-  submitBtn: {
-    backgroundColor: colors.amber, borderRadius: radius.md,
-    paddingVertical: spacing.md, alignItems: "center",
-  },
-  submitBtnDisabled: { backgroundColor: colors.amberDim, opacity: 0.5 },
-  submitBtnText: { color: colors.bg, fontWeight: "700", fontSize: typography.body, letterSpacing: 0.3 },
-
-  // Expert Preview Card
-  expertPreviewCard: {
     backgroundColor: colors.bgCard,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.amber + "30",
+    borderColor: colors.border,
     padding: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  input: {
+    fontSize: typography.body,
+    color: colors.textPrimary,
+    minHeight: 80,
+    textAlignVertical: "top",
+    lineHeight: 24,
     marginBottom: spacing.md,
   },
-  expertPreviewLabel: {
-    fontSize: typography.xs,
-    color: colors.amber,
-    fontWeight: "700",
-    letterSpacing: 1.2,
-    textTransform: "uppercase",
-    marginBottom: spacing.sm,
+  submitBtn: {
+    backgroundColor: colors.amber,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: "center",
   },
-  expertPreviewLoading: {
+  submitBtnDisabled: {
+    backgroundColor: colors.amberDim,
+    opacity: 0.5,
+  },
+  submitBtnText: {
+    color: colors.bg,
+    fontWeight: "700",
+    fontSize: typography.body,
+    letterSpacing: 0.3,
+  },
+
+  // Loading
+  loadingCard: {
+    backgroundColor: colors.bgCard,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    alignItems: "center",
+  },
+  loadingDots: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  loadingAgent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.xs,
+    backgroundColor: colors.bgInput,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.full,
   },
-  expertPreviewLoadingText: {
+  loadingAgentText: {
+    fontSize: typography.xs,
+    color: colors.textSecondary,
+  },
+  loadingHint: {
     fontSize: typography.small,
     color: colors.textMuted,
     fontStyle: "italic",
   },
-  expertChips: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs,
-  },
-  expertChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    borderWidth: 1,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    backgroundColor: colors.bgInput,
-  },
-  expertChipDot: { width: 7, height: 7, borderRadius: 4 },
-  expertChipText: { fontSize: typography.xs, fontWeight: "600", letterSpacing: 0.3 },
-
-  // Loading
-  loadingCard: {
-    backgroundColor: colors.bgCard, borderRadius: radius.md,
-    borderWidth: 1, borderColor: colors.border,
-    padding: spacing.lg, marginBottom: spacing.lg, alignItems: "center",
-  },
-  loadingDots: {
-    flexDirection: "row", flexWrap: "wrap",
-    justifyContent: "center", gap: spacing.sm, marginBottom: spacing.md,
-  },
-  loadingAgent: {
-    flexDirection: "row", alignItems: "center", gap: spacing.xs,
-    backgroundColor: colors.bgInput,
-    paddingHorizontal: spacing.sm, paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-  },
-  loadingAgentText: { fontSize: typography.xs, color: colors.textSecondary },
-  loadingHint: { fontSize: typography.small, color: colors.textMuted, fontStyle: "italic" },
 
   // Error
   errorCard: {
-    backgroundColor: colors.redBg, borderRadius: radius.md,
-    borderWidth: 1, borderColor: colors.redDim,
-    padding: spacing.md, marginBottom: spacing.lg,
+    backgroundColor: colors.redBg,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.redDim,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
   },
-  errorText: { color: colors.red, fontSize: typography.small, lineHeight: 20 },
+  errorText: {
+    color: colors.red,
+    fontSize: typography.small,
+    lineHeight: 20,
+  },
 
   // Examples
-  examples:      { gap: spacing.sm },
-  examplesLabel: { fontSize: typography.xs, color: colors.textMuted, letterSpacing: 1.5, fontWeight: "600", marginBottom: spacing.xs },
-  exampleChip:   { backgroundColor: colors.bgCard, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, padding: spacing.md },
-  exampleText:   { fontSize: typography.small, color: colors.textSecondary, lineHeight: 20 },
+  examples: {
+    gap: spacing.sm,
+  },
+  examplesLabel: {
+    fontSize: typography.xs,
+    color: colors.textMuted,
+    letterSpacing: 1.5,
+    fontWeight: "600",
+    marginBottom: spacing.xs,
+  },
+  exampleChip: {
+    backgroundColor: colors.bgCard,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md,
+  },
+  exampleText: {
+    fontSize: typography.small,
+    color: colors.textSecondary,
+    lineHeight: 20,
+  },
 });

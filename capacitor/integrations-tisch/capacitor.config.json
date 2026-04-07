@@ -1,0 +1,23 @@
+{
+  "appId": "app.tisch.integrations",
+  "appName": "iNTEGRATiONS TiSCH",
+  "webDir": "www",
+  "server": {
+    "url": "https://der-tisch-production.up.railway.app/integrationstisch.html",
+    "cleartext": false
+  },
+  "android": {
+    "backgroundColor": "#0d0f12"
+  },
+  "ios": {
+    "backgroundColor": "#0d0f12",
+    "contentInset": "automatic"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#0d0f12",
+      "showSpinner": false
+    }
+  }
+}
