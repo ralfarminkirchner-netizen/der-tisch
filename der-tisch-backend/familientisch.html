@@ -280,41 +280,64 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 
     <!-- Main Hero SVG -->
     <svg class="hero-main" viewBox="0 0 760 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Left T crossbar (full left half) -->
-      <rect x="40" y="54" width="340" height="22" rx="3" fill="#C4622D" opacity="0.85"/>
-      <!-- Right T crossbar (full right half) -->
-      <rect x="380" y="54" width="340" height="22" rx="3" fill="#C4622D" opacity="0.85"/>
-      <!-- Seam highlight at center -->
-      <rect x="374" y="54" width="12" height="22" rx="2" fill="#C4622D"/>
-      <!-- Left T leg -->
-      <rect x="218" y="76" width="22" height="90" rx="3" fill="#9A7A6A" opacity="0.7"/>
-      <!-- Right T leg -->
-      <rect x="520" y="76" width="22" height="90" rx="3" fill="#9A7A6A" opacity="0.7"/>
 
-      <!-- Left T text: "FAMiLi" left of leg -->
-      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" fill="#F5EDE6" letter-spacing="2">
-        <tspan x="48" y="102">F</tspan>
-        <tspan>A</tspan>
-        <tspan>M</tspan>
-        <tspan fill="#C4622D">i</tspan>
-        <tspan fill="#F5EDE6">L</tspan>
-        <tspan fill="#C4622D">i</tspan>
-      </text>
-      <!-- "EN" right of left leg -->
-      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" fill="#F5EDE6" letter-spacing="2">
-        <tspan x="248" y="102">EN</tspan>
-      </text>
-      <!-- "iSCH" right of right leg — the right T-leg IS the T of TiSCH -->
-      <text font-family="Inter,sans-serif" font-weight="800" font-size="38" letter-spacing="2">
-        <tspan x="548" y="102" fill="#C4622D">i</tspan>
-        <tspan fill="#F5EDE6">SCH</tspan>
-      </text>
+      <!-- ── Tischplatte: lang, mit Gold-Gradient-Optik ── -->
+      <defs>
+        <linearGradient id="fam-platte" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#DDA060"/>
+          <stop offset="45%" stop-color="#C4622D"/>
+          <stop offset="100%" stop-color="#8B3D18"/>
+        </linearGradient>
+        <linearGradient id="fam-sockel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C4622D"/>
+          <stop offset="100%" stop-color="#7A2E0E"/>
+        </linearGradient>
+        <radialGradient id="fam-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C4622D" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#C4622D" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
 
-      <!-- Decorative baseline dots -->
-      <circle cx="380" cy="178" r="3" fill="#C4622D" opacity="0.5"/>
-      <circle cx="360" cy="178" r="2" fill="#C4622D" opacity="0.3"/>
-      <circle cx="400" cy="178" r="2" fill="#C4622D" opacity="0.3"/>
+      <!-- Subtile Aura unter dem Tisch -->
+      <ellipse cx="380" cy="185" rx="120" ry="14" fill="url(#fam-glow)"/>
+
+      <!-- ── Tischplatte (breiter Querbalken) ── -->
+      <rect x="130" y="52" width="500" height="15" fill="url(#fam-platte)" rx="2"/>
+      <!-- Glanzlinie oben -->
+      <rect x="130" y="52" width="500" height="3" fill="#DDA060" opacity="0.35" rx="2"/>
+      <!-- Schatten-Kante unten -->
+      <rect x="130" y="65" width="500" height="3" fill="#7A2E0E" opacity="0.4" rx="1"/>
+
+      <!-- ── Mittelbein (einzeln, elegant) ── -->
+      <rect x="373" y="67" width="14" height="100" fill="#C4622D" rx="2"/>
+      <!-- Bein Highlight links -->
+      <rect x="373" y="67" width="3" height="100" fill="#DDA060" opacity="0.25" rx="1"/>
+
+      <!-- ── Sockel (kurze, breite Fußplatte — Rundtisch-Charakter) ── -->
+      <rect x="305" y="168" width="150" height="14" fill="url(#fam-sockel)" rx="6"/>
+      <!-- Sockel Glanzlinie -->
+      <rect x="305" y="168" width="150" height="3" fill="#DDA060" opacity="0.3" rx="5"/>
+      <!-- Sockel Schatten unten -->
+      <rect x="310" y="180" width="140" height="3" fill="#5A1E08" opacity="0.35" rx="3"/>
+      <!-- Boden-Schatten Ellipse -->
+      <ellipse cx="380" cy="184" rx="85" ry="6" fill="#1A0804" opacity="0.4"/>
+
+      <!-- ── Buchstaben: FAMiLiEN links, iSCH rechts ── -->
+
+      <!-- "FAMiLiEN" — rechtsbündig am Bein -->
+      <text text-anchor="end" x="368" y="152"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="52" font-weight="300"
+        fill="#F5EDE6" letter-spacing="-1">FAM<tspan fill="#C4622D">i</tspan>L<tspan fill="#C4622D">i</tspan>EN</text>
+
+      <!-- "iSCH" — linksbündig ab Bein -->
+      <text x="392" y="152"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="52" font-weight="300"
+        fill="#F5EDE6" letter-spacing="-1"><tspan fill="#C4622D">i</tspan>SCH</text>
+
     </svg>
+
 
     <!-- Right silhouettes -->
     <svg style="position:absolute;right:0;top:50%;transform:translateY(-50%);width:140px;height:200px;opacity:0.26" viewBox="0 0 140 200" fill="none" xmlns="http://www.w3.org/2000/svg">
