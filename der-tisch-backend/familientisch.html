@@ -413,18 +413,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 
       <!-- Example chips -->
       <div class="chips-label" id="chipsLabel">Themen am TiSCH</div>
-      <div class="chips" id="chipsContainer">
-        <button class="chip" onclick="useChip(this)">Mein Kind macht, was es will — wie setze ich Grenzen?</button>
-        <button class="chip" onclick="useChip(this)">Meine Eltern verstehen mich nicht.</button>
-        <button class="chip" onclick="useChip(this)">Geschwisterkonflikt — wie vermitteln?</button>
-        <button class="chip" onclick="useChip(this)">Ich fühle mich in meiner Familie unsichtbar.</button>
-        <button class="chip" onclick="useChip(this)">Wie spreche ich Trennung mit Kindern an?</button>
-        <button class="chip" onclick="useChip(this)">Meine Mutter mischt sich ständig ein.</button>
-        <button class="chip" onclick="useChip(this)">Teenager-Phase: Nähe und Autonomie balancieren.</button>
-        <button class="chip" onclick="useChip(this)">Unser Familienalltag ist Chaos.</button>
-        <button class="chip" onclick="useChip(this)">Wie gehen wir mit einem Todesfall in der Familie um?</button>
-        <button class="chip" onclick="useChip(this)">Patchwork-Familie: Wie gelingt das Zusammenwachsen?</button>
-      </div>
+      <div class="chips" id="chipsContainer"></div>
 
       <!-- Input -->
       <div class="input-wrap">
@@ -520,6 +509,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="16" x2="16" y2="4"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="4" r="2"/></svg>
         Verbindung
       </button>
+      <button class="auf-btn" onclick="saveAufstellung()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Speichern
+      </button>
+      <button class="auf-btn" onclick="loadAufstellung()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/><polyline points="8 10 12 14 16 10"/><line x1="12" y1="14" x2="12" y2="3"/></svg>
+        Laden
+      </button>
       <button class="auf-btn" onclick="clearScene()">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/><path d="M8 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
         Leeren
@@ -539,6 +536,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
         <button class="rel-type-btn active" data-rel="nah" onclick="setRelType(this)">Nah</button>
         <button class="rel-type-btn" data-rel="distanziert" onclick="setRelType(this)">Distanziert</button>
         <button class="rel-type-btn" data-rel="konfliktreich" onclick="setRelType(this)">Konfliktreich</button>
+      </div>
+      <div style="margin-top:10px">
+        <button class="auf-btn" onclick="deleteFigure()" style="color:#FF6B6B;border-color:rgba(255,107,107,0.4)">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/><path d="M8 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Figur entfernen
+        </button>
       </div>
     </div>
 
@@ -581,6 +584,107 @@ const PERSPEKTIVEN = [
   { id: 'identitaet',     icon: 'mirror',   de: 'Identität & Rolle',             en: 'Identity & Role',            color: '#D07850', filters: ['all','erziehung','beziehung'] },
 ];
 
+const CHIPS_DATA = {
+  all: {
+    de: [
+      'Mein Kind macht, was es will — wie setze ich Grenzen?',
+      'Meine Eltern verstehen mich nicht.',
+      'Geschwisterkonflikt — wie vermitteln?',
+      'Ich fühle mich in meiner Familie unsichtbar.',
+      'Wie spreche ich Trennung mit Kindern an?',
+      'Meine Mutter mischt sich ständig ein.',
+      'Teenager-Phase: Nähe und Autonomie balancieren.',
+      'Unser Familienalltag ist Chaos.',
+      'Wie gehen wir mit einem Todesfall in der Familie um?',
+      'Patchwork-Familie: Wie gelingt das Zusammenwachsen?',
+    ],
+    en: [
+      'My child does what they want — how do I set limits?',
+      'My parents don\'t understand me.',
+      'Sibling conflict — how to mediate?',
+      'I feel invisible in my family.',
+      'How do I talk to my children about separation?',
+      'My mother keeps interfering.',
+      'Teenage years: balancing closeness and autonomy.',
+      'Our family routine is chaos.',
+      'How do we handle a death in the family?',
+      'Blended family: how do we grow together?',
+    ],
+  },
+  erziehung: {
+    de: [
+      'Mein Kind macht, was es will — wie setze ich Grenzen?',
+      'Teenager-Phase: Nähe und Autonomie balancieren.',
+      'Wie erkläre ich meinem Kind Nein-Sagen?',
+      'Bildschirmzeit reduzieren ohne Machtkampf.',
+      'Mein Kind hat Angst vor der Schule.',
+      'Wie stärke ich das Selbstbewusstsein meines Kindes?',
+    ],
+    en: [
+      'My child does what they want — how do I set limits?',
+      'Teenage years: balancing closeness and autonomy.',
+      'How do I teach my child to say no?',
+      'Reducing screen time without a power struggle.',
+      'My child is afraid of school.',
+      'How do I build my child\'s self-confidence?',
+    ],
+  },
+  beziehung: {
+    de: [
+      'Meine Mutter mischt sich ständig ein.',
+      'Meine Eltern verstehen mich nicht.',
+      'Patchwork-Familie: Wie gelingt das Zusammenwachsen?',
+      'Geschwisterkonflikt — wie vermitteln?',
+      'Ich fühle mich in meiner Familie unsichtbar.',
+      'Wie spreche ich schwierige Themen in der Familie an?',
+    ],
+    en: [
+      'My mother keeps interfering.',
+      'My parents don\'t understand me.',
+      'Blended family: how do we grow together?',
+      'Sibling conflict — how to mediate?',
+      'I feel invisible in my family.',
+      'How do I address difficult topics in the family?',
+    ],
+  },
+  generationen: {
+    de: [
+      'Meine Großeltern haben eine andere Wertewelt — wie damit umgehen?',
+      'Welche Muster aus meiner Herkunftsfamilie trage ich weiter?',
+      'Pflege der Eltern: Wie teilen wir die Verantwortung?',
+      'Meine Eltern haben hohe Erwartungen — wie grenze ich mich ab?',
+      'Was vererben wir unseren Kindern unbewusst?',
+      'Familiäre Traumata — wie breche ich den Kreislauf?',
+    ],
+    en: [
+      'My grandparents have different values — how to handle this?',
+      'What patterns from my family of origin do I carry forward?',
+      'Caring for parents: how do we share responsibility?',
+      'My parents have high expectations — how do I set limits?',
+      'What do we unconsciously pass on to our children?',
+      'Family trauma — how do I break the cycle?',
+    ],
+  },
+  krise: {
+    de: [
+      'Wie gehen wir mit einem Todesfall in der Familie um?',
+      'Wie spreche ich Trennung mit Kindern an?',
+      'Unser Familienalltag ist Chaos.',
+      'Schwere Erkrankung in der Familie — wie sprechen wir darüber?',
+      'Trennung der Eltern — wie schütze ich meine Kinder?',
+      'Wie überstehen wir eine Familienphase ohne Geld?',
+    ],
+    en: [
+      'How do we handle a death in the family?',
+      'How do I talk to my children about separation?',
+      'Our family routine is chaos.',
+      'Serious illness in the family — how do we talk about it?',
+      'Parents separating — how do I protect my children?',
+      'How do we get through a financially difficult time as a family?',
+    ],
+  },
+};
+
 const SVG_ICONS = {
   network: `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>`,
   heart:   `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>`,
@@ -602,6 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Select all by default
   PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
   renderPerspGrid();
+  updateChips();
 
   // Keyboard send
   document.getElementById('questionInput').addEventListener('keydown', e => {
@@ -671,9 +776,15 @@ function setFilter(btn, filter) {
   updateChips();
 }
 
+
 function updateChips() {
-  // Chips stay the same, just language label
   document.getElementById('chipsLabel').textContent = currentLang === 'de' ? 'Themen am TiSCH' : 'Topics at the TiSCH';
+  const container = document.getElementById('chipsContainer');
+  const filterKey = currentFilter in CHIPS_DATA ? currentFilter : 'all';
+  const chips = CHIPS_DATA[filterKey][currentLang] || CHIPS_DATA[filterKey]['de'];
+  container.innerHTML = chips.map(text =>
+    `<button class="chip" onclick="useChip(this)">${text}</button>`
+  ).join('');
 }
 
 // ============================================================
@@ -823,10 +934,9 @@ async function handleStream(resp, perspectives, container) {
 }
 
 function renderResults(data, perspectives, container) {
-  // Support both array and object responses
-  const responses = Array.isArray(data) ? data : (data.responses || data.answers || []);
-  if (responses.length === 0) {
-    // Fallback: show raw data per perspective
+  // API returns TableResponse: { perspectives: [{rolle, kernanalyse, ...}], friction, integration }
+  const apiPerspectives = data.perspectives || [];
+  if (apiPerspectives.length === 0) {
     perspectives.forEach(p => {
       const card = createResultCard(p);
       card.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
@@ -834,21 +944,44 @@ function renderResults(data, perspectives, container) {
     });
     return;
   }
-  responses.forEach((r, i) => {
-    const p = perspectives[i] || perspectives[0];
-    const card = createResultCard(p);
-    card.querySelector('.streaming-text').textContent = r.text || r.content || r.answer || '';
+  apiPerspectives.forEach((r) => {
+    const rolle = r.rolle || '';
+    const pDef = perspectives.find(p =>
+      p.id === rolle.toLowerCase() ||
+      (p.de || '').toLowerCase() === rolle.toLowerCase()
+    ) || perspectives[0];
+    const card = createResultCard(pDef, rolle);
+    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
     container.appendChild(card);
   });
+  // Integrations-Karte
+  if (data.integration && data.integration.einfach_gesagt) {
+    const synthCard = document.createElement('div');
+    synthCard.className = 'result-card';
+    synthCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+        </div>
+        <div class="result-card-title">kiNTEGRATiON</div>
+        <div class="result-card-badge">synthese</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
+    `;
+    setTimeout(() => synthCard.classList.add('open'), 100);
+    container.appendChild(synthCard);
+  }
 }
 
-function createResultCard(p) {
+function createResultCard(p, overrideName) {
+  const displayName = overrideName || (currentLang === 'de' ? p.de : p.en);
   const card = document.createElement('div');
   card.className = 'result-card';
   card.innerHTML = `
     <div class="result-card-header" onclick="toggleCard(this.parentElement)">
       <div class="result-card-icon" style="background:${p.color}22;color:${p.color}">${SVG_ICONS[p.icon]||''}</div>
-      <div class="result-card-title">${currentLang==='de'?p.de:p.en}</div>
+      <div class="result-card-title">${displayName}</div>
       <div class="result-card-badge">${p.id}</div>
       <div class="result-card-chevron">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
@@ -1286,6 +1419,25 @@ function updateFigureName() {
   updateLabels();
 }
 
+function deleteFigure() {
+  if (!selectedFigure) return;
+  // Remove all relationship lines for this figure
+  const toRemove = relationships.filter(r => r.a === selectedFigure || r.b === selectedFigure);
+  toRemove.forEach(r => {
+    scene.remove(r.line);
+    if (r.lineGlow) scene.remove(r.lineGlow);
+  });
+  relationships = relationships.filter(r => r.a !== selectedFigure && r.b !== selectedFigure);
+  // Remove 3D objects
+  scene.remove(selectedFigure.group);
+  figures = figures.filter(f => f !== selectedFigure);
+  selectedFigure = null;
+  if (connectFirst && !figures.includes(connectFirst)) connectFirst = null;
+  document.getElementById('selectedInfo').style.display = 'none';
+  updateLabels();
+  showToast('Figur entfernt.');
+}
+
 function updateLabels() {
   const labelsDiv = document.getElementById('figureLabels');
   labelsDiv.innerHTML = '';
@@ -1374,7 +1526,10 @@ function setRelType(btn) {
 
 function clearScene() {
   figures.forEach(f => scene.remove(f.group));
-  relationships.forEach(r => scene.remove(r.line));
+  relationships.forEach(r => {
+    scene.remove(r.line);
+    if (r.lineGlow) scene.remove(r.lineGlow);
+  });
   figures = [];
   relationships = [];
   selectedFigure = null;
@@ -1383,6 +1538,50 @@ function clearScene() {
   updateLabels();
   document.getElementById('selectedInfo').style.display = 'none';
   document.getElementById('aufstellungResults').innerHTML = '';
+}
+
+const AUFSTELLUNG_KEY = 'familientisch_aufstellung_v1';
+
+function saveAufstellung() {
+  if (figures.length === 0) { showToast('Keine Figuren zum Speichern.'); return; }
+  const data = {
+    figures: figures.map(f => ({
+      type: f.type,
+      name: f.name,
+      x: parseFloat(f.group.position.x.toFixed(3)),
+      z: parseFloat(f.group.position.z.toFixed(3)),
+    })),
+    relationships: relationships.map(r => ({
+      aIdx: figures.indexOf(r.a),
+      bIdx: figures.indexOf(r.b),
+      type: r.type,
+    })).filter(r => r.aIdx >= 0 && r.bIdx >= 0),
+  };
+  localStorage.setItem(AUFSTELLUNG_KEY, JSON.stringify(data));
+  showToast('Aufstellung gespeichert.');
+}
+
+function loadAufstellung() {
+  const raw = localStorage.getItem(AUFSTELLUNG_KEY);
+  if (!raw) { showToast('Keine gespeicherte Aufstellung gefunden.'); return; }
+  try {
+    const data = JSON.parse(raw);
+    clearScene();
+    if (!threeInit) initThreeJS();
+    data.figures.forEach(fd => {
+      const fig = addFigure(fd.type);
+      fig.name = fd.name || fig.name;
+      fig.group.position.x = fd.x;
+      fig.group.position.z = fd.z;
+    });
+    data.relationships.forEach(rd => {
+      if (figures[rd.aIdx] && figures[rd.bIdx]) {
+        addRelationship(figures[rd.aIdx], figures[rd.bIdx], rd.type);
+      }
+    });
+    updateLabels();
+    showToast('Aufstellung geladen.');
+  } catch { showToast('Fehler beim Laden.'); }
 }
 
 function onResize3D() {
@@ -1456,27 +1655,56 @@ async function analyseAufstellung() {
 
     if (!resp.ok) throw new Error('API ' + resp.status);
     const data = await resp.json();
-    const text = data.answer || data.text || (Array.isArray(data) ? data[0]?.text : '') || JSON.stringify(data);
 
-    resultsDiv.innerHTML = `
-      <div class="result-card open">
+    resultsDiv.innerHTML = '';
+    const aufPerspDefs = [
+      { id: 'systemisch', icon: 'network', de: 'Systemische Therapeutin', en: 'Systemic Therapist', color: '#C4622D' },
+      { id: 'bindung',    icon: 'heart',   de: 'Bindungsexpertin',         en: 'Attachment Expert',  color: '#D4845A' },
+      { id: 'konflikt',   icon: 'zap',     de: 'Konfliktmediation',        en: 'Conflict Mediation', color: '#CC7040' }
+    ];
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r) => {
+        const rolle = r.rolle || '';
+        const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
+        const card = createResultCard(pDef, rolle);
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    } else {
+      const text = data.answer || data.text || JSON.stringify(data);
+      const fallbackCard = createResultCard(aufPerspDefs[0], 'Systemische Analyse');
+      fallbackCard.querySelector('.streaming-text').textContent = text;
+      resultsDiv.appendChild(fallbackCard);
+    }
+    if (data.integration && data.integration.einfach_gesagt) {
+      const synthCard = document.createElement('div');
+      synthCard.className = 'result-card';
+      synthCard.innerHTML = `
         <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-          <div class="result-card-icon" style="background:rgba(196,98,45,0.15);color:#C4622D">
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
           </div>
-          <div class="result-card-title">Systemische Analyse der Aufstellung</div>
+          <div class="result-card-title">kiNTEGRATiON</div>
+          <div class="result-card-badge">synthese</div>
           <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
         </div>
-        <div class="result-card-body"><p class="streaming-text">${escapeHTML(text)}</p></div>
-      </div>
-      <div class="kintegrity" style="margin-top:16px">
-        <div class="kintegrity-title">kiNTEGRiTY</div>
-        <div class="kintegrity-items">
-          <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> Keine Diagnose</div>
-          <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Reflexionsangebot</div>
-        </div>
+        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
+      `;
+      setTimeout(() => synthCard.classList.add('open'), 100);
+      resultsDiv.appendChild(synthCard);
+    }
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> Keine Diagnose</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Reflexionsangebot</div>
       </div>
     `;
+    resultsDiv.appendChild(kiDiv);
 
     saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
 
