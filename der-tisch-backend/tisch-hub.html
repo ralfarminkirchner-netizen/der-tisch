@@ -337,20 +337,46 @@
 
 <!-- HERO -->
 <div class="hero">
-  <!-- Giant TiSCH logo SVG — T as table (horizontal bar + two legs) in gold -->
-  <svg viewBox="0 0 320 100" style="width:clamp(200px,50vw,320px);height:auto;display:block;margin:0 auto 32px" aria-label="TiSCH Logo" role="img">
-    <!-- Tagline above -->
-    <text x="160" y="14" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#C9A84C" letter-spacing="0.22em" text-anchor="middle">TiSCH HUB · ELF TISCHE.</text>
-    <!-- Table bar -->
-    <rect x="20" y="22" width="280" height="14" fill="#C9A84C" rx="2"/>
-    <!-- Left leg -->
-    <rect x="72" y="36" width="14" height="58" fill="#C9A84C"/>
-    <!-- Right leg -->
-    <rect x="234" y="36" width="14" height="58" fill="#C9A84C"/>
-    <!-- T -->
-    <text x="28" y="90" font-family="Inter,sans-serif" font-size="54" font-weight="300" fill="white" text-anchor="start">T</text>
-    <!-- iSCH -->
-    <text x="252" y="90" font-family="Inter,sans-serif" font-size="54" font-weight="300" fill="white" text-anchor="start"><tspan fill="#C9A84C">i</tspan>SCH</text>
+  <!-- TiSCH HUB Hero Logo -->
+  <svg viewBox="0 0 580 140" style="width:min(88vw,580px);height:auto;display:block;margin:0 auto 36px" aria-label="TiSCH HUB" role="img">
+    <defs>
+      <linearGradient id="hub-gold" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#DDB95A"/>
+        <stop offset="50%" stop-color="#C9A84C"/>
+        <stop offset="100%" stop-color="#9A7830"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Tagline -->
+    <text x="290" y="14" font-family="Inter,sans-serif" font-size="9" font-weight="600"
+      fill="#C9A84C" letter-spacing="0.28em" text-anchor="middle" opacity="0.75">ELF TiSCHE · KI-PERSPEKTIVEN</text>
+
+    <!-- ── Das T als Tisch (Tischplatte + zwei Beine) ── -->
+    <!-- Tischplatte -->
+    <rect x="22" y="24" width="200" height="13" fill="url(#hub-gold)" rx="2"/>
+    <!-- Glanzlinie -->
+    <rect x="22" y="24" width="200" height="3" fill="#DDB95A" opacity="0.4" rx="2"/>
+    <!-- Linkes Bein -->
+    <rect x="64" y="37" width="13" height="76" fill="#C9A84C" rx="1"/>
+    <!-- Rechtes Bein -->
+    <rect x="147" y="37" width="13" height="76" fill="#C9A84C" rx="1"/>
+    <!-- Schatten unten -->
+    <rect x="22" y="37" width="200" height="3" fill="#7A5820" opacity="0.3"/>
+
+    <!-- "iSCH" — direkt nach dem rechten Bein -->
+    <text x="165" y="108"
+      font-family="'Inter','Helvetica Neue',sans-serif"
+      font-size="72" font-weight="300"
+      fill="white" letter-spacing="-2">
+      <tspan fill="#C9A84C">i</tspan>SCH
+    </text>
+
+    <!-- " HUB" — nach iSCH, gleiche Baseline, etwas spacing -->
+    <text x="374" y="108"
+      font-family="'Inter','Helvetica Neue',sans-serif"
+      font-size="72" font-weight="300"
+      fill="#C9A84C" letter-spacing="-2" opacity="0.9"> HUB</text>
+
   </svg>
 
   <h1>KI-gestützte Multiperspektiv-Analyse</h1>
