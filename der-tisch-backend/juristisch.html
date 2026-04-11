@@ -9,9 +9,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0D0D0D">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="JURiS TiSCH">
-<title>JURiS TiSCH — Rechtsfragen am Tisch</title>
-<meta name="description" content="JURiS TiSCH: Anwalt, Richter, Notar, Rechtsberater, Mediator und mehr — juristische Perspektiven auf deine Rechtsfrage.">
+<meta name="apple-mobile-web-app-title" content="JURiSTiSCH">
+<title>JURiSTiSCH — Rechtsfragen</title>
+<meta name="description" content="JURiSTiSCH: Anwalt, Richter, Notar, Rechtsberater, Mediator und mehr — juristische Perspektiven auf deine Rechtsfrage.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -229,8 +229,8 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 
 <!-- ── Navigation ────────────────────────────────────────── -->
 <nav>
-  <a class="nav-logo" aria-label="JURiS TiSCH" href="/juristisch.html" style="text-decoration:none;">
-    <span class="nav-logo-pre">JURiS</span>
+  <a class="nav-logo" aria-label="JURiSTiSCH" href="/juristisch.html" style="text-decoration:none;">
+    <span class="nav-logo-pre">JURiSTiSCH</span>
     <!-- Nav-Logo: T mit Sockel (Rundtisch von der Seite) -->
     <svg class="nav-logo-mark" viewBox="0 0 96 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TiSCH">
       <!-- Tischplatte -->
@@ -277,9 +277,9 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 <main>
 <section class="hero">
 
-  <!-- ── Hero Logo: JURiS TiSCH — ein großes T mit Sockel ── -->
+  <!-- ── Hero Logo: JURiSTiSCH — ein großes T mit Sockel ── -->
   <div style="text-align:center;margin:0 auto 18px;width:100%;">
-    <svg class="hero-logo-svg" viewBox="0 0 740 250" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JURiS TiSCH">
+    <svg class="hero-logo-svg" viewBox="0 0 740 250" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JURiSTiSCH">
 
       <defs>
         <!-- Gold-Glanz Gradient für die Tischplatte -->
@@ -402,7 +402,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 
       <!-- ── Layout: JUR i S [RIESIGES SOCKEL-T] i SCH ── -->
 
-      <!-- "JURiS" rechtsbündig am T-Bein -->
+      <!-- "JURiSTiSCH" — links vom Bein: JURiSTi, rechts: SCH -->
       <text x="350" y="163" font-family="'Inter','Helvetica Neue',sans-serif" font-size="54" font-weight="300" fill="currentColor" letter-spacing="-1" text-anchor="end">JUR<tspan fill="#C9A84C">i</tspan>S</text>
 
       <!-- "iSCH" linksbündig ab rechter Bein-Kante -->
@@ -781,11 +781,11 @@ function copyResults() {
 const HISTORY_KEY='tisch_history_v1';
 function saveToHistory(q,data,perspectives){
   const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
-  h.unshift({id:Date.now(),ts:new Date().toISOString(),app:'JURiS TiSCH',question:q,perspectives,result:data});
+  h.unshift({id:Date.now(),ts:new Date().toISOString(),app:'JURiSTiSCH',question:q,perspectives,result:data});
   localStorage.setItem(HISTORY_KEY,JSON.stringify(h.slice(0,50)));
 }
 function loadHistory(){
-  const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x.app==='JURiS TiSCH');
+  const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x.app==='JURiSTiSCH');
   document.getElementById('historyBody').innerHTML=h.length===0
     ?`<div class="history-empty">${lang==='de'?'Noch keine Einträge':'No entries yet'}</div>`
     :h.map(e=>`<div class="history-item" onclick="restoreHistory(${e.id})"><div class="history-item-q">${e.question}</div><div class="history-item-meta">${new Date(e.ts).toLocaleDateString('de-DE')} · ${(e.perspectives||[]).length} Perspektiven</div></div>`).join('');
