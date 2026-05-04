@@ -966,7 +966,9 @@ async function submitQuestion() {
   const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
 
   try {
-    const res = await fetch(API + '/api/ask', {
+    const res = await   // Route to /api/ask-table when custom perspectives or methods are present
+  var _apiEndpoint = ((typeof allCustom !== 'undefined' && allCustom.length > 0) || (typeof methods !== 'undefined' && methods.length > 0)) ? '/api/ask-table' : '/api/ask';
+  fetch(API + '' + _apiEndpoint + '', {
       signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
