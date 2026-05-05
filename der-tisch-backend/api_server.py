@@ -916,8 +916,8 @@ def sync_call_perspective(system_prompt: str, question: str, stil: str = "philos
     if tone and tone in TONE_INSTRUCTIONS:
         stil_instr = stil_instr + " " + TONE_INSTRUCTIONS[tone][lang]
     return _call_api(
-        model="claude-sonnet-4-6",
-        max_tokens=900,
+        model="claude-haiku-4-5-20251001",
+        max_tokens=500,
         system=system_prompt + "\n\n" + stil_instr,
         tools=[PERSPECTIVE_TOOL],
         tool_name="submit_perspective",
@@ -1018,7 +1018,7 @@ def sync_call_friction(context: str, question: str, lang: str = "de", stil: str 
         )
     return _call_api(
         model="claude-sonnet-4-6",
-        max_tokens=900,
+        max_tokens=700,
         system=system,
         tools=[FRICTION_TOOL],
         tool_name="submit_friction",
@@ -1106,7 +1106,7 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
         )
     return _call_api(
         model="claude-sonnet-4-6",
-        max_tokens=3000,
+        max_tokens=2000,
         system=system,
         tools=[INTEGRATION_TOOL],
         tool_name="submit_integration",
@@ -1437,7 +1437,7 @@ async def ask_simple(req: QueryRequest):
     selected_roles = []
     try:
         sel_resp = client.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-haiku-4-5-20251001",
             max_tokens=80,
             messages=[
                 {"role": "user", "content": f"{selector_prompt}\n\nFrage: {q}"}
