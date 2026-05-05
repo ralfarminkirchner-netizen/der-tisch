@@ -1,11 +1,10 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "nixpacksConfigPath": "der-tisch-backend/nixpacks.toml"
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "der-tisch-backend/Dockerfile"
   },
   "deploy": {
-    "startCommand": "cd der-tisch-backend && uvicorn api_server:app --host 0.0.0.0 --port $PORT",
     "restartPolicyType": "ON_FAILURE"
   }
 }
