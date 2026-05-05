@@ -1286,6 +1286,64 @@ class FullRequest(TableRequest):
     """
     pass  # Alle Felder bereits in TableRequest definiert
 
+
+@app.get("/hub")
+async def serve_hub(): return FileResponse("tisch-hub.html")
+
+@app.get("/tisch-hub")
+async def serve_tisch_hub2(): return FileResponse("tisch-hub.html")
+
+@app.get("/tisch-hub.html")
+async def serve_tisch_hub3(): return FileResponse("tisch-hub.html")
+
+@app.get("/expertentisch")
+async def serve_expertentisch(): return FileResponse("expertentisch.html")
+
+@app.get("/expertentisch.html")
+async def serve_expertentisch2(): return FileResponse("expertentisch.html")
+
+@app.get("/familientisch")
+async def serve_familientisch(): return FileResponse("familientisch.html")
+
+@app.get("/familientisch.html")
+async def serve_familientisch2(): return FileResponse("familientisch.html")
+
+@app.get("/juristisch")
+async def serve_juristisch(): return FileResponse("juristisch.html")
+
+@app.get("/juristisch.html")
+async def serve_juristisch2(): return FileResponse("juristisch.html")
+
+@app.get("/literatentisch")
+async def serve_literatentisch(): return FileResponse("literatentisch.html")
+
+@app.get("/literatentisch.html")
+async def serve_literatentisch2(): return FileResponse("literatentisch.html")
+
+@app.get("/medizintisch")
+async def serve_medizintisch(): return FileResponse("medizintisch.html")
+
+@app.get("/medizintisch.html")
+async def serve_medizintisch2(): return FileResponse("medizintisch.html")
+
+@app.get("/trainingstisch")
+async def serve_trainingstisch(): return FileResponse("trainingstisch.html")
+
+@app.get("/trainingstisch.html")
+async def serve_trainingstisch2(): return FileResponse("trainingstisch.html")
+
+@app.get("/coachingtisch")
+async def serve_coachingtisch(): return FileResponse("coachingtisch.html")
+
+@app.get("/coachingtisch.html")
+async def serve_coachingtisch2(): return FileResponse("coachingtisch.html")
+
+@app.get("/integrationstisch")
+async def serve_integrationstisch2(): return FileResponse("integrationstisch.html")
+
+@app.get("/der-tisch")
+async def serve_der_tisch2(): return FileResponse("der-tisch.html")
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "service": "TiSCH API", "version": "7.0", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"], "shared_core": "active"}
