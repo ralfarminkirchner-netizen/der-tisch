@@ -1282,15 +1282,29 @@ class TableRequest(BaseModel):
     source_app: Optional[str] = None                    # App identifier for Shared Core, kein Weichzeichnen
     source_app: str = ""  # z.B. "EiGENER-TiSCH", "FAMiLiEN-TiSCH" — optional, für Shared Core Logging
 
+
+class FullRequest(TableRequest):
+    """Superset von QueryRequest + TableRequest.
+    Wird von /api/ask verwendet damit custom_perspectives + methods auch an
+    diesem Endpunkt ankommen und korrekt verarbeitet werden.
+    TableRequest hat bereits alle benötigten Felder inkl. custom_perspectives,
+    methods, reibungsintensitaet und source_app.
+    """
+    pass  # Alle Felder bereits in TableRequest definiert
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "service": "TiSCH API", "version": "7.0", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"], "shared_core": "active"}
 
 @app.post("/api/ask", response_model=TableResponse)
-async def ask_the_table(req: QueryRequest):
+async def ask_the_table(req: FullRequest):
     """Original-Endpunkt: immer alle 8 Methoden-Agenten."""
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
+    # Delegation: wenn custom_perspectives oder methods vorhanden → /api/ask-table Logik
+    if req.custom_perspectives or req.methods:
+        return await ask_the_custom_table(req)
+
     # TISCH-PATCH: delegate to /api/ask-table when custom perspectives or methods are active
     if req.custom_perspectives or req.methods:
         table_req = TableRequest(
