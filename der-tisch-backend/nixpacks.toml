@@ -1,8 +1,11 @@
 [phases.setup]
-nixPkgs = ["python312"]
+nixPkgs = ["python3"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+  "python3 -m ensurepip --upgrade",
+  "python3 -m pip install -r der-tisch-backend/requirements.txt"
+]
 
 [start]
-cmd = "uvicorn api_server:app --host 0.0.0.0 --port $PORT"
+cmd = "cd der-tisch-backend && uvicorn api_server:app --host 0.0.0.0 --port $PORT"

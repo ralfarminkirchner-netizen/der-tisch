@@ -5,7 +5,7 @@
     "nixpacksConfigPath": "der-tisch-backend/nixpacks.toml"
   },
   "deploy": {
-    "startCommand": "uvicorn api_server:app --host 0.0.0.0 --port $PORT",
+    "startCommand": "cd der-tisch-backend && uvicorn api_server:app --host 0.0.0.0 --port $PORT",
     "restartPolicyType": "ON_FAILURE"
   }
 }
