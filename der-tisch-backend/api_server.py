@@ -1222,13 +1222,7 @@ class QueryRequest(BaseModel):
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
     register: str = ""  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
-    source_app: str = ""  # z.B. "DER-TiSCH", "LiTERATUR-TiSCH" — optional, für Shared Core Logging
 
-    # ── TISCH-PATCH: extended fields ──────────────────────────────────
-    source_app: Optional[str] = None            # App identifier for Shared Core (e.g. "JURiSTiSCH")
-    custom_perspectives: List[CustomPerspective] = []  # Routes to /api/ask-table logic when present
-    methods: List[str] = []                     # Subset of methods to invoke
-    reibungsintensitaet: str = "standard"       # standard | eskaliert | maximal
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
     Wird sowohl für temporäre Tischgäste (inline) als auch für
