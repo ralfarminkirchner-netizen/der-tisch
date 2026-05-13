@@ -1,35 +1,36 @@
 #!/usr/bin/env python3
-# TISCH-PATCH-APPLIED
 """Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
-   Version 7.0: Shared Core Session-Logging + myCEL Pattern-Store aktiviert.
+   Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
 """
 import asyncio
-import contextlib
 from pathlib import Path
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from kintegrity import KintegrityRequest, KintegrityResponse, kintegrity_synthesize
 from pydantic import BaseModel
 from typing import List, Optional
 import anthropic
-import shared_core_store
 
-# ---------------------------------------------------------------------------
-# Lifespan: Shared Core DB beim Start initialisieren
-# ---------------------------------------------------------------------------
-@contextlib.asynccontextmanager
-async def lifespan(app: FastAPI):
-    await shared_core_store.init_db()
-    yield
-
-app = FastAPI(title="TiSCH API", lifespan=lifespan)
+app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = anthropic.Anthropic()
 
-# Serve index.html at root
+# Serve TiSCH Hub at root
 @app.get("/")
 async def serve_index():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html")
+
+# Serve TEAM TiSCH
+@app.get("/teamtisch")
+async def serve_teamtisch():
+    return FileResponse(Path(__file__).parent / "index.html")
+
+@app.get("/teamtisch.html")
+async def serve_teamtisch_html():
+    return FileResponse(Path(__file__).parent / "index.html")
+
+@app.get("/team-tisch")
+async def serve_team_tisch():
     return FileResponse(Path(__file__).parent / "index.html")
 
 # Serve iNTEGRATiONS TiSCH
@@ -41,53 +42,81 @@ async def serve_integrationstisch():
 async def serve_der_tisch():
     return FileResponse(Path(__file__).parent / "der-tisch.html")
 
-@app.get("/literatentisch.html")
-async def serve_literatentisch():
-    return FileResponse(Path(__file__).parent / "literatentisch.html")
-
-@app.get("/expertentisch.html")
-async def serve_expertentisch():
-    return FileResponse(Path(__file__).parent / "expertentisch.html")
-
-@app.get("/trainingstisch.html")
-async def serve_trainingstisch():
-    return FileResponse(Path(__file__).parent / "trainingstisch.html")
+@app.get("/der-tisch")
+async def serve_der_tisch_short():
+    return FileResponse(Path(__file__).parent / "der-tisch.html")
 
 @app.get("/coachingtisch.html")
 async def serve_coachingtisch():
     return FileResponse(Path(__file__).parent / "coachingtisch.html")
 
-@app.get("/medizintisch.html")
-async def serve_medizintisch():
-    return FileResponse(Path(__file__).parent / "medizintisch.html")
+@app.get("/coachingtisch")
+async def serve_coachingtisch_short():
+    return FileResponse(Path(__file__).parent / "coachingtisch.html")
 
-@app.get("/juristisch.html")
-async def serve_juristisch():
-    return FileResponse(Path(__file__).parent / "juristisch.html")
+@app.get("/expertentisch.html")
+async def serve_expertentisch():
+    return FileResponse(Path(__file__).parent / "expertentisch.html")
+
+@app.get("/expertentisch")
+async def serve_expertentisch_short():
+    return FileResponse(Path(__file__).parent / "expertentisch.html")
 
 @app.get("/familientisch.html")
 async def serve_familientisch():
     return FileResponse(Path(__file__).parent / "familientisch.html")
 
+@app.get("/familientisch")
+async def serve_familientisch_short():
+    return FileResponse(Path(__file__).parent / "familientisch.html")
+
+@app.get("/juristisch.html")
+async def serve_juristisch():
+    return FileResponse(Path(__file__).parent / "juristisch.html")
+
+@app.get("/juristisch")
+async def serve_juristisch_short():
+    return FileResponse(Path(__file__).parent / "juristisch.html")
+
+@app.get("/literatentisch.html")
+async def serve_literatentisch():
+    return FileResponse(Path(__file__).parent / "literatentisch.html")
+
+@app.get("/literatentisch")
+async def serve_literatentisch_short():
+    return FileResponse(Path(__file__).parent / "literatentisch.html")
+
+@app.get("/medizintisch.html")
+async def serve_medizintisch():
+    return FileResponse(Path(__file__).parent / "medizintisch.html")
+
+@app.get("/medizintisch")
+async def serve_medizintisch_short():
+    return FileResponse(Path(__file__).parent / "medizintisch.html")
+
+@app.get("/trainingstisch.html")
+async def serve_trainingstisch():
+    return FileResponse(Path(__file__).parent / "trainingstisch.html")
+
+@app.get("/trainingstisch")
+async def serve_trainingstisch_short():
+    return FileResponse(Path(__file__).parent / "trainingstisch.html")
+
 @app.get("/tisch-hub.html")
 async def serve_tisch_hub():
     return FileResponse(Path(__file__).parent / "tisch-hub.html")
 
-@app.get("/wiki-tooltip.js")
-async def serve_wiki_tooltip():
-    return FileResponse(Path(__file__).parent / "wiki-tooltip.js", media_type="application/javascript")
+@app.get("/tisch-hub")
+async def serve_tisch_hub_short():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html")
 
-@app.get("/notizbuch.js")
-async def serve_notizbuch():
-    return FileResponse(Path(__file__).parent / "notizbuch.js", media_type="application/javascript")
+@app.get("/hub")
+async def serve_hub_short():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html")
 
-@app.post("/api/kintegrity/synthesize", response_model=KintegrityResponse)
-async def api_kintegrity_synthesize(req: KintegrityRequest):
-    try:
-        return await kintegrity_synthesize(req)
-    except Exception as e:
-        import traceback
-        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}")
+@app.get("/integrationstisch")
+async def serve_integrationstisch_short():
+    return FileResponse(Path(__file__).parent / "integrationstisch.html")
 
 # PWA Manifests
 @app.get("/manifest-team-tisch.json")
@@ -317,38 +346,30 @@ class TableResponse(BaseModel):
 # ==========================================
 PERSPECTIVE_TOOL = {
     "name": "submit_perspective",
-    "description": "Submit methodical analysis. CRITICAL RULES: (1) Start directly with content — never begin with meta-phrases like 'As a philosophical perspective...' or 'From my method...' or 'I would say...'. (2) Each field: 3-6 sentences, no more, no filler. (3) All fields roughly equal length. (4) No hedging, no apologies, no empty qualifiers.",
+    "description": "Submit methodical analysis including explicit claim-type identification",
     "input_schema": {
         "type": "object",
         "properties": {
             "anspruchstyp": {
                 "type": "string",
                 "description": (
-                    "Name the claim-type your method addresses (correspondence / coherence / validity / evidential experience) "
-                    "and what it cannot address. Direct statement, 2-3 sentences. No meta-commentary."
+                    "Which type of truth-claim can your method actually address? "
+                    "Be explicit: correspondence (statement-world), coherence (statement-belief system), "
+                    "validity (social stabilization), or evidential experience (subject-inner coherence). "
+                    "Also name what your method CANNOT address. (1-2 sentences)"
                 )
             },
             "kernanalyse": {
                 "type": "string",
-                "description": (
-                    "Core analysis strictly from your method. 3-6 sentences. "
-                    "Start with the substance, not with 'My method says...' or similar. "
-                    "Proportional to the question's weight — neither too short nor bloated."
-                )
+                "description": "Core analysis in 2-3 sentences strictly from your methodical framework — stay within your claim-type"
             },
             "evidenz": {
                 "type": "string",
-                "description": (
-                    "What grounds your analysis — concepts, logic, observed patterns, data. "
-                    "3-5 sentences. Concrete, not generic."
-                )
+                "description": "What concepts, observations or logic grounds your analysis? (1-2 sentences)"
             },
             "blinder_fleck": {
                 "type": "string",
-                "description": (
-                    "What your method principally cannot see. Honest, specific. "
-                    "2-4 sentences. Not a disclaimer — an honest limit."
-                )
+                "description": "What can your method principally NOT see? Name it honestly. (1 sentence)"
             }
         },
         "required": ["anspruchstyp", "kernanalyse", "evidenz", "blinder_fleck"]
@@ -924,12 +945,9 @@ def sync_call_perspective(system_prompt: str, question: str, stil: str = "philos
         messages=[{
             "role": "user",
             "content": (
-                f"Analyse this question from your specific method. Rules:\n"
-                f"- Begin every field with the substance, never with 'As [method]...' or 'From my perspective...'\n"
-                f"- 3-6 sentences per field. Proportional to the question's weight.\n"
-                f"- No filler, no hedging, no empty qualifiers. Every sentence must carry content.\n"
-                f"- All fields roughly equal in length.\n"
-                f"- Stay strictly within your method's reach.\n\n"
+                f"Analyse this question from your method.\n"
+                f"First: name which claim-type your method can address — and which it cannot.\n"
+                f"Then: stay strictly within your method's reach. Your finger points at your moon, not at all moons.\n\n"
                 f"QUESTION: {question}"
             )
         }]
@@ -1272,103 +1290,17 @@ class TableRequest(BaseModel):
     custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
     # Reibungsintensität: "standard" | "eskaliert" | "maximal"
-    reibungsintensitaet: str = "standard"               # eskaliert = Antagonisten-Modus
-    source_app: Optional[str] = None                    # App identifier for Shared Core, kein Weichzeichnen
-    source_app: str = ""  # z.B. "EiGENER-TiSCH", "FAMiLiEN-TiSCH" — optional, für Shared Core Logging
-
-
-class FullRequest(TableRequest):
-    """Superset von QueryRequest + TableRequest.
-    Wird von /api/ask verwendet damit custom_perspectives + methods auch an
-    diesem Endpunkt ankommen und korrekt verarbeitet werden.
-    TableRequest hat bereits alle benötigten Felder inkl. custom_perspectives,
-    methods, reibungsintensitaet und source_app.
-    """
-    pass  # Alle Felder bereits in TableRequest definiert
-
-
-@app.get("/hub")
-async def serve_hub(): return FileResponse("tisch-hub.html")
-
-@app.get("/tisch-hub")
-async def serve_tisch_hub2(): return FileResponse("tisch-hub.html")
-
-@app.get("/tisch-hub.html")
-async def serve_tisch_hub3(): return FileResponse("tisch-hub.html")
-
-@app.get("/expertentisch")
-async def serve_expertentisch(): return FileResponse("expertentisch.html")
-
-@app.get("/expertentisch.html")
-async def serve_expertentisch2(): return FileResponse("expertentisch.html")
-
-@app.get("/familientisch")
-async def serve_familientisch(): return FileResponse("familientisch.html")
-
-@app.get("/familientisch.html")
-async def serve_familientisch2(): return FileResponse("familientisch.html")
-
-@app.get("/juristisch")
-async def serve_juristisch(): return FileResponse("juristisch.html")
-
-@app.get("/juristisch.html")
-async def serve_juristisch2(): return FileResponse("juristisch.html")
-
-@app.get("/literatentisch")
-async def serve_literatentisch(): return FileResponse("literatentisch.html")
-
-@app.get("/literatentisch.html")
-async def serve_literatentisch2(): return FileResponse("literatentisch.html")
-
-@app.get("/medizintisch")
-async def serve_medizintisch(): return FileResponse("medizintisch.html")
-
-@app.get("/medizintisch.html")
-async def serve_medizintisch2(): return FileResponse("medizintisch.html")
-
-@app.get("/trainingstisch")
-async def serve_trainingstisch(): return FileResponse("trainingstisch.html")
-
-@app.get("/trainingstisch.html")
-async def serve_trainingstisch2(): return FileResponse("trainingstisch.html")
-
-@app.get("/coachingtisch")
-async def serve_coachingtisch(): return FileResponse("coachingtisch.html")
-
-@app.get("/coachingtisch.html")
-async def serve_coachingtisch2(): return FileResponse("coachingtisch.html")
-
-@app.get("/integrationstisch")
-async def serve_integrationstisch2(): return FileResponse("integrationstisch.html")
-
-@app.get("/der-tisch")
-async def serve_der_tisch2(): return FileResponse("der-tisch.html")
+    reibungsintensitaet: str = "standard"               # eskaliert = Antagonisten-Modus, kein Weichzeichnen
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "TiSCH API", "version": "7.0", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"], "shared_core": "active"}
+    return {"status": "ok", "service": "TiSCH API", "version": "7.1", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"], "shared_core": "active"}
 
 @app.post("/api/ask", response_model=TableResponse)
-async def ask_the_table(req: FullRequest):
+async def ask_the_table(req: QueryRequest):
     """Original-Endpunkt: immer alle 8 Methoden-Agenten."""
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
-    # Delegation: wenn custom_perspectives oder methods vorhanden → /api/ask-table Logik
-    if req.custom_perspectives or req.methods:
-        return await ask_the_custom_table(req)
-
-    # TISCH-PATCH: delegate to /api/ask-table when custom perspectives or methods are active
-    if req.custom_perspectives or req.methods:
-        table_req = TableRequest(
-            question=req.question, lang=req.lang, stil=req.stil,
-            register=req.register, tone=req.tone,
-            custom_perspectives=req.custom_perspectives,
-            methods=req.methods,
-            reibungsintensitaet=req.reibungsintensitaet,
-            source_app=req.source_app,
-        )
-        return await ask_the_custom_table(table_req)
-
 
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
@@ -1380,19 +1312,7 @@ async def ask_the_table(req: FullRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
-        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
-        # Shared Core: Session automatisch speichern (fire-and-forget)
-        asyncio.create_task(shared_core_store.save_session(
-            source_app=req.source_app or "DER-TiSCH-FULL",
-            question=req.question,
-            lang=req.lang,
-            stil=stil,
-            tone=tone,
-            perspectives=[p.model_dump() for p in perspectives],
-            friction=friction.model_dump(),
-            integration=integration.model_dump(),
-        ))
-        return result
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -1483,19 +1403,7 @@ async def ask_simple(req: QueryRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, q, lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, q, lang, stil, tone)
-        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
-        # Shared Core: Session automatisch speichern (fire-and-forget)
-        asyncio.create_task(shared_core_store.save_session(
-            source_app=req.source_app or "DER-TiSCH",
-            question=q,
-            lang=lang,
-            stil=stil,
-            tone=tone,
-            perspectives=[p.model_dump() for p in perspectives],
-            friction=friction.model_dump(),
-            integration=integration.model_dump(),
-        ))
-        return result
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -1689,19 +1597,7 @@ async def ask_the_custom_table(req: TableRequest):
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, reibung, tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
 
-        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
-        # Shared Core: Session automatisch speichern (fire-and-forget)
-        asyncio.create_task(shared_core_store.save_session(
-            source_app=req.source_app or "EiGENER-TiSCH",
-            question=req.question,
-            lang=req.lang,
-            stil=stil,
-            tone=tone,
-            perspectives=[p.model_dump() for p in perspectives],
-            friction=friction.model_dump(),
-            integration=integration.model_dump(),
-        ))
-        return result
+        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
 
     except HTTPException:
         raise
@@ -2230,17 +2126,15 @@ async def hook_ki_ntegrity(payload: KiNtegrityPayload):
 
 @app.get("/api/hooks/mycel/patterns", tags=["ecosystem"])
 async def hook_mycel_read():
-    """myCEL: Alle gespeicherten Muster aus dem Shared Core lesen."""
-    patterns = await shared_core_store.read_patterns()
-    return {"status": "ok", "hook": "myCEL", "patterns": patterns, "count": len(patterns)}
+    """myCEL: Read from Muster-Ordner (pattern directory)."""
+    # HOOKPOINT — returns empty pattern store until connected
+    return {"status": "hookpoint_ready", "hook": "myCEL", "patterns": []}
 
 @app.post("/api/hooks/mycel/patterns", tags=["ecosystem"])
 async def hook_mycel_write(payload: MycelPayload):
-    """myCEL: Muster in den Shared Core schreiben/aktualisieren."""
-    if not payload.pattern_key:
-        return {"status": "error", "detail": "pattern_key required"}
-    await shared_core_store.write_pattern(payload.pattern_key, payload.data)
-    return {"status": "ok", "hook": "myCEL", "operation": "write", "key": payload.pattern_key}
+    """myCEL: Write to Muster-Ordner (pattern directory)."""
+    # HOOKPOINT — write operation pending
+    return {"status": "hookpoint_ready", "hook": "myCEL", "operation": payload.operation, "key": payload.pattern_key}
 
 @app.post("/api/hooks/brainstormz", tags=["ecosystem"])
 async def hook_brainstormz(payload: BrainstormzPayload):
@@ -2253,60 +2147,6 @@ async def hook_pandora_logic(payload: PandoraLogicPayload):
     """Pandora_Logic: Trigger when idea cloud reaches maximum density."""
     # HOOKPOINT — trigger logic pending
     return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
-
-
-# =============================================
-# SHARED CORE — Session-Zugriff (intern)
-# =============================================
-
-@app.get("/api/sessions", tags=["shared-core"])
-async def get_sessions(
-    app_filter: Optional[str] = Query(None, alias="app"),
-    limit: int = Query(100, ge=1, le=500),
-    offset: int = Query(0, ge=0),
-    key: str = Query("", description="SHARED_CORE_KEY"),
-):
-    """Gespeicherte Sessions abrufen.
-    Interner Endpoint — key=SHARED_CORE_KEY erforderlich.
-    Optional: ?app=DER-TiSCH für App-Filter.
-    """
-    if key != shared_core_store.SHARED_CORE_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized — SHARED_CORE_KEY required.")
-    sessions = await shared_core_store.get_sessions(
-        source_app=app_filter, limit=limit, offset=offset
-    )
-    total = await shared_core_store.get_session_count(source_app=app_filter)
-    stats = await shared_core_store.get_app_stats()
-    return {
-        "total": total,
-        "returned": len(sessions),
-        "offset": offset,
-        "app_stats": stats,
-        "sessions": sessions,
-    }
-
-
-@app.get("/api/sessions/export", tags=["shared-core"])
-async def export_sessions(
-    since: Optional[str] = Query(None, description="ISO-Zeitstempel — nur Sessions nach diesem Datum"),
-    key: str = Query("", description="SHARED_CORE_KEY"),
-):
-    """Vollständiger Export für Vault-Sync (alle Sessions + alle Muster).
-    Interner Endpoint — key=SHARED_CORE_KEY erforderlich.
-    """
-    if key != shared_core_store.SHARED_CORE_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized — SHARED_CORE_KEY required.")
-    return await shared_core_store.export_for_vault(since=since)
-
-
-@app.get("/api/sessions/patterns", tags=["shared-core"])
-async def get_patterns(key: str = Query("", description="SHARED_CORE_KEY")):
-    """Alle erkannten Muster aus dem myCEL-Pattern-Store abrufen."""
-    if key != shared_core_store.SHARED_CORE_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized — SHARED_CORE_KEY required.")
-    patterns = await shared_core_store.read_patterns()
-    return {"pattern_count": len(patterns), "patterns": patterns}
-
 
 if __name__ == "__main__":
     import uvicorn
