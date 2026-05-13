@@ -3,17 +3,18 @@
    Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
 """
 import asyncio
+import json as _json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
-import anthropic
+from openai import OpenAI
 
 app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-client = anthropic.Anthropic()
+client = OpenAI()
 
 NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
 
@@ -893,21 +894,35 @@ EMPTY_FALLBACKS_EN = {
 # ==========================================
 # SYNC HELPERS — run in thread pool
 # ==========================================
+def _anthropic_tool_to_openai(tool: dict) -> dict:
+    """Convert Anthropic tool format to OpenAI function format."""
+    return {
+        "type": "function",
+        "function": {
+            "name": tool["name"],
+            "description": tool.get("description", ""),
+            "parameters": tool.get("input_schema", {"type": "object", "properties": {}})
+        }
+    }
+
 def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: str, messages: list) -> dict:
-    """Generic sync API call with Tool Use. Returns the tool input dict."""
-    response = client.messages.create(
+    """Generic sync API call with Function Calling. Returns the tool input dict."""
+    openai_tools = [_anthropic_tool_to_openai(t) for t in tools]
+    all_messages = [{"role": "system", "content": system}] + messages
+    response = client.chat.completions.create(
         model=model,
         max_tokens=max_tokens,
-        system=system,
-        tools=tools,
-        tool_choice={"type": "tool", "name": tool_name},
-        messages=messages
+        messages=all_messages,
+        tools=openai_tools,
+        tool_choice={"type": "function", "function": {"name": tool_name}}
     )
-    for block in response.content:
-        if block.type == "tool_use" and block.name == tool_name:
-            return dict(block.input)
-    stop = getattr(response, 'stop_reason', 'unknown')
-    raise RuntimeError(f"No tool_use block (tool={tool_name}, stop_reason={stop}). Check max_tokens.")
+    tool_calls = response.choices[0].message.tool_calls
+    if tool_calls:
+        for tc in tool_calls:
+            if tc.function.name == tool_name:
+                return _json.loads(tc.function.arguments)
+    stop = response.choices[0].finish_reason
+    raise RuntimeError(f"No function call (tool={tool_name}, finish_reason={stop}). Check max_tokens.")
 
 
 REGISTER_INSTRUCTIONS = {
@@ -939,7 +954,7 @@ def sync_call_perspective(system_prompt: str, question: str, stil: str = "philos
     if tone and tone in TONE_INSTRUCTIONS:
         stil_instr = stil_instr + " " + TONE_INSTRUCTIONS[tone][lang]
     return _call_api(
-        model="claude-haiku-4-5-20251001",
+        model="gpt-4o-mini",
         max_tokens=500,
         system=system_prompt + "\n\n" + stil_instr,
         tools=[PERSPECTIVE_TOOL],
@@ -1037,7 +1052,7 @@ def sync_call_friction(context: str, question: str, lang: str = "de", stil: str 
             "Keine Synthese. Kurze präzise Sätze."
         )
     return _call_api(
-        model="claude-sonnet-4-6",
+        model="gpt-4o-mini",
         max_tokens=700,
         system=system,
         tools=[FRICTION_TOOL],
@@ -1125,7 +1140,7 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             "Keine Synthese — ehrliche Orientierung. Kurze präzise Sätze."
         )
     return _call_api(
-        model="claude-sonnet-4-6",
+        model="gpt-4o-mini",
         max_tokens=2000,
         system=system,
         tools=[INTEGRATION_TOOL],
@@ -1353,19 +1368,18 @@ async def ask_simple(req: QueryRequest):
         "Respond ONLY with the JSON list, no other text."
     )
 
-    import json as _json
     import re as _re
 
     selected_roles = []
     try:
-        sel_resp = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        sel_resp = client.chat.completions.create(
+            model="gpt-4o-mini",
             max_tokens=80,
             messages=[
                 {"role": "user", "content": f"{selector_prompt}\n\nFrage: {q}"}
             ]
         )
-        raw = sel_resp.content[0].text.strip()
+        raw = sel_resp.choices[0].message.content.strip()
         # Extract JSON array
         m = _re.search(r'\[.*?\]', raw, _re.DOTALL)
         if m:
