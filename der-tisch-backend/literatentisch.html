@@ -1590,9 +1590,10 @@ async function submitQuestion() {
       body: JSON.stringify(payload),
     });
 
+    clearTimeout(_tid0);
+
     if (!res.ok) {
-      const err = await res.json().catch(() => ({
-        clearTimeout(_tid0);}));
+      const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
 
@@ -1847,8 +1848,7 @@ function ltTogglePanel(id) {
 
 function ltCopyPanel(id) {
   var el = document.getElementById(id)?.querySelector('.ki-editable-lt');
-  if (el) navigator.clipboard.writeText(el.textContent || '').catch(function(){
-        clearTimeout(_tid2);});
+  if (el) navigator.clipboard.writeText(el.textContent || '').catch(function(){});
 }
 
 // Init
