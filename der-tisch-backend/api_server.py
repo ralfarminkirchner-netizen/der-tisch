@@ -4,10 +4,8 @@
 """
 import asyncio
 import json as _json
-from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from openai import OpenAI
@@ -15,137 +13,6 @@ from openai import OpenAI
 app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = OpenAI()
-
-NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
-
-# Serve TiSCH Hub at root
-@app.get("/")
-async def serve_index():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
-
-# Serve TEAM TiSCH
-@app.get("/teamtisch")
-async def serve_teamtisch():
-    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
-
-@app.get("/teamtisch.html")
-async def serve_teamtisch_html():
-    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
-
-@app.get("/team-tisch")
-async def serve_team_tisch():
-    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
-
-# Serve iNTEGRATiONS TiSCH
-@app.get("/integrationstisch.html")
-async def serve_integrationstisch():
-    return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
-
-@app.get("/der-tisch.html")
-async def serve_der_tisch():
-    return FileResponse(Path(__file__).parent / "der-tisch.html")
-
-@app.get("/der-tisch")
-async def serve_der_tisch_short():
-    return FileResponse(Path(__file__).parent / "der-tisch.html")
-
-@app.get("/coachingtisch.html")
-async def serve_coachingtisch():
-    return FileResponse(Path(__file__).parent / "coachingtisch.html")
-
-@app.get("/coachingtisch")
-async def serve_coachingtisch_short():
-    return FileResponse(Path(__file__).parent / "coachingtisch.html")
-
-@app.get("/expertentisch.html")
-async def serve_expertentisch():
-    return FileResponse(Path(__file__).parent / "expertentisch.html")
-
-@app.get("/expertentisch")
-async def serve_expertentisch_short():
-    return FileResponse(Path(__file__).parent / "expertentisch.html")
-
-@app.get("/familientisch.html")
-async def serve_familientisch():
-    return FileResponse(Path(__file__).parent / "familientisch.html")
-
-@app.get("/familientisch")
-async def serve_familientisch_short():
-    return FileResponse(Path(__file__).parent / "familientisch.html")
-
-@app.get("/juristisch.html")
-async def serve_juristisch():
-    return FileResponse(Path(__file__).parent / "juristisch.html")
-
-@app.get("/juristisch")
-async def serve_juristisch_short():
-    return FileResponse(Path(__file__).parent / "juristisch.html")
-
-@app.get("/literatentisch.html")
-async def serve_literatentisch():
-    return FileResponse(Path(__file__).parent / "literatentisch.html")
-
-@app.get("/literatentisch")
-async def serve_literatentisch_short():
-    return FileResponse(Path(__file__).parent / "literatentisch.html")
-
-@app.get("/medizintisch.html")
-async def serve_medizintisch():
-    return FileResponse(Path(__file__).parent / "medizintisch.html")
-
-@app.get("/medizintisch")
-async def serve_medizintisch_short():
-    return FileResponse(Path(__file__).parent / "medizintisch.html")
-
-@app.get("/trainingstisch.html")
-async def serve_trainingstisch():
-    return FileResponse(Path(__file__).parent / "trainingstisch.html")
-
-@app.get("/trainingstisch")
-async def serve_trainingstisch_short():
-    return FileResponse(Path(__file__).parent / "trainingstisch.html")
-
-@app.get("/tisch-hub.html")
-async def serve_tisch_hub():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
-
-@app.get("/tisch-hub")
-async def serve_tisch_hub_short():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
-
-@app.get("/hub")
-async def serve_hub_short():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
-
-@app.get("/integrationstisch")
-async def serve_integrationstisch_short():
-    return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
-
-# PWA Manifests
-@app.get("/manifest-team-tisch.json")
-async def serve_manifest_team():
-    return FileResponse(Path(__file__).parent / "manifest-team-tisch.json", media_type="application/manifest+json")
-
-@app.get("/manifest-integrations-tisch.json")
-async def serve_manifest_integrations():
-    return FileResponse(Path(__file__).parent / "manifest-integrations-tisch.json", media_type="application/manifest+json")
-
-@app.get("/manifest-der-tisch.json")
-async def serve_manifest_der_tisch():
-    return FileResponse(Path(__file__).parent / "manifest-der-tisch.json", media_type="application/manifest+json")
-
-# Service Worker
-@app.get("/sw.js")
-async def serve_sw():
-    return FileResponse(Path(__file__).parent / "sw.js", media_type="application/javascript")
-
-# Icons
-@app.get("/icons/{filename}")
-async def serve_icon(filename: str):
-    icon_path = Path(__file__).parent / "icons" / filename
-    if not icon_path.exists() or not icon_path.suffix == ".png":
-        raise HTTPException(status_code=404)
-    return FileResponse(icon_path, media_type="image/png")
 
 # ==========================================
 # SPRACHSTIL INSTRUCTIONS

@@ -862,7 +862,7 @@ async function sendQuestion() {
       app: 'FAMiLiEN TiSCH'
     };
 
-    const resp = await fetch(window.location.origin + '/api/ask', {
+    const resp = await fetch('https://der-tisch-production.up.railway.app/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1647,7 +1647,7 @@ async function analyseAufstellung() {
       app: 'FAMiLiEN TiSCH'
     };
 
-    const resp = await fetch(window.location.origin + '/api/ask', {
+    const resp = await fetch('https://der-tisch-production.up.railway.app/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
