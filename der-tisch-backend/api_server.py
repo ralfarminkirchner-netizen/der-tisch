@@ -15,28 +15,30 @@ app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = anthropic.Anthropic()
 
+NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
+
 # Serve TiSCH Hub at root
 @app.get("/")
 async def serve_index():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html")
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
 
 # Serve TEAM TiSCH
 @app.get("/teamtisch")
 async def serve_teamtisch():
-    return FileResponse(Path(__file__).parent / "index.html")
+    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
 
 @app.get("/teamtisch.html")
 async def serve_teamtisch_html():
-    return FileResponse(Path(__file__).parent / "index.html")
+    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
 
 @app.get("/team-tisch")
 async def serve_team_tisch():
-    return FileResponse(Path(__file__).parent / "index.html")
+    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
 
 # Serve iNTEGRATiONS TiSCH
 @app.get("/integrationstisch.html")
 async def serve_integrationstisch():
-    return FileResponse(Path(__file__).parent / "integrationstisch.html")
+    return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
 
 @app.get("/der-tisch.html")
 async def serve_der_tisch():
@@ -104,19 +106,19 @@ async def serve_trainingstisch_short():
 
 @app.get("/tisch-hub.html")
 async def serve_tisch_hub():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html")
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
 
 @app.get("/tisch-hub")
 async def serve_tisch_hub_short():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html")
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
 
 @app.get("/hub")
 async def serve_hub_short():
-    return FileResponse(Path(__file__).parent / "tisch-hub.html")
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
 
 @app.get("/integrationstisch")
 async def serve_integrationstisch_short():
-    return FileResponse(Path(__file__).parent / "integrationstisch.html")
+    return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
 
 # PWA Manifests
 @app.get("/manifest-team-tisch.json")
