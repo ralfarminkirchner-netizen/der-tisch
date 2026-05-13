@@ -83,7 +83,8 @@ Die frühere `_anthropic_tool_to_openai()` Hilfsfunktion wurde entfernt.
 - `api_server.py` serviert keine HTML-, JS-, Icon- oder Manifest-Dateien mehr.
 - Alle statischen Frontends liegen weiterhin in `der-tisch-backend/`.
 - Die HTML-Apps nutzen `API_BASE = 'https://der-tisch-production.up.railway.app'`.
-- `vercel.json` liegt im Repo-Root und routet Kurzpfade auf die jeweiligen HTML-Dateien.
+- `vercel.json` liegt im Repo-Root und zusätzlich in `der-tisch-backend/`, damit beide Vercel-Setups funktionieren: Repo-Root oder `der-tisch-backend` als Root Directory.
+- `/sw.js`, `/notizbuch.js`, `/wiki-tooltip.js`, Manifeste und Icons werden als statische Frontend-Assets über Vercel ausgeliefert, nicht über FastAPI.
 
 ### API-Endpunkte
 
@@ -120,6 +121,7 @@ Die frühere `_anthropic_tool_to_openai()` Hilfsfunktion wurde entfernt.
   "reibungsintensitaet": "standard"
 }
 ```
+Hinweis: Das JSON-Feld heißt weiterhin `register`. Intern heißt das Pydantic-Feld `sprachregister`, damit es nicht mehr `BaseModel.register` überschattet.
 
 ### Response-Format
 ```json
@@ -186,10 +188,11 @@ Bekannte potenzielle Probleme:
 - `required` Felder in Tool-Schemas sind explizit gesetzt
 
 ### 3. 🟡 WICHTIG: Vercel deployment
-- `vercel.json` liegt bereits im Root des Repos
+- `vercel.json` liegt im Root des Repos und in `der-tisch-backend/`
 - Vercel Projekt: Root Directory = `der-tisch-backend`
 - Framework Preset: "Other" (static)
 - Alle `.html` Dateien werden direkt als statische Assets serviert
+- `/sw.js` muss über die Vercel-Frontend-Domain `200` liefern. Railway/FastAPI liefert bewusst `404`, weil das Backend nur API-Routen hat.
 
 ### 4. 🟡 WICHTIG: CORS nach Vercel-Deployment einschränken
 In `api_server.py` CORS-Origins nach Deployment auf tatsächliche Vercel-Domain einschränken. Aktuell ist für die Übergangsphase `allow_origins=["*"]` gesetzt.
@@ -206,7 +209,9 @@ Für bessere UX: OpenAI Streaming API nutzen damit Antworten inkrementell ersche
 - `_anthropic_tool_to_openai()` entfernt.
 - FastAPI serviert nur noch API-Endpunkte.
 - Alle HTML-Dateien liegen im Repo und nutzen `API_BASE` für Railway.
-- `vercel.json` im Repo-Root ergänzt.
+- `vercel.json` im Repo-Root und in `der-tisch-backend/` ergänzt.
+- `/sw.js` bleibt statisches Frontend-Asset und wurde über lokalen Static-Server mit `200` verifiziert.
+- Pydantic-Warnungen für das Requestfeld `register` wurden durch interne Aliasfelder `sprachregister` behoben.
 - Frontend-Syntaxfehler in `index.html`, `literatentisch.html` und `trainingstisch.html` repariert.
 - Verifiziert: `python3 -m py_compile api_server.py`, JSON-Check für `vercel.json`, Inline-JS-Syntaxcheck für alle 11 HTML-Dateien.
 

@@ -6,7 +6,7 @@ import asyncio
 import json as _json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
 from openai import OpenAI
 
@@ -1116,10 +1116,12 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
 # API ENDPOINTS
 # ==========================================
 class QueryRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     question: str
     lang: str = "de"   # "de" or "en"
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
-    register: str = ""  # "" | "fachsprache" | "einfach"
+    sprachregister: str = Field(default="", alias="register")  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
 
 class CustomPerspective(BaseModel):
@@ -1163,10 +1165,12 @@ class StoredCustomPerspective(CustomPerspective):
 
 
 class TableRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
-    register: str = ""  # "" | "fachsprache" | "einfach"
+    sprachregister: str = Field(default="", alias="register")  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
     custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
@@ -1189,7 +1193,7 @@ async def ask_the_table(req: QueryRequest):
 
     try:
         tone = req.tone if req.tone in ("achtsam", "direkt") else ""
-        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.register, tone) for role, prompt in agents.items()]
+        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.sprachregister, tone) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
@@ -1290,10 +1294,12 @@ async def ask_simple(req: QueryRequest):
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
 
 class TranslateRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
-    register: str = "fachsprache"  # target register: "fachsprache" | "alltag"
+    sprachregister: str = Field(default="fachsprache", alias="register")  # target register: "fachsprache" | "alltag"
     tone: str = ""  # "" | "achtsam" | "direkt"
     custom_perspectives: List[CustomPerspective] = []
     methods: List[str] = []
@@ -1307,7 +1313,7 @@ async def translate_answer(req: TranslateRequest):
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht",
                    "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "alltag"
-    register = req.register if req.register in ("fachsprache", "alltag") else "alltag"
+    register = req.sprachregister if req.sprachregister in ("fachsprache", "alltag") else "alltag"
 
     # Use alltag for Alltagssprache target, keep stil for Fachsprache
     effective_stil = "alltag" if register == "alltag" else stil

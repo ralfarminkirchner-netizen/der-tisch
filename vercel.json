@@ -1,22 +1,48 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/tisch-hub.html" },
-    { "source": "/hub", "destination": "/tisch-hub.html" },
-    { "source": "/team-tisch", "destination": "/index.html" },
-    { "source": "/teamtisch", "destination": "/index.html" },
-    { "source": "/integrationstisch", "destination": "/integrationstisch.html" },
-    { "source": "/der-tisch", "destination": "/der-tisch.html" },
-    { "source": "/coachingtisch", "destination": "/coachingtisch.html" },
-    { "source": "/expertentisch", "destination": "/expertentisch.html" },
-    { "source": "/familientisch", "destination": "/familientisch.html" },
-    { "source": "/juristisch", "destination": "/juristisch.html" },
-    { "source": "/literatentisch", "destination": "/literatentisch.html" },
-    { "source": "/medizintisch", "destination": "/medizintisch.html" },
-    { "source": "/trainingstisch", "destination": "/trainingstisch.html" }
+    { "source": "/", "destination": "/der-tisch-backend/tisch-hub.html" },
+    { "source": "/hub", "destination": "/der-tisch-backend/tisch-hub.html" },
+    { "source": "/tisch-hub", "destination": "/der-tisch-backend/tisch-hub.html" },
+    { "source": "/tisch-hub.html", "destination": "/der-tisch-backend/tisch-hub.html" },
+    { "source": "/team-tisch", "destination": "/der-tisch-backend/index.html" },
+    { "source": "/teamtisch", "destination": "/der-tisch-backend/index.html" },
+    { "source": "/teamtisch.html", "destination": "/der-tisch-backend/index.html" },
+    { "source": "/index.html", "destination": "/der-tisch-backend/index.html" },
+    { "source": "/integrationstisch", "destination": "/der-tisch-backend/integrationstisch.html" },
+    { "source": "/integrationstisch.html", "destination": "/der-tisch-backend/integrationstisch.html" },
+    { "source": "/der-tisch", "destination": "/der-tisch-backend/der-tisch.html" },
+    { "source": "/der-tisch.html", "destination": "/der-tisch-backend/der-tisch.html" },
+    { "source": "/coachingtisch", "destination": "/der-tisch-backend/coachingtisch.html" },
+    { "source": "/coachingtisch.html", "destination": "/der-tisch-backend/coachingtisch.html" },
+    { "source": "/expertentisch", "destination": "/der-tisch-backend/expertentisch.html" },
+    { "source": "/expertentisch.html", "destination": "/der-tisch-backend/expertentisch.html" },
+    { "source": "/familientisch", "destination": "/der-tisch-backend/familientisch.html" },
+    { "source": "/familientisch.html", "destination": "/der-tisch-backend/familientisch.html" },
+    { "source": "/juristisch", "destination": "/der-tisch-backend/juristisch.html" },
+    { "source": "/juristisch.html", "destination": "/der-tisch-backend/juristisch.html" },
+    { "source": "/literatentisch", "destination": "/der-tisch-backend/literatentisch.html" },
+    { "source": "/literatentisch.html", "destination": "/der-tisch-backend/literatentisch.html" },
+    { "source": "/medizintisch", "destination": "/der-tisch-backend/medizintisch.html" },
+    { "source": "/medizintisch.html", "destination": "/der-tisch-backend/medizintisch.html" },
+    { "source": "/trainingstisch", "destination": "/der-tisch-backend/trainingstisch.html" },
+    { "source": "/trainingstisch.html", "destination": "/der-tisch-backend/trainingstisch.html" },
+    { "source": "/sw.js", "destination": "/der-tisch-backend/sw.js" },
+    { "source": "/notizbuch.js", "destination": "/der-tisch-backend/notizbuch.js" },
+    { "source": "/wiki-tooltip.js", "destination": "/der-tisch-backend/wiki-tooltip.js" },
+    { "source": "/manifest-team-tisch.json", "destination": "/der-tisch-backend/manifest-team-tisch.json" },
+    { "source": "/manifest-integrations-tisch.json", "destination": "/der-tisch-backend/manifest-integrations-tisch.json" },
+    { "source": "/manifest-der-tisch.json", "destination": "/der-tisch-backend/manifest-der-tisch.json" },
+    { "source": "/icons/:path*", "destination": "/der-tisch-backend/icons/:path*" }
   ],
   "headers": [
     {
       "source": "/(.*).html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/sw.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]

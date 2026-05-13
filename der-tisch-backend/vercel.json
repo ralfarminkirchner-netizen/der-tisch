@@ -1,0 +1,33 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/tisch-hub.html" },
+    { "source": "/hub", "destination": "/tisch-hub.html" },
+    { "source": "/tisch-hub", "destination": "/tisch-hub.html" },
+    { "source": "/team-tisch", "destination": "/index.html" },
+    { "source": "/teamtisch", "destination": "/index.html" },
+    { "source": "/teamtisch.html", "destination": "/index.html" },
+    { "source": "/integrationstisch", "destination": "/integrationstisch.html" },
+    { "source": "/der-tisch", "destination": "/der-tisch.html" },
+    { "source": "/coachingtisch", "destination": "/coachingtisch.html" },
+    { "source": "/expertentisch", "destination": "/expertentisch.html" },
+    { "source": "/familientisch", "destination": "/familientisch.html" },
+    { "source": "/juristisch", "destination": "/juristisch.html" },
+    { "source": "/literatentisch", "destination": "/literatentisch.html" },
+    { "source": "/medizintisch", "destination": "/medizintisch.html" },
+    { "source": "/trainingstisch", "destination": "/trainingstisch.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    }
+  ]
+}
