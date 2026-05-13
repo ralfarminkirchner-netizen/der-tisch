@@ -570,6 +570,7 @@ let activePerspectives = new Set();
 let isLoading = false;
 let historyData = [];
 let currentMode = 'perspektiven';
+const API_BASE = 'https://der-tisch-production.up.railway.app';
 
 const PERSPEKTIVEN = [
   { id: 'systemisch',     icon: 'network',  de: 'Systemische Therapeutin',      en: 'Systemic Therapist',         color: '#C4622D', filters: ['all','beziehung'] },
@@ -862,7 +863,7 @@ async function sendQuestion() {
       app: 'FAMiLiEN TiSCH'
     };
 
-    const resp = await fetch('https://der-tisch-production.up.railway.app/api/ask', {
+    const resp = await fetch(`${API_BASE}/api/ask`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1647,7 +1648,7 @@ async function analyseAufstellung() {
       app: 'FAMiLiEN TiSCH'
     };
 
-    const resp = await fetch('https://der-tisch-production.up.railway.app/api/ask', {
+    const resp = await fetch(`${API_BASE}/api/ask`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

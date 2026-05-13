@@ -215,74 +215,82 @@ class TableResponse(BaseModel):
 # TOOL DEFINITIONS
 # ==========================================
 PERSPECTIVE_TOOL = {
-    "name": "submit_perspective",
-    "description": "Submit methodical analysis including explicit claim-type identification",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "anspruchstyp": {
-                "type": "string",
-                "description": (
-                    "Which type of truth-claim can your method actually address? "
-                    "Be explicit: correspondence (statement-world), coherence (statement-belief system), "
-                    "validity (social stabilization), or evidential experience (subject-inner coherence). "
-                    "Also name what your method CANNOT address. (1-2 sentences)"
-                )
+    "type": "function",
+    "function": {
+        "name": "submit_perspective",
+        "description": "Submit methodical analysis including explicit claim-type identification",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "anspruchstyp": {
+                    "type": "string",
+                    "description": (
+                        "Which type of truth-claim can your method actually address? "
+                        "Be explicit: correspondence (statement-world), coherence (statement-belief system), "
+                        "validity (social stabilization), or evidential experience (subject-inner coherence). "
+                        "Also name what your method CANNOT address. (1-2 sentences)"
+                    )
+                },
+                "kernanalyse": {
+                    "type": "string",
+                    "description": "Core analysis in 2-3 sentences strictly from your methodical framework — stay within your claim-type"
+                },
+                "evidenz": {
+                    "type": "string",
+                    "description": "What concepts, observations or logic grounds your analysis? (1-2 sentences)"
+                },
+                "blinder_fleck": {
+                    "type": "string",
+                    "description": "What can your method principally NOT see? Name it honestly. (1 sentence)"
+                }
             },
-            "kernanalyse": {
-                "type": "string",
-                "description": "Core analysis in 2-3 sentences strictly from your methodical framework — stay within your claim-type"
-            },
-            "evidenz": {
-                "type": "string",
-                "description": "What concepts, observations or logic grounds your analysis? (1-2 sentences)"
-            },
-            "blinder_fleck": {
-                "type": "string",
-                "description": "What can your method principally NOT see? Name it honestly. (1 sentence)"
-            }
-        },
-        "required": ["anspruchstyp", "kernanalyse", "evidenz", "blinder_fleck"]
+            "required": ["anspruchstyp", "kernanalyse", "evidenz", "blinder_fleck"]
+        }
     }
 }
 
 FRICTION_TOOL = {
-    "name": "submit_friction",
-    "description": "Distinguish translation errors from genuine contradictions",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "uebersetzungsfehler": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": (
-                    "2 cases where perspectives seem to contradict but actually point to different moons — "
-                    "same word, different claim-type. Name what each perspective actually means. (1 sentence each)"
-                )
+    "type": "function",
+    "function": {
+        "name": "submit_friction",
+        "description": "Distinguish translation errors from genuine contradictions",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "uebersetzungsfehler": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "2 cases where perspectives seem to contradict but actually point to different moons — "
+                        "same word, different claim-type. Name what each perspective actually means. (1 sentence each)"
+                    )
+                },
+                "echte_widersprueche": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "1-2 genuine contradictions — same claim-type, same referent, incompatible answers. "
+                        "These cannot be dissolved by translation. (1 sentence each)"
+                    )
+                },
+                "uebersehenes": {
+                    "type": "string",
+                    "description": "What have ALL perspectives collectively overlooked — including non-propositional forms of truth (pain, love, dying)? (1-2 sentences)"
+                }
             },
-            "echte_widersprueche": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": (
-                    "1-2 genuine contradictions — same claim-type, same referent, incompatible answers. "
-                    "These cannot be dissolved by translation. (1 sentence each)"
-                )
-            },
-            "uebersehenes": {
-                "type": "string",
-                "description": "What have ALL perspectives collectively overlooked — including non-propositional forms of truth (pain, love, dying)? (1-2 sentences)"
-            }
-        },
-        "required": ["uebersetzungsfehler", "echte_widersprueche", "uebersehenes"]
+            "required": ["uebersetzungsfehler", "echte_widersprueche", "uebersehenes"]
+        }
     }
 }
 
 INTEGRATION_TOOL = {
-    "name": "submit_integration",
-    "description": "Map the claim-types, build bridges, hold the incommensurability, and produce a plain-language summary",
-    "input_schema": {
-        "type": "object",
-        "properties": {
+    "type": "function",
+    "function": {
+        "name": "submit_integration",
+        "description": "Map the claim-types, build bridges, hold the incommensurability, and produce a plain-language summary",
+        "parameters": {
+            "type": "object",
+            "properties": {
             "anspruchskarte": {
                 "type": "string",
                 "description": (
@@ -391,11 +399,12 @@ INTEGRATION_TOOL = {
                     "2-3 sentences. What does the energy of relation, feeling into, and holding complexity say here?"
                 )
             },
-        },
-        "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
-                     "praktische_optionen", "offene_pruefpfade",
-                     "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt",
-                     "herzmensch", "kopfmensch", "maennlich", "weiblich"]
+            },
+            "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
+                         "praktische_optionen", "offene_pruefpfade",
+                         "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt",
+                         "herzmensch", "kopfmensch", "maennlich", "weiblich"]
+        }
     }
 }
 
@@ -761,26 +770,14 @@ EMPTY_FALLBACKS_EN = {
 # ==========================================
 # SYNC HELPERS — run in thread pool
 # ==========================================
-def _anthropic_tool_to_openai(tool: dict) -> dict:
-    """Convert Anthropic tool format to OpenAI function format."""
-    return {
-        "type": "function",
-        "function": {
-            "name": tool["name"],
-            "description": tool.get("description", ""),
-            "parameters": tool.get("input_schema", {"type": "object", "properties": {}})
-        }
-    }
-
 def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: str, messages: list) -> dict:
     """Generic sync API call with Function Calling. Returns the tool input dict."""
-    openai_tools = [_anthropic_tool_to_openai(t) for t in tools]
     all_messages = [{"role": "system", "content": system}] + messages
     response = client.chat.completions.create(
         model=model,
         max_tokens=max_tokens,
         messages=all_messages,
-        tools=openai_tools,
+        tools=tools,
         tool_choice={"type": "function", "function": {"name": tool_name}}
     )
     tool_calls = response.choices[0].message.tool_calls

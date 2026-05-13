@@ -4,6 +4,7 @@
 **GitHub:** `ralfarminkirchner-netizen/der-tisch`  
 **Eigentümer:** Ralf Kirchner  
 **Übergabe erstellt von:** Claude (Anthropic) — Mai 2026
+**Zuletzt aktualisiert von:** OpenAI Codex — 14. Mai 2026
 
 ---
 
@@ -50,11 +51,12 @@ der-tisch/
 | Service | URL | Status |
 |---|---|---|
 | Backend (Railway) | `https://der-tisch-production.up.railway.app` | ✅ live |
-| Frontend (noch bei Railway) | gleiche URL | ⚠️ soll zu Vercel |
+| Backend-Routen | nur `/api/*` | ✅ HTML/Assets aus FastAPI entfernt |
 | Frontend (Vercel) | noch nicht deployed | 🔲 TODO |
+| Frontend-Assets im Repo | `der-tisch-backend/*.html` | ✅ Vercel-ready |
 
 **Umgebungsvariablen auf Railway (Service `der-tisch`, Projekt `clever-gentleness`):**
-- `OPENAI_API_KEY` = muss gesetzt werden (von Anthropic migriert)
+- `OPENAI_API_KEY` = muss mit gültigem OpenAI-Key gesetzt/ersetzt werden
 - `PORT` = von Railway automatisch gesetzt
 
 ---
@@ -70,10 +72,18 @@ der-tisch/
 ### Kern-Funktion: `_call_api`
 ```python
 def _call_api(model, max_tokens, system, tools, tool_name, messages) -> dict:
-    # Konvertiert Anthropic Tool-Format → OpenAI Function-Calling-Format
+    # Erwartet native OpenAI Function-Calling-Tools
     # Gibt das strukturierte Output-Dict zurück
 ```
-Die Tool-Definitionen sind noch im Anthropic-Format (`input_schema`). `_anthropic_tool_to_openai()` konvertiert sie automatisch beim Aufruf.
+Die Tool-Definitionen sind im nativen OpenAI-Format:
+`{"type": "function", "function": {"name": "...", "description": "...", "parameters": {...}}}`.
+Die frühere `_anthropic_tool_to_openai()` Hilfsfunktion wurde entfernt.
+
+### Frontend/Backend-Trennung
+- `api_server.py` serviert keine HTML-, JS-, Icon- oder Manifest-Dateien mehr.
+- Alle statischen Frontends liegen weiterhin in `der-tisch-backend/`.
+- Die HTML-Apps nutzen `API_BASE = 'https://der-tisch-production.up.railway.app'`.
+- `vercel.json` liegt im Repo-Root und routet Kurzpfade auf die jeweiligen HTML-Dateien.
 
 ### API-Endpunkte
 
@@ -148,8 +158,17 @@ Die Tool-Definitionen sind noch im Anthropic-Format (`input_schema`). `_anthropi
 
 ## Was noch zu tun ist (Priorität)
 
-### 1. 🔴 KRITISCH: OpenAI-Migration testen
-Die Migration von Anthropic → OpenAI wurde im Code durchgeführt, aber noch **nicht live getestet**.
+### 1. 🔴 KRITISCH: Gültigen OpenAI-Key auf Railway setzen
+Die lokalen Testläufe gegen `/api/ask` und `/api/ask-simple` erreichten den OpenAI-Codepfad, wurden aber durch `AuthenticationError / invalid_api_key` blockiert. Zuerst einen gültigen Key setzen:
+
+```bash
+cd ~/Documents/der-tisch/der-tisch-backend
+railway variables set OPENAI_API_KEY=sk-proj-...
+railway up --detach
+```
+
+### 2. 🔴 KRITISCH: OpenAI-Migration mit gültigem Key testen
+Sobald ein gültiger Key vorhanden ist:
 
 ```bash
 # Lokal testen:
@@ -162,65 +181,34 @@ curl -X POST http://localhost:8000/api/ask \
 ```
 
 Bekannte potenzielle Probleme:
-- `tool_choice` Format: OpenAI erwartet `{"type": "function", "function": {"name": "..."}}` — bereits implementiert
+- `tool_choice` Format: OpenAI erwartet `{"type": "function", "function": {"name": "..."}}` — implementiert
 - JSON-Parsing der Function Arguments: bereits mit `json.loads(tc.function.arguments)` implementiert
-- `required` Felder in Tool-Schemas müssen explizit gesetzt sein für OpenAI
+- `required` Felder in Tool-Schemas sind explizit gesetzt
 
-### 2. 🔴 KRITISCH: OPENAI_API_KEY auf Railway setzen
-```bash
-cd ~/Documents/der-tisch/der-tisch-backend
-railway variables set OPENAI_API_KEY=sk-proj-...
-```
-
-### 3. 🟡 WICHTIG: Frontend/Backend trennen
-
-**Ziel:** 
-- Backend (nur `/api/*` Routes) bleibt auf Railway
-- Frontend (HTML-Dateien) → Vercel
-
-**Schritte:**
-
-**a) HTML-Routes aus api_server.py entfernen** (Zeilen 22–147, alle `@app.get()` die HTML/JS/Icons servieren).
-Behalten: nur `/api/health` und alle `/api/...` Endpunkte.
-
-**b) API-URLs in allen HTML-Dateien anpassen:**
-Alle `fetch('/api/...')` → `fetch('https://der-tisch-production.up.railway.app/api/...')`
-
-Suche in allen HTML-Dateien nach:
-```javascript
-fetch('/api/
-fetch(`/api/
-```
-Ersetze mit der absoluten Backend-URL. Am besten eine Konstante am Anfang jeder HTML-Datei:
-```javascript
-const API_BASE = 'https://der-tisch-production.up.railway.app';
-// dann: fetch(`${API_BASE}/api/ask`, ...)
-```
-
-**c) Vercel deployment:**
+### 3. 🟡 WICHTIG: Vercel deployment
 - `vercel.json` liegt bereits im Root des Repos
 - Vercel Projekt: Root Directory = `der-tisch-backend`
 - Framework Preset: "Other" (static)
 - Alle `.html` Dateien werden direkt als statische Assets serviert
 
-**d) CORS auf Railway:**
-In `api_server.py` CORS-Origins nach Deployment auf tatsächliche Vercel-Domain einschränken (aktuell `*`).
-
-### 4. 🟢 NICE TO HAVE: Tool-Definitionen in nativem OpenAI-Format
-
-Die Tool-Definitionen (`PERSPECTIVE_TOOL`, `FRICTION_TOOL`, `INTEGRATION_TOOL` etc.) sind noch im Anthropic-Format mit `input_schema`. Sie werden durch `_anthropic_tool_to_openai()` konvertiert. 
-
-Optional: Direkt ins OpenAI-Format umschreiben (entfernt den Konversionsschritt):
-```python
-# Anthropic-Format (aktuell):
-TOOL = {"name": "...", "description": "...", "input_schema": {"type": "object", ...}}
-
-# OpenAI-Format (Ziel):
-TOOL = {"type": "function", "function": {"name": "...", "description": "...", "parameters": {"type": "object", ...}}}
-```
+### 4. 🟡 WICHTIG: CORS nach Vercel-Deployment einschränken
+In `api_server.py` CORS-Origins nach Deployment auf tatsächliche Vercel-Domain einschränken. Aktuell ist für die Übergangsphase `allow_origins=["*"]` gesetzt.
 
 ### 5. 🟢 NICE TO HAVE: Streaming-Antworten
 Für bessere UX: OpenAI Streaming API nutzen damit Antworten inkrementell erscheinen.
+
+---
+
+## Erledigt durch Codex
+
+- OpenAI-Migration committed und gepusht.
+- Tool-Definitionen auf natives OpenAI-Format migriert.
+- `_anthropic_tool_to_openai()` entfernt.
+- FastAPI serviert nur noch API-Endpunkte.
+- Alle HTML-Dateien liegen im Repo und nutzen `API_BASE` für Railway.
+- `vercel.json` im Repo-Root ergänzt.
+- Frontend-Syntaxfehler in `index.html`, `literatentisch.html` und `trainingstisch.html` repariert.
+- Verifiziert: `python3 -m py_compile api_server.py`, JSON-Check für `vercel.json`, Inline-JS-Syntaxcheck für alle 11 HTML-Dateien.
 
 ---
 
@@ -253,8 +241,10 @@ pip install -r requirements.txt
 # Backend starten
 OPENAI_API_KEY=sk-... uvicorn api_server:app --reload --port 8000
 
-# Frontend testen: einfach index.html im Browser öffnen
-# API-URL in HTML-Datei temporär auf localhost:8000 setzen
+# Frontend testen
+cd ~/Documents/der-tisch/der-tisch-backend
+python3 -m http.server 8082 --bind 127.0.0.1
+# dann z.B. http://127.0.0.1:8082/tisch-hub.html öffnen
 ```
 
 ---
