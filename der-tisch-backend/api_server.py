@@ -4,15 +4,148 @@
 """
 import asyncio
 import json as _json
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, ConfigDict, Field
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
 from typing import List, Optional
 from openai import OpenAI
 
 app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = OpenAI()
+
+NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
+
+# Serve TiSCH Hub at root
+@app.get("/")
+async def serve_index():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
+
+# Serve TEAM TiSCH
+@app.get("/teamtisch")
+async def serve_teamtisch():
+    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
+
+@app.get("/teamtisch.html")
+async def serve_teamtisch_html():
+    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
+
+@app.get("/team-tisch")
+async def serve_team_tisch():
+    return FileResponse(Path(__file__).parent / "index.html", headers=NO_CACHE)
+
+# Serve iNTEGRATiONS TiSCH
+@app.get("/integrationstisch.html")
+async def serve_integrationstisch():
+    return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
+
+@app.get("/der-tisch.html")
+async def serve_der_tisch():
+    return FileResponse(Path(__file__).parent / "der-tisch.html")
+
+@app.get("/der-tisch")
+async def serve_der_tisch_short():
+    return FileResponse(Path(__file__).parent / "der-tisch.html")
+
+@app.get("/coachingtisch.html")
+async def serve_coachingtisch():
+    return FileResponse(Path(__file__).parent / "coachingtisch.html")
+
+@app.get("/coachingtisch")
+async def serve_coachingtisch_short():
+    return FileResponse(Path(__file__).parent / "coachingtisch.html")
+
+@app.get("/expertentisch.html")
+async def serve_expertentisch():
+    return FileResponse(Path(__file__).parent / "expertentisch.html")
+
+@app.get("/expertentisch")
+async def serve_expertentisch_short():
+    return FileResponse(Path(__file__).parent / "expertentisch.html")
+
+@app.get("/familientisch.html")
+async def serve_familientisch():
+    return FileResponse(Path(__file__).parent / "familientisch.html")
+
+@app.get("/familientisch")
+async def serve_familientisch_short():
+    return FileResponse(Path(__file__).parent / "familientisch.html")
+
+@app.get("/juristisch.html")
+async def serve_juristisch():
+    return FileResponse(Path(__file__).parent / "juristisch.html")
+
+@app.get("/juristisch")
+async def serve_juristisch_short():
+    return FileResponse(Path(__file__).parent / "juristisch.html")
+
+@app.get("/literatentisch.html")
+async def serve_literatentisch():
+    return FileResponse(Path(__file__).parent / "literatentisch.html")
+
+@app.get("/literatentisch")
+async def serve_literatentisch_short():
+    return FileResponse(Path(__file__).parent / "literatentisch.html")
+
+@app.get("/medizintisch.html")
+async def serve_medizintisch():
+    return FileResponse(Path(__file__).parent / "medizintisch.html")
+
+@app.get("/medizintisch")
+async def serve_medizintisch_short():
+    return FileResponse(Path(__file__).parent / "medizintisch.html")
+
+@app.get("/trainingstisch.html")
+async def serve_trainingstisch():
+    return FileResponse(Path(__file__).parent / "trainingstisch.html")
+
+@app.get("/trainingstisch")
+async def serve_trainingstisch_short():
+    return FileResponse(Path(__file__).parent / "trainingstisch.html")
+
+@app.get("/tisch-hub.html")
+async def serve_tisch_hub():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
+
+@app.get("/tisch-hub")
+async def serve_tisch_hub_short():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
+
+@app.get("/hub")
+async def serve_hub_short():
+    return FileResponse(Path(__file__).parent / "tisch-hub.html", headers=NO_CACHE)
+
+@app.get("/integrationstisch")
+async def serve_integrationstisch_short():
+    return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
+
+# PWA Manifests
+@app.get("/manifest-team-tisch.json")
+async def serve_manifest_team():
+    return FileResponse(Path(__file__).parent / "manifest-team-tisch.json", media_type="application/manifest+json")
+
+@app.get("/manifest-integrations-tisch.json")
+async def serve_manifest_integrations():
+    return FileResponse(Path(__file__).parent / "manifest-integrations-tisch.json", media_type="application/manifest+json")
+
+@app.get("/manifest-der-tisch.json")
+async def serve_manifest_der_tisch():
+    return FileResponse(Path(__file__).parent / "manifest-der-tisch.json", media_type="application/manifest+json")
+
+# Service Worker
+@app.get("/sw.js")
+async def serve_sw():
+    return FileResponse(Path(__file__).parent / "sw.js", media_type="application/javascript")
+
+# Icons
+@app.get("/icons/{filename}")
+async def serve_icon(filename: str):
+    icon_path = Path(__file__).parent / "icons" / filename
+    if not icon_path.exists() or not icon_path.suffix == ".png":
+        raise HTTPException(status_code=404)
+    return FileResponse(icon_path, media_type="image/png")
 
 # ==========================================
 # SPRACHSTIL INSTRUCTIONS
@@ -215,82 +348,74 @@ class TableResponse(BaseModel):
 # TOOL DEFINITIONS
 # ==========================================
 PERSPECTIVE_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "submit_perspective",
-        "description": "Submit methodical analysis including explicit claim-type identification",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "anspruchstyp": {
-                    "type": "string",
-                    "description": (
-                        "Which type of truth-claim can your method actually address? "
-                        "Be explicit: correspondence (statement-world), coherence (statement-belief system), "
-                        "validity (social stabilization), or evidential experience (subject-inner coherence). "
-                        "Also name what your method CANNOT address. (1-2 sentences)"
-                    )
-                },
-                "kernanalyse": {
-                    "type": "string",
-                    "description": "Core analysis in 2-3 sentences strictly from your methodical framework — stay within your claim-type"
-                },
-                "evidenz": {
-                    "type": "string",
-                    "description": "What concepts, observations or logic grounds your analysis? (1-2 sentences)"
-                },
-                "blinder_fleck": {
-                    "type": "string",
-                    "description": "What can your method principally NOT see? Name it honestly. (1 sentence)"
-                }
+    "name": "submit_perspective",
+    "description": "Submit methodical analysis including explicit claim-type identification",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "anspruchstyp": {
+                "type": "string",
+                "description": (
+                    "Which type of truth-claim can your method actually address? "
+                    "Be explicit: correspondence (statement-world), coherence (statement-belief system), "
+                    "validity (social stabilization), or evidential experience (subject-inner coherence). "
+                    "Also name what your method CANNOT address. (1-2 sentences)"
+                )
             },
-            "required": ["anspruchstyp", "kernanalyse", "evidenz", "blinder_fleck"]
-        }
+            "kernanalyse": {
+                "type": "string",
+                "description": "Core analysis in 2-3 sentences strictly from your methodical framework — stay within your claim-type"
+            },
+            "evidenz": {
+                "type": "string",
+                "description": "What concepts, observations or logic grounds your analysis? (1-2 sentences)"
+            },
+            "blinder_fleck": {
+                "type": "string",
+                "description": "What can your method principally NOT see? Name it honestly. (1 sentence)"
+            }
+        },
+        "required": ["anspruchstyp", "kernanalyse", "evidenz", "blinder_fleck"]
     }
 }
 
 FRICTION_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "submit_friction",
-        "description": "Distinguish translation errors from genuine contradictions",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "uebersetzungsfehler": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": (
-                        "2 cases where perspectives seem to contradict but actually point to different moons — "
-                        "same word, different claim-type. Name what each perspective actually means. (1 sentence each)"
-                    )
-                },
-                "echte_widersprueche": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": (
-                        "1-2 genuine contradictions — same claim-type, same referent, incompatible answers. "
-                        "These cannot be dissolved by translation. (1 sentence each)"
-                    )
-                },
-                "uebersehenes": {
-                    "type": "string",
-                    "description": "What have ALL perspectives collectively overlooked — including non-propositional forms of truth (pain, love, dying)? (1-2 sentences)"
-                }
+    "name": "submit_friction",
+    "description": "Distinguish translation errors from genuine contradictions",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "uebersetzungsfehler": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "2 cases where perspectives seem to contradict but actually point to different moons — "
+                    "same word, different claim-type. Name what each perspective actually means. (1 sentence each)"
+                )
             },
-            "required": ["uebersetzungsfehler", "echte_widersprueche", "uebersehenes"]
-        }
+            "echte_widersprueche": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "1-2 genuine contradictions — same claim-type, same referent, incompatible answers. "
+                    "These cannot be dissolved by translation. (1 sentence each)"
+                )
+            },
+            "uebersehenes": {
+                "type": "string",
+                "description": "What have ALL perspectives collectively overlooked — including non-propositional forms of truth (pain, love, dying)? (1-2 sentences)"
+            }
+        },
+        "required": ["uebersetzungsfehler", "echte_widersprueche", "uebersehenes"]
     }
 }
 
 INTEGRATION_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "submit_integration",
-        "description": "Map the claim-types, build bridges, hold the incommensurability, and produce a plain-language summary",
-        "parameters": {
-            "type": "object",
-            "properties": {
+    "name": "submit_integration",
+    "description": "Map the claim-types, build bridges, hold the incommensurability, and produce a plain-language summary",
+    "input_schema": {
+        "type": "object",
+        "properties": {
             "anspruchskarte": {
                 "type": "string",
                 "description": (
@@ -399,12 +524,11 @@ INTEGRATION_TOOL = {
                     "2-3 sentences. What does the energy of relation, feeling into, and holding complexity say here?"
                 )
             },
-            },
-            "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
-                         "praktische_optionen", "offene_pruefpfade",
-                         "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt",
-                         "herzmensch", "kopfmensch", "maennlich", "weiblich"]
-        }
+        },
+        "required": ["anspruchskarte", "uebersetzbare_bruecken", "echte_unvereinbarkeiten",
+                     "praktische_optionen", "offene_pruefpfade",
+                     "vorlaeufiges_fazit", "entscheidungshilfe", "kurzfassung", "einfach_gesagt",
+                     "herzmensch", "kopfmensch", "maennlich", "weiblich"]
     }
 }
 
@@ -770,14 +894,26 @@ EMPTY_FALLBACKS_EN = {
 # ==========================================
 # SYNC HELPERS — run in thread pool
 # ==========================================
+def _anthropic_tool_to_openai(tool: dict) -> dict:
+    """Convert Anthropic tool format to OpenAI function format."""
+    return {
+        "type": "function",
+        "function": {
+            "name": tool["name"],
+            "description": tool.get("description", ""),
+            "parameters": tool.get("input_schema", {"type": "object", "properties": {}})
+        }
+    }
+
 def _call_api(model: str, max_tokens: int, system: str, tools: list, tool_name: str, messages: list) -> dict:
     """Generic sync API call with Function Calling. Returns the tool input dict."""
+    openai_tools = [_anthropic_tool_to_openai(t) for t in tools]
     all_messages = [{"role": "system", "content": system}] + messages
     response = client.chat.completions.create(
         model=model,
         max_tokens=max_tokens,
         messages=all_messages,
-        tools=tools,
+        tools=openai_tools,
         tool_choice={"type": "function", "function": {"name": tool_name}}
     )
     tool_calls = response.choices[0].message.tool_calls
@@ -1116,12 +1252,10 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
 # API ENDPOINTS
 # ==========================================
 class QueryRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
     question: str
     lang: str = "de"   # "de" or "en"
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
-    sprachregister: str = Field(default="", alias="register")  # "" | "fachsprache" | "einfach"
+    register: str = ""  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
 
 class CustomPerspective(BaseModel):
@@ -1165,12 +1299,10 @@ class StoredCustomPerspective(CustomPerspective):
 
 
 class TableRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
-    sprachregister: str = Field(default="", alias="register")  # "" | "fachsprache" | "einfach"
+    register: str = ""  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
     custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
@@ -1193,7 +1325,7 @@ async def ask_the_table(req: QueryRequest):
 
     try:
         tone = req.tone if req.tone in ("achtsam", "direkt") else ""
-        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.sprachregister, tone) for role, prompt in agents.items()]
+        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.register, tone) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
@@ -1294,12 +1426,10 @@ async def ask_simple(req: QueryRequest):
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
 
 class TranslateRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
     question: str
     lang: str = "de"
     stil: str = "philosophisch"
-    sprachregister: str = Field(default="fachsprache", alias="register")  # target register: "fachsprache" | "alltag"
+    register: str = "fachsprache"  # target register: "fachsprache" | "alltag"
     tone: str = ""  # "" | "achtsam" | "direkt"
     custom_perspectives: List[CustomPerspective] = []
     methods: List[str] = []
@@ -1313,7 +1443,7 @@ async def translate_answer(req: TranslateRequest):
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht",
                    "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "alltag"
-    register = req.sprachregister if req.sprachregister in ("fachsprache", "alltag") else "alltag"
+    register = req.register if req.register in ("fachsprache", "alltag") else "alltag"
 
     # Use alltag for Alltagssprache target, keep stil for Fachsprache
     effective_stil = "alltag" if register == "alltag" else stil
