@@ -164,7 +164,7 @@ Hinweis: Das JSON-Feld heißt weiterhin `register`. Intern heißt das Pydantic-F
 - **Streaming-API** `/api/ask-stream` implementiert (SSE — Server-Sent Events).
   - Perspektiven werden progressiv gesendet, sobald jede einzelne fertig ist (`asyncio.as_completed`).
   - Events: `perspective` | `friction` | `integration` | `done` | `error`.
-  - Frontends können `EventSource` nutzen, um Ergebnisse inkrementell darzustellen.
+  - Frontends müssen `fetch` + `ReadableStream` nutzen (kein `EventSource` — der unterstützt nur GET).
 - **Neue Fach-Arenen** hinzugefügt:
   - `"Soziologie"` — Kritische Theorie vs. Strukturfunktionalismus vs. Bourdieu vs. Luhmann (4 Positionen, 3 Ränge)
   - `"KI-Ethik"` — KI-Safety vs. e/acc vs. Regulierung vs. Kritische KI-Studien vs. Transhumanismus (5 Positionen, 3 Ränge)

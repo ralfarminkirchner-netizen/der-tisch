@@ -4,6 +4,7 @@
                 Herzmensch/Kopfmensch, Klärungsgespräch-Modus, Antagonisten-System.
 """
 import asyncio
+import traceback as _traceback
 import json as _json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
@@ -1379,33 +1380,32 @@ async def ask_stream(req: QueryRequest):
                 try:
                     p = await coro
                     all_perspectives.append(p)
-                    yield f"data: {_json.dumps({'type': 'perspective', 'data': p.dict()}, ensure_ascii=False)}\n\n"
+                    yield f"data: {_json.dumps({'type': 'perspective', 'data': p.model_dump()}, ensure_ascii=False)}\n\n"
                 except Exception as e:
                     yield f"data: {_json.dumps({'type': 'perspective_error', 'error': str(e)}, ensure_ascii=False)}\n\n"
 
             if not all_perspectives:
-                yield f"data: {_json.dumps({'type': 'error', 'error': 'No perspectives generated'})}\n\n"
+                yield f"data: {_json.dumps({'type': 'error', 'error': 'No perspectives generated'}, ensure_ascii=False)}\n\n"
                 return
 
             try:
                 friction = await fetch_friction(all_perspectives, q, req.lang, stil, "standard", tone)
-                yield f"data: {_json.dumps({'type': 'friction', 'data': friction.dict()}, ensure_ascii=False)}\n\n"
+                yield f"data: {_json.dumps({'type': 'friction', 'data': friction.model_dump()}, ensure_ascii=False)}\n\n"
             except Exception as e:
-                yield f"data: {_json.dumps({'type': 'error', 'phase': 'friction', 'error': str(e)})}\n\n"
+                yield f"data: {_json.dumps({'type': 'error', 'phase': 'friction', 'error': str(e)}, ensure_ascii=False)}\n\n"
                 return
 
             try:
                 integration = await fetch_integration(all_perspectives, friction, q, req.lang, stil, tone)
-                yield f"data: {_json.dumps({'type': 'integration', 'data': integration.dict()}, ensure_ascii=False)}\n\n"
+                yield f"data: {_json.dumps({'type': 'integration', 'data': integration.model_dump()}, ensure_ascii=False)}\n\n"
             except Exception as e:
-                yield f"data: {_json.dumps({'type': 'error', 'phase': 'integration', 'error': str(e)})}\n\n"
+                yield f"data: {_json.dumps({'type': 'error', 'phase': 'integration', 'error': str(e)}, ensure_ascii=False)}\n\n"
                 return
 
             yield f"data: {_json.dumps({'type': 'done'})}\n\n"
 
         except Exception as e:
-            import traceback
-            yield f"data: {_json.dumps({'type': 'error', 'error': f'{type(e).__name__}: {str(e)}', 'traceback': traceback.format_exc()})}\n\n"
+            yield f"data: {_json.dumps({'type': 'error', 'error': f'{type(e).__name__}: {str(e)}', 'traceback': _traceback.format_exc()}, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(
         generate(),
