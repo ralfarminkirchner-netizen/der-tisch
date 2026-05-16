@@ -1,10 +1,10 @@
-# TiSCH — Übergabe an OpenAI Codex
+# TiSCH — Übergabe-Dokument
 
 **Projekt:** TiSCH Ecosystem — KI-gestützte Multiperspektiv-Analyse  
 **GitHub:** `ralfarminkirchner-netizen/der-tisch`  
 **Eigentümer:** Ralf Kirchner  
 **Übergabe erstellt von:** Claude (Anthropic) — Mai 2026
-**Zuletzt aktualisiert von:** OpenAI Codex — 14. Mai 2026
+**Zuletzt aktualisiert von:** Claude (Anthropic) — 16. Mai 2026
 
 ---
 
@@ -96,6 +96,7 @@ Die frühere `_anthropic_tool_to_openai()` Hilfsfunktion wurde entfernt.
 | `/api/ask-table` | POST | Tisch-Modus: individuelle Agenten-Auswahl |
 | `/api/ask-clarify` | POST | Klärungsgespräch-Modus |
 | `/api/translate` | POST | Übersetzung + Re-Analyse |
+| `/api/ask-stream` | POST | Streaming-SSE: Perspektiven progressiv als Server-Sent Events |
 | `/api/antagonisten/arena` | POST | Antagonisten-Modus (eskalierte Reibung) |
 | `/api/antagonisten/fachgebiete` | GET | Verfügbare Fachgebiete |
 | `/api/antagonisten/{fachgebiet}` | GET | Fachgebiet-Details |
@@ -158,6 +159,21 @@ Hinweis: Das JSON-Feld heißt weiterhin `register`. Intern heißt das Pydantic-F
 
 ---
 
+## Erledigt durch Claude (16. Mai 2026)
+
+- **Streaming-API** `/api/ask-stream` implementiert (SSE — Server-Sent Events).
+  - Perspektiven werden progressiv gesendet, sobald jede einzelne fertig ist (`asyncio.as_completed`).
+  - Events: `perspective` | `friction` | `integration` | `done` | `error`.
+  - Frontends können `EventSource` nutzen, um Ergebnisse inkrementell darzustellen.
+- **Neue Fach-Arenen** hinzugefügt:
+  - `"Soziologie"` — Kritische Theorie vs. Strukturfunktionalismus vs. Bourdieu vs. Luhmann (4 Positionen, 3 Ränge)
+  - `"KI-Ethik"` — KI-Safety vs. e/acc vs. Regulierung vs. Kritische KI-Studien vs. Transhumanismus (5 Positionen, 3 Ränge)
+- **Health-Endpunkt** auf Version 8.0 aktualisiert, enthält jetzt vollständige Produktliste und Feature-Flags.
+- **StreamingResponse** in FastAPI-Imports ergänzt.
+- Docstring auf Version 8.0 aktualisiert.
+
+---
+
 ## Was noch zu tun ist (Priorität)
 
 ### 1. 🔴 KRITISCH: Gültigen OpenAI-Key auf Railway setzen
@@ -197,12 +213,30 @@ Bekannte potenzielle Probleme:
 ### 4. 🟡 WICHTIG: CORS nach Vercel-Deployment einschränken
 In `api_server.py` CORS-Origins nach Deployment auf tatsächliche Vercel-Domain einschränken. Aktuell ist für die Übergangsphase `allow_origins=["*"]` gesetzt.
 
-### 5. 🟢 NICE TO HAVE: Streaming-Antworten
-Für bessere UX: OpenAI Streaming API nutzen damit Antworten inkrementell erscheinen.
+### 5. 🟢 NICE TO HAVE: Frontend-Integration der Streaming-API
+`/api/ask-stream` ist implementiert. Nächster Schritt: Ein oder mehrere Frontends auf `EventSource` umstellen.
+Beispiel-Snippet für Frontend:
+```javascript
+const es = new EventSource('/api/ask-stream'); // POST geht nicht nativ mit EventSource
+// Alternative: fetch + ReadableStream
+const res = await fetch('/api/ask-stream', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(req)});
+const reader = res.body.getReader();
+while (true) {
+  const {done, value} = await reader.read();
+  if (done) break;
+  const lines = new TextDecoder().decode(value).split('\n');
+  for (const line of lines) {
+    if (line.startsWith('data: ')) {
+      const event = JSON.parse(line.slice(6));
+      // event.type === 'perspective' | 'friction' | 'integration' | 'done'
+    }
+  }
+}
+```
 
 ---
 
-## Erledigt durch Codex
+## Erledigt durch OpenAI Codex (14. Mai 2026)
 
 - OpenAI-Migration committed und gepusht.
 - Tool-Definitionen auf natives OpenAI-Format migriert.
