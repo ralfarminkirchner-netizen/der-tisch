@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
-   Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
+"""Der Tisch — Agenten-Orchestrierungs-Engine
+   Version 8.0: Streaming-API (SSE), neue Fach-Arenen (Soziologie, KI-Ethik),
+                Herzmensch/Kopfmensch, Klärungsgespräch-Modus, Antagonisten-System.
 """
 import asyncio
+import traceback as _traceback
 import json as _json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from openai import OpenAI
@@ -1311,7 +1313,20 @@ class TableRequest(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "TiSCH API", "version": "7.1", "products": ["DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH"], "shared_core": "active"}
+    return {
+        "status": "ok",
+        "service": "TiSCH API",
+        "version": "8.0",
+        "products": [
+            "DER TiSCH", "TEAM TiSCH", "iNTEGRATiONS TiSCH",
+            "COACHiNG TiSCH", "EXPERTEN TiSCH", "FAMiLiEN TiSCH",
+            "JURiSTiSCH TiSCH", "LiTERATEN TiSCH", "MEDiZiN TiSCH",
+            "TRAiNiNGS TiSCH",
+        ],
+        "fach_arenen": ["Psychologie", "Philosophie", "Ökonomie", "Pädagogik", "Ethik", "Spiritualität", "Soziologie", "KI-Ethik"],
+        "features": ["streaming-sse", "antagonisten-arena", "klärungsgespräch", "custom-perspectives"],
+        "shared_core": "active",
+    }
 
 @app.post("/api/ask", response_model=TableResponse)
 async def ask_the_table(req: QueryRequest):
@@ -1335,6 +1350,72 @@ async def ask_the_table(req: QueryRequest):
         tb = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
 
+
+
+@app.post("/api/ask-stream")
+async def ask_stream(req: QueryRequest):
+    """Streaming-Endpunkt: Sendet Perspektiven progressiv als Server-Sent Events.
+    Events: perspective | friction | integration | done | error
+    """
+    if not req.question or len(req.question.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Question too short.")
+
+    valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht",
+                   "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
+    stil = req.stil if req.stil in valid_stile else "philosophisch"
+    agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
+    tone = req.tone if req.tone in ("achtsam", "direkt") else ""
+    q = req.question.strip()
+    register = req.register
+
+    async def generate():
+        try:
+            tasks = [
+                fetch_perspective(role, prompt, q, stil, req.lang, register, tone)
+                for role, prompt in agents.items()
+            ]
+
+            all_perspectives = []
+            for coro in asyncio.as_completed(tasks):
+                try:
+                    p = await coro
+                    all_perspectives.append(p)
+                    yield f"data: {_json.dumps({'type': 'perspective', 'data': p.model_dump()}, ensure_ascii=False)}\n\n"
+                except Exception as e:
+                    yield f"data: {_json.dumps({'type': 'perspective_error', 'error': str(e)}, ensure_ascii=False)}\n\n"
+
+            if not all_perspectives:
+                yield f"data: {_json.dumps({'type': 'error', 'error': 'No perspectives generated'}, ensure_ascii=False)}\n\n"
+                return
+
+            try:
+                friction = await fetch_friction(all_perspectives, q, req.lang, stil, "standard", tone)
+                yield f"data: {_json.dumps({'type': 'friction', 'data': friction.model_dump()}, ensure_ascii=False)}\n\n"
+            except Exception as e:
+                yield f"data: {_json.dumps({'type': 'error', 'phase': 'friction', 'error': str(e)}, ensure_ascii=False)}\n\n"
+                return
+
+            try:
+                integration = await fetch_integration(all_perspectives, friction, q, req.lang, stil, tone)
+                yield f"data: {_json.dumps({'type': 'integration', 'data': integration.model_dump()}, ensure_ascii=False)}\n\n"
+            except Exception as e:
+                yield f"data: {_json.dumps({'type': 'error', 'phase': 'integration', 'error': str(e)}, ensure_ascii=False)}\n\n"
+                return
+
+            yield f"data: {_json.dumps({'type': 'done'})}\n\n"
+
+        except Exception as e:
+            yield f"data: {_json.dumps({'type': 'error', 'error': f'{type(e).__name__}: {str(e)}', 'traceback': _traceback.format_exc()}, ensure_ascii=False)}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        }
+    )
 
 
 @app.post("/api/ask-simple", response_model=TableResponse)
@@ -1957,6 +2038,110 @@ FACH_ARENEN: dict = {
             gegenposition="Westliche monotheistische Religionen",
             blinde_flecken="Soziale Verantwortung, historische Kontexte, kollektive Gerechtigkeit.",
             kurzbeschreibung="Advaita Vedanta, Zen, Taoismus — Einheit jenseits der Dualitäten"
+        ),
+    ],
+    "Soziologie": [
+        ArenaPair(
+            id="soz-kritisch", name="Kritische Theorie / Frankfurter Schule", fachgebiet="Soziologie", rang=1,
+            konter_id="soz-funktional",
+            position="Gesellschaft ist durchdrungen von Herrschaftsverhältnissen, die durch Ideologie verschleiert werden. Soziologie hat die Aufgabe, diese Strukturen aufzudecken und zu kritisieren.",
+            grundhaltung="Gesellschaft ist nicht neutral — Macht, Klasse und Ideologie prägen jede Struktur. Aufklärung ohne Herrschaftskritik ist unvollständig.",
+            argumentationsstil="Immanente Kritik, dialektisch, auf Emanzipation und Widersprüche fokussiert.",
+            gegenposition="Strukturfunktionalismus",
+            blinde_flecken="Funktionale Integration, systemische Notwendigkeiten, nicht-ideologische Koordinationsleistungen.",
+            kurzbeschreibung="Horkheimer, Adorno, Habermas, Honneth — Gesellschaft als Herrschaftsgefüge"
+        ),
+        ArenaPair(
+            id="soz-funktional", name="Strukturfunktionalismus", fachgebiet="Soziologie", rang=1,
+            konter_id="soz-kritisch",
+            position="Gesellschaftliche Institutionen existieren, weil sie Funktionen erfüllen, die für den Zusammenhalt notwendig sind. Stabilität ist eine Leistung, keine Herrschaft.",
+            grundhaltung="Gesellschaft ist ein System interdependenter Subsysteme, die gemeinsam Ordnung produzieren.",
+            argumentationsstil="Systemisch, funktional, auf Integration und Gleichgewicht fokussiert.",
+            gegenposition="Kritische Theorie",
+            blinde_flecken="Macht, Konflikt, Wandel, marginalisierte Gruppen, reproduzierte Ungleichheit.",
+            kurzbeschreibung="Parsons, Merton — Gesellschaft als funktionales System"
+        ),
+        ArenaPair(
+            id="soz-interakt", name="Symbolischer Interaktionismus / Mikrosoziologie", fachgebiet="Soziologie", rang=2,
+            konter_id="soz-bourdieu",
+            position="Gesellschaft entsteht in der alltäglichen Interaktion. Bedeutungen werden ausgehandelt, nicht strukturell vorgegeben. Das Mikro ist das Fundament des Makro.",
+            grundhaltung="Menschen handeln auf Basis der Bedeutungen, die Dinge für sie haben — und diese Bedeutungen entstehen in sozialer Interaktion.",
+            argumentationsstil="Interpretativ, ethnografisch, auf Alltagspraxis und Bedeutungsaushandlung fokussiert.",
+            gegenposition="Bourdieu / Kapitalsoziologie",
+            blinde_flecken="Strukturelle Macht, materielle Ungleichheit, makrosoziologische Muster.",
+            kurzbeschreibung="Mead, Goffman, Blumer — Gesellschaft als permanent ausgehandeltes Bedeutungsgefüge"
+        ),
+        ArenaPair(
+            id="soz-bourdieu", name="Bourdieu / Kapital- und Feldsoziologie", fachgebiet="Soziologie", rang=2,
+            konter_id="soz-interakt",
+            position="Soziale Ungleichheit reproduziert sich über Kapitalformen (ökonomisch, kulturell, sozial) und Felder. Der Habitus ist der verkörperte Ausdruck sozialer Position.",
+            grundhaltung="Klasse ist nicht nur Einkommen — sie ist Geschmack, Körper, Sprache, Selbstverständlichkeit.",
+            argumentationsstil="Struktural-konstruktivistisch, auf Reproduktion von Ungleichheit fokussiert.",
+            gegenposition="Symbolischer Interaktionismus",
+            blinde_flecken="Handlungsspielräume, Widerstand, Wandel, nicht-reproduktive Interaktionen.",
+            kurzbeschreibung="Bourdieu — Habitus, Feld, Kapital als Mechanismen sozialer Reproduktion"
+        ),
+        ArenaPair(
+            id="soz-luhmann", name="Systemtheorie / Luhmann", fachgebiet="Soziologie", rang=3,
+            konter_id="soz-kritisch",
+            position="Gesellschaft ist ein selbstreferenzielles Kommunikationssystem. Subjekte kommunizieren nicht — Kommunikationen kommunizieren. Humanismus ist eine Selbstbeschreibung, keine soziologische Grundlage.",
+            grundhaltung="Gesellschaft operiert durch funktionale Differenzierung autonomer Subsysteme — Wirtschaft, Recht, Wissenschaft, Politik — ohne Zentrum und ohne Subjekt.",
+            argumentationsstil="Radikal systemisch, anti-humanistisch, auf Selbstreferenz und Kontingenz fokussiert.",
+            gegenposition="Kritische Theorie",
+            blinde_flecken="Macht als Handlungsressource, Normativität, Emanzipationspotenziale.",
+            kurzbeschreibung="Luhmann — Gesellschaft als kommunikatives Funktionssystem ohne Subjekt"
+        ),
+    ],
+    "KI-Ethik": [
+        ArenaPair(
+            id="ki-safety", name="KI-Sicherheit / Alignment-Forschung", fachgebiet="KI-Ethik", rang=1,
+            konter_id="ki-accel",
+            position="Fortgeschrittene KI stellt existenzielle Risiken dar, wenn Ziele und Werte nicht präzise mit menschlichem Wohlergehen ausgerichtet sind. Alignment ist die wichtigste wissenschaftliche Herausforderung unserer Zeit.",
+            grundhaltung="Die Entwicklung superintelligenter Systeme ohne gelöstes Alignment-Problem ist grob fahrlässig. Sicherheit muss Geschwindigkeit vorausgehen.",
+            argumentationsstil="Formal-mathematisch, auf Worst-Case-Szenarien und langfristige Konsequenzen fokussiert.",
+            gegenposition="Effektiver Akzelerationismus",
+            blinde_flecken="Kurzfristige Nutzen, demokratische Teilhabe an KI-Vorteilen, alternative Risikopfade.",
+            kurzbeschreibung="Yudkowsky, Bostrom, MIRI, Anthropic — existenzielle Risiken durch unkontrollierte KI"
+        ),
+        ArenaPair(
+            id="ki-accel", name="Effektiver Akzelerationismus (e/acc)", fachgebiet="KI-Ethik", rang=1,
+            konter_id="ki-safety",
+            position="Technologischer Fortschritt — einschließlich KI — ist der Motor menschlichen Gedeihens. Verlangsamung schadet mehr als sie schützt. Die Risiken des Nicht-Entwickelns überwiegen die Risiken des Entwickelns.",
+            grundhaltung="Technologie ist per se progressiv. Regulierung und Vorsicht sind verkleidete Machtinteressen etablierter Akteure.",
+            argumentationsstil="Libertär, wachstumsorientiert, auf Chancen und Disruption fokussiert.",
+            gegenposition="KI-Sicherheitsforschung",
+            blinde_flecken="Verteilungsgerechtigkeit, irreversible Schäden, Kontrollverlust, Machtkonzentration.",
+            kurzbeschreibung="e/acc-Bewegung — Beschleunigung als moralisches Gebot"
+        ),
+        ArenaPair(
+            id="ki-regulierung", name="Regulierungs- und Governance-Ansatz", fachgebiet="KI-Ethik", rang=2,
+            konter_id="ki-accel",
+            position="KI ist zu mächtig, um sie dem Markt zu überlassen. Demokratische Kontrolle, Transparenzpflichten und internationale Regulierung sind notwendig, um Machtkonzentration und Diskriminierung zu verhindern.",
+            grundhaltung="KI-Systeme müssen erklärbar, rechenschaftspflichtig und demokratisch legitimiert sein.",
+            argumentationsstil="Rechtlich-institutionell, auf Accountability, Fairness und demokratische Kontrolle fokussiert.",
+            gegenposition="Effektiver Akzelerationismus",
+            blinde_flecken="Innovationshemmung, internationale Wettbewerbsdynamiken, technische Umsetzbarkeit von Regulierung.",
+            kurzbeschreibung="EU AI Act, Russel, Eubanks — KI braucht demokratische Aufsicht"
+        ),
+        ArenaPair(
+            id="ki-kritisch", name="Kritische KI-Studien / Tech-Kritik", fachgebiet="KI-Ethik", rang=2,
+            konter_id="ki-safety",
+            position="KI reproduziert und verstärkt bestehende gesellschaftliche Ungleichheiten. Die dominante KI-Ethik-Debatte ignoriert strukturellen Rassismus, Kolonialismus und die Interessen des Globalen Südens.",
+            grundhaltung="KI ist kein neutrales Werkzeug — sie ist politisch, eingebettet in Machtstrukturen, und dient primär den Interessen westlicher Technologiekonzerne.",
+            argumentationsstil="Intersektional, postkolonial, auf Macht, Diskriminierung und Marginalisierung fokussiert.",
+            gegenposition="KI-Sicherheitsforschung",
+            blinde_flecken="Technische Machbarkeit, skalierbare Alternativen, existenzielle Risikoszenarien.",
+            kurzbeschreibung="Gebru, Benjamin, Crawford — KI als verlängerter Arm bestehender Machtstrukturen"
+        ),
+        ArenaPair(
+            id="ki-posthuman", name="Transhumanismus / KI-Optimismus", fachgebiet="KI-Ethik", rang=3,
+            konter_id="ki-kritisch",
+            position="KI und Mensch-Maschine-Integration sind der nächste Schritt menschlicher Evolution. Die Überwindung biologischer Beschränkungen ist ein moralisches Gut.",
+            grundhaltung="Leiden ist nicht unvermeidbar. Superintelligenz und Human Enhancement können Krankheit, Altern und Armut lösen.",
+            argumentationsstil="Utopisch-technologisch, auf langfristige Potenziale und Superintelligenz fokussiert.",
+            gegenposition="Kritische KI-Studien",
+            blinde_flecken="Zugangsgerechtigkeit, Kontrollverlust, was 'menschlich' bedeutet, unintendierte Konsequenzen.",
+            kurzbeschreibung="Kurzweil, More — KI als Sprungbrett zur posthumanen Zukunft"
         ),
     ],
 }
