@@ -988,6 +988,18 @@ async function handleStream(resp, perspectives, container) {
   }
 }
 
+function buildPerspCardBody(r) {
+  let html = `<p class="streaming-text">${escapeHTML(r.kernanalyse || '')}</p>`;
+  if (r.anspruchstyp || r.evidenz || r.blinder_fleck) {
+    html += `<div class="persp-detail">`;
+    if (r.anspruchstyp) html += `<div class="persp-detail-item"><div class="persp-detail-label">Anspruchstyp</div><div class="persp-detail-text">${escapeHTML(r.anspruchstyp)}</div></div>`;
+    if (r.evidenz) html += `<div class="persp-detail-item"><div class="persp-detail-label">Evidenz</div><div class="persp-detail-text">${escapeHTML(r.evidenz)}</div></div>`;
+    if (r.blinder_fleck) html += `<div class="persp-detail-item"><div class="persp-detail-label">Blinder Fleck</div><div class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</div></div>`;
+    html += `</div>`;
+  }
+  return html;
+}
+
 function renderResults(data, perspectives, container) {
   const apiPerspectives = data.perspectives || [];
   if (apiPerspectives.length === 0) {
@@ -1005,22 +1017,7 @@ function renderResults(data, perspectives, container) {
       (p.de || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
-    const body = card.querySelector('.result-card-body');
-    let html = `<p class="streaming-text">${escapeHTML(r.kernanalyse || '')}</p>`;
-    if (r.anspruchstyp || r.evidenz || r.blinder_fleck) {
-      html += `<div class="persp-detail">`;
-      if (r.anspruchstyp) {
-        html += `<div class="persp-detail-item"><div class="persp-detail-label">Anspruchstyp</div><div class="persp-detail-text">${escapeHTML(r.anspruchstyp)}</div></div>`;
-      }
-      if (r.evidenz) {
-        html += `<div class="persp-detail-item"><div class="persp-detail-label">Evidenz</div><div class="persp-detail-text">${escapeHTML(r.evidenz)}</div></div>`;
-      }
-      if (r.blinder_fleck) {
-        html += `<div class="persp-detail-item"><div class="persp-detail-label">Blinder Fleck</div><div class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</div></div>`;
-      }
-      html += `</div>`;
-    }
-    body.innerHTML = html;
+    card.querySelector('.result-card-body').innerHTML = buildPerspCardBody(r);
     container.appendChild(card);
   });
 
@@ -1059,6 +1056,7 @@ function buildFrictionCard(friction) {
     </div>
     <div class="result-card-body">${bodyHtml}</div>
   `;
+  setTimeout(() => card.classList.add('open'), 100);
   return card;
 }
 
@@ -1812,16 +1810,7 @@ async function analyseAufstellung() {
         const rolle = r.rolle || '';
         const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
-        const body = card.querySelector('.result-card-body');
-        let html = `<p class="streaming-text">${escapeHTML(r.kernanalyse || '')}</p>`;
-        if (r.anspruchstyp || r.evidenz || r.blinder_fleck) {
-          html += `<div class="persp-detail">`;
-          if (r.anspruchstyp) html += `<div class="persp-detail-item"><div class="persp-detail-label">Anspruchstyp</div><div class="persp-detail-text">${escapeHTML(r.anspruchstyp)}</div></div>`;
-          if (r.evidenz) html += `<div class="persp-detail-item"><div class="persp-detail-label">Evidenz</div><div class="persp-detail-text">${escapeHTML(r.evidenz)}</div></div>`;
-          if (r.blinder_fleck) html += `<div class="persp-detail-item"><div class="persp-detail-label">Blinder Fleck</div><div class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</div></div>`;
-          html += `</div>`;
-        }
-        body.innerHTML = html;
+        card.querySelector('.result-card-body').innerHTML = buildPerspCardBody(r);
         resultsDiv.appendChild(card);
       });
     } else {
@@ -1848,6 +1837,15 @@ async function analyseAufstellung() {
     `;
     resultsDiv.appendChild(kiDiv);
 
+    const copyRow = document.createElement('div');
+    copyRow.className = 'results-actions';
+    copyRow.style.marginTop = '12px';
+    copyRow.innerHTML = `<button class="action-btn" onclick="copyResults('aufstellungResults')">
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="10" height="10" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Ergebnisse kopieren
+    </button>`;
+    resultsDiv.appendChild(copyRow);
+
     saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
 
   } catch (err) {
@@ -1858,15 +1856,16 @@ async function analyseAufstellung() {
 // ============================================================
 // COPY & EXPORT
 // ============================================================
-function copyResults() {
-  const list = document.getElementById('resultsList');
-  if (!list || !list.textContent.trim()) { showToast('Keine Ergebnisse zum Kopieren.'); return; }
+function copyResults(containerId) {
+  const id = containerId || (currentMode === 'aufstellung' ? 'aufstellungResults' : 'resultsList');
+  const list = document.getElementById(id);
+  if (!list || !list.innerText.trim()) { showToast('Keine Ergebnisse zum Kopieren.'); return; }
   const lines = [];
   list.querySelectorAll('.result-card').forEach(card => {
     const title = card.querySelector('.result-card-title');
-    if (title) lines.push('\n=== ' + title.textContent.trim() + ' ===');
-    card.querySelectorAll('p, li').forEach(el => {
-      const t = el.textContent.trim();
+    if (title) lines.push('\n=== ' + title.innerText.trim() + ' ===');
+    card.querySelectorAll('p, li, .persp-detail-item, .herzkopp-card').forEach(el => {
+      const t = el.innerText.trim().replace(/\n+/g, ': ');
       if (t) lines.push(t);
     });
   });
