@@ -9,14 +9,15 @@
 <link rel="author" href="https://www.perplexity.ai/computer">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#061A0A">
+<meta name="theme-color" content="#FAF7F2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="TRAiNiNGSTiSCH">
+<link rel="icon" href="icons/team-tisch-192.png">
 <title>TRAiNiNGSTiSCH — Professionelles Training am Tisch</title>
 <meta name="description" content="TRAiNiNGSTiSCH: 8 professionelle Trainingsperspektiven analysieren deine Frage — Cheftrainer, Sportwissenschaft, Athletik, Psychologie, Taktik, Medizin, Ernährung, Datenanalyse.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ─── Variables ──────────────────────────────────────────── */
 :root {
@@ -38,8 +39,9 @@
   --green:       #22C55E;
   --amber:       #F59E0B;
   --red:         #EF4444;
-  --r-card:      14px;
-  --r-btn:       10px;
+  --orange:      #E8874A;   /* TiSCH-DNA: italic i's */
+  --r-card:      8px;
+  --r-btn:       8px;
   --shadow:      0 2px 16px rgba(0,0,0,0.5);
   --shadow-lg:   0 8px 40px rgba(0,0,0,0.6);
   --trans:       0.18s ease;
@@ -47,12 +49,12 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: var(--bg); }
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  min-height: 100svh;
   display: flex; flex-direction: column;
   -webkit-font-smoothing: antialiased;
 }
@@ -85,14 +87,13 @@ nav {
   background: rgba(6,26,10,0.94);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
-  min-height: 72px; padding: 0 24px;
+  min-height: 64px; padding: 0 clamp(12px, 2vw, 28px);
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 
 /* Nav-Logo: SVG (wie TEAM TiSCH) */
-.nav-logo { display: flex; flex-direction: column; line-height: 1; user-select: none; text-decoration: none; gap: 2px; }
-.nav-logo-pre { font-size: 9px; letter-spacing: 0.22em; color: var(--faint); text-transform: uppercase; font-weight: 600; }
-.nav-logo-mark { height: clamp(38px, 5.5vw, 54px); width: auto; display: block; }
+.nav-logo { display: flex; align-items: center; line-height: 1; user-select: none; text-decoration: none; min-width: 0; }
+.nav-logo-mark { height: clamp(28px, 4vw, 38px); width: auto; max-width: min(54vw, 280px); display: block; color: var(--text); }
 
 .nav-right { display: flex; align-items: center; gap: 8px; }
 
@@ -117,19 +118,112 @@ nav {
 .icon-btn svg { width: 16px; height: 16px; }
 
 /* ─── Main ───────────────────────────────────────────────── */
-main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+main {
+  flex: 1;
+  width: min(100% - clamp(24px, 4vw, 120px), 3200px);
+  margin: 0 auto;
+  padding: 0;
+}
 
 /* ─── Hero ───────────────────────────────────────────────── */
 .hero {
-  min-height: calc(100vh - 72px);
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  padding: 28px 0 36px; text-align: center;
+  min-height: auto;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(380px, 1.1fr);
+  align-items: start;
+  gap: clamp(28px, 5vw, 76px);
+  padding: clamp(34px, 8svh, 118px) 0 clamp(40px, 8svh, 120px);
+  text-align: left;
 }
 
-/* ─── Hero Logo SVG ──────────────────────────────────────── */
+.hero-intro,
+.hero-control {
+  min-width: 0;
+}
+
+.hero-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-control {
+  width: 100%;
+}
+
+/* ─── Hero Logo SVG (legacy — versteckt, neue Wordmark übernimmt) ─ */
 .hero-logo-svg {
-  width: min(92vw, 780px);
-  height: auto; display: block; margin: 0 auto 18px;
+  width: min(100%, 760px);
+  height: auto; display: block; margin: 0 0 22px;
+}
+.hero-logo-svg > :not(.training-logo-clean) { display: none; }
+.training-logo-clean text { font-family: Inter, system-ui, sans-serif; }
+.legacy-hero-logo { display: none; }
+
+/* ─── TT=Tisch Wordmark (DNA: gestapelte T's, Inter 900, orange italic i) ─── */
+.logo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 0.86;
+  user-select: none;
+}
+.logo-top {
+  display: block;
+  font-size: clamp(18px, 2.8vw, 34px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: none;
+}
+.logo-main {
+  display: block;
+  font-size: clamp(64px, 11vw, 132px);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  margin-top: -0.04em;
+}
+.logo-i,
+.logo-i-main {
+  font-style: italic;
+  font-weight: 900;
+  color: var(--orange);
+}
+.hero-wordmark { margin: 0 0 22px; }
+.wordmark-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+.logo-accent-line {
+  display: block;
+  width: 88px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin: 14px 0 10px;
+}
+.wordmark-rule {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Nav-Variante: SVG übernimmt, Text-Wordmark als a11y-Fallback unsichtbar */
+.nav-wordmark {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .hero-badge {
@@ -137,7 +231,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
   background: var(--accent-dim); border: 1px solid rgba(46,204,90,0.3);
   border-radius: 100px; padding: 5px 16px;
   font-size: 11px; font-weight: 600; color: var(--accent);
-  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;
 }
 .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
   animation: pulse-dot 2.5s ease-in-out infinite; }
@@ -149,18 +243,18 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
   display: none;
 }
 .hero-sub {
-  font-size: 15px; color: var(--muted); margin-bottom: 36px; line-height: 1.65; max-width: 540px;
+  font-size: clamp(14px, 1.1vw, 17px); color: var(--muted); margin-bottom: 0; line-height: 1.65; max-width: 620px;
 }
 
 /* ─── Perspektiven-Auswahl ───────────────────────────────── */
 .perspektiven-selector {
   background: var(--surface);
   border: 1.5px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--r-card);
   padding: 18px 20px;
   margin-bottom: 12px;
   box-shadow: var(--shadow);
-  width: 100%; max-width: 680px;
+  width: 100%;
 }
 .perspektiven-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px;
@@ -225,13 +319,13 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .custom-perspektive-input::placeholder { color: var(--faint); }
 
 /* ─── Input area ─────────────────────────────────────────── */
-.input-wrap { width: 100%; max-width: 680px; }
+.input-wrap { width: 100%; }
 
 .question-input {
-  width: 100%; border: 1.5px solid var(--border); border-radius: 18px;
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--r-card);
   padding: 18px 22px; font-family: inherit; font-size: 15px; color: var(--text);
   background: var(--surface); resize: none; outline: none;
-  min-height: 80px; max-height: none; line-height: 1.6;
+  min-height: clamp(92px, 14svh, 160px); max-height: none; line-height: 1.6;
   box-shadow: var(--shadow); transition: border-color var(--trans), box-shadow var(--trans);
   margin-bottom: 10px; display: block;
 }
@@ -239,7 +333,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .question-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow); }
 
 /* ─── Action Row ─────────────────────────────────────────── */
-.action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.action-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-start; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--accent); color: #021005; border: none; border-radius: var(--r-btn);
@@ -261,8 +355,8 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .btn-examples svg { width: 14px; height: 14px; }
 
 /* ─── Chips ──────────────────────────────────────────────── */
-.chips-toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; justify-content: center; }
-.chips-wrap { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 680px; margin-bottom: 16px; }
+.chips-toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; justify-content: flex-start; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 7px; justify-content: flex-start; margin-bottom: 16px; }
 .chip {
   border: 1px solid var(--border); background: transparent; color: var(--muted);
   border-radius: 100px; padding: 6px 14px; font-family: inherit; font-size: 12px;
@@ -292,7 +386,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .loading-text { font-size: 14px; color: var(--muted); font-weight: 500; }
 
 /* ─── Results ─────────────────────────────────────────────── */
-.results-wrap { display: none; padding: 32px 0 60px; }
+.results-wrap { display: none; padding: clamp(22px, 4svh, 48px) 0 72px; }
 .results-wrap.visible { display: block; }
 
 .results-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
@@ -300,7 +394,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .results-meta { font-size: 12px; color: var(--faint); margin-top: 3px; }
 
 /* Perspektiven-Cards */
-.perspective-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.perspective-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; margin-bottom: 28px; }
 .perspective-card {
   background: var(--surface); border: 1.5px solid var(--border);
   border-radius: var(--r-card); padding: 20px;
@@ -319,6 +413,9 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .card-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
 
 .card-body { font-size: 14px; line-height: 1.7; color: var(--muted); }
+.training-bullets { list-style: none; display: grid; gap: 8px; padding: 0; margin: 0; }
+.training-bullets li { position: relative; padding-left: 16px; color: var(--muted); }
+.training-bullets li::before { content: ''; position: absolute; left: 0; top: 0.72em; width: 6px; height: 1px; background: var(--accent); opacity: 0.85; }
 
 /* ─── kiNTEGRiTY Field ───────────────────────────────────── */
 .kintegrity-wrap { margin: 0 0 28px; display: none; }
@@ -406,34 +503,88 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 
 /* ─── Mobile ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  nav { padding: 0 14px; }
-  main { padding: 0 12px; }
-  .hero { padding: 16px 0 28px; }
+  nav { padding: 0 12px; }
+  main { width: calc(100% - 24px); }
+  .hero {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px 0 28px;
+    text-align: center;
+  }
+  .hero-intro { align-items: center; }
+  .hero-logo-svg { width: min(100%, 360px); margin-bottom: 14px; }
+  .hero-sub { font-size: 14px; }
   .perspective-cards { grid-template-columns: 1fr; }
   .sportarten-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
   .history-panel { width: 100vw; }
   .question-input { font-size: 14px; }
+  .action-row,
+  .chips-toggle-row,
+  .chips-wrap { justify-content: center; }
+}
+
+@media (orientation: landscape) and (max-height: 680px) {
+  .hero {
+    min-height: auto;
+    grid-template-columns: minmax(280px, 0.82fr) minmax(360px, 1.18fr);
+    align-items: start;
+    padding: 18px 0 28px;
+  }
+  .hero-logo-svg { width: min(100%, 520px); margin-bottom: 12px; }
+  .hero-badge { margin-bottom: 10px; }
+  .hero-sub { font-size: 13px; line-height: 1.5; }
+  .question-input { min-height: 76px; }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero-intro { align-items: center; }
+  .action-row,
+  .chips-toggle-row,
+  .chips-wrap { justify-content: center; }
+}
+
+@media (orientation: landscape) and (max-height: 680px) and (min-width: 700px) {
+  main { width: calc(100% - 32px); }
+  .hero {
+    grid-template-columns: minmax(260px, 0.86fr) minmax(360px, 1.14fr);
+    align-items: start;
+    gap: 24px;
+    padding: 18px 0 24px;
+    text-align: left;
+  }
+  .hero-intro { align-items: flex-start; }
+  .hero-logo-svg { width: min(100%, 460px); margin-bottom: 8px; }
+  .hero-badge { margin-bottom: 8px; padding: 4px 12px; font-size: 10px; }
+  .hero-sub { font-size: 12px; line-height: 1.45; max-width: 520px; }
+  .question-input { min-height: 72px; padding: 12px 14px; }
+  .perspektiven-selector { padding: 12px 14px; }
+  .chips-toggle-row { justify-content: flex-start; }
+  .action-row { justify-content: flex-start; }
+  .btn-primary { padding: 11px 20px; }
 }
 </style>
+<link rel="stylesheet" href="tisch-responsive.css">
 </head>
 <body>
 
 <!-- ─── Navigation ──────────────────────────────────────────── -->
 <nav>
-  <a class="nav-logo" aria-label="TRAiNiNGSTiSCH" href="/trainingstisch.html" style="text-decoration:none;">
-    <span class="nav-logo-pre">TRAiNiNGS</span>
-    <!-- Nav-Logo: T als Tisch mit grünem i -->
-    <svg class="nav-logo-mark" viewBox="0 0 120 54" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TiSCH">
-      <!-- Tischplatte -->
-      <rect x="4" y="10" width="112" height="9" fill="#2ECC5A" rx="1"/>
-      <!-- Bein links -->
-      <rect x="28" y="19" width="8" height="32" fill="#2ECC5A"/>
-      <!-- Bein rechts -->
-      <rect x="84" y="19" width="8" height="32" fill="#2ECC5A"/>
-      <!-- T — links vom Bein -->
-      <text x="4" y="50" font-family="'Inter',sans-serif" font-size="26" font-weight="700" fill="currentColor" letter-spacing="-0.5">T</text>
-      <!-- iSCH — rechts vom rechten Bein -->
-      <text x="95" y="50" font-family="'Inter',sans-serif" font-size="26" font-weight="700" fill="currentColor" letter-spacing="-0.5"><tspan fill="#2ECC5A">i</tspan>SCH</text>
+  <a class="nav-logo" aria-label="TRAiNiNGSTiSCH" href="trainingstisch.html" style="text-decoration:none;">
+    <span class="nav-wordmark logo-block nav-logo-block" aria-hidden="true">
+      <span class="logo-top">TRA<span class="logo-i">i</span>N<span class="logo-i">i</span>NGS</span>
+      <span class="logo-main">T<span class="logo-i-main">i</span>SCH</span>
+    </span>
+    <svg class="nav-logo-mark" viewBox="0 0 260 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="TRAiNiNGS TiSCH">
+      <rect x="2" y="5" width="78" height="5" rx="2.5" fill="#2ECC5A"/>
+      <rect x="18" y="10" width="5" height="22" rx="2.5" fill="#2ECC5A"/>
+      <rect x="58" y="10" width="5" height="22" rx="2.5" fill="#2ECC5A"/>
+      <text x="88" y="30" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="900" fill="currentColor">TRA<tspan fill="#E8874A" font-style="italic">i</tspan>N<tspan fill="#E8874A" font-style="italic">i</tspan>NGS</text>
+      <text x="198" y="30" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="900" fill="currentColor">T<tspan fill="#E8874A" font-style="italic">i</tspan>SCH</text>
     </svg>
   </a>
 
@@ -469,9 +620,26 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 
 <main>
 <section class="hero">
+  <div class="hero-intro hero-left">
+  <a class="hub-pill" href="tisch-hub.html" aria-label="Zurueck zum TiSCH HUB">
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12.5 4.5L7 10l5.5 5.5"/>
+      <path d="M7.5 10H17"/>
+      <path d="M3 4v12"/>
+    </svg>
+    TiSCH HUB
+  </a>
+
+  <div class="hero-wordmark logo-block" role="img" aria-label="TRAiNiNGS TiSCH">
+    <span class="wordmark-kicker">Professionelles Training am TiSCH</span>
+    <span class="logo-top">TRA<span class="logo-i">i</span>N<span class="logo-i">i</span>NGS</span>
+    <span class="logo-main">T<span class="logo-i-main">i</span>SCH</span>
+    <span class="logo-accent-line" aria-hidden="true"></span>
+    <span class="wordmark-rule">Athletik · Taktik · Regeneration</span>
+  </div>
 
   <!-- ─── Hero Logo: TRAiNiNGS TiSCH mit riesigen T's + Sportball-i-Punkte ── -->
-  <div style="text-align:center;margin:0 auto 16px;width:100%;">
+  <div class="legacy-hero-logo" style="text-align:center;margin:0 auto 16px;width:100%;">
     <svg class="hero-logo-svg" viewBox="0 0 780 230" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TRAiNiNGSTiSCH">
 
       <!-- ── Rasen-Streifen Hintergrund im SVG ── -->
@@ -621,6 +789,17 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
       <!-- "SCH" -->
       <text x="545" y="162" font-family="'Inter','Helvetica Neue',sans-serif" font-size="50" font-weight="300" fill="currentColor" letter-spacing="-1">SCH</text>
 
+      <g class="training-logo-clean">
+        <text x="390" y="26" font-size="12" font-weight="700" fill="#2ECC5A" letter-spacing="2.5" text-anchor="middle">PROFESSIONELLES TRAINING AM TiSCH</text>
+        <rect x="72" y="48" width="636" height="14" rx="3" fill="#2ECC5A"/>
+        <rect x="188" y="62" width="14" height="78" rx="3" fill="#2ECC5A"/>
+        <rect x="560" y="62" width="14" height="78" rx="3" fill="#2ECC5A"/>
+        <rect x="72" y="62" width="636" height="2" fill="#9BF7B5" opacity="0.36"/>
+        <text x="96" y="130" font-size="54" font-weight="700" fill="#E8F5E3">TRA<tspan fill="#2ECC5A">i</tspan>N<tspan fill="#2ECC5A">i</tspan>NGS</text>
+        <text x="460" y="130" font-size="54" font-weight="700" fill="#E8F5E3">T<tspan fill="#2ECC5A">i</tspan>SCH</text>
+        <text x="390" y="170" font-size="16" font-weight="500" fill="#8FBC8A" text-anchor="middle">Analyse fuer Training, Taktik, Athletik, Regeneration und Leistung</text>
+      </g>
+
     </svg>
   </div>
 
@@ -633,8 +812,10 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
   <p class="hero-sub" id="hero-sub">
     Cheftrainer, Taktik, Athletik, Sportpsychologie, Sportwissenschaft, Sportmedizin, Ernährung und Datenanalyse analysieren deine Trainingsfrage — für jede Sportart.
   </p>
+  </div>
 
   <!-- Input -->
+  <div class="hero-control hero-right">
   <div class="input-wrap">
     <textarea
       class="question-input"
@@ -656,7 +837,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
       </div>
       <div class="perspektiven-sub-tabs">
         <button class="perspektiven-sub-tab active" id="tab-auto" onclick="setPerspMode('auto')">+ KI-Auto</button>
-        <button class="perspektiven-sub-tab" id="tab-list" onclick="setPerspMode('list')" id="tab-list-btn">Aus Liste wählen</button>
+        <button class="perspektiven-sub-tab" id="tab-list" onclick="setPerspMode('list')">Aus Liste wählen</button>
         <button class="perspektiven-sub-tab" id="tab-custom" onclick="setPerspMode('custom')">Eigene definieren</button>
       </div>
 
@@ -702,6 +883,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
     </div>
+  </div>
   </div>
 
 </section>
@@ -953,13 +1135,17 @@ async function submitQuestion() {
     if (perspectives.length === 0) perspectives = PERSPEKTIVEN.slice(0, 6).map(p => lang === 'de' ? p.de : p.en);
   }
 
+  const answerFormat = lang === 'de'
+    ? 'Antworte faktenreich, knapp und konkret. Keine langen Fliesstexte. Nutze Stichpunkte, Trainingsparameter, Checks, Risiken, Messwerte, Sofortmassnahmen und klare Prioritaeten. Wenn sinnvoll: Dosierung, Frequenz, Dauer, Intensitaet, Monitoring und Warnzeichen nennen.'
+    : 'Answer with concrete facts, not long prose. Use bullets, training parameters, checks, risks, metrics, immediate actions and clear priorities. When useful, include dosage, frequency, duration, intensity, monitoring and warning signs.';
+
   const payload = {
-    question: q,
+    question: `${q}\n\nAntwortformat: ${answerFormat}`,
     custom_perspectives: perspectives.map(name => ({
       name,
       position: lang === 'de'
-        ? `Trainings- und Sportperspektive: ${name}. Analysiere die Frage aus dieser Rolle.`
-        : `Training and sports perspective: ${name}. Analyze the question from this role.`
+        ? `Trainings- und Sportperspektive: ${name}. Analysiere die Frage aus dieser Rolle. Liefere 5 bis 8 konkrete Stichpunkte statt Essay: Befund, relevante Fakten, konkrete Trainingsmassnahmen, Mess-/Kontrollpunkte, Risiken und naechster Schritt.`
+        : `Training and sports perspective: ${name}. Analyze the question from this role. Provide 5 to 8 concrete bullets instead of an essay: diagnosis, relevant facts, concrete training actions, measurement/control points, risks and next step.`
     })),
     methods: [],
     stil: 'akademisch',
@@ -996,6 +1182,38 @@ async function submitQuestion() {
 }
 
 // ─── Render Results ────────────────────────────────────────────
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function roleOf(p) {
+  return p.role || p.rolle || p.name || '';
+}
+
+function analysisOf(p) {
+  return p.kernanalyse || p.analysis || p.analyse || p.text || '';
+}
+
+function formatTrainingText(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const lines = raw
+    .split(/\n+/)
+    .map(line => line.replace(/^\s*[-*•]\s*/, '').trim())
+    .filter(Boolean);
+
+  if (lines.length >= 2) {
+    return `<ul class="training-bullets">${lines.map(line => `<li>${escapeHtml(line)}</li>`).join('')}</ul>`;
+  }
+
+  return `<p>${escapeHtml(raw)}</p>`;
+}
+
 function renderResults(data, question, perspectives) {
   lastResults = data;
   document.getElementById('loadingWrap').classList.remove('visible');
@@ -1015,10 +1233,12 @@ function renderResults(data, question, perspectives) {
 
   perspList.forEach((p, i) => {
     const def = PERSPEKTIVEN.find(x =>
-      (lang === 'de' ? x.de : x.en).toLowerCase() === (p.role || '').toLowerCase()
+      (lang === 'de' ? x.de : x.en).toLowerCase() === roleOf(p).toLowerCase()
     );
     const color = def ? def.color : `hsl(${(i * 45) % 360}, 60%, 55%)`;
     const icon = def ? def.icon : '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>';
+    const role = roleOf(p);
+    const analysis = analysisOf(p);
 
     const card = document.createElement('div');
     card.className = 'perspective-card';
@@ -1030,11 +1250,11 @@ function renderResults(data, question, perspectives) {
           <span>${icon}</span>
         </div>
         <div>
-          <div class="card-role" style="color:${color}">${p.role || ''}</div>
-          <div class="card-title">${p.kernanalyse ? p.kernanalyse.slice(0, 60) : ''}</div>
+          <div class="card-role" style="color:${color}">${escapeHtml(role)}</div>
+          <div class="card-title">${escapeHtml(analysis ? analysis.slice(0, 72) : '')}</div>
         </div>
       </div>
-      <div class="card-body">${p.kernanalyse || ''}</div>
+      <div class="card-body">${formatTrainingText(analysis)}</div>
     `;
     cards.appendChild(card);
   });
@@ -1116,7 +1336,7 @@ function copyPanel(key) {
 function copyResults() {
   if (!lastResults) return;
   const txt = Array.isArray(lastResults.perspectives)
-    ? lastResults.perspectives.map(p => `${p.role}:\n${p.kernanalyse}`).join('\n\n')
+    ? lastResults.perspectives.map(p => `${roleOf(p)}:\n${analysisOf(p)}`).join('\n\n')
     : JSON.stringify(lastResults, null, 2);
   navigator.clipboard.writeText(lastQuestion + '\n\n' + txt);
 }
