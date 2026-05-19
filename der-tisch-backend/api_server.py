@@ -2170,6 +2170,49 @@ async def hook_pandora_logic(payload: PandoraLogicPayload):
     # HOOKPOINT — trigger logic pending
     return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
 
+
+# =============================================
+# PERSONEN-BIBLIOTHEK — Disziplinen & Denker (Snapshot aus shared-core)
+# Daten: data/personen_bibliothek.json (Build: data/build_personen_bibliothek.py)
+# =============================================
+
+_BIBLIOTHEK_PATH = Path(__file__).parent / "data" / "personen_bibliothek.json"
+try:
+    _BIBLIOTHEK = _json.loads(_BIBLIOTHEK_PATH.read_text(encoding="utf-8"))
+except Exception as _bib_err:  # Datei fehlt/defekt -> leere, aber valide Antwort
+    _BIBLIOTHEK = {
+        "disziplinen": [], "personen": [],
+        "counts": {"personen": 0, "disziplinen": 0},
+        "error": f"{type(_bib_err).__name__}: {_bib_err}",
+    }
+
+
+@app.get("/bibliothek")
+async def serve_bibliothek():
+    return FileResponse(Path(__file__).parent / "bibliothek.html", headers=NO_CACHE)
+
+
+@app.get("/bibliothek.html")
+async def serve_bibliothek_html():
+    return FileResponse(Path(__file__).parent / "bibliothek.html", headers=NO_CACHE)
+
+
+@app.get("/api/bibliothek", tags=["bibliothek"])
+async def api_bibliothek():
+    """Volle Personen-Bibliothek: Disziplinen + Personen mit Beschreibungen."""
+    return _BIBLIOTHEK
+
+
+@app.get("/api/bibliothek/personen/{person_id}", tags=["bibliothek"])
+async def api_bibliothek_person(person_id: str):
+    """Eine Person der Bibliothek per id (mit oder ohne 'personality-'-Präfix)."""
+    pid = person_id if person_id.startswith("personality-") else f"personality-{person_id}"
+    for p in _BIBLIOTHEK.get("personen", []):
+        if p.get("id") in (pid, person_id):
+            return p
+    raise HTTPException(status_code=404, detail=f"Person nicht gefunden: {person_id}")
+
+
 if __name__ == "__main__":
     import uvicorn
     import os

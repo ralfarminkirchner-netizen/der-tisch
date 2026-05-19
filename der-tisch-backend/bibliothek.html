@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personen-Bibliothek — DER TiSCH</title>
+<style>
+  :root{
+    --bg:#0f1620; --panel:#16202d; --panel-2:#1b2c3d;
+    --ink:#f4f1e8; --ink-dim:#a9b4c0; --ink-faint:#71808f;
+    --gold:#b99b5d; --gold-bright:#d8bd82;
+    --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+    --serif:"Georgia","Times New Roman",serif;
+    --sans:"Inter","Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--gold-bright);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ---- Header ---- */
+  header{
+    padding:34px 26px 24px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel-2),var(--bg));
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+  .eyebrow{
+    font-size:12px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--gold);font-weight:700;
+  }
+  h1{font-family:var(--serif);font-size:40px;font-weight:700;margin:6px 0 4px;letter-spacing:.5px}
+  .lead{color:var(--ink-dim);max-width:62ch}
+  .backlink{display:inline-block;margin-bottom:14px;font-size:13px;color:var(--ink-faint)}
+  .disclaimer{
+    margin-top:16px;padding:10px 14px;border-left:3px solid var(--gold);
+    background:rgba(185,155,93,.09);font-size:13px;color:var(--ink-dim);border-radius:0 6px 6px 0;
+  }
+
+  /* ---- Toolbar ---- */
+  .toolbar{position:sticky;top:0;z-index:20;background:rgba(15,22,32,.96);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 26px}
+  .toolbar-inner{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  #search{
+    flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line-strong);
+    color:var(--ink);padding:10px 14px;border-radius:9px;font-size:14px;font-family:var(--sans);
+  }
+  #search:focus{outline:none;border-color:var(--gold)}
+  .count{font-size:13px;color:var(--ink-faint);white-space:nowrap}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .chip{
+    background:var(--panel);border:1px solid var(--line-strong);color:var(--ink-dim);
+    padding:6px 13px;border-radius:999px;font-size:12.5px;cursor:pointer;transition:.15s;
+  }
+  .chip:hover{border-color:var(--gold);color:var(--ink)}
+  .chip.active{background:var(--gold);border-color:var(--gold);color:#1a1205;font-weight:700}
+
+  /* ---- Sections ---- */
+  main{padding:30px 26px 80px}
+  .disz{margin-bottom:46px}
+  .disz-head{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:20px}
+  .disz-head h2{font-family:var(--serif);font-size:25px;font-weight:700;color:var(--gold-bright)}
+  .disz-head p{color:var(--ink-dim);font-size:14px;max-width:78ch;margin-top:5px}
+  .disz-count{font-size:12px;color:var(--ink-faint);font-weight:400}
+
+  /* ---- Card grid ---- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:16px}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:13px;
+    overflow:hidden;cursor:pointer;transition:.16s;display:flex;flex-direction:column;
+  }
+  .card:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+  .portrait{width:100%;aspect-ratio:9/5.6;object-fit:cover;display:block;background:var(--panel-2)}
+  .portrait-fallback{display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--accent,#b99b5d),var(--panel-2))}
+  .portrait-fallback span{font-family:var(--serif);font-size:38px;font-weight:700;
+    color:rgba(255,255,255,.92);letter-spacing:2px}
+  .card-body{padding:13px 15px 15px}
+  .card-name{font-family:var(--serif);font-size:18.5px;font-weight:700}
+  .card-meta{font-size:12.5px;color:var(--ink-faint);margin-top:1px}
+  .card-role{font-size:13px;color:var(--gold);margin-top:7px;font-weight:600}
+  .card-bio{font-size:13px;color:var(--ink-dim);margin-top:7px}
+
+  .empty{color:var(--ink-faint);font-style:italic;padding:40px 0;text-align:center}
+
+  /* ---- Modal ---- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(6,10,15,.84);z-index:50;
+    display:none;align-items:flex-start;justify-content:center;padding:40px 18px;overflow-y:auto;
+  }
+  .overlay.open{display:flex}
+  .modal{
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:16px;
+    max-width:680px;width:100%;overflow:hidden;animation:rise .2s ease;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .modal-portrait{width:100%;aspect-ratio:9/4.2;object-fit:cover;display:block;background:var(--panel-2)}
+  .modal-body{padding:22px 26px 28px}
+  .modal-close{
+    position:sticky;top:0;float:right;background:rgba(0,0,0,.45);border:1px solid var(--line-strong);
+    color:var(--ink);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;
+    margin:12px 12px -46px 0;z-index:2;
+  }
+  .modal-close:hover{background:var(--gold);color:#1a1205}
+  .modal h3{font-family:var(--serif);font-size:30px;font-weight:700;margin-bottom:2px}
+  .modal-meta{color:var(--ink-faint);font-size:13.5px}
+  .modal-role{color:var(--gold);font-weight:700;font-size:14.5px;margin-top:8px}
+  .block{margin-top:20px}
+  .block-label{
+    font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;
+    color:var(--gold);margin-bottom:5px;
+  }
+  .block-label .tag{
+    color:var(--ink-faint);font-weight:600;letter-spacing:.5px;text-transform:none;
+    font-size:11px;margin-left:7px;
+  }
+  .block p{color:var(--ink);font-size:15px}
+  .block.kernel p{color:var(--ink-dim);font-style:italic}
+  ul.ideen{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  ul.ideen li{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+    padding:8px 12px;font-size:14px;
+  }
+  ul.ideen li::before{content:"◆ ";color:var(--gold)}
+  .modal-foot{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--ink-faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  @media(max-width:560px){h1{font-size:30px}.modal h3{font-size:24px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="backlink" href="/">‹ TiSCH Hub</a>
+    <div class="eyebrow">DER TiSCH · Wissens-Bibliothek</div>
+    <h1>Personen-Bibliothek</h1>
+    <p class="lead">Denker, Weise und Persönlichkeiten aus elf Disziplinen —
+      jede mit geprüftem Kern und ausführlicher Beschreibung.</p>
+    <div class="disclaimer" id="disclaimer">Lädt …</div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="toolbar-inner">
+      <input id="search" type="search" placeholder="Suchen — Name, Rolle, Idee, Tradition …" autocomplete="off">
+      <span class="count" id="count"></span>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</div>
+
+<main><div class="wrap" id="content"><p class="empty">Lädt …</p></div></main>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const state = { data:null, query:"", disziplin:"alle" };
+
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"]/g,c=>(
+    {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+function portrait(p, cls){
+  if (p.portraitUrl && p.portraitUrl.startsWith("data:"))
+    return `<img class="${cls}" src="${esc(p.portraitUrl)}" alt="${esc(p.name)}" loading="lazy">`;
+  return `<div class="${cls} portrait-fallback" style="--accent:${esc(p.accent||'#b99b5d')}">
+            <span>${esc(p.symbol||"·")}</span></div>`;
+}
+
+function matchesQuery(p){
+  const q = state.query.trim().toLowerCase();
+  if (!q) return true;
+  const hay = [p.name,p.role,p.tradition,p.years,p.bio,p.beschreibung,
+               (p.kernideen||[]).join(" ")].join(" ").toLowerCase();
+  return hay.includes(q);
+}
+
+function render(){
+  const d = state.data, box = document.getElementById("content");
+  const visible = p => matchesQuery(p) &&
+    (state.disziplin==="alle" || p.tradition===state.disziplin);
+  const shown = d.personen.filter(visible);
+  document.getElementById("count").textContent =
+    shown.length + " / " + d.personen.length + " Personen";
+
+  if (!shown.length){ box.innerHTML = `<p class="empty">Keine Treffer.</p>`; return; }
+
+  let html = "";
+  for (const dz of d.disziplinen){
+    if (state.disziplin!=="alle" && dz.name!==state.disziplin) continue;
+    const people = dz.person_ids
+      .map(id => d.personen.find(p=>p.id===id))
+      .filter(p => p && visible(p));
+    if (!people.length) continue;
+    html += `<section class="disz">
+      <div class="disz-head">
+        <h2>${esc(dz.name)} <span class="disz-count">· ${people.length} Personen</span></h2>
+        <p>${esc(dz.beschreibung)}</p>
+      </div><div class="grid">`;
+    for (const p of people){
+      html += `<article class="card" onclick="openPerson('${esc(p.id)}')">
+        ${portrait(p,"portrait")}
+        <div class="card-body">
+          <div class="card-name">${esc(p.name)}</div>
+          <div class="card-meta">${esc(p.years)} · ${esc(p.tradition)}</div>
+          <div class="card-role">${esc(p.role)}</div>
+          <div class="card-bio">${esc(p.bio)}</div>
+        </div></article>`;
+    }
+    html += `</div></section>`;
+  }
+  box.innerHTML = html || `<p class="empty">Keine Treffer.</p>`;
+}
+
+function openPerson(id){
+  const p = state.data.personen.find(x=>x.id===id);
+  if (!p) return;
+  const dz = state.data.disziplinen.find(x=>x.name===p.tradition);
+  const ideen = (p.kernideen||[]).map(k=>`<li>${esc(k)}</li>`).join("");
+  const generated = p.beschreibung_quelle==="model_generated";
+  document.getElementById("modal").innerHTML = `
+    <button class="modal-close" onclick="closeModal()" aria-label="Schließen">×</button>
+    ${portrait(p,"modal-portrait")}
+    <div class="modal-body">
+      <h3>${esc(p.name)}</h3>
+      <div class="modal-meta">${esc(p.years)} · ${esc(p.tradition)}</div>
+      <div class="modal-role">${esc(p.role)}</div>
+
+      <div class="block kernel">
+        <div class="block-label">Geprüfter Kern <span class="tag">· Kurz-Bio aus shared-core</span></div>
+        <p>${esc(p.bio)}</p>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Beschreibung
+          <span class="tag">· ${generated?"ausführlich · modellgeneriert":"ohne Beschreibung"}</span></div>
+        <p>${esc(p.beschreibung||"—")}</p>
+      </div>
+
+      ${ideen?`<div class="block">
+        <div class="block-label">Kernideen</div>
+        <ul class="ideen">${ideen}</ul></div>`:""}
+
+      ${dz?`<div class="block">
+        <div class="block-label">Disziplin · ${esc(dz.name)}</div>
+        <p style="font-size:14px;color:var(--ink-dim)">${esc(dz.beschreibung)}</p></div>`:""}
+
+      <div class="modal-foot">
+        <span>${generated?"Beschreibung & Kernideen sind modellgeneriert — kein geprüftes Wissen.":""}</span>
+        ${p.wikiTerm?`<a href="https://de.wikipedia.org/wiki/${encodeURIComponent(p.wikiTerm)}" target="_blank" rel="noopener">Wikipedia ›</a>`:""}
+      </div>
+    </div>`;
+  const ov = document.getElementById("overlay");
+  ov.classList.add("open"); ov.scrollTop = 0;
+}
+function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+
+function renderChips(){
+  const c = document.getElementById("chips");
+  let html = `<div class="chip${state.disziplin==="alle"?" active":""}" onclick="setDisziplin('alle')">Alle</div>`;
+  for (const dz of state.data.disziplinen)
+    html += `<div class="chip${state.disziplin===dz.name?" active":""}" onclick="setDisziplin('${esc(dz.name)}')">${esc(dz.name)} ${dz.anzahl}</div>`;
+  c.innerHTML = html;
+}
+function setDisziplin(name){ state.disziplin=name; renderChips(); render(); }
+
+document.getElementById("search").addEventListener("input", e=>{
+  state.query = e.target.value; render();
+});
+document.getElementById("overlay").addEventListener("click", e=>{
+  if (e.target.id==="overlay") closeModal();
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
+
+fetch("/api/bibliothek").then(r=>r.json()).then(d=>{
+  state.data = d;
+  const c = d.counts||{};
+  document.getElementById("disclaimer").innerHTML =
+    `<strong>${c.personen||0} Personen</strong> in <strong>${c.disziplinen||0} Disziplinen</strong>. ` +
+    `Die kurze Bio ist der geprüfte Kern aus dem <em>shared-core</em>; ` +
+    `die ausführlichen Beschreibungen und Kernideen sind <strong>modellgeneriert</strong> — ` +
+    `ausführlicher Erläuterungstext, kein verifiziertes Wissen.`;
+  renderChips();
+  render();
+}).catch(err=>{
+  document.getElementById("content").innerHTML =
+    `<p class="empty">Bibliothek konnte nicht geladen werden: ${esc(err)}</p>`;
+});
+</script>
+</body>
+</html>

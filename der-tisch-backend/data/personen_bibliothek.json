@@ -1,0 +1,1112 @@
+{
+  "schema_version": "1",
+  "title": "TiSCH Personen-Bibliothek",
+  "generated_from": "shared-core/data/personalities.json",
+  "note": "bio = geprüfter Kern aus dem shared-core (unverändert). beschreibung + kernideen + Disziplin-Texte sind modellgeneriert (beschreibung_quelle: model_generated) — ausführlicher Erläuterungstext, kein verifiziertes Wissen.",
+  "counts": {
+    "personen": 40,
+    "disziplinen": 11
+  },
+  "disziplinen": [
+    {
+      "id": "upanishadische-tradition",
+      "name": "Upanishadische Tradition",
+      "beschreibung": "Die upanishadische Tradition Indiens fragt nach dem Verhältnis von individuellem Selbst (Atman) und Weltgrund (Brahman). Aus den Upanishaden entwickelt sich über Jahrhunderte das Vedanta — eine Familie von Schulen, die Erkenntnis nicht als Information, sondern als befreiende Selbsterkenntnis versteht.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-yajnavalkya",
+        "personality-patanjali",
+        "personality-shankara",
+        "personality-ramana",
+        "personality-vivekananda"
+      ],
+      "anzahl": 5
+    },
+    {
+      "id": "buddhismus",
+      "name": "Buddhismus",
+      "beschreibung": "Der Buddhismus geht auf die Einsichten Siddhartha Gautamas zurück und versteht Leiden nicht als Schicksal, sondern als analysierbaren Prozess. Statt nach einem Schöpfergott fragt er nach den Bedingungen von Bindung und Befreiung — und entfaltet über die Jahrhunderte Schulen von strenger Analyse bis zu lebendiger Achtsamkeitspraxis.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-buddha",
+        "personality-nagarjuna",
+        "personality-thich-nhat-hanh",
+        "personality-goenka",
+        "personality-ajahn-chah"
+      ],
+      "anzahl": 5
+    },
+    {
+      "id": "daoismus",
+      "name": "Daoismus",
+      "beschreibung": "Der Daoismus sucht nicht die Beherrschung der Welt, sondern den Einklang mit dem Dao — dem unergründlichen „Weg“, dem alles folgt. Sein Ideal ist das Wu Wei, das mühelose Handeln, das sich gegen Zwang und Übermaß stellt und im Natürlichen die größere Weisheit erkennt.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-laozi",
+        "personality-zhuangzi",
+        "personality-zhang-sanfeng"
+      ],
+      "anzahl": 3
+    },
+    {
+      "id": "griechische-schule",
+      "name": "Griechische Schule",
+      "beschreibung": "Mit der klassischen griechischen Philosophie verschiebt sich das Fragen vom Mythos zum Begriff. In Athen entstehen mit Sokrates und Platon Schulen, die Erkenntnis, Tugend und gerechtes Zusammenleben zum prüfbaren Gegenstand des Denkens machen.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-sokrates",
+        "personality-platon"
+      ],
+      "anzahl": 2
+    },
+    {
+      "id": "aristotelische-schule",
+      "name": "Aristotelische Schule",
+      "beschreibung": "Mit Aristoteles wird die Philosophie zur ordnenden Wissenschaft. Statt einer Welt der Urbilder untersucht er das Einzelne selbst, seine Ursachen und Zwecke — und begründet damit Logik, Naturforschung und Ethik als getrennte, methodische Disziplinen.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-aristoteles"
+      ],
+      "anzahl": 1
+    },
+    {
+      "id": "vorsokratik",
+      "name": "Vorsokratik",
+      "beschreibung": "Die Vorsokratiker fragen zum ersten Mal systematisch nach Ursprung und Bauprinzip der Welt — nicht mehr in Göttergeschichten, sondern in Begriffen wie Werden, Sein und Zahl. Ihre knappen, oft rätselhaften Fragmente stehen am Anfang des abendländischen Denkens.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-heraklit",
+        "personality-parmenides",
+        "personality-pythagoras"
+      ],
+      "anzahl": 3
+    },
+    {
+      "id": "stoische-linie",
+      "name": "Stoische Linie",
+      "beschreibung": "Die Stoa lehrt, zwischen dem zu unterscheiden, was in unserer Macht steht, und dem, was nicht — und allein den eigenen Urteilen und Haltungen Sorge zu widmen. Gelassenheit ist hier kein Rückzug, sondern eine eingeübte Kunst, inmitten von Schicksal und Pflicht frei zu bleiben.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-seneca",
+        "personality-aurelius",
+        "personality-epictet",
+        "personality-zenon"
+      ],
+      "anzahl": 4
+    },
+    {
+      "id": "christliche-theologie",
+      "name": "Christliche Theologie",
+      "beschreibung": "Die christliche Theologie und Mystik fragt, wie der Mensch dem unverfügbaren Gott begegnet — in der Innerlichkeit, in der Vision, im Loslassen. Sie verbindet Denken und Glauben zu einem Weg der Verwandlung, der bis an die Grenzen der Sprache führt.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-augustinus",
+        "personality-eckhart",
+        "personality-teresa",
+        "personality-hildegard",
+        "personality-merton"
+      ],
+      "anzahl": 5
+    },
+    {
+      "id": "konfuzianismus",
+      "name": "Konfuzianismus",
+      "beschreibung": "Der Konfuzianismus fragt, wie der Mensch durch Bildung, Ritual und Selbstkultivierung zu einem guten Glied einer guten Ordnung wird. Ethik ist hier nicht Theorie, sondern eingeübte Haltung — getragen von Menschlichkeit (Ren) und dem rechten Maß im Umgang.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-konfuzius",
+        "personality-mengzi",
+        "personality-zhu-xi",
+        "personality-wang-yangming"
+      ],
+      "anzahl": 4
+    },
+    {
+      "id": "neuplatonismus",
+      "name": "Neuplatonismus",
+      "beschreibung": "Der Neuplatonismus deutet die Wirklichkeit als gestufte Ordnung, die aus einem letzten Ursprung — dem „Einen“ — hervorgeht und in es zurückstrebt. Philosophie wird hier zum Aufstieg der Seele durch die Ebenen des Seins.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-plotinus",
+        "personality-porphyry",
+        "personality-proclus"
+      ],
+      "anzahl": 3
+    },
+    {
+      "id": "neuzeit",
+      "name": "Neuzeit",
+      "beschreibung": "Die neuzeitliche Philosophie verschiebt den Grund der Gewissheit in das denkende, kritische Subjekt. Von Descartes’ Zweifel bis zu Nietzsches Umwertung wird das Denken selbst zum Prüfstein — und zugleich zur offenen Frage.",
+      "beschreibung_quelle": "model_generated",
+      "person_ids": [
+        "personality-descartes",
+        "personality-kant",
+        "personality-hegel",
+        "personality-nietzsche",
+        "personality-camus"
+      ],
+      "anzahl": 5
+    }
+  ],
+  "personen": [
+    {
+      "id": "personality-yajnavalkya",
+      "name": "Yajnavalkya",
+      "years": "ca. 700 v. Chr.",
+      "role": "Vedischer Weiser",
+      "tradition": "Upanishadische Tradition",
+      "symbol": "ATM",
+      "accent": "#b99b5d",
+      "wikiTerm": "Yajnavalkya",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b99b5d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EVedischer%20Weiser%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EYajnavalkya%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EATM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_upanishadic",
+        "text_upanishads",
+        "shankara"
+      ],
+      "bio": "Wichtiger Lehrer der Brihadaranyaka Upanishad. Formuliert Atman als reines Bewusstsein.",
+      "beschreibung": "Yajnavalkya gilt als einer der frühesten namentlich fassbaren Denker Indiens und prägt große Teile der Brihadaranyaka-Upanishad. In berühmten Streitgesprächen — etwa mit der Philosophin Gargi — bestimmt er das Selbst (Atman) negativ: „neti, neti“, nicht dies, nicht dies. Das wahre Selbst ist reines Bewusstsein, das alles erkennt und selbst nie zum Objekt wird. Damit legt er den Grundstein der gesamten späteren Vedanta-Philosophie.",
+      "kernideen": [
+        "Atman als reines, objektloses Bewusstsein",
+        "„neti, neti“ — Wahrheit über die Verneinung",
+        "Frühe dialogische Philosophie"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-patanjali",
+      "name": "Patanjali",
+      "years": "ca. 200 v. Chr.",
+      "role": "Systematiker des Yoga",
+      "tradition": "Upanishadische Tradition",
+      "symbol": "YOG",
+      "accent": "#b99b5d",
+      "wikiTerm": "Patanjali",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b99b5d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3ESystematiker%20des%20Yoga%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EPatanjali%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EYOG%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_upanishadic",
+        "text_upanishads"
+      ],
+      "bio": "Verfasser der Yoga Sutras. Systematisiert den achtgliedrigen Pfad des Yoga.",
+      "beschreibung": "Patanjali bündelt in den Yoga-Sutras eine bis dahin verstreute Praxis zu einem klaren System. Sein achtgliedriger Pfad (Ashtanga) führt von ethischen Grundregeln über Körperhaltung und Atem bis zu Sammlung und Versenkung. Yoga definiert er als das „Zur-Ruhe-Kommen der Bewegungen des Geistes“. Sein Werk ist bis heute die maßgebliche Referenz für Meditationspraxis im Hinduismus.",
+      "kernideen": [
+        "Achtgliedriger Pfad des Yoga",
+        "Yoga als Stillwerden des Geistes",
+        "Systematik statt loser Praxis"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-shankara",
+      "name": "Shankara",
+      "years": "788-820",
+      "role": "Philosoph des Advaita",
+      "tradition": "Upanishadische Tradition",
+      "symbol": "ADV",
+      "accent": "#b99b5d",
+      "wikiTerm": "Adi_Shankara",
+      "portraitUrl": "/images/shankara.svg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_upanishadic",
+        "text_upanishads",
+        "shankara"
+      ],
+      "bio": "Begruender des Advaita Vedanta. Lehrt Nicht-Zweiheit von Atman und Brahman.",
+      "beschreibung": "Shankara gilt als der bedeutendste Philosoph des Advaita Vedanta, der „Nicht-Zweiheit“. Er lehrt, dass Atman und Brahman letztlich identisch sind und die Vielheit der Welt auf Unwissenheit (Avidya) beruht. Mit scharfen Kommentaren zu Upanishaden, Bhagavadgita und Brahmasutras und der Gründung von Klöstern in allen Himmelsrichtungen formte er den Hinduismus dauerhaft — und das in einem kurzen Leben.",
+      "kernideen": [
+        "Identität von Atman und Brahman",
+        "Welt-Vielheit als Avidya (Unwissenheit)",
+        "Nicht-Dualität (Advaita)"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-ramana",
+      "name": "Ramana Maharshi",
+      "years": "1879-1950",
+      "role": "Advaita-Lehrer",
+      "tradition": "Upanishadische Tradition",
+      "symbol": "WHO",
+      "accent": "#b99b5d",
+      "wikiTerm": "Ramana_Maharshi",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b99b5d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EAdvaita-Lehrer%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3ERamana%20Maharshi%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EWHO%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_upanishadic",
+        "cluster_unity"
+      ],
+      "bio": "Lehrt Selbsterforschung durch die Frage \"Wer bin ich?\" ohne Ritual und Systemzwang.",
+      "beschreibung": "Ramana Maharshi durchlebte als Jugendlicher eine spontane Todeserfahrung, aus der eine bleibende Gewissheit des Selbst hervorging. Seine zentrale Methode ist die Selbsterforschung: die beharrliche Frage „Wer bin ich?“, die den Geist zu seiner Quelle zurückführt. Er lehrte ohne Rituale, Dogmen oder Systemzwang, oft im Schweigen. Vom Berg Arunachala aus wurde er zu einer der einflussreichsten spirituellen Gestalten des modernen Indien.",
+      "kernideen": [
+        "Selbsterforschung: „Wer bin ich?“",
+        "Lehre jenseits von Ritual und Dogma",
+        "Das Schweigen als Unterweisung"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-vivekananda",
+      "name": "Swami Vivekananda",
+      "years": "1863-1902",
+      "role": "Botschafter des Vedanta",
+      "tradition": "Upanishadische Tradition",
+      "symbol": "VED",
+      "accent": "#b99b5d",
+      "wikiTerm": "Swami_Vivekananda",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b99b5d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EBotschafter%20des%20Vedanta%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3ESwami%20Vivekananda%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EVED%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_upanishadic"
+      ],
+      "bio": "Bringt Vedanta auf das Weltparlament der Religionen und oeffnet ihn fuer den globalen Dialog.",
+      "beschreibung": "Swami Vivekananda, Schüler des Mystikers Ramakrishna, trug das Vedanta 1893 auf das Weltparlament der Religionen in Chicago und wurde zur Stimme eines selbstbewussten, dialogfähigen Hinduismus. Er verband spirituelle Tiefe mit sozialem Engagement und gründete den Ramakrishna-Orden. Religion war für ihn nicht Lehrsatz, sondern Verwirklichung des Göttlichen im Menschen.",
+      "kernideen": [
+        "Vedanta im globalen Dialog",
+        "Spiritualität verbunden mit sozialem Dienst",
+        "Religion als Verwirklichung, nicht Dogma"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-buddha",
+      "name": "Siddhartha Gautama",
+      "years": "ca. 563-483 v. Chr.",
+      "role": "Der Buddha",
+      "tradition": "Buddhismus",
+      "symbol": "BUD",
+      "accent": "#c89a54",
+      "wikiTerm": "Gautama_Buddha",
+      "portraitUrl": "/images/buddha.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_buddhism",
+        "text_dhammapada",
+        "buddha"
+      ],
+      "bio": "Begruender des Buddhismus. Lehrt den Mittleren Weg zwischen Askese und Genuss.",
+      "beschreibung": "Siddhartha Gautama gab als Sohn eines Adelsgeschlechts ein Leben im Wohlstand auf, um dem Leiden auf den Grund zu gehen. Nach Jahren der Askese fand er den „Mittleren Weg“ zwischen Selbstkasteiung und Genuss und formulierte die Vier Edlen Wahrheiten. Sein Weg zielt nicht auf Glauben, sondern auf eigene Einsicht und das Erlöschen von Gier, Hass und Verblendung.",
+      "kernideen": [
+        "Vier Edle Wahrheiten",
+        "Der Mittlere Weg",
+        "Befreiung durch Einsicht statt Glauben"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-nagarjuna",
+      "name": "Nagarjuna",
+      "years": "ca. 150-250",
+      "role": "Philosoph der Leere",
+      "tradition": "Buddhismus",
+      "symbol": "SUN",
+      "accent": "#c89a54",
+      "wikiTerm": "Nagarjuna",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c89a54%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EPhilosoph%20der%20Leere%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3ENagarjuna%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ESUN%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_buddhism",
+        "cluster_detachment"
+      ],
+      "bio": "Begruendet die Madhyamaka-Schule und entwickelt die Philosophie der Leerheit.",
+      "beschreibung": "Nagarjuna begründete die Madhyamaka-Schule, die „Mittlere Lehre“, und gilt nach dem Buddha als wichtigster Denker des Buddhismus. Sein Schlüsselbegriff ist Shunyata — die Leerheit: Nichts existiert aus sich selbst, alles entsteht in Abhängigkeit. Mit einer radikalen Dialektik zeigt er die Widersprüche jeder festgelegten Position auf, ohne selbst eine neue These zu behaupten.",
+      "kernideen": [
+        "Shunyata — Leerheit aller Dinge",
+        "Abhängiges Entstehen",
+        "Dialektik ohne eigene Letzt-These"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-thich-nhat-hanh",
+      "name": "Thich Nhat Hanh",
+      "years": "1926-2022",
+      "role": "Zen-Meister",
+      "tradition": "Buddhismus",
+      "symbol": "ZEN",
+      "accent": "#c89a54",
+      "wikiTerm": "Thich_Nhat_Hanh",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c89a54%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EZen-Meister%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EThich%20Nhat%20Hanh%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EZEN%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_buddhism",
+        "cluster_detachment"
+      ],
+      "bio": "Begruendet einen engagierten Buddhismus und popularisiert Achtsamkeit als Lebenskunst.",
+      "beschreibung": "Der vietnamesische Zen-Meister Thich Nhat Hanh prägte den Begriff des „engagierten Buddhismus“ — Meditation, die sich dem Leid der Welt nicht entzieht. Sein Friedensengagement im Vietnamkrieg zwang ihn ins jahrzehntelange Exil. In einer einfachen, poetischen Sprache machte er Achtsamkeit für ein westliches Publikum zugänglich: bewusstes Atmen, bewusstes Gehen, Präsenz im Alltäglichen.",
+      "kernideen": [
+        "Engagierter Buddhismus",
+        "Achtsamkeit im Alltag",
+        "Frieden beginnt im gegenwärtigen Atemzug"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-goenka",
+      "name": "S. N. Goenka",
+      "years": "1924-2013",
+      "role": "Vipassana-Lehrer",
+      "tradition": "Buddhismus",
+      "symbol": "VIP",
+      "accent": "#c89a54",
+      "wikiTerm": "S._N._Goenka",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c89a54%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EVipassana-Lehrer%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3ES.%20N.%20Goenka%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EVIP%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_buddhism",
+        "text_dhammapada"
+      ],
+      "bio": "Verbreitet die Vipassana-Meditation weltweit in 10-Tage-Retreats.",
+      "beschreibung": "S. N. Goenka, ein in Burma geborener Geschäftsmann indischer Herkunft, lernte Vipassana bei dem Lehrer Sayagyi U Ba Khin und gab sie ab 1969 weltweit weiter. In zehntägigen, kostenfreien Retreats vermittelt er eine nicht-konfessionelle Technik der Körperbeobachtung: das gleichmütige Wahrnehmen von Empfindungen, das tief sitzende Reaktionsmuster auflöst.",
+      "kernideen": [
+        "Vipassana als Körperbeobachtung",
+        "Gleichmut gegenüber allen Empfindungen",
+        "Nicht-konfessionelle, freie Retreats"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-ajahn-chah",
+      "name": "Ajahn Chah",
+      "years": "1918-1992",
+      "role": "Waldmönch",
+      "tradition": "Buddhismus",
+      "symbol": "THR",
+      "accent": "#c89a54",
+      "wikiTerm": "Ajahn_Chah",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c89a54%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EWaldm%C3%B6nch%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EAjahn%20Chah%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ETHR%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_buddhism"
+      ],
+      "bio": "Praegt die moderne Theravada-Rezeption mit Einfachheit, Strenge und Humor.",
+      "beschreibung": "Ajahn Chah war ein thailändischer Waldmönch, der die strenge, einfache Tradition des Theravada-Waldbuddhismus erneuerte. Sein Kloster zog auch westliche Schüler an, aus denen eine internationale Klosterlinie erwuchs. Seine Belehrungen waren konkret, humorvoll und unprätentiös — Gelassenheit lernte man bei ihm an Alltagspflichten und am genauen Hinsehen, nicht an Theorie.",
+      "kernideen": [
+        "Theravada-Waldtradition",
+        "Lehre durch Einfachheit und Humor",
+        "Praxis im konkreten Alltag"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-laozi",
+      "name": "Laozi",
+      "years": "ca. 6. Jh. v. Chr.",
+      "role": "Begruender des Daoismus",
+      "tradition": "Daoismus",
+      "symbol": "DAO",
+      "accent": "#7aa061",
+      "wikiTerm": "Laozi",
+      "portraitUrl": "/images/laozi.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_daoism",
+        "text_daodejing",
+        "laozi"
+      ],
+      "bio": "Legendärer Verfasser des Daodejing. Lehrt Wu Wei und Rueckkehr zum Natuerlichen.",
+      "beschreibung": "Laozi gilt als legendärer Verfasser des Daodejing, eines der meistübersetzten Bücher der Welt. Ob historische Person oder Sammelgestalt — sein Werk lehrt das Dao, den „Weg“, der sich jeder Definition entzieht, und das Wu Wei, das nicht-erzwingende Handeln. Stärke zeigt sich für ihn im Weichen, Führung im Zurücktreten.",
+      "kernideen": [
+        "Das Dao jenseits aller Begriffe",
+        "Wu Wei — Handeln ohne Erzwingen",
+        "Die Stärke des Weichen"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-zhuangzi",
+      "name": "Zhuangzi",
+      "years": "ca. 369-286 v. Chr.",
+      "role": "Daoistischer Philosoph",
+      "tradition": "Daoismus",
+      "symbol": "CHI",
+      "accent": "#7aa061",
+      "wikiTerm": "Zhuang_Zhou",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%237aa061%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EDaoistischer%20Philosoph%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EZhuangzi%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ECHI%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_daoism",
+        "text_daodejing",
+        "cluster_becoming"
+      ],
+      "bio": "Meister der Paradoxie und der Relativierung aller Standpunkte.",
+      "beschreibung": "Zhuangzi ist der große Stilist und Provokateur des Daoismus. In Gleichnissen, Paradoxien und absurden Geschichten — am bekanntesten der Traum vom Schmetterling — relativiert er jeden festen Standpunkt und jede Gewissheit. Er verspottet Ehrgeiz und Karriere und preist die Freiheit dessen, der „nutzlos“ und so ungebunden ist.",
+      "kernideen": [
+        "Relativität aller Standpunkte",
+        "Der Schmetterlingstraum",
+        "Freiheit durch „Nutzlosigkeit“"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-zhang-sanfeng",
+      "name": "Zhang Sanfeng",
+      "years": "ca. 12./13. Jh.",
+      "role": "Legendenfigur des Taiji",
+      "tradition": "Daoismus",
+      "symbol": "TAI",
+      "accent": "#7aa061",
+      "wikiTerm": "Zhang_Sanfeng",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%237aa061%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3ELegendenfigur%20des%20Taiji%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EZhang%20Sanfeng%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ETAI%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_daoism"
+      ],
+      "bio": "Daoistischer Moench, dem die Erfindung des Taiji zugeschrieben wird.",
+      "beschreibung": "Zhang Sanfeng ist eine halb legendäre Gestalt, ein daoistischer Mönch, dem die Überlieferung die Erfindung des Taiji Quan zuschreibt. Die Legende erzählt, er habe den Kampf einer Schlange mit einem Kranich beobachtet und daraus ein Prinzip gewonnen: das Weiche überwindet das Harte. Er verkörpert die Verbindung von daoistischer Philosophie, innerer Alchemie und Bewegungskunst.",
+      "kernideen": [
+        "Taiji als Bewegung gewordene Daoistik",
+        "Das Weiche überwindet das Harte",
+        "Innere Alchemie und Körperpraxis"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-sokrates",
+      "name": "Sokrates",
+      "years": "470-399 v. Chr.",
+      "role": "Begruender der Fragekunst",
+      "tradition": "Griechische Schule",
+      "symbol": "ASK",
+      "accent": "#c28c68",
+      "wikiTerm": "Socrates",
+      "portraitUrl": "/images/sokrates.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "school_platonism",
+        "school_presocratics",
+        "sokrates"
+      ],
+      "bio": "Philosophiert ueber Pruefung, Gewissen und dialogische Selbsterkenntnis.",
+      "beschreibung": "Sokrates schrieb kein Wort und wurde doch zum Wendepunkt der Philosophie. Auf den Plätzen Athens prüfte er im Gespräch die Selbstverständlichkeiten seiner Mitbürger und entlarvte Scheinwissen — wissend, dass er nichts wisse. Sein Ziel war nicht Rechthaben, sondern die gemeinsame Sorge um ein gutes, geprüftes Leben. Für seine Unbeirrbarkeit nahm er das Todesurteil in Kauf.",
+      "kernideen": [
+        "Dialogische Prüfung (Elenchos)",
+        "Das Wissen des Nichtwissens",
+        "Das ungeprüfte Leben ist nicht lebenswert"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-platon",
+      "name": "Platon",
+      "years": "428-348 v. Chr.",
+      "role": "Ideenphilosoph",
+      "tradition": "Griechische Schule",
+      "symbol": "IDEA",
+      "accent": "#c28c68",
+      "wikiTerm": "Plato",
+      "portraitUrl": "/images/platon.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "school_platonism",
+        "text_republic",
+        "platon"
+      ],
+      "bio": "Gruendet die Akademie und entwickelt Ideenlehre, Paideia und politische Philosophie.",
+      "beschreibung": "Platon, Schüler des Sokrates, gründete in Athen die Akademie — die erste dauerhafte philosophische Schule. In kunstvollen Dialogen entwickelte er die Ideenlehre: Hinter der wandelbaren Sinnenwelt liegt eine Ordnung unwandelbarer Urbilder. Sein Höhlengleichnis prägt bis heute das Bild von Bildung als Weg ans Licht; in der „Politeia“ verband er Erkenntnis, Seele und gerechten Staat.",
+      "kernideen": [
+        "Ideenlehre — Urbilder hinter den Erscheinungen",
+        "Das Höhlengleichnis",
+        "Erkenntnis, Seele und Gerechtigkeit"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-aristoteles",
+      "name": "Aristoteles",
+      "years": "384-322 v. Chr.",
+      "role": "Systematiker",
+      "tradition": "Aristotelische Schule",
+      "symbol": "LOG",
+      "accent": "#c28c68",
+      "wikiTerm": "Aristotle",
+      "portraitUrl": "/images/aristoteles.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "school_aristotelianism",
+        "aristoteles"
+      ],
+      "bio": "Begruendet Logik, Tugendethik und eine formale Ordnung des Wissens.",
+      "beschreibung": "Aristoteles, zwanzig Jahre Schüler Platons, wandte sich von der Ideenlehre ab und der konkreten Wirklichkeit zu. Er begründete die formale Logik, ordnete das Wissen in eigenständige Disziplinen und legte Grundlagen von Biologie, Physik und Staatslehre. Seine Tugendethik sucht das gelingende Leben (Eudaimonia) im Maß, in der „Mitte“ zwischen den Extremen.",
+      "kernideen": [
+        "Begründung der formalen Logik",
+        "Tugend als Mitte zwischen Extremen",
+        "Eudaimonia — gelingendes Leben"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-heraklit",
+      "name": "Heraklit",
+      "years": "ca. 535-475 v. Chr.",
+      "role": "Philosoph des Werdens",
+      "tradition": "Vorsokratik",
+      "symbol": "FLUX",
+      "accent": "#c28c68",
+      "wikiTerm": "Heraclitus",
+      "portraitUrl": "/images/heraklit.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "school_presocratics",
+        "cluster_becoming",
+        "heraklit"
+      ],
+      "bio": "Denkt Wandel, Spannung und den Logos als Grundfigur der Wirklichkeit.",
+      "beschreibung": "Heraklit aus Ephesos, der „Dunkle“ genannt, denkt die Welt als unaufhörlichen Fluss: alles fließt, niemand steigt zweimal in denselben Fluss. Wirklichkeit ist für ihn Spannung der Gegensätze, gehalten von einem verborgenen Logos, der Weltvernunft. In dunklen, aphoristischen Sätzen formuliert er eine Philosophie des Werdens.",
+      "kernideen": [
+        "„Panta rhei“ — alles fließt",
+        "Einheit der Gegensätze",
+        "Der Logos als Weltordnung"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-parmenides",
+      "name": "Parmenides",
+      "years": "ca. 515-450 v. Chr.",
+      "role": "Philosoph des Seins",
+      "tradition": "Vorsokratik",
+      "symbol": "BEING",
+      "accent": "#c28c68",
+      "wikiTerm": "Parmenides",
+      "portraitUrl": "/images/parmenides.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "school_presocratics",
+        "parmenides"
+      ],
+      "bio": "Stellt dem Wandel die These eines unveraenderlichen Seins entgegen.",
+      "beschreibung": "Parmenides aus Elea stellt dem Fluss Heraklits die radikale Gegenthese entgegen: Das Sein ist, das Nichtsein ist nicht — und folglich kann es kein echtes Werden, keine Vielheit, keine Bewegung geben. Wahrheit erschließt sich nur dem Denken, nicht den trügerischen Sinnen. Damit begründet er die Ontologie.",
+      "kernideen": [
+        "Das Sein ist, Nichtsein ist nicht",
+        "Wandel als Sinnentrug",
+        "Vorrang des Denkens vor der Wahrnehmung"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-pythagoras",
+      "name": "Pythagoras",
+      "years": "ca. 570-495 v. Chr.",
+      "role": "Mathematiker und Mystiker",
+      "tradition": "Vorsokratik",
+      "symbol": "NUM",
+      "accent": "#c28c68",
+      "wikiTerm": "Pythagoras",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c28c68%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EMathematiker%20und%20Mystiker%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EPythagoras%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ENUM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "school_presocratics"
+      ],
+      "bio": "Verbindet Zahl, Kosmos und Lebensform in einer philosophischen Gemeinschaft.",
+      "beschreibung": "Pythagoras verband mathematische Einsicht mit religiöser Lebensform. In seiner Gemeinschaft in Süditalien galt die Zahl als Schlüssel zur Ordnung des Kosmos — von den Verhältnissen der Töne bis zu den Bahnen der Gestirne. Lehren von Seelenwanderung und der „Harmonie der Sphären“ machten seine Schule zugleich zur Forschungsstätte und zum Lebensbund.",
+      "kernideen": [
+        "Die Zahl als Ordnung des Kosmos",
+        "Harmonie der Sphären",
+        "Philosophie als Lebensform"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-seneca",
+      "name": "Seneca",
+      "years": "4 v. Chr.-65",
+      "role": "Stoischer Staatsmann",
+      "tradition": "Stoische Linie",
+      "symbol": "STOA",
+      "accent": "#c28c68",
+      "wikiTerm": "Seneca_the_Younger",
+      "portraitUrl": "/images/seneca.svg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "seneca",
+        "cluster_critique"
+      ],
+      "bio": "Verbindet stoische Lebenskunst mit politischer Verantwortung und Selbstpruefung.",
+      "beschreibung": "Seneca war Philosoph, Dramatiker und einer der mächtigsten Männer Roms — Erzieher und Berater des Kaisers Nero. In Briefen und Essays machte er die stoische Lebenskunst praktisch: über Zeit, Zorn, Tod und das rechte Maß. Sein Leben blieb spannungsvoll zwischen Reichtum, Macht und philosophischem Anspruch.",
+      "kernideen": [
+        "Stoische Lebenskunst im Alltag",
+        "Umgang mit Zeit, Zorn und Tod",
+        "Philosophie zwischen Macht und Maß"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-aurelius",
+      "name": "Marc Aurel",
+      "years": "121-180",
+      "role": "Philosophenkaiser",
+      "tradition": "Stoische Linie",
+      "symbol": "STOA",
+      "accent": "#c28c68",
+      "wikiTerm": "Marcus_Aurelius",
+      "portraitUrl": "/images/aurelius.svg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "aurelius",
+        "cluster_critique"
+      ],
+      "bio": "Die Selbstbetrachtungen verdichten stoische Regierung des Selbst unter den Bedingungen der Macht.",
+      "beschreibung": "Marc Aurel regierte zwei Jahrzehnte als römischer Kaiser — und führte zugleich ein philosophisches Tagebuch, die „Selbstbetrachtungen“, nicht zur Veröffentlichung, sondern zur eigenen Prüfung. Darin ringt er, mitten in Krieg und Pflicht, um stoische Haltung: Gelassenheit gegenüber dem Unabänderlichen und das Bewusstsein der Vergänglichkeit.",
+      "kernideen": [
+        "Selbstprüfung als tägliche Übung",
+        "Gelassenheit gegenüber dem Unabänderlichen",
+        "Pflicht und Vergänglichkeit"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-epictet",
+      "name": "Epiktet",
+      "years": "ca. 50-135",
+      "role": "Stoischer Lehrer",
+      "tradition": "Stoische Linie",
+      "symbol": "DISC",
+      "accent": "#c28c68",
+      "wikiTerm": "Epictetus",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c28c68%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EStoischer%20Lehrer%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EEpiktet%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EDISC%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "cluster_critique"
+      ],
+      "bio": "Lehrt innere Freiheit durch die Unterscheidung dessen, was in unserer Macht steht und was nicht.",
+      "beschreibung": "Epiktet begann sein Leben als Sklave und wurde zum einflussreichsten Lehrer der späten Stoa. Sein Kerngedanke: Nicht die Dinge beunruhigen uns, sondern unsere Urteile über sie. Frei wird, wer klar trennt zwischen dem, was in seiner Macht steht — die eigenen Vorstellungen und Entscheidungen — und dem, was es nicht ist.",
+      "kernideen": [
+        "Die Dichotomie der Kontrolle",
+        "Nicht die Dinge, sondern die Urteile beunruhigen",
+        "Innere Freiheit unter allen Umständen"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-zenon",
+      "name": "Zenon von Kition",
+      "years": "334-262 v. Chr.",
+      "role": "Begruender der Stoa",
+      "tradition": "Stoische Linie",
+      "symbol": "PORT",
+      "accent": "#c28c68",
+      "wikiTerm": "Zeno_of_Citium",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c28c68%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EBegruender%20der%20Stoa%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EZenon%20von%20Kition%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EPORT%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "cluster_critique"
+      ],
+      "bio": "Gruendet die Schule in der Stoa Poikile in Athen.",
+      "beschreibung": "Zenon von Kition, ein Kaufmann zypriotischer Herkunft, kam durch einen Schiffbruch zur Philosophie und gründete um 300 v. Chr. in Athen die Stoa. Ihren Namen trägt sie von der „bunten Säulenhalle“ (Stoa Poikile). Er entwarf eine Philosophie, die Logik, Naturlehre und Ethik verband und das Leben „in Übereinstimmung mit der Natur“ zum Ziel erklärte.",
+      "kernideen": [
+        "Gründung der Stoa",
+        "Leben im Einklang mit der Natur",
+        "Einheit von Logik, Physik und Ethik"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-augustinus",
+      "name": "Augustinus",
+      "years": "354-430",
+      "role": "Theologe der Innerlichkeit",
+      "tradition": "Christliche Theologie",
+      "symbol": "INT",
+      "accent": "#b48bc9",
+      "wikiTerm": "Augustine_of_Hippo",
+      "portraitUrl": "/images/augustinus.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_christian_theology",
+        "augustinus",
+        "cluster_innerness"
+      ],
+      "bio": "Denkt Erinnerung, Gnade und Rueckkehr als Wege in den inneren Raum der Wahrheit.",
+      "beschreibung": "Augustinus, von der antiken Rhetorik herkommend und lange suchend, fand erst spät zum christlichen Glauben — ein Weg, den er in den „Bekenntnissen“ als erste große Autobiografie der Innerlichkeit erzählt. Er entdeckt das Innere als Ort, an dem der Mensch Gott begegnet, und denkt das Verhältnis von Wille, Gnade und Freiheit neu.",
+      "kernideen": [
+        "Innerlichkeit als Ort der Wahrheit",
+        "Erinnerung, Wille und Gnade",
+        "„Bekenntnisse“ — Autobiografie der Seele"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-eckhart",
+      "name": "Meister Eckhart",
+      "years": "1260-1328",
+      "role": "Mystiker und Theologe",
+      "tradition": "Christliche Theologie",
+      "symbol": "VOID",
+      "accent": "#b48bc9",
+      "wikiTerm": "Meister_Eckhart",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b48bc9%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EMystiker%20und%20Theologe%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EMeister%20Eckhart%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EVOID%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_christian_theology",
+        "cluster_innerness"
+      ],
+      "bio": "Lehrt Gelassenheit als Loslassen aller Bilder, selbst der Bilder von Gott.",
+      "beschreibung": "Meister Eckhart, Dominikaner und Prediger, gilt als der kühnste Mystiker des deutschen Mittelalters. Er lehrt die „Gelassenheit“ — das Loslassen aller Bilder, Wünsche und Sicherheiten, bis hin zum Loslassen der eigenen Gottesvorstellungen. Seine paradoxe, an die Grenzen der Sprache gehende Lehre brachte ihm einen Häresieprozess ein.",
+      "kernideen": [
+        "Gelassenheit — Loslassen aller Bilder",
+        "Der Seelengrund",
+        "Mystik an der Grenze der Sprache"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-teresa",
+      "name": "Teresa von Avila",
+      "years": "1515-1582",
+      "role": "Mystikerin und Reformerin",
+      "tradition": "Christliche Theologie",
+      "symbol": "SOUL",
+      "accent": "#b48bc9",
+      "wikiTerm": "Teresa_of_Avila",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b48bc9%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EMystikerin%20und%20Reformerin%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3ETeresa%20von%20Avila%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ESOUL%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_christian_theology",
+        "cluster_innerness"
+      ],
+      "bio": "Beschreibt die Wohnungen der Seele als Stufen einer inneren Verwandlung.",
+      "beschreibung": "Teresa von Avila war Karmelitin, Mystikerin und tatkräftige Ordensreformerin im Spanien des 16. Jahrhunderts. In der „Inneren Burg“ beschreibt sie den Weg der Seele als Durchschreiten von sieben „Wohnungen“, von der ersten Umkehr bis zur Einung mit Gott. Ihre Mystik bleibt nüchtern und prüfend, misstrauisch gegen bloße Gefühle.",
+      "kernideen": [
+        "Die „Innere Burg“ — sieben Wohnungen der Seele",
+        "Mystik mit nüchterner Prüfung",
+        "Kontemplation und tätige Reform"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-hildegard",
+      "name": "Hildegard von Bingen",
+      "years": "1098-1179",
+      "role": "Visionaerin",
+      "tradition": "Christliche Theologie",
+      "symbol": "VIS",
+      "accent": "#b48bc9",
+      "wikiTerm": "Hildegard_of_Bingen",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b48bc9%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EVisionaerin%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EHildegard%20von%20Bingen%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EVIS%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_christian_theology"
+      ],
+      "bio": "Verbindet Mystik, Musik, Naturbeobachtung und kosmische Bildwelten.",
+      "beschreibung": "Hildegard von Bingen war Benediktinerin, Äbtissin und eine der vielseitigsten Gestalten des Mittelalters: Visionärin, Komponistin, Heilkundige. Ihre Visionen hielt sie in Wort und leuchtenden Bildern fest. Sie verband eine kosmische Schau der Schöpfung mit konkretem Wissen über Pflanzen und Körper — das „Grünen“ (viriditas) war ihr Bild lebendiger Kraft.",
+      "kernideen": [
+        "Visionäre Schau der Schöpfung",
+        "Viriditas — die „Grünkraft“ des Lebendigen",
+        "Einheit von Mystik, Musik und Heilkunde"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-merton",
+      "name": "Thomas Merton",
+      "years": "1915-1968",
+      "role": "Moench und Autor",
+      "tradition": "Christliche Theologie",
+      "symbol": "DIAL",
+      "accent": "#b48bc9",
+      "wikiTerm": "Thomas_Merton",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23b48bc9%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EMoench%20und%20Autor%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EThomas%20Merton%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EDIAL%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_christian_theology"
+      ],
+      "bio": "Verbindet christliche Kontemplation mit Zen und sozialem Engagement.",
+      "beschreibung": "Thomas Merton, US-amerikanischer Trappistenmönch und Schriftsteller, wurde mit seiner Autobiografie zum meistgelesenen geistlichen Autor seiner Zeit. Aus der Stille des Klosters heraus suchte er den Dialog: mit dem Zen-Buddhismus, dem Daoismus, der Friedensbewegung. Kontemplation war für ihn kein Rückzug, sondern führte zur Verantwortung für die Welt.",
+      "kernideen": [
+        "Kontemplation und Weltverantwortung",
+        "Interreligiöser Dialog mit Zen und Daoismus",
+        "Stille als Quelle des Engagements"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-konfuzius",
+      "name": "Konfuzius",
+      "years": "551-479 v. Chr.",
+      "role": "Lehrer der Kultivierung",
+      "tradition": "Konfuzianismus",
+      "symbol": "REN",
+      "accent": "#cda25f",
+      "wikiTerm": "Confucius",
+      "portraitUrl": "/images/konfuzios.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_confucianism",
+        "konfuzios"
+      ],
+      "bio": "Verbindet Menschlichkeit, Ritual und Selbstformung als Grundlage guter Ordnung.",
+      "beschreibung": "Konfuzius lebte in einer Zeit politischen Zerfalls und suchte die Erneuerung der Ordnung nicht in Gesetz und Strafe, sondern in der sittlichen Bildung des Einzelnen. Sein Schlüsselbegriff ist Ren — Menschlichkeit —, eingeübt in Ritual (Li), Pietät und beständigem Lernen. Der „Edle“ ist nicht von Geburt, sondern durch Selbstformung edel.",
+      "kernideen": [
+        "Ren — Menschlichkeit als Kern der Ethik",
+        "Ritual und Selbstkultivierung",
+        "Der „Edle“ durch Bildung, nicht Geburt"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-mengzi",
+      "name": "Mengzi",
+      "years": "372-289 v. Chr.",
+      "role": "Zweiter Weiser",
+      "tradition": "Konfuzianismus",
+      "symbol": "GOOD",
+      "accent": "#cda25f",
+      "wikiTerm": "Mencius",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23cda25f%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EZweiter%20Weiser%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EMengzi%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EGOOD%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_confucianism"
+      ],
+      "bio": "Lehrt die angeborene Guete des Menschen und die Keime der Tugend.",
+      "beschreibung": "Mengzi (Menzius) gilt als der „zweite Weise“ des Konfuzianismus. Gegen pessimistische Zeitgenossen verteidigt er die These von der angeborenen Güte des Menschen: In jedem liegen „Keime“ der Tugend — etwa das spontane Mitleid beim Anblick eines Kindes in Gefahr. Auch Herrschaft bindet er an das Wohl des Volkes.",
+      "kernideen": [
+        "Angeborene Güte des Menschen",
+        "Die „Keime“ der Tugend",
+        "Herrschaft im Dienst des Volkes"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-zhu-xi",
+      "name": "Zhu Xi",
+      "years": "1130-1200",
+      "role": "Neo-Konfuzianer",
+      "tradition": "Konfuzianismus",
+      "symbol": "RITE",
+      "accent": "#cda25f",
+      "wikiTerm": "Zhu_Xi",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23cda25f%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3ENeo-Konfuzianer%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EZhu%20Xi%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ERITE%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_confucianism"
+      ],
+      "bio": "Systematisiert den Neo-Konfuzianismus und verbindet Metaphysik mit Bildung.",
+      "beschreibung": "Zhu Xi systematisierte im 12. Jahrhundert die konfuzianische Tradition neu und schuf den Neo-Konfuzianismus, der für Jahrhunderte das geistige Fundament Chinas wurde. Er verband Ethik mit einer Metaphysik von Prinzip (Li) und Lebensenergie (Qi). Erkenntnis bedeutet ihm das „Ergründen der Dinge“ — geduldiges Studium als Weg der Selbstvervollkommnung.",
+      "kernideen": [
+        "Neo-konfuzianische Synthese",
+        "Prinzip (Li) und Energie (Qi)",
+        "Erkenntnis durch „Ergründen der Dinge“"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-wang-yangming",
+      "name": "Wang Yangming",
+      "years": "1472-1529",
+      "role": "Neo-Konfuzianer",
+      "tradition": "Konfuzianismus",
+      "symbol": "ACT",
+      "accent": "#cda25f",
+      "wikiTerm": "Wang_Yangming",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23cda25f%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3ENeo-Konfuzianer%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EWang%20Yangming%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EACT%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_confucianism"
+      ],
+      "bio": "Lehrt die Einheit von Wissen und Handeln.",
+      "beschreibung": "Wang Yangming, General und Philosoph der Ming-Zeit, setzte dem gelehrten Studium Zhu Xis eine andere Betonung entgegen: Wissen und Handeln sind eine Einheit — wer wirklich weiß, handelt bereits danach. Im „angeborenen moralischen Wissen“ (Liangzhi) besitzt jeder Mensch einen unmittelbaren sittlichen Kompass.",
+      "kernideen": [
+        "Einheit von Wissen und Handeln",
+        "Liangzhi — angeborenes moralisches Wissen",
+        "Intuition vor bloßer Gelehrsamkeit"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-plotinus",
+      "name": "Plotin",
+      "years": "204-270",
+      "role": "Neuplatoniker",
+      "tradition": "Neuplatonismus",
+      "symbol": "ONE",
+      "accent": "#a78295",
+      "wikiTerm": "Plotinus",
+      "portraitUrl": "/images/plotin.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_neoplatonism",
+        "plotin",
+        "text_enneads"
+      ],
+      "bio": "Entfaltet das Eine, den Nous und die Rueckkehr der Seele als gestufte Ontologie.",
+      "beschreibung": "Plotin gilt als Begründer des Neuplatonismus. In den „Enneaden“ entfaltet er eine gestufte Wirklichkeit: Aus dem „Einen“, das jenseits von Sein und Begriff liegt, geht der Geist (Nous) hervor, aus diesem die Seele, aus dieser die sinnliche Welt. Philosophie ist für ihn der Aufstieg der Seele, die Rückkehr zum Ursprung.",
+      "kernideen": [
+        "Das „Eine“ jenseits von Sein und Begriff",
+        "Stufung: Eines — Nous — Seele — Welt",
+        "Philosophie als Aufstieg und Rückkehr"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-porphyry",
+      "name": "Porphyrios",
+      "years": "ca. 234-305",
+      "role": "Editor der Enneaden",
+      "tradition": "Neuplatonismus",
+      "symbol": "EDIT",
+      "accent": "#a78295",
+      "wikiTerm": "Porphyry_(philosopher)",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23a78295%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3EEditor%20der%20Enneaden%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EPorphyrios%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3EEDIT%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_neoplatonism",
+        "text_enneads"
+      ],
+      "bio": "Schueler Plotins und Herausgeber der Enneaden. Vermittelt Neuplatonismus in systematischer Form.",
+      "beschreibung": "Porphyrios war Schüler Plotins und ordnete dessen verstreute Schriften zu den „Enneaden“ — ohne ihn wäre Plotins Werk kaum erhalten. Als eigenständiger Denker schrieb er zu Logik und Religionskritik; seine „Isagoge“ wurde für über ein Jahrtausend zum Standard-Lehrbuch der Logik.",
+      "kernideen": [
+        "Herausgeber der „Enneaden“",
+        "Die „Isagoge“ — Logik-Lehrbuch des Mittelalters",
+        "Neuplatonismus systematisch vermittelt"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-proclus",
+      "name": "Proklos",
+      "years": "412-485",
+      "role": "Neuplatonischer Systematiker",
+      "tradition": "Neuplatonismus",
+      "symbol": "STEP",
+      "accent": "#a78295",
+      "wikiTerm": "Proclus",
+      "portraitUrl": "data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20560%22%3E%0A%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23a78295%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231b2c3d%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22560%22%20rx%3D%2234%22%20fill%3D%22%23111821%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%22852%22%20height%3D%22512%22%20rx%3D%2228%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C0.14)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22708%22%20cy%3D%22148%22%20r%3D%2270%22%20fill%3D%22rgba(255%2C255%2C255%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2268%22%20y%3D%2286%22%20width%3D%22278%22%20height%3D%22330%22%20rx%3D%2224%22%20fill%3D%22rgba(255%2C255%2C255%2C0.12)%22%20stroke%3D%22rgba(255%2C255%2C255%2C0.28)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22194%22%20r%3D%2272%22%20fill%3D%22rgba(17%2C24%2C33%2C0.22)%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22207%22%20cy%3D%22174%22%20r%3D%2242%22%20fill%3D%22rgba(255%2C255%2C255%2C0.30)%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22151%22%20y%3D%22250%22%20width%3D%22112%22%20height%3D%2286%22%20rx%3D%2242%22%20fill%3D%22rgba(17%2C24%2C33%2C0.24)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22154%22%20fill%3D%22rgba(255%2C255%2C255%2C0.78)%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2228%22%20letter-spacing%3D%226%22%3ENeuplatonischer%20Systematiker%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22252%22%20fill%3D%22%23fff7f9%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2266%22%20font-weight%3D%22700%22%3EProklos%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22332%22%20fill%3D%22rgba(255%2C255%2C255%2C0.88)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2226%22%3ESTEP%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22430%22%20y%3D%22374%22%20width%3D%22270%22%20height%3D%222%22%20fill%3D%22rgba(255%2C255%2C255%2C0.42)%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22430%22%20y%3D%22422%22%20fill%3D%22rgba(255%2C255%2C255%2C0.82)%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2224%22%3EEpistemic%20Atlas%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "source": "local-generated",
+      "relatedNodeIds": [
+        "tradition_neoplatonism"
+      ],
+      "bio": "Verfeinert die gestufte Ontologie des Neuplatonismus und die Vermittlungslogik zwischen Ebenen.",
+      "beschreibung": "Proklos war der große Systematiker der spätantiken Akademie in Athen. In seiner „Theologischen Elementarlehre“ brachte er den Neuplatonismus in eine streng deduktive, fast mathematische Form: Satz für Satz entfaltet er, wie die Ebenen der Wirklichkeit auseinander hervorgehen. Sein System wurde Hauptquelle der mittelalterlichen Metaphysik.",
+      "kernideen": [
+        "Deduktive Systematik der Metaphysik",
+        "Logik der Vermittlung zwischen Seinsebenen",
+        "Brücke in die mittelalterliche Philosophie"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-descartes",
+      "name": "Descartes",
+      "years": "1596-1650",
+      "role": "Methodischer Neubeginn",
+      "tradition": "Neuzeit",
+      "symbol": "COG",
+      "accent": "#80acd6",
+      "wikiTerm": "René_Descartes",
+      "portraitUrl": "/images/descartes.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_enlightenment",
+        "descartes"
+      ],
+      "bio": "Begruendet den methodischen Zweifel und verschiebt Gewissheit in das denkende Ich.",
+      "beschreibung": "René Descartes suchte ein Fundament des Wissens, das jedem Zweifel standhält. Methodisch zog er alles in Zweifel — bis er auf das eine Unbezweifelbare stieß: dass er, indem er zweifelt, denkt, und indem er denkt, ist. Mit dieser Verankerung der Gewissheit im denkenden Ich eröffnete er die neuzeitliche Philosophie.",
+      "kernideen": [
+        "Methodischer Zweifel",
+        "„Cogito ergo sum“",
+        "Trennung von Geist und Körper"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-kant",
+      "name": "Immanuel Kant",
+      "years": "1724-1804",
+      "role": "Kritiker der Vernunft",
+      "tradition": "Neuzeit",
+      "symbol": "CRIT",
+      "accent": "#80acd6",
+      "wikiTerm": "Immanuel_Kant",
+      "portraitUrl": "/images/kant.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_enlightenment",
+        "kant"
+      ],
+      "bio": "Untersucht die Bedingungen von Erkenntnis, Freiheit und Urteilskraft.",
+      "beschreibung": "Immanuel Kant vollzog die „kopernikanische Wende“ der Philosophie: Nicht das Erkennen richtet sich nach den Gegenständen, sondern die Gegenstände erscheinen uns nach den Formen unseres Erkennens. In drei „Kritiken“ bestimmte er die Grenzen der Vernunft, den kategorischen Imperativ als Gesetz der Freiheit und die Urteilskraft.",
+      "kernideen": [
+        "Kopernikanische Wende der Erkenntnis",
+        "Der kategorische Imperativ",
+        "Grenzen und Bedingungen der Vernunft"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-hegel",
+      "name": "G. W. F. Hegel",
+      "years": "1770-1831",
+      "role": "Dialektiker",
+      "tradition": "Neuzeit",
+      "symbol": "DIAL",
+      "accent": "#80acd6",
+      "wikiTerm": "Georg_Wilhelm_Friedrich_Hegel",
+      "portraitUrl": "/images/hegel.svg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_enlightenment",
+        "hegel"
+      ],
+      "bio": "Denkt Geschichte, Begriff und Widerspruch als sich entfaltenden Prozess.",
+      "beschreibung": "G. W. F. Hegel entwarf das umfassendste System der klassischen deutschen Philosophie. Wirklichkeit ist für ihn nicht starr, sondern Prozess: Der „Geist“ entfaltet sich durch Widerspruch und dessen Aufhebung — die Dialektik — hindurch. Geschichte, Recht und Kunst erscheinen als Stufen, auf denen der Geist zu sich selbst kommt.",
+      "kernideen": [
+        "Dialektik — Denken durch den Widerspruch",
+        "Wirklichkeit als Prozess des Geistes",
+        "Geschichte als Entfaltung der Freiheit"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-nietzsche",
+      "name": "Friedrich Nietzsche",
+      "years": "1844-1900",
+      "role": "Genealoge der Werte",
+      "tradition": "Neuzeit",
+      "symbol": "WILL",
+      "accent": "#80acd6",
+      "wikiTerm": "Friedrich_Nietzsche",
+      "portraitUrl": "/images/nietzsche.jpg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_enlightenment",
+        "nietzsche"
+      ],
+      "bio": "Schneidet die Herkunft moralischer Werte auf und verschiebt Denken in Kritik und Umwertung.",
+      "beschreibung": "Friedrich Nietzsche stellte die Herkunft der Moral selbst in Frage. Mit der „Genealogie“ deckte er auf, dass scheinbar ewige Werte geschichtlich geworden sind — und forderte ihre „Umwertung“. „Gott ist tot“ war für ihn die Diagnose eines Verlusts, der Antwort verlangt: Lebensbejahung noch im Leiden.",
+      "kernideen": [
+        "Genealogie und Umwertung der Werte",
+        "„Gott ist tot“ als kulturelle Diagnose",
+        "Lebensbejahung trotz des Leidens"
+      ],
+      "beschreibung_quelle": "model_generated"
+    },
+    {
+      "id": "personality-camus",
+      "name": "Albert Camus",
+      "years": "1913-1960",
+      "role": "Denker des Absurden",
+      "tradition": "Neuzeit",
+      "symbol": "ABS",
+      "accent": "#80acd6",
+      "wikiTerm": "Albert_Camus",
+      "portraitUrl": "/images/camus.svg",
+      "source": "legacy-einsein",
+      "relatedNodeIds": [
+        "tradition_enlightenment",
+        "camus",
+        "cluster_critique"
+      ],
+      "bio": "Verbindet Sinnkrise, Revolte und Haltung ohne metaphysische Absicherung.",
+      "beschreibung": "Albert Camus, Schriftsteller und Philosoph, dachte das „Absurde“ — den Zusammenstoß zwischen dem menschlichen Verlangen nach Sinn und einer schweigenden Welt. Seine Antwort ist nicht Resignation und nicht Selbsttäuschung, sondern Revolte: das hellsichtige, solidarische Festhalten am Leben ohne metaphysischen Trost.",
+      "kernideen": [
+        "Das Absurde als Grundverhältnis",
+        "Revolte statt Resignation oder Trost",
+        "Solidarität ohne metaphysische Absicherung"
+      ],
+      "beschreibung_quelle": "model_generated"
+    }
+  ]
+}
