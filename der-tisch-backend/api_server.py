@@ -33,6 +33,28 @@ try:
 except ImportError:
     _TISCH_MEMORY_AVAILABLE = False
 
+_STOPWORDS_DE = {
+    "ich", "du", "er", "sie", "es", "wir", "ihr", "ein", "eine", "einen", "dem", "den",
+    "der", "die", "das", "und", "oder", "aber", "ist", "bin", "hat", "haben", "sein",
+    "nicht", "kein", "wie", "was", "wer", "wo", "wann", "warum", "ob", "für", "mit",
+    "an", "auf", "in", "von", "zu", "aus", "bei", "nach", "über", "unter", "vor",
+    "mein", "meine", "meinen", "dein", "deine", "sein", "ihre", "unser", "euer",
+    "soll", "kann", "muss", "will", "darf", "würde", "sollte", "könnte", "müsste",
+}
+_STOPWORDS_EN = {
+    "i", "you", "he", "she", "it", "we", "they", "a", "an", "the", "and", "or",
+    "but", "is", "am", "has", "have", "be", "not", "no", "how", "what", "who",
+    "where", "when", "why", "for", "with", "at", "on", "in", "of", "to", "from",
+    "my", "your", "his", "her", "our", "their", "should", "can", "will", "do",
+}
+
+def _extract_keywords(text: str, n: int = 8) -> list[str]:
+    """Tokenisiert und filtert Stoppwörter + Satzzeichen für Tag-Extraktion."""
+    import re
+    tokens = re.sub(r"[^\w\s]", "", text.lower()).split()
+    stopwords = _STOPWORDS_DE | _STOPWORDS_EN
+    return [t for t in tokens if t not in stopwords and len(t) > 2][:n]
+
 NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
 
 # Serve TiSCH Hub at root
@@ -1276,6 +1298,7 @@ class QueryRequest(BaseModel):
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
     register: str = ""  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
+    source_app: str = "der-tisch"  # TiSCH Memory: welche App sendet die Anfrage
 
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
@@ -1346,10 +1369,9 @@ async def ask_the_table(req: QueryRequest):
     context_pack_summary = ""
     if TISCH_MEMORY_ENABLED and _TISCH_MEMORY_AVAILABLE:
         try:
-            source_app = getattr(req, "source_app", "der-tisch") or "der-tisch"
             ranked = rank_cards_for_context(
                 req.question,
-                tags=req.question.lower().split()[:6],
+                tags=_extract_keywords(req.question, n=6),
                 include_private=False,
                 max_chars=2400,
             )
@@ -1371,22 +1393,20 @@ async def ask_the_table(req: QueryRequest):
         # --- Post-Run: Ergebnis als MemoryCandidate speichern (wenn aktiviert) ---
         if TISCH_MEMORY_ENABLED and _TISCH_MEMORY_AVAILABLE:
             try:
-                source_app = getattr(req, "source_app", "der-tisch") or "der-tisch"
                 candidate = MemoryCandidate(
                     source_role=SourceRole.tisch_run_result,
                     memory_layer=MemoryLayer.project_memory,
                     curation_state=CurationState.candidate,
-                    family_line=[source_app],
+                    family_line=[req.source_app],
                     title=req.question[:120],
                     content=integration.vorlaeufiges_fazit or integration.einfach_gesagt or "",
-                    tags=req.question.lower().split()[:8],
-                    origin_app=source_app,
+                    tags=_extract_keywords(req.question),
+                    origin_app=req.source_app,
                     input_summary=req.question[:300],
                     output_summary=(integration.kurzfassung[0] if integration.kurzfassung else ""),
                     visibility="private",
                 )
-                import asyncio as _asyncio
-                loop = _asyncio.get_event_loop()
+                loop = asyncio.get_running_loop()
                 await loop.run_in_executor(None, append_candidate, candidate)
             except Exception:
                 pass
@@ -2269,8 +2289,7 @@ async def submit_memory_candidate(req: CandidateRequest):
             suggested_obsidian_path=req.suggested_obsidian_path,
             visibility=req.visibility,
         )
-        import asyncio as _asyncio
-        loop = _asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, append_candidate, candidate)
         return {"status": "ok", "id": candidate.id, "curation_state": candidate.curation_state.value}
     except (ValueError, KeyError) as e:
@@ -2294,9 +2313,8 @@ async def get_context_pack(req: ContextPackApiRequest):
     if not _TISCH_MEMORY_AVAILABLE:
         raise HTTPException(status_code=503, detail="tisch_memory module not available")
     try:
-        import asyncio as _asyncio
-        loop = _asyncio.get_event_loop()
-        query_tags = req.query.lower().split()[:8]
+        loop = asyncio.get_running_loop()
+        query_tags = _extract_keywords(req.query, n=8)
         ranked = await loop.run_in_executor(
             None,
             lambda: rank_cards_for_context(
@@ -2328,7 +2346,9 @@ async def get_context_pack(req: ContextPackApiRequest):
             total_chars=total_chars,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import logging
+        logging.getLogger("tisch_memory").exception("context-pack error")
+        raise HTTPException(status_code=500, detail="Context pack konnte nicht geladen werden.")
 
 
 @app.get("/api/tisch-memory/candidates", tags=["tisch-memory"])
@@ -2336,8 +2356,7 @@ async def list_candidates(origin_app: Optional[str] = None, project: Optional[st
     """Listet gespeicherte Candidates (read-only, für Debugging/Curation)."""
     if not _TISCH_MEMORY_AVAILABLE:
         raise HTTPException(status_code=503, detail="tisch_memory module not available")
-    import asyncio as _asyncio
-    loop = _asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     records = await loop.run_in_executor(
         None,
         lambda: read_candidates(origin_app=origin_app, project=project, include_private=True, limit=limit)

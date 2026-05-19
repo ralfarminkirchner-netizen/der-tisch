@@ -47,6 +47,7 @@ def _append(path: Path, record: dict) -> None:
 
 
 def _read_all(path: Path) -> list[dict]:
+    # MVP: vollständiger Datei-Scan. Bei > ~10k Einträgen auf SQLite migrieren.
     _ensure_dirs()
     if not path.exists():
         return []
