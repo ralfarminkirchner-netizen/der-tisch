@@ -4,6 +4,7 @@
 """
 import asyncio
 import json as _json
+import os
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +16,22 @@ from openai import OpenAI
 app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = OpenAI()
+
+# Feature-Flag: TiSCH Memory Hooks ein-/ausschaltbar
+TISCH_MEMORY_ENABLED = os.environ.get("TISCH_MEMORY_ENABLED", "true").lower() == "true"
+
+try:
+    from tisch_memory.schemas import (
+        MemoryCandidate, MemoryCard, ContextPackRequest, ContextPackResponse, ContextPackCard,
+        CurationState, SourceRole, MemoryLayer,
+    )
+    from tisch_memory.storage import (
+        append_candidate, read_candidates, rank_cards_for_context, append_card,
+    )
+    from tisch_memory.obsidian_writer import write_card_to_vault
+    _TISCH_MEMORY_AVAILABLE = True
+except ImportError:
+    _TISCH_MEMORY_AVAILABLE = False
 
 NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
 
@@ -1325,13 +1342,56 @@ async def ask_the_table(req: QueryRequest):
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
 
+    # --- Pre-Run: Context Pack aus tisch_shared_core laden (wenn aktiviert) ---
+    context_pack_summary = ""
+    if TISCH_MEMORY_ENABLED and _TISCH_MEMORY_AVAILABLE:
+        try:
+            source_app = getattr(req, "source_app", "der-tisch") or "der-tisch"
+            ranked = rank_cards_for_context(
+                req.question,
+                tags=req.question.lower().split()[:6],
+                include_private=False,
+                max_chars=2400,
+            )
+            if ranked:
+                context_pack_summary = "\n\n---\nKontext aus TiSCH Memory (kuratiert):\n" + "\n".join(
+                    f"[{c.get('title','')}]: {c.get('content','')[:300]}" for c in ranked[:4]
+                )
+        except Exception:
+            pass
+
     try:
         tone = req.tone if req.tone in ("achtsam", "direkt") else ""
-        tasks = [fetch_perspective(role, prompt, req.question, stil, req.lang, req.register, tone) for role, prompt in agents.items()]
+        tasks = [fetch_perspective(role, prompt, req.question + context_pack_summary, stil, req.lang, req.register, tone) for role, prompt in agents.items()]
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        response = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+
+        # --- Post-Run: Ergebnis als MemoryCandidate speichern (wenn aktiviert) ---
+        if TISCH_MEMORY_ENABLED and _TISCH_MEMORY_AVAILABLE:
+            try:
+                source_app = getattr(req, "source_app", "der-tisch") or "der-tisch"
+                candidate = MemoryCandidate(
+                    source_role=SourceRole.tisch_run_result,
+                    memory_layer=MemoryLayer.project_memory,
+                    curation_state=CurationState.candidate,
+                    family_line=[source_app],
+                    title=req.question[:120],
+                    content=integration.vorlaeufiges_fazit or integration.einfach_gesagt or "",
+                    tags=req.question.lower().split()[:8],
+                    origin_app=source_app,
+                    input_summary=req.question[:300],
+                    output_summary=(integration.kurzfassung[0] if integration.kurzfassung else ""),
+                    visibility="private",
+                )
+                import asyncio as _asyncio
+                loop = _asyncio.get_event_loop()
+                await loop.run_in_executor(None, append_candidate, candidate)
+            except Exception:
+                pass
+
+        return response
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -2166,8 +2226,136 @@ async def hook_pandora_logic(payload: PandoraLogicPayload):
     # HOOKPOINT — trigger logic pending
     return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
 
+# ==========================================
+# TiSCH MEMORY — Shared Core Endpunkte
+# ==========================================
+
+class CandidateRequest(BaseModel):
+    source_role: str = "tisch_run_result"
+    memory_layer: str = "project_memory"
+    curation_state: str = "candidate"
+    family_line: List[str] = []
+    title: str
+    content: str
+    tags: List[str] = []
+    origin_app: Optional[str] = None
+    project: Optional[str] = None
+    task: Optional[str] = None
+    input_summary: Optional[str] = None
+    output_summary: Optional[str] = None
+    suggested_obsidian_path: Optional[str] = None
+    visibility: str = "private"
+
+
+@app.post("/api/tisch-memory/candidates", tags=["tisch-memory"])
+async def submit_memory_candidate(req: CandidateRequest):
+    """Speichert einen MemoryCandidate in candidates.jsonl."""
+    if not _TISCH_MEMORY_AVAILABLE:
+        raise HTTPException(status_code=503, detail="tisch_memory module not available")
+    try:
+        candidate = MemoryCandidate(
+            source_role=SourceRole(req.source_role),
+            memory_layer=MemoryLayer(req.memory_layer),
+            curation_state=CurationState(req.curation_state),
+            family_line=req.family_line,
+            title=req.title,
+            content=req.content,
+            tags=req.tags,
+            origin_app=req.origin_app,
+            project=req.project,
+            task=req.task,
+            input_summary=req.input_summary,
+            output_summary=req.output_summary,
+            suggested_obsidian_path=req.suggested_obsidian_path,
+            visibility=req.visibility,
+        )
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        await loop.run_in_executor(None, append_candidate, candidate)
+        return {"status": "ok", "id": candidate.id, "curation_state": candidate.curation_state.value}
+    except (ValueError, KeyError) as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+class ContextPackApiRequest(BaseModel):
+    app_id: str = "der-tisch"
+    project: Optional[str] = None
+    task: Optional[str] = None
+    query: str
+    max_tokens: int = 1200
+    include: List[str] = []
+    exclude: List[str] = []
+    include_private: bool = False
+
+
+@app.post("/api/tisch-memory/context-pack", tags=["tisch-memory"])
+async def get_context_pack(req: ContextPackApiRequest):
+    """Liest kuratierte Cards aus cards.jsonl, rankiert nach Tag-Match + Recency."""
+    if not _TISCH_MEMORY_AVAILABLE:
+        raise HTTPException(status_code=503, detail="tisch_memory module not available")
+    try:
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        query_tags = req.query.lower().split()[:8]
+        ranked = await loop.run_in_executor(
+            None,
+            lambda: rank_cards_for_context(
+                req.query,
+                tags=query_tags,
+                include_private=req.include_private,
+                max_chars=req.max_tokens * 4,  # rough chars-per-token estimate
+            )
+        )
+        cards = [
+            ContextPackCard(
+                id=c.get("id", ""),
+                title=c.get("title", ""),
+                content=c.get("content", ""),
+                tags=c.get("tags", []),
+                curation_state=CurationState(c.get("curation_state", "reviewed")),
+                source_role=SourceRole(c.get("source_role", "tisch_run_result")),
+                origin_app=c.get("origin_app"),
+                created_at=c.get("created_at", "2000-01-01"),
+                score=c.get("score", 0.0),
+            )
+            for c in ranked
+        ]
+        total_chars = sum(len(c.content) for c in cards)
+        return ContextPackResponse(
+            app_id=req.app_id,
+            query=req.query,
+            cards=cards,
+            total_chars=total_chars,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/tisch-memory/candidates", tags=["tisch-memory"])
+async def list_candidates(origin_app: Optional[str] = None, project: Optional[str] = None, limit: int = 50):
+    """Listet gespeicherte Candidates (read-only, für Debugging/Curation)."""
+    if not _TISCH_MEMORY_AVAILABLE:
+        raise HTTPException(status_code=503, detail="tisch_memory module not available")
+    import asyncio as _asyncio
+    loop = _asyncio.get_event_loop()
+    records = await loop.run_in_executor(
+        None,
+        lambda: read_candidates(origin_app=origin_app, project=project, include_private=True, limit=limit)
+    )
+    return {"count": len(records), "candidates": records}
+
+
+@app.get("/api/tisch-memory/status", tags=["tisch-memory"])
+def tisch_memory_status():
+    """Status des TiSCH Memory Moduls."""
+    return {
+        "available": _TISCH_MEMORY_AVAILABLE,
+        "enabled": TISCH_MEMORY_ENABLED,
+        "module": "tisch_memory",
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
-    import os
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
