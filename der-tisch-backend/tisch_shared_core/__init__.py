@@ -7,7 +7,7 @@ HANDOFF_dual_shared_cores_2026-05-18.md (Stand 2026-05-18).
 
 Module:
   models.py             Pydantic-Modelle + Provenance-Protokoll
-  store.py              JSONL-Persistenz
+  store.py              SQLite-Persistenz (aiosqlite)
   capture.py            Raw Capture -> MemoryCandidate
   kintegrity_synthesis  KiNTEGRiTY-Synthese (gewickelt) -> synthesized
   curator.py            Curator-Agent mit canonical-Guard

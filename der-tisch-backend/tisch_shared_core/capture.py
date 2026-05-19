@@ -3,7 +3,7 @@ tisch_shared_core/capture.py — Raw Capture.
 
 Nimmt rohe TiSCH-Run-Outputs / Chat-Excerpts entgegen und erzeugt daraus
 `MemoryCandidate`s mit curation_state `raw` oder `candidate`. Persistierung
-über store.py (JSONL — Begründung der Persistenz-Wahl: siehe store.py-Docstring).
+über store.py (SQLite via aiosqlite).
 
 Smoke-Test:  python -m tisch_shared_core.capture --demo
 """

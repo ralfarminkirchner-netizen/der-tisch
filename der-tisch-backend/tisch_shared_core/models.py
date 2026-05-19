@@ -345,7 +345,7 @@ class ObsidianNoteExport(ProvenanceRecord):
     rendered_markdown: str = ""
 
 
-# Mapping kind -> Modellklasse (Rekonstruktion aus JSONL).
+# Mapping kind -> Modellklasse (Rekonstruktion aus dem Store).
 RECORD_MODELS = {
     "memory_candidate": MemoryCandidate,
     "memory_card": MemoryCard,
