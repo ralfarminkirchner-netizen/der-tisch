@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.env
+.env
+*.sqlite
+*.db
+data/tisch_shared_core/*.jsonl
