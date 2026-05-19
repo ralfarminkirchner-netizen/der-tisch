@@ -16,6 +16,10 @@ app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 client = OpenAI()
 
+# --- TiSCH Shared Core — Dual-Core-Memory-Router (HANDOFF 2026-05-18) ---
+from tisch_shared_core.api import router as tisch_shared_core_router
+app.include_router(tisch_shared_core_router, prefix="")
+
 NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
 
 # Serve TiSCH Hub at root
