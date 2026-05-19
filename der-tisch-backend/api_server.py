@@ -14,7 +14,13 @@ from openai import OpenAI
 
 app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-client = OpenAI()
+try:
+    client = OpenAI()
+except Exception:
+    # App soll auch ohne OPENAI_API_KEY importierbar bleiben (lokale Dev /
+    # robuster Deploy). LLM-Calls schlagen dann zur Laufzeit klar fehl (401),
+    # statt die gesamte App schon beim Import abstürzen zu lassen.
+    client = OpenAI(api_key="OPENAI_API_KEY_NOT_SET")
 
 # --- TiSCH Shared Core — Dual-Core-Memory-Router (HANDOFF 2026-05-18) ---
 from tisch_shared_core.api import router as tisch_shared_core_router
