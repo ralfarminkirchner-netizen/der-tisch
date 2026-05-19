@@ -28,14 +28,20 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
 import aiosqlite
 
 # --- Speicherort -----------------------------------------------------------
+# Default: modul-relativ. Über die Env-Var TISCH_CORE_DB_PATH lässt sich die
+# DB auf ein persistentes Volume legen (z.B. ein Railway-Volume) — das mildert
+# die Ephemeralität des Railway-Filesystems: ohne Override überlebt die .db
+# keinen Redeploy.
 DATA_DIR = Path(__file__).parent / "data"
-DB_PATH = DATA_DIR / "tisch_shared_core.db"
+_env_db = os.environ.get("TISCH_CORE_DB_PATH", "").strip()
+DB_PATH = Path(_env_db).expanduser() if _env_db else (DATA_DIR / "tisch_shared_core.db")
 
 # --- Collections (= Tabellennamen) -----------------------------------------
 CANDIDATES = "candidates"
@@ -76,7 +82,7 @@ async def _ensure_schema() -> None:
     async with _get_init_lock():
         if _schema_ready:
             return
-        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
         async with aiosqlite.connect(DB_PATH) as db:
             for table in _COLLECTIONS:
                 await db.execute(
