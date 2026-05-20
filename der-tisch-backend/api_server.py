@@ -4,6 +4,7 @@
 """
 import asyncio
 import json as _json
+import os
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +12,19 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from openai import OpenAI
+
+try:
+    from tisch_memory import (
+        MemoryCandidate, MemoryCard, ContextPackRequest, ContextPack,
+        SourceRole, CurationState, MemoryLayer,
+        append_candidate, build_context_pack,
+    )
+    _MEMORY_AVAILABLE = True
+except ImportError:
+    _MEMORY_AVAILABLE = False
+
+# Feature-Flag: TISCH_MEMORY_HOOKS=true aktiviert Pre/Post-Run-Hooks auf /api/ask
+TISCH_MEMORY_HOOKS: bool = os.environ.get("TISCH_MEMORY_HOOKS", "false").lower() == "true"
 
 app = FastAPI(title="TiSCH API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -1321,6 +1335,17 @@ async def ask_the_table(req: QueryRequest):
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
+    # Pre-Run Memory Hook (Feature-Flag: TISCH_MEMORY_HOOKS)
+    if TISCH_MEMORY_HOOKS and _MEMORY_AVAILABLE:
+        try:
+            build_context_pack(ContextPackRequest(
+                app_id="der-tisch",
+                query=req.question,
+                include_private=False,
+            ))
+        except Exception:
+            pass  # Hooks sind nie blockierend
+
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
     agents = AGENTS_EN if req.lang == "en" else AGENTS_DE
@@ -1331,7 +1356,31 @@ async def ask_the_table(req: QueryRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        result = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+
+        # Post-Run Memory Hook (Feature-Flag: TISCH_MEMORY_HOOKS)
+        if TISCH_MEMORY_HOOKS and _MEMORY_AVAILABLE:
+            try:
+                _summary = integration.get("kurzfassung") or integration.get("vorlaeufiges_fazit", "")
+                if isinstance(_summary, list):
+                    _summary = " | ".join(_summary)
+                _content = f"Frage: {req.question}\n\nFazit: {_summary}"
+                append_candidate(MemoryCandidate(
+                    origin_app="der-tisch",
+                    source_role=SourceRole.tisch_run_result,
+                    memory_layer=MemoryLayer.project_memory,
+                    curation_state=CurationState.candidate,
+                    title=req.question[:120],
+                    content=_content,
+                    tags=["der-tisch", "tisch-run", req.lang, stil],
+                    input_summary=req.question[:200],
+                    output_summary=str(_summary)[:400],
+                    model="gpt-4o-mini",
+                ))
+            except Exception:
+                pass  # Hooks sind nie blockierend
+
+        return result
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -2166,8 +2215,66 @@ async def hook_pandora_logic(payload: PandoraLogicPayload):
     # HOOKPOINT — trigger logic pending
     return {"status": "hookpoint_ready", "hook": "Pandora_Logic", "cloud": payload.cloud_id, "density": payload.density_score}
 
+# =============================================
+# TiSCH SHARED CORE — Memory Endpoints (MVP)
+# =============================================
+
+if _MEMORY_AVAILABLE:
+    @app.post("/api/tisch-memory/candidates", tags=["tisch-memory"])
+    async def save_memory_candidate(candidate: MemoryCandidate):
+        """Speichert einen MemoryCandidate in candidates.jsonl.
+
+        source_role=tisch_run_result → candidate automatisch gesetzt.
+        canonical darf nie automatisch gesetzt werden — nur durch Nutzer-Freigabe.
+        """
+        if candidate.canonical:
+            raise HTTPException(
+                status_code=422,
+                detail="canonical darf nicht automatisch gesetzt werden. Nur Nutzer-Freigabe via Obsidian ist erlaubt.",
+            )
+        try:
+            append_candidate(candidate)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Storage-Fehler: {e}")
+        return {
+            "status": "saved",
+            "id": candidate.id,
+            "curation_state": candidate.curation_state,
+            "core_id": candidate.core_id,
+        }
+
+    @app.post("/api/tisch-memory/context-pack", tags=["tisch-memory"])
+    async def get_context_pack(req: ContextPackRequest):
+        """Gibt einen kompakten ContextPack aus cards.jsonl zurück.
+
+        Nur Cards mit curation_state >= reviewed werden einbezogen.
+        include_private=false ist der sichere Default.
+        """
+        try:
+            pack = build_context_pack(req)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"ContextPack-Fehler: {e}")
+        return pack
+
+    @app.get("/api/tisch-memory/health", tags=["tisch-memory"])
+    async def memory_health():
+        """Prüft ob das Memory-Subsystem erreichbar ist."""
+        from tisch_memory.storage import _CANDIDATES_FILE, _CARDS_FILE
+        return {
+            "status": "ok",
+            "memory_hooks_active": TISCH_MEMORY_HOOKS,
+            "candidates_file": str(_CANDIDATES_FILE),
+            "cards_file": str(_CARDS_FILE),
+            "candidates_exist": _CANDIDATES_FILE.exists(),
+            "cards_exist": _CARDS_FILE.exists(),
+        }
+else:
+    @app.get("/api/tisch-memory/health", tags=["tisch-memory"])
+    async def memory_health_unavailable():
+        return {"status": "unavailable", "detail": "tisch_memory module not loaded"}
+
+
 if __name__ == "__main__":
     import uvicorn
-    import os
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
