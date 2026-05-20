@@ -79,8 +79,8 @@ class ContextPackRequest(BaseModel):
 
 
 class CurateRequest(BaseModel):
-    target_state: str                       # reviewed | curated_draft | canonical
-    candidate_id: Optional[str] = None       # für reviewed / curated_draft
+    target_state: str                       # reviewed | canonical
+    candidate_id: Optional[str] = None       # für reviewed
     card_id: Optional[str] = None            # für canonical
     approved_by: Optional[str] = None        # Pflicht bei canonical
     approved_for_reuse: bool = True
@@ -176,7 +176,7 @@ async def read_card(card_id: str) -> MemoryCard:
 async def curate(req: CurateRequest) -> MemoryCard:
     """Kurations-Endpunkt.
 
-    - target_state `reviewed`/`curated_draft`: braucht `candidate_id` —
+    - target_state `reviewed`: braucht `candidate_id` —
       autonome Kuration zu einer MemoryCard.
     - target_state `canonical`: braucht `card_id` + `approved_by` —
       schließt das Approval-Tor. Autonom ist `canonical` verboten (403).
@@ -206,11 +206,11 @@ async def curate(req: CurateRequest) -> MemoryCard:
             # leeres approved_by -> Approval-Tor nicht erfüllt
             raise HTTPException(status_code=400, detail=str(exc))
 
-    if target in (CurationState.REVIEWED, CurationState.CURATED_DRAFT):
+    if target == CurationState.REVIEWED:
         if not req.candidate_id:
             raise HTTPException(
                 status_code=400,
-                detail="candidate_id ist Pflicht für target_state reviewed/curated_draft.",
+                detail="candidate_id ist Pflicht für target_state reviewed.",
             )
         candidate = await capture.get_candidate(_as_urn(req.candidate_id))
         if candidate is None:
@@ -231,7 +231,7 @@ async def curate(req: CurateRequest) -> MemoryCard:
     raise HTTPException(
         status_code=400,
         detail=(
-            "target_state muss reviewed, curated_draft oder canonical sein "
+            "target_state muss reviewed oder canonical sein "
             f"(erhalten: {req.target_state!r})."
         ),
     )

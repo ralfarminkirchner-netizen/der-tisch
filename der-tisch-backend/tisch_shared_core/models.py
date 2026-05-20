@@ -10,11 +10,10 @@ visibility, moonfingers_use, provenance_chain, optional reuse_state.
 - core_id ist fix `tisch_shared_core` (per Literal erzwungen).
 - IDs in URN-Form `tisch_shared_core:<short_id>` (per Validator erzwungen).
 
-Hinweis zu `curation_state`: Die Vertrags-Tabelle listet `curated`, die
-Vertrags-Prosa (Kurations-Pipeline / Phase 2) spricht zusätzlich von
-`curated_draft` als autonom erreichbarem Zustand. Beide Werte sind hier
-aufgenommen — die Diskrepanz ist im Phasen-Report als offene Vertrags-Frage
-für die Bridge/Knowledge-Seite vermerkt.
+Hinweis zu `curation_state`: Kanonischer Zustandsautomat hat sieben aktive
+Werte (raw, imported, candidate, synthesized, reviewed, curated, canonical)
+plus die End-Zustände `deprecated`/`archived`. Agent-Autonomie endet bei
+`reviewed`; `curated` und `canonical` setzt nur das Nutzer-Tor.
 """
 from __future__ import annotations
 
@@ -74,6 +73,7 @@ class SourceRole(str, Enum):
     CHAT_EXCERPT = "chat_excerpt"
     MODEL_GENERATED_SYNTHESIS = "model_generated_synthesis"
     KINTEGRITY_SYNTHESIS = "kintegrity_synthesis"
+    CONTEXT_PACK = "context_pack"
     USER_AUTHORED_NOTE = "user_authored_note"
     CURATOR_DECISION = "curator_decision"
     STABLE_ANSWER = "stable_answer"
@@ -95,7 +95,6 @@ class CurationState(str, Enum):
     CANDIDATE = "candidate"
     SYNTHESIZED = "synthesized"
     REVIEWED = "reviewed"
-    CURATED_DRAFT = "curated_draft"  # Vertrags-Prosa: autonom erreichbarer Zustand
     CURATED = "curated"
     CANONICAL = "canonical"
     DEPRECATED = "deprecated"
@@ -132,7 +131,6 @@ AUTONOMOUS_STATES = frozenset({
     CurationState.CANDIDATE,
     CurationState.SYNTHESIZED,
     CurationState.REVIEWED,
-    CurationState.CURATED_DRAFT,
 })
 
 
@@ -314,11 +312,11 @@ class ContextPackEntry(BaseModel):
 class ContextPack(ProvenanceRecord):
     """Kompakter, wiederverwendbarer Kontext aus mehreren MemoryCards.
 
-    Aggregationsartefakt: source_role `model_generated_synthesis`,
+    Aggregationsartefakt: source_role `context_pack`,
     memory_layer `reusable_context`.
     """
     kind: Literal["context_pack"] = "context_pack"
-    source_role: SourceRole = SourceRole.MODEL_GENERATED_SYNTHESIS
+    source_role: SourceRole = SourceRole.CONTEXT_PACK
     memory_layer: MemoryLayer = MemoryLayer.REUSABLE_CONTEXT
     curation_state: CurationState = CurationState.SYNTHESIZED
     moonfingers_use: List[MoonfingersUse] = Field(

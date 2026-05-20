@@ -2,12 +2,12 @@
 tisch_shared_core/curator.py — Curator-Agent mit canonical-Guard.
 
 Kurations-Pipeline (Vertrag):
-  Candidate -> (Synthese) -> Dedupe -> Curator -> reviewed / curated_draft
+  Candidate -> (Synthese) -> Dedupe -> Curator -> reviewed
   -> Nutzer-Tor -> canonical
 
 HARTE REGELN (Vertrag + Phase-2-Auftrag):
 - Eingang: `MemoryCandidate`s mit curation_state in {raw, candidate, synthesized}.
-- Autonom erlaubte Zielzustände: maximal `reviewed` oder `curated_draft`.
+- Autonom erlaubter Zielzustand: ausschließlich `reviewed`.
   Der Curator darf `reuse_state: approved_for_reuse` setzen.
 - `canonical` ist autonom VERBOTEN. Der Übergang erfolgt ausschließlich über
   `promote_to_canonical(...)` mit nicht-leerem `approved_by` — aufgerufen
@@ -50,7 +50,6 @@ CURATOR_INPUT_STATES = frozenset({
 })
 CURATOR_AUTONOMOUS_TARGETS = frozenset({
     CurationState.REVIEWED,
-    CurationState.CURATED_DRAFT,
 })
 
 # Ähnlichkeits-Schwelle fürs Dedupe (Token-Jaccard). Bewusst konservativ.
@@ -136,7 +135,7 @@ async def list_cards(
 
 
 # ---------------------------------------------------------------------------
-# Autonome Kuration: Candidate -> MemoryCard (reviewed / curated_draft)
+# Autonome Kuration: Candidate -> MemoryCard (reviewed)
 # ---------------------------------------------------------------------------
 
 async def curate_candidate(
@@ -149,7 +148,7 @@ async def curate_candidate(
 ) -> MemoryCard:
     """Einen Candidate autonom zu einer MemoryCard kuratieren.
 
-    Stoppt hart bei `reviewed` / `curated_draft`. `canonical` löst
+    Stoppt hart bei `reviewed`. `canonical` löst
     `CanonicalGuardError` aus.
     """
     if isinstance(target_state, str):
