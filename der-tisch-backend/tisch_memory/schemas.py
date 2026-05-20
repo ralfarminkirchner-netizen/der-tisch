@@ -4,14 +4,14 @@ ID-Konvention: URN-Form, z.B. tisch_shared_core:run_2026_05_18_a1b2c3
 Felder exakt nach TISCH_SHARED_CORE_AUFTRAG_PATCH_2026-05-18.md.
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Literal, Optional
 from pydantic import BaseModel, Field
 
 
 def _new_urn() -> str:
-    ts = datetime.utcnow().strftime("%Y_%m_%d")
+    ts = datetime.now(timezone.utc).strftime("%Y_%m_%d")
     return f"tisch_shared_core:run_{ts}_{uuid.uuid4().hex[:6]}"
 
 
@@ -77,7 +77,7 @@ class MemoryCandidate(BaseModel):
     visibility: Literal["private", "shared", "public"] = "private"
     provenance_chain: list[ProvenanceLink] = []
     reuse_state: ReuseState = Field(default_factory=ReuseState)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     # Inhaltliche Felder
     title: str
     content: str

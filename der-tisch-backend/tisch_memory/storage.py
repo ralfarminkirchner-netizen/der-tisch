@@ -2,6 +2,7 @@
 
 Pfade relativ zum Backend-Verzeichnis — kein /Volumes-Zugriff.
 """
+import time
 from pathlib import Path
 from .schemas import MemoryCandidate, MemoryCard, ContextPackRequest, ContextPack, CurationState
 
@@ -93,7 +94,6 @@ def _score_card(card: MemoryCard, query_tags: list[str]) -> float:
     """Tag-Match + Recency-Score für ContextPack-Ranking."""
     tag_score = sum(1.0 for t in query_tags if t in card.tags)
     # neueste Karte zuerst (Unix-timestamp normalisiert, max 10 Punkte)
-    import time
     age_seconds = time.time() - card.created_at.timestamp()
     recency_score = max(0.0, 10.0 - age_seconds / 86400)  # 1 Punkt pro Tag Alter abgezogen
     return tag_score * 3.0 + recency_score

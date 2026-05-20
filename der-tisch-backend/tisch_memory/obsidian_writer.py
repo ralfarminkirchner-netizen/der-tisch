@@ -33,7 +33,11 @@ def write_card_to_obsidian(card: MemoryCard) -> Path | None:
     dest_dir = vault / sub
     dest_dir.mkdir(parents=True, exist_ok=True)
 
-    safe_title = card.title.replace("/", "_").replace("\\", "_").replace(":", "_")[:80]
+    _unsafe = r'/\:*?"<>|'
+    safe_title = card.title
+    for ch in _unsafe:
+        safe_title = safe_title.replace(ch, "_")
+    safe_title = safe_title[:80]
     filepath = dest_dir / f"{safe_title}.md"
 
     # ISO-8601 UTC

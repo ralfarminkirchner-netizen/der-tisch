@@ -1361,7 +1361,7 @@ async def ask_the_table(req: QueryRequest):
         # Post-Run Memory Hook (Feature-Flag: TISCH_MEMORY_HOOKS)
         if TISCH_MEMORY_HOOKS and _MEMORY_AVAILABLE:
             try:
-                _summary = integration.get("kurzfassung") or integration.get("vorlaeufiges_fazit", "")
+                _summary = integration.kurzfassung or integration.vorlaeufiges_fazit
                 if isinstance(_summary, list):
                     _summary = " | ".join(_summary)
                 _content = f"Frage: {req.question}\n\nFazit: {_summary}"
