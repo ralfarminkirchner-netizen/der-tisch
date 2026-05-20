@@ -13,7 +13,13 @@ from typing import List, Optional
 from openai import OpenAI
 
 app = FastAPI(title="TiSCH API")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=False,  # FastAPI-Regel: bei Wildcard-Origin MUSS credentials False sein.
+)
 try:
     client = OpenAI()
 except Exception:
