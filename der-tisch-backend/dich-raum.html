@@ -1,0 +1,1584 @@
+<!doctype html>
+<html lang="de" data-view="raum">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0e0d0b">
+  <title>Dich-Raum — iNTEGRATiONS TiSCH</title>
+  <meta name="description" content="Dich-Raum: Einflüsse wählen, Herkunft sichtbar machen und zum IBW-Tisch bringen.">
+  <style>
+    :root {
+      --bg: #0e0d0b;
+      --surface: #151411;
+      --surface-2: #1c1a16;
+      --surface-3: #232019;
+      --border: #302d25;
+      --border-soft: rgba(240, 237, 230, 0.09);
+      --text: #f0ede6;
+      --text-2: #b8afa0;
+      --muted: #777064;
+      --faint: #4b453c;
+      --accent: #c8993a;
+      --petrol: #3a6f73;
+      --spiritual: #c8993a;
+      --philosophical: #5d83a8;
+      --psychological: #6a9b73;
+      --somatic: #bd6a4b;
+      --friction: #c0574a;
+      --bridge: #8aa6b8;
+      --radius: 8px;
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.38);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); color: var(--text); }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: var(--font);
+      background:
+        linear-gradient(rgba(240,237,230,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,237,230,0.022) 1px, transparent 1px),
+        var(--bg);
+      background-size: 48px 48px, 48px 48px, auto;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button, input { font: inherit; }
+    button {
+      color: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--border);
+      background: rgba(14, 13, 11, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      min-height: 64px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 10px clamp(14px, 2vw, 28px);
+      display: grid;
+      grid-template-columns: minmax(190px, auto) 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(200,153,58,0.45);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-title {
+      display: block;
+      font-size: 14px;
+      font-weight: 750;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .view-switch {
+      justify-self: center;
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius);
+    }
+
+    .view-btn,
+    .action-btn,
+    .branch-btn,
+    .node-btn,
+    .pill-btn,
+    .module-btn {
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .view-btn {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 6px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .view-btn:hover,
+    .view-btn.is-active {
+      background: var(--surface-3);
+      color: var(--text);
+    }
+
+    .view-btn.is-active {
+      box-shadow: inset 0 0 0 1px rgba(200,153,58,0.32);
+      color: #f7df9b;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      min-height: 36px;
+      padding: 0 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      border-color: rgba(240,237,230,0.28);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .action-btn.primary {
+      border-color: rgba(200,153,58,0.5);
+      background: rgba(200,153,58,0.13);
+      color: #f4dfa4;
+    }
+
+    .workspace {
+      min-height: 0;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(14px, 2vw, 28px);
+    }
+
+    .view {
+      display: none;
+      min-height: calc(100vh - 120px);
+    }
+
+    html[data-view="raum"] .view-raum,
+    html[data-view="karte"] .view-karte,
+    html[data-view="tisch"] .view-tisch {
+      display: grid;
+    }
+
+    .view-raum {
+      grid-template-columns: minmax(520px, 1fr) minmax(340px, 430px);
+      gap: 18px;
+    }
+
+    .view-karte,
+    .view-tisch {
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
+      gap: 18px;
+    }
+
+    .raum-stage,
+    .side-panel,
+    .map-stage,
+    .table-stage,
+    .inspector {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(21, 20, 17, 0.78);
+      box-shadow: var(--shadow);
+    }
+
+    .raum-stage {
+      position: relative;
+      min-height: 680px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .raum-stage::before {
+      content: "";
+      position: absolute;
+      inset: 10%;
+      border: 1px solid rgba(240,237,230,0.055);
+      border-radius: 50%;
+    }
+
+    .raum-stage::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(60vw, 620px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(240,237,230,0.045);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .stage-label {
+      position: absolute;
+      left: 22px;
+      top: 20px;
+      z-index: 4;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .center-node {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: clamp(132px, 13vw, 170px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(200,153,58,0.58);
+      border-radius: 50%;
+      background: rgba(200,153,58,0.08);
+      color: #f4dfa4;
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 760;
+      letter-spacing: -0.03em;
+      box-shadow: 0 0 0 1px rgba(240,237,230,0.04) inset, 0 0 54px rgba(200,153,58,0.12);
+      z-index: 6;
+    }
+
+    .center-node.is-open {
+      animation: centerBreath 4s ease-in-out infinite;
+    }
+
+    @keyframes centerBreath {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(240,237,230,0.04) inset, 0 0 38px rgba(200,153,58,0.1); }
+      50% { box-shadow: 0 0 0 1px rgba(240,237,230,0.08) inset, 0 0 70px rgba(200,153,58,0.2); }
+    }
+
+    .axis-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: var(--axis-length);
+      height: 1px;
+      transform-origin: left center;
+      transform: rotate(var(--angle));
+      background: linear-gradient(90deg, rgba(240,237,230,0), var(--axis-color));
+      opacity: 0.58;
+      z-index: 2;
+    }
+
+    .branch-btn {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      min-width: 156px;
+      transform: translate(-50%, -50%);
+      padding: 12px 14px;
+      border: 1px solid color-mix(in srgb, var(--axis-color) 48%, var(--border));
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--axis-color) 10%, rgba(21,20,17,0.92));
+      text-align: left;
+      z-index: 5;
+    }
+
+    .branch-btn:hover,
+    .branch-btn.is-active {
+      border-color: color-mix(in srgb, var(--axis-color) 74%, var(--border));
+      background: color-mix(in srgb, var(--axis-color) 16%, rgba(21,20,17,0.92));
+      transform: translate(-50%, -51%);
+    }
+
+    .branch-name {
+      display: block;
+      color: var(--text);
+      font-weight: 740;
+      font-size: 14px;
+    }
+
+    .branch-desc {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .raum-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .influence-line {
+      fill: none;
+      stroke: rgba(240,237,230,0.24);
+      stroke-width: 1;
+      stroke-dasharray: 4 9;
+      animation: lineMove 14s linear infinite;
+    }
+
+    .cross-link {
+      fill: none;
+      stroke: rgba(58,111,115,0.54);
+      stroke-width: 1;
+      stroke-dasharray: 2 8;
+      opacity: 0;
+    }
+
+    .cross-link.visible { opacity: 1; }
+
+    @keyframes lineMove { to { stroke-dashoffset: -180; } }
+
+    .selected-node {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      z-index: 5;
+      transform: translate(-50%, -50%);
+      max-width: 132px;
+      padding: 8px 10px;
+      border: 1px solid color-mix(in srgb, var(--axis-color) 58%, var(--border));
+      border-radius: var(--radius);
+      background: rgba(14,13,11,0.9);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .side-panel,
+    .inspector {
+      padding: 20px;
+      min-height: 680px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 18px;
+    }
+
+    .panel-kicker,
+    .section-kicker,
+    .micro-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 760;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 42px);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+    }
+
+    .panel-text {
+      margin: 12px 0 0;
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.62;
+    }
+
+    .node-list,
+    .profile-list,
+    .region-list,
+    .insight-list {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      overflow: auto;
+      min-height: 0;
+      padding-right: 3px;
+    }
+
+    .node-btn {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(240,237,230,0.026);
+      text-align: left;
+    }
+
+    .node-btn:hover,
+    .node-btn.is-selected {
+      border-color: color-mix(in srgb, var(--node-color) 58%, var(--border));
+      background: color-mix(in srgb, var(--node-color) 9%, rgba(240,237,230,0.026));
+    }
+
+    .node-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .node-title {
+      font-weight: 740;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .node-weight {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .node-summary {
+      margin: 8px 0 0;
+      color: var(--text-2);
+      font-size: 13px;
+      line-height: 1.48;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      padding: 4px 7px;
+      border: 1px solid var(--border-soft);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .profile-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(240,237,230,0.026);
+    }
+
+    .profile-row strong {
+      font-size: 13px;
+    }
+
+    .profile-row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .profile-row input {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .remove-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+    }
+
+    .remove-btn:hover {
+      color: var(--text);
+      border-color: rgba(240,237,230,0.28);
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .map-stage,
+    .table-stage {
+      min-height: 680px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .map-head,
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .map-head h1,
+    .table-head h1,
+    .inspector h1 {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 42px);
+      letter-spacing: -0.045em;
+      line-height: 1.04;
+    }
+
+    .map-controls {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .pill-btn {
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill-btn.is-active,
+    .pill-btn:hover {
+      color: var(--text);
+      background: var(--surface-3);
+    }
+
+    .world-wrap {
+      position: relative;
+      height: min(58vh, 560px);
+      min-height: 420px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #10100e;
+      overflow: hidden;
+    }
+
+    .world-map {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .grid-line { stroke: rgba(240,237,230,0.075); stroke-width: 1; }
+    .land {
+      fill: rgba(240,237,230,0.07);
+      stroke: rgba(240,237,230,0.13);
+      stroke-width: 1;
+    }
+
+    .route {
+      fill: none;
+      stroke: rgba(240,237,230,0.24);
+      stroke-width: 1.35;
+      stroke-dasharray: 7 10;
+      animation: lineMove 16s linear infinite;
+    }
+
+    .historic-route {
+      fill: none;
+      stroke: rgba(200,153,58,0.58);
+      stroke-width: 2.1;
+      stroke-dasharray: 3 8;
+      opacity: 0;
+    }
+
+    html[data-map-mode="routes"] .historic-route { opacity: 1; }
+
+    .region-field {
+      fill: var(--region-color);
+      opacity: var(--region-opacity);
+      filter: blur(14px);
+    }
+
+    html[data-map-mode="points"] .region-field,
+    html[data-map-mode="points"] .route { display: none; }
+
+    .marker-ring {
+      fill: none;
+      stroke: var(--region-color);
+      stroke-width: 1.6;
+      opacity: 0.55;
+      animation: markerPulse 2.8s ease-out infinite;
+    }
+
+    @keyframes markerPulse {
+      from { r: 7; opacity: 0.55; }
+      to { r: 28; opacity: 0; }
+    }
+
+    .marker-dot {
+      fill: var(--region-color);
+      stroke: rgba(240,237,230,0.85);
+      stroke-width: 0.9;
+    }
+
+    .map-label {
+      fill: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      paint-order: stroke;
+      stroke: rgba(14,13,11,0.92);
+      stroke-width: 4px;
+    }
+
+    .map-center {
+      fill: rgba(200,153,58,0.12);
+      stroke: rgba(200,153,58,0.8);
+      stroke-width: 1.5;
+    }
+
+    .region-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 7px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(240,237,230,0.026);
+    }
+
+    .region-row strong {
+      font-size: 13px;
+    }
+
+    .region-row .score {
+      color: #f4dfa4;
+      font-weight: 760;
+    }
+
+    .region-row p {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .table-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      min-height: 560px;
+    }
+
+    .quadrant {
+      min-height: 260px;
+      padding: 14px;
+      border: 1px solid color-mix(in srgb, var(--quad-color) 38%, var(--border));
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--quad-color) 7%, rgba(240,237,230,0.024));
+    }
+
+    .quadrant-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 11px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .quadrant h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.015em;
+    }
+
+    .quadrant-count {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .module-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .module-btn {
+      width: 100%;
+      min-height: 112px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(14,13,11,0.2);
+      text-align: left;
+    }
+
+    .module-btn:hover,
+    .module-btn.is-active {
+      border-color: color-mix(in srgb, var(--quad-color) 62%, var(--border));
+      background: color-mix(in srgb, var(--quad-color) 10%, rgba(14,13,11,0.2));
+    }
+
+    .module-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--text);
+      font-weight: 750;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .module-body {
+      margin: 8px 0 0;
+      color: var(--text-2);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .empty-text {
+      color: var(--faint);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .inspector-body {
+      overflow: auto;
+      min-height: 0;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      padding-right: 3px;
+    }
+
+    .insight-block {
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(240,237,230,0.026);
+    }
+
+    .insight-block h3 {
+      margin: 0 0 9px;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .insight-block ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-2);
+      font-size: 13px;
+      line-height: 1.58;
+    }
+
+    .save-status {
+      color: var(--muted);
+      font-size: 12px;
+      min-height: 16px;
+    }
+
+    @media (max-width: 1120px) {
+      .view-raum,
+      .view-karte,
+      .view-tisch {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel,
+      .inspector {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner {
+        grid-template-columns: 1fr;
+        justify-items: stretch;
+      }
+
+      .view-switch {
+        justify-self: stretch;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .top-actions {
+        justify-content: stretch;
+      }
+
+      .top-actions .action-btn {
+        flex: 1;
+      }
+
+      .workspace {
+        padding: 12px;
+      }
+
+      .raum-stage,
+      .map-stage,
+      .table-stage {
+        min-height: 590px;
+      }
+
+      .branch-btn {
+        min-width: 124px;
+        padding: 10px;
+      }
+
+      .branch-desc {
+        display: none;
+      }
+
+      .selected-node {
+        max-width: 96px;
+        font-size: 11px;
+      }
+
+      .map-head,
+      .table-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .world-wrap {
+        min-height: 380px;
+      }
+
+      .table-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/tisch-hub.html" aria-label="Zum TiSCH Hub">
+          <span class="brand-mark">IBW</span>
+          <span>
+            <span class="brand-title">Dich-Raum</span>
+            <span class="brand-subtitle">Einfluss · Herkunft · Tisch</span>
+          </span>
+        </a>
+
+        <nav class="view-switch" aria-label="Dich-Raum Ansichten">
+          <button class="view-btn is-active" data-view-target="raum">Dich</button>
+          <button class="view-btn" data-view-target="karte">Weltkarte</button>
+          <button class="view-btn" data-view-target="tisch">Tisch</button>
+        </nav>
+
+        <div class="top-actions">
+          <button class="action-btn" data-action="toggle-links">Querbezüge</button>
+          <button class="action-btn primary" data-action="save-profile">Pfad speichern</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="view view-raum" aria-label="Dich-Raum">
+        <div class="raum-stage">
+          <div class="stage-label">Radiales Selbstmodell</div>
+          <svg class="raum-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" id="raumSvg"></svg>
+          <button class="center-node is-open" data-action="activate">Dich</button>
+          <div id="branchLayer"></div>
+          <div id="selectedLayer"></div>
+        </div>
+
+        <aside class="side-panel">
+          <div>
+            <p class="panel-kicker" id="sideKicker">Aktiver Ast</p>
+            <h1 class="panel-title" id="sideTitle">Spirituell</h1>
+            <p class="panel-text" id="sideText">Transzendenz, Bewusstsein, Mystik, Befreiung und kontemplative Praxis.</p>
+          </div>
+          <div class="node-list" id="nodeList"></div>
+          <div class="panel-actions">
+            <button class="action-btn primary" data-view-target="karte">Herkunft anzeigen</button>
+            <button class="action-btn" data-view-target="tisch">Zum Tisch</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="view view-karte" aria-label="Weltkarte">
+        <section class="map-stage">
+          <div class="map-head">
+            <div>
+              <p class="section-kicker">Herkunftsprojektion</p>
+              <h1>Globale Herkunftsmatrix</h1>
+            </div>
+            <div class="map-controls" aria-label="Kartenmodus">
+              <button class="pill-btn is-active" data-map-mode="regions">Felder</button>
+              <button class="pill-btn" data-map-mode="points">Punkte</button>
+              <button class="pill-btn" data-map-mode="routes">Wege</button>
+            </div>
+          </div>
+          <div class="world-wrap">
+            <svg class="world-map" id="worldMap" viewBox="0 0 960 520" role="img" aria-label="Weltkarte der gewählten Einflüsse"></svg>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <div>
+            <p class="panel-kicker">Gewichtete Räume</p>
+            <h1 class="panel-title">Woher spricht es?</h1>
+            <p class="panel-text">Die Karte zeigt keine Flaggenlogik, sondern kulturelle Wurzel-, Transformations- und Rezeptionsräume.</p>
+          </div>
+          <div class="region-list" id="regionList"></div>
+          <div class="panel-actions">
+            <button class="action-btn" data-view-target="raum">Zurück</button>
+            <button class="action-btn primary" data-view-target="tisch">Zum Tisch bringen</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="view view-tisch" aria-label="IBW-Tisch">
+        <section class="table-stage">
+          <div class="table-head">
+            <div>
+              <p class="section-kicker">IBW-Raum</p>
+              <h1>Reibung, Resonanz, Integration</h1>
+            </div>
+            <button class="action-btn primary" data-action="best-compare">Vergleich</button>
+          </div>
+          <div class="table-grid" id="tableGrid"></div>
+        </section>
+
+        <aside class="inspector">
+          <div>
+            <p class="panel-kicker">Inspector</p>
+            <h1 id="inspectorTitle">Vergleich</h1>
+            <p class="panel-text" id="inspectorSummary"></p>
+          </div>
+          <div class="inspector-body" id="inspectorBody"></div>
+          <div>
+            <div class="save-status" id="saveStatus"></div>
+            <div class="panel-actions">
+              <button class="action-btn" data-view-target="karte">Herkunft</button>
+              <button class="action-btn primary" data-action="save-profile">Pfad speichern</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const branches = [
+      { id: "spiritual", label: "Spirituell", description: "Transzendenz, Bewusstsein, Mystik", angle: -90, color: "#c8993a" },
+      { id: "psychological", label: "Psychologisch", description: "Erleben, Entwicklung, innere Dynamik", angle: 0, color: "#6a9b73" },
+      { id: "somatic", label: "Körperlich", description: "Nervensystem, Atem, Verkörperung", angle: 90, color: "#bd6a4b" },
+      { id: "philosophical", label: "Philosophisch", description: "Begriffe, Wahrheit, Weltverhältnis", angle: 180, color: "#5d83a8" }
+    ];
+
+    const nodes = [
+      {
+        id: "zen", title: "Zen", short: "Zen", branch: "spiritual",
+        secondary: ["psychological", "philosophical"],
+        tags: ["Zazen", "Leerheit", "Präsenz"],
+        summary: "Direkte Praxis, Gegenwärtigkeit und nicht-konzeptuelle Einsicht.",
+        origins: [{ id: "india", role: "Wurzel", weight: 0.45 }, { id: "china", role: "Transformation", weight: 0.8 }, { id: "japan", role: "Ausprägung", weight: 0.95 }]
+      },
+      {
+        id: "advaita", title: "Advaita Vedanta", short: "Advaita", branch: "spiritual",
+        secondary: ["philosophical"],
+        tags: ["Nichtdualität", "Atman", "Brahman"],
+        summary: "Untersucht Identität von Selbst und absoluter Wirklichkeit.",
+        origins: [{ id: "india", role: "Wurzel", weight: 1 }]
+      },
+      {
+        id: "sufism", title: "Sufismus", short: "Sufismus", branch: "spiritual",
+        secondary: ["somatic", "philosophical"],
+        tags: ["Herz", "Mystik", "Dhikr"],
+        summary: "Mystischer Erfahrungsweg mit Liebe, Erinnerung und Läuterung.",
+        origins: [{ id: "persia", role: "Ausprägung", weight: 0.72 }, { id: "middle_east", role: "Wurzelraum", weight: 0.78 }]
+      },
+      {
+        id: "stoa", title: "Stoa", short: "Stoa", branch: "philosophical",
+        secondary: ["psychological"],
+        tags: ["Tugend", "Urteil", "Freiheit"],
+        summary: "Richtet Freiheit auf Urteilskraft, Tugend und innere Zustimmung.",
+        origins: [{ id: "greece", role: "Wurzel", weight: 0.86 }, { id: "rome", role: "Praxisraum", weight: 0.68 }]
+      },
+      {
+        id: "phenomenology", title: "Phänomenologie", short: "Phänomenologie", branch: "philosophical",
+        secondary: ["psychological"],
+        tags: ["Erfahrung", "Bewusstsein", "Beschreibung"],
+        summary: "Beschreibt, wie Welt, Körper und Selbst im Erleben erscheinen.",
+        origins: [{ id: "germany", role: "Wurzel", weight: 0.75 }, { id: "france", role: "Weiterführung", weight: 0.58 }]
+      },
+      {
+        id: "process", title: "Prozessphilosophie", short: "Prozess", branch: "philosophical",
+        secondary: ["spiritual"],
+        tags: ["Werden", "Relation", "Ereignis"],
+        summary: "Denkt Wirklichkeit primär als Werden, Beziehung und Ereignis.",
+        origins: [{ id: "uk", role: "Wurzel", weight: 0.52 }, { id: "usa", role: "Ausarbeitung", weight: 0.62 }]
+      },
+      {
+        id: "ifs", title: "Internal Family Systems", short: "IFS", branch: "psychological",
+        secondary: ["spiritual"],
+        tags: ["Teile", "Self", "Trauma"],
+        summary: "Die Psyche als System von Teilen, führbar durch Self-Qualitäten.",
+        origins: [{ id: "usa", role: "Entwicklung", weight: 1 }]
+      },
+      {
+        id: "act", title: "Acceptance and Commitment Therapy", short: "ACT", branch: "psychological",
+        secondary: ["philosophical"],
+        tags: ["Defusion", "Werte", "Flexibilität"],
+        summary: "Psychologische Flexibilität statt bloßer Symptomkontrolle.",
+        origins: [{ id: "usa", role: "Entwicklung", weight: 1 }]
+      },
+      {
+        id: "systemic", title: "Systemische Therapie", short: "Systemisch", branch: "psychological",
+        secondary: ["philosophical"],
+        tags: ["Relation", "Kontext", "Muster"],
+        summary: "Probleme als Muster in Beziehungs- und Bedeutungssystemen.",
+        origins: [{ id: "usa", role: "Entwicklung", weight: 0.64 }, { id: "europe", role: "Rezeption", weight: 0.56 }]
+      },
+      {
+        id: "polyvagal", title: "Polyvagal", short: "Polyvagal", branch: "somatic",
+        secondary: ["psychological"],
+        tags: ["Sicherheit", "Nervensystem", "Regulation"],
+        summary: "Autonome Zustände als Grundlage von Sicherheit und Beziehung.",
+        origins: [{ id: "usa", role: "Entwicklung", weight: 1 }]
+      },
+      {
+        id: "breathwork", title: "Atemarbeit", short: "Atem", branch: "somatic",
+        secondary: ["spiritual", "psychological"],
+        tags: ["Rhythmus", "Atem", "Regulation"],
+        summary: "Atemrhythmus als Brücke zwischen Körper, Affekt und Aufmerksamkeit.",
+        origins: [{ id: "india", role: "Praxiswurzel", weight: 0.55 }, { id: "europe", role: "moderne Schulen", weight: 0.36 }, { id: "usa", role: "moderne Schulen", weight: 0.34 }]
+      },
+      {
+        id: "yoga", title: "Yoga", short: "Yoga", branch: "somatic",
+        secondary: ["spiritual", "philosophical"],
+        tags: ["Körper", "Atem", "Disziplin"],
+        summary: "Verbindet Körper, Atem, Geist und Befreiungsweg in Übungssystemen.",
+        origins: [{ id: "india", role: "Wurzel", weight: 1 }]
+      },
+      {
+        id: "somatic_experiencing", title: "Somatic Experiencing", short: "SE", branch: "somatic",
+        secondary: ["psychological"],
+        tags: ["Trauma", "Titration", "Körper"],
+        summary: "Körperliche Entladung und Pendulation traumatischer Aktivierung.",
+        origins: [{ id: "usa", role: "Entwicklung", weight: 0.96 }]
+      }
+    ];
+
+    const regions = {
+      india: { label: "Indien", lat: 22, lng: 78, color: "#c8993a", text: "Wurzelraum nichtdualer, yogischer und buddhistischer Traditionslinien." },
+      china: { label: "China", lat: 35, lng: 103, color: "#9d8c5d", text: "Transformationsraum ostasiatischer Praxis- und Denkformen." },
+      japan: { label: "Japan", lat: 36, lng: 138, color: "#7ea9a2", text: "Ausprägungsraum von Zen und verkörperter Formkultur." },
+      persia: { label: "Persien", lat: 32, lng: 54, color: "#b9854d", text: "Poetischer und mystischer Ausprägungsraum des Sufismus." },
+      middle_east: { label: "Naher Osten", lat: 29, lng: 42, color: "#bd6a4b", text: "Verflechtungsraum abrahamitischer Mystik und philosophischer Übertragung." },
+      greece: { label: "Griechenland", lat: 39, lng: 22, color: "#5d83a8", text: "Antiker Wurzelraum europäischer Philosophie und Tugendethik." },
+      rome: { label: "Rom", lat: 42, lng: 12, color: "#5d83a8", text: "Praxis- und Rezeptionsraum antiker philosophischer Schulen." },
+      germany: { label: "Deutschland", lat: 51, lng: 10, color: "#5d83a8", text: "Moderner Raum begrifflicher und phänomenologischer Ausarbeitung." },
+      france: { label: "Frankreich", lat: 47, lng: 2, color: "#5d83a8", text: "Wichtiger Resonanzraum kontinentaler Philosophie." },
+      uk: { label: "UK", lat: 54, lng: -2, color: "#5d83a8", text: "Mitprägender Raum moderner Prozess- und Wissenschaftsdiskurse." },
+      usa: { label: "USA", lat: 39, lng: -98, color: "#6a9b73", text: "Entwicklungsraum moderner Psychotherapie und somatischer Modelle." },
+      europe: { label: "Europa", lat: 50, lng: 14, color: "#3a6f73", text: "Rezeptions- und Übersetzungsraum moderner Schulen." }
+    };
+
+    const comparisons = [
+      {
+        nodes: ["ifs", "act"],
+        title: "IFS und ACT",
+        summary: "Nähe in der Desidentifikation, klare Differenz im Modell der Psyche.",
+        resonance: ["Beide schaffen Abstand zu inneren Prozessen.", "Beide stärken Handlungsfähigkeit trotz innerer Aktivierung."],
+        friction: ["IFS modelliert innere Teile relativ konkret.", "ACT bleibt funktionaler und vermeidet eine starke Binnenontologie."],
+        bridges: ["Self-Leadership kann funktional mit Self-as-context verglichen werden."]
+      },
+      {
+        nodes: ["zen", "advaita"],
+        title: "Zen und Advaita",
+        summary: "Resonanz in Nichtdualität, Spannung in der Sprache des Selbst.",
+        resonance: ["Beide misstrauen rein begrifflicher Erkenntnis.", "Beide verschieben Identität aus gewohnter Ich-Verengung."],
+        friction: ["Advaita spricht vom Selbst als absoluter Wirklichkeit.", "Zen lässt solche Setzungen oft in Praxis und Schweigen zurücktreten."],
+        bridges: ["Nicht-Anhaften und nicht-konzeptuelle Einsicht bilden eine tragfähige Übersetzungsachse."]
+      },
+      {
+        nodes: ["yoga", "polyvagal"],
+        title: "Yoga und Polyvagal",
+        summary: "Starke Praxisbrücke, solange Tradition und Modell nicht vermischt werden.",
+        resonance: ["Beide machen Regulation über Körper, Atem und Haltung zugänglich.", "Beide verbinden Innenzustand und Beziehungsfähigkeit."],
+        friction: ["Yoga ist ein spirituell-philosophisches Übungssystem.", "Polyvagal ist ein modernes neurophysiologisches Modell."],
+        bridges: ["Atem, Rhythmus und Sicherheit bilden eine präzise Übersetzungsbrücke."]
+      },
+      {
+        nodes: ["stoa", "act"],
+        title: "Stoa und ACT",
+        summary: "Eine starke Brücke über Urteil, Werte und handlungsfähige Distanz.",
+        resonance: ["Beide unterscheiden Ereignis und Bewertung.", "Beide richten Praxis auf werte- oder tugendbezogenes Handeln."],
+        friction: ["Stoa begründet normativ-ethisch.", "ACT bleibt stärker verhaltenswissenschaftlich und funktional."],
+        bridges: ["Wertearbeit kann als moderne Praxisform stoischer Orientierung gelesen werden."]
+      }
+    ];
+
+    const crossEdges = [
+      ["ifs", "act"],
+      ["zen", "advaita"],
+      ["yoga", "polyvagal"],
+      ["stoa", "act"],
+      ["zen", "act"],
+      ["phenomenology", "ifs"],
+      ["breathwork", "polyvagal"]
+    ];
+
+    const state = {
+      branch: null,
+      showLinks: false,
+      mapMode: "regions",
+      selected: {
+        zen: 0.86,
+        ifs: 0.82,
+        act: 0.64,
+        yoga: 0.54
+      },
+      tableFocus: ["ifs", "act"]
+    };
+
+    const nodeById = Object.fromEntries(nodes.map(node => [node.id, node]));
+    const branchById = Object.fromEntries(branches.map(branch => [branch.id, branch]));
+
+    function pct(value) {
+      return Math.round(value * 100) + "%";
+    }
+
+    function selectedIds() {
+      return Object.keys(state.selected).filter(id => nodeById[id]);
+    }
+
+    function polar(angle, radius) {
+      const rad = angle * Math.PI / 180;
+      return { x: 50 + Math.cos(rad) * radius, y: 50 + Math.sin(rad) * radius };
+    }
+
+    function setView(view) {
+      document.documentElement.dataset.view = view;
+      document.querySelectorAll("[data-view-target]").forEach(btn => {
+        btn.classList.toggle("is-active", btn.dataset.viewTarget === view && btn.classList.contains("view-btn"));
+      });
+      render();
+    }
+
+    function setMapMode(mode) {
+      state.mapMode = mode;
+      document.documentElement.dataset.mapMode = mode;
+      document.querySelectorAll("[data-map-mode]").forEach(btn => {
+        btn.classList.toggle("is-active", btn.dataset.mapMode === mode);
+      });
+      renderMap();
+    }
+
+    function renderBranches() {
+      const layer = document.getElementById("branchLayer");
+      layer.innerHTML = branches.map(branch => {
+        const p = polar(branch.angle, 34);
+        return `
+          <div class="axis-line" style="--angle:${branch.angle}deg;--axis-length:37%;--axis-color:${branch.color}"></div>
+          <button class="branch-btn ${state.branch === branch.id ? "is-active" : ""}" data-branch="${branch.id}" style="--x:${p.x}%;--y:${p.y}%;--axis-color:${branch.color}">
+            <span class="branch-name">${branch.label}</span>
+            <span class="branch-desc">${branch.description}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function tokenPositions() {
+      const groups = Object.fromEntries(branches.map(branch => [branch.id, []]));
+      selectedIds().forEach(id => groups[nodeById[id].branch].push(nodeById[id]));
+      const out = [];
+      branches.forEach(branch => {
+        groups[branch.id].forEach((node, index) => {
+          const spread = (index - (groups[branch.id].length - 1) / 2) * 10;
+          const p = polar(branch.angle + spread, 23.5);
+          out.push({ id: node.id, x: p.x, y: p.y, color: branch.color });
+        });
+      });
+      return out;
+    }
+
+    function renderSelectedNodes() {
+      const layer = document.getElementById("selectedLayer");
+      layer.innerHTML = tokenPositions().map(token => {
+        const node = nodeById[token.id];
+        return `<button class="selected-node" data-node-toggle="${node.id}" style="--x:${token.x}%;--y:${token.y}%;--axis-color:${token.color}">${node.short || node.title}</button>`;
+      }).join("");
+    }
+
+    function renderRaumSvg() {
+      const svg = document.getElementById("raumSvg");
+      const tokens = tokenPositions();
+      const lines = tokens.map(token => `<path class="influence-line" d="M50 50 Q ${(50 + token.x) / 2} ${(50 + token.y) / 2 - 2} ${token.x} ${token.y}"/>`).join("");
+      const links = crossEdges.map(edge => {
+        const a = tokens.find(token => token.id === edge[0]);
+        const b = tokens.find(token => token.id === edge[1]);
+        if (!a || !b) return "";
+        return `<path class="cross-link ${state.showLinks ? "visible" : ""}" d="M${a.x} ${a.y} Q50 50 ${b.x} ${b.y}"/>`;
+      }).join("");
+      svg.innerHTML = lines + links;
+    }
+
+    function renderSidePanel() {
+      if (!state.branch) {
+        document.getElementById("sideKicker").textContent = "Zentrum";
+        document.getElementById("sideTitle").textContent = "Dich";
+        document.getElementById("sideText").textContent = "Das Profil sammelt Einflüsse, bevor sie als Herkunftsmatrix und später als Tischmaterial sichtbar werden.";
+        document.getElementById("nodeList").innerHTML = selectedIds().map(id => {
+          const node = nodeById[id];
+          return `
+            <div class="profile-row">
+              <strong>${node.short || node.title}</strong>
+              <button class="remove-btn" data-remove-node="${id}" aria-label="${node.title} entfernen">×</button>
+              <span>Gewicht ${pct(state.selected[id])}</span>
+              <input type="range" min="0.2" max="1" step="0.02" value="${state.selected[id]}" data-strength="${id}">
+            </div>
+          `;
+        }).join("") || `<p class="empty-text">Noch keine Einflüsse gewählt.</p>`;
+        return;
+      }
+
+      const branch = branchById[state.branch];
+      document.getElementById("sideKicker").textContent = "Aktiver Ast";
+      document.getElementById("sideTitle").textContent = branch.label;
+      document.getElementById("sideText").textContent = branch.description;
+      document.getElementById("nodeList").innerHTML = nodes
+        .filter(node => node.branch === state.branch)
+        .map(node => {
+          const selected = state.selected[node.id];
+          const color = branchById[node.branch].color;
+          return `
+            <button class="node-btn ${selected ? "is-selected" : ""}" data-node-toggle="${node.id}" style="--node-color:${color}">
+              <span class="node-top">
+                <span class="node-title">${node.title}</span>
+                <span class="node-weight">${selected ? pct(selected) : "+"}</span>
+              </span>
+              <p class="node-summary">${node.summary}</p>
+              <span class="tag-row">${node.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</span>
+            </button>
+          `;
+        }).join("");
+    }
+
+    function renderProfileList(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = selectedIds().map(id => {
+        const node = nodeById[id];
+        return `
+          <div class="profile-row">
+            <strong>${node.short || node.title}</strong>
+            <button class="remove-btn" data-remove-node="${id}" aria-label="${node.title} entfernen">×</button>
+            <span>Gewicht ${pct(state.selected[id])}</span>
+            <input type="range" min="0.2" max="1" step="0.02" value="${state.selected[id]}" data-strength="${id}">
+          </div>
+        `;
+      }).join("");
+    }
+
+    function projection() {
+      const totals = {};
+      selectedIds().forEach(id => {
+        const strength = state.selected[id];
+        nodeById[id].origins.forEach(origin => {
+          totals[origin.id] = (totals[origin.id] || 0) + strength * origin.weight;
+        });
+      });
+      const max = Math.max(1, ...Object.values(totals));
+      return Object.entries(totals)
+        .map(([id, raw]) => ({ id, raw, score: raw / max }))
+        .sort((a, b) => b.raw - a.raw);
+    }
+
+    function project(lng, lat) {
+      return {
+        x: ((lng + 180) / 360) * 960,
+        y: ((90 - lat) / 180) * 520
+      };
+    }
+
+    function renderMap() {
+      const svg = document.getElementById("worldMap");
+      if (!svg) return;
+      const data = projection();
+      const active = new Set(data.map(item => item.id));
+      const grid = [-120, -60, 0, 60, 120].map(lng => {
+        const p = project(lng, 0);
+        return `<line class="grid-line" x1="${p.x}" y1="28" x2="${p.x}" y2="492"/>`;
+      }).join("") + [-45, 0, 45].map(lat => {
+        const p = project(0, lat);
+        return `<line class="grid-line" x1="42" y1="${p.y}" x2="918" y2="${p.y}"/>`;
+      }).join("");
+
+      const land = `
+        <path class="land" d="M116 163 C148 109 230 97 288 127 C334 152 337 205 292 231 C259 251 242 304 204 308 C164 312 148 263 113 242 C83 224 92 184 116 163 Z"/>
+        <path class="land" d="M235 299 C267 285 306 305 321 343 C339 397 302 468 259 458 C224 450 224 402 206 370 C188 337 197 310 235 299 Z"/>
+        <path class="land" d="M443 144 C493 101 596 91 681 126 C750 154 800 200 783 247 C764 302 676 299 628 280 C572 258 526 294 474 275 C419 254 396 184 443 144 Z"/>
+        <path class="land" d="M471 274 C516 255 574 281 596 329 C624 388 589 461 533 457 C485 453 452 398 451 346 C450 312 448 286 471 274 Z"/>
+        <path class="land" d="M705 319 C747 300 812 310 844 353 C869 387 852 429 809 432 C759 436 716 403 692 367 C679 348 684 329 705 319 Z"/>
+        <path class="land" d="M402 124 C426 94 472 88 500 105 C526 121 517 149 489 157 C453 168 417 158 402 124 Z"/>
+      `;
+
+      const fields = data.map(item => {
+        const region = regions[item.id];
+        const p = project(region.lng, region.lat);
+        return `<circle class="region-field" cx="${p.x}" cy="${p.y}" r="${34 + item.score * 56}" style="--region-color:${region.color};--region-opacity:${0.07 + item.score * 0.16}"/>`;
+      }).join("");
+
+      const routes = data.map(item => {
+        const region = regions[item.id];
+        const p = project(region.lng, region.lat);
+        return `<path class="route" d="M${p.x} ${p.y} Q${(p.x + 480) / 2} ${(p.y + 260) / 2 - 38} 480 260"/>`;
+      }).join("");
+
+      const historic = active.has("india") && active.has("china") && active.has("japan")
+        ? `<path class="historic-route" d="M${project(78,22).x} ${project(78,22).y} Q590 158 ${project(103,35).x} ${project(103,35).y} Q666 156 ${project(138,36).x} ${project(138,36).y}"/>`
+        : "";
+
+      const markers = data.map(item => {
+        const region = regions[item.id];
+        const p = project(region.lng, region.lat);
+        return `
+          <g style="--region-color:${region.color}">
+            <circle class="marker-ring" cx="${p.x}" cy="${p.y}" r="8"></circle>
+            <circle class="marker-dot" cx="${p.x}" cy="${p.y}" r="${5 + item.score * 7}"></circle>
+            <text class="map-label" x="${p.x + 12}" y="${p.y - 10}">${region.label}</text>
+          </g>
+        `;
+      }).join("");
+
+      svg.innerHTML = `
+        ${grid}
+        ${land}
+        ${fields}
+        ${routes}
+        ${historic}
+        <circle class="map-center" cx="480" cy="260" r="22"></circle>
+        <text class="map-label" x="504" y="254">Dich</text>
+        ${markers}
+      `;
+
+      const regionList = document.getElementById("regionList");
+      if (regionList) {
+        regionList.innerHTML = data.map(item => `
+          <div class="region-row">
+            <strong>${regions[item.id].label}</strong>
+            <span class="score">${pct(item.score)}</span>
+            <p>${regions[item.id].text}</p>
+          </div>
+        `).join("");
+      }
+    }
+
+    function renderTable() {
+      const grid = document.getElementById("tableGrid");
+      if (!grid) return;
+      grid.innerHTML = branches.map(branch => {
+        const selected = selectedIds().map(id => nodeById[id]).filter(node => node.branch === branch.id);
+        return `
+          <section class="quadrant" style="--quad-color:${branch.color}">
+            <div class="quadrant-head">
+              <h2>${branch.label}</h2>
+              <span class="quadrant-count">${selected.length} aktiv</span>
+            </div>
+            <div class="module-list">
+              ${selected.length ? selected.map(node => `
+                <button class="module-btn ${state.tableFocus.includes(node.id) ? "is-active" : ""}" data-table-focus="${node.id}" style="--quad-color:${branch.color}">
+                  <span class="module-title"><span>${node.title}</span><span>${pct(state.selected[node.id])}</span></span>
+                  <p class="module-body">${node.summary}</p>
+                  <span class="tag-row">${node.secondary.map(id => `<span class="tag">${branchById[id].label}</span>`).join("")}</span>
+                </button>
+              `).join("") : `<p class="empty-text">Noch nicht belegt.</p>`}
+            </div>
+          </section>
+        `;
+      }).join("");
+      renderInspector();
+    }
+
+    function findComparison() {
+      if (state.tableFocus.length < 2) return null;
+      const pair = new Set(state.tableFocus.slice(0, 2));
+      return comparisons.find(item => item.nodes.every(id => pair.has(id))) || null;
+    }
+
+    function renderInspector() {
+      const title = document.getElementById("inspectorTitle");
+      const summary = document.getElementById("inspectorSummary");
+      const body = document.getElementById("inspectorBody");
+      if (!title || !summary || !body) return;
+      const comparison = findComparison();
+      const focusNodes = state.tableFocus.map(id => nodeById[id]).filter(Boolean);
+
+      if (comparison) {
+        title.textContent = comparison.title;
+        summary.textContent = comparison.summary;
+        body.innerHTML = [
+          ["Resonanz", comparison.resonance],
+          ["Reibung", comparison.friction],
+          ["Übersetzungsbrücken", comparison.bridges]
+        ].map(([headline, items]) => `
+          <section class="insight-block">
+            <h3>${headline}</h3>
+            <ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>
+          </section>
+        `).join("");
+        return;
+      }
+
+      title.textContent = focusNodes.length ? focusNodes.map(node => node.short || node.title).join(" + ") : "Vergleich";
+      summary.textContent = focusNodes.length < 2 ? "Wähle zwei Module am Tisch." : "Für dieses Paar ist noch keine kuratierte IBW-Brücke hinterlegt.";
+      body.innerHTML = focusNodes.map(node => `
+        <section class="insight-block">
+          <h3>${node.title}</h3>
+          <ul>
+            <li>${node.summary}</li>
+            <li>Primär: ${branchById[node.branch].label}</li>
+            <li>Sekundär: ${node.secondary.map(id => branchById[id].label).join(", ") || "keine"}</li>
+          </ul>
+        </section>
+      `).join("");
+    }
+
+    function toggleNode(id) {
+      if (state.selected[id]) {
+        delete state.selected[id];
+        state.tableFocus = state.tableFocus.filter(nodeId => nodeId !== id);
+      } else {
+        state.selected[id] = 0.7;
+      }
+      if (state.tableFocus.length < 2) {
+        const fallback = selectedIds().slice(0, 2);
+        state.tableFocus = fallback;
+      }
+      render();
+    }
+
+    function render() {
+      renderBranches();
+      renderSelectedNodes();
+      renderRaumSvg();
+      renderSidePanel();
+      renderMap();
+      renderTable();
+    }
+
+    document.addEventListener("click", event => {
+      const viewTarget = event.target.closest("[data-view-target]");
+      if (viewTarget) setView(viewTarget.dataset.viewTarget);
+
+      const branchBtn = event.target.closest("[data-branch]");
+      if (branchBtn) {
+        state.branch = branchBtn.dataset.branch;
+        render();
+      }
+
+      const nodeBtn = event.target.closest("[data-node-toggle]");
+      if (nodeBtn) toggleNode(nodeBtn.dataset.nodeToggle);
+
+      const removeBtn = event.target.closest("[data-remove-node]");
+      if (removeBtn) toggleNode(removeBtn.dataset.removeNode);
+
+      const modeBtn = event.target.closest("[data-map-mode]");
+      if (modeBtn) setMapMode(modeBtn.dataset.mapMode);
+
+      const focusBtn = event.target.closest("[data-table-focus]");
+      if (focusBtn) {
+        const id = focusBtn.dataset.tableFocus;
+        state.tableFocus = state.tableFocus.includes(id)
+          ? state.tableFocus.filter(nodeId => nodeId !== id)
+          : [...state.tableFocus, id].slice(-2);
+        renderTable();
+      }
+
+      const action = event.target.closest("[data-action]");
+      if (action && action.dataset.action === "activate") {
+        state.branch = null;
+        render();
+      }
+
+      if (action && action.dataset.action === "toggle-links") {
+        state.showLinks = !state.showLinks;
+        action.classList.toggle("primary", state.showLinks);
+        renderRaumSvg();
+      }
+
+      if (action && action.dataset.action === "best-compare") {
+        const ids = selectedIds();
+        const match = comparisons.find(item => item.nodes.every(id => ids.includes(id)));
+        state.tableFocus = match ? match.nodes.slice() : ids.slice(0, 2);
+        renderTable();
+      }
+
+      if (action && action.dataset.action === "save-profile") {
+        localStorage.setItem("dich_raum_profile", JSON.stringify({ selected: state.selected, tableFocus: state.tableFocus }));
+        const status = document.getElementById("saveStatus");
+        if (status) status.textContent = "Pfad lokal gespeichert.";
+      }
+    });
+
+    document.addEventListener("input", event => {
+      const input = event.target.closest("[data-strength]");
+      if (!input) return;
+      state.selected[input.dataset.strength] = Number(input.value);
+      render();
+    });
+
+    const saved = localStorage.getItem("dich_raum_profile");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.selected) state.selected = parsed.selected;
+        if (parsed.tableFocus) state.tableFocus = parsed.tableFocus;
+      } catch (error) {
+        localStorage.removeItem("dich_raum_profile");
+      }
+    }
+
+    document.documentElement.dataset.mapMode = state.mapMode;
+    render();
+  </script>
+</body>
+</html>

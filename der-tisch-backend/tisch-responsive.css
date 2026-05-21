@@ -1,0 +1,322 @@
+/* Shared responsive screen-fill rules for all TiSCH frontends. */
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100%;
+  min-height: 100svh;
+  overflow-x: hidden;
+}
+
+body > main,
+.container,
+.aufstellung-wrap,
+.results,
+.results-section,
+.mode-section > .container {
+  width: min(100% - clamp(24px, 4vw, 120px), 3200px) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body > main {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.input-wrap,
+.input-wrapper,
+.input-box,
+.question-input-wrapper,
+.perspektiven-selector,
+.mode-tabs,
+.mode-selector,
+.controls-row,
+.filter-row,
+.chips,
+.persp-grid,
+.select-all-row,
+.translate-section,
+.integrity-field-wrap,
+.ki-bar-lt,
+.ki-output-lt {
+  max-width: min(100%, 1120px) !important;
+}
+
+.question-input,
+.input-wrap textarea,
+.input-wrapper textarea,
+.question-input-wrapper textarea,
+.werk-input,
+.integrity-textarea {
+  min-height: clamp(88px, 12svh, 180px) !important;
+}
+
+.perspective-cards,
+.perspectives-grid,
+#translated-cards,
+#dt-translated-cards {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)) !important;
+  gap: clamp(14px, 1.4vw, 26px) !important;
+}
+
+.persp-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+}
+
+.result-card,
+.perspective-card,
+.skeleton-card,
+.integration-cell,
+.translate-section,
+.kintegrity,
+.ki-panel-lt {
+  border-radius: 8px !important;
+}
+
+.hero-logo-svg,
+.hero-main {
+  width: min(100%, clamp(520px, 42vw, 1240px)) !important;
+  max-height: min(52svh, 680px);
+}
+
+.hero-svg-wrap,
+.hero > div:has(.hero-logo-svg) {
+  width: 100% !important;
+  max-width: min(100%, 1320px) !important;
+}
+
+@media (min-width: 1100px) and (min-height: 580px) {
+  body > main > .hero,
+  body > main section.hero {
+    min-height: calc(100svh - 64px) !important;
+    padding-top: clamp(28px, 6svh, 96px) !important;
+    padding-bottom: clamp(36px, 7svh, 112px) !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg),
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) {
+    display: grid !important;
+    grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 1.05fr);
+    align-items: center !important;
+    align-content: center !important;
+    grid-auto-rows: min-content;
+    justify-items: stretch !important;
+    column-gap: clamp(40px, 6vw, 150px);
+    row-gap: clamp(10px, 1.6svh, 24px);
+    text-align: left !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-logo-svg,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > :has(.hero-logo-svg),
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-logo-svg,
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) > :has(.hero-logo-svg),
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .book-shelf,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .writing-deco {
+    grid-column: 1;
+    justify-self: center;
+    align-self: center;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-logo-svg,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > :has(.hero-logo-svg),
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-logo-svg,
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) > :has(.hero-logo-svg) {
+    grid-row: 1 / span 10;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .book-shelf,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .writing-deco {
+    display: none !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-badge,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-eyebrow,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-sub,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .mode-tabs,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .mode-selector,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .input-wrap,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .input-wrapper,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .question-input-wrapper,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .perspektiven-selector,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .cta-btn,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .chip-toggle-btn,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .chip-row,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .error-msg,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .error-panel,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > div:not(:has(.hero-logo-svg)):not(.book-shelf):not(.writing-deco) {
+    grid-column: 2;
+    justify-self: stretch;
+    max-width: min(100%, 1120px) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .cta-btn,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .chip-toggle-btn {
+    justify-self: start;
+    width: auto !important;
+  }
+
+  body > main > .hero:has(.hero-intro):has(.hero-control) {
+    grid-template-columns: minmax(360px, 0.9fr) minmax(420px, 1.1fr) !important;
+    gap: clamp(40px, 6vw, 150px) !important;
+  }
+
+  body > main > .hero:has(.hero-intro):has(.hero-control) .hero-logo-svg {
+    width: min(100%, clamp(520px, 38vw, 1180px)) !important;
+  }
+}
+
+@media (max-width: 1099px) {
+  body > main,
+  .container,
+  .aufstellung-wrap,
+  .results,
+  .results-section,
+  .mode-section > .container {
+    width: calc(100% - 24px) !important;
+  }
+
+  body > main > .hero,
+  body > main section.hero {
+    min-height: auto !important;
+    padding-top: clamp(18px, 5svh, 48px) !important;
+    padding-bottom: clamp(28px, 6svh, 64px) !important;
+    text-align: center !important;
+  }
+
+  .hero-logo-svg,
+  .hero-main {
+    width: min(100%, 560px) !important;
+    max-height: 36svh;
+  }
+
+  .input-wrap,
+  .input-wrapper,
+  .input-box,
+  .question-input-wrapper,
+  .perspektiven-selector,
+  .mode-tabs,
+  .mode-selector {
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 540px) and (min-width: 700px) {
+  body > main {
+    width: calc(100% - 32px) !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg),
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) {
+    display: grid !important;
+    grid-template-columns: minmax(260px, 0.82fr) minmax(360px, 1.18fr);
+    align-items: center !important;
+    align-content: center !important;
+    grid-auto-rows: min-content;
+    column-gap: clamp(24px, 5vw, 72px);
+    padding-top: 14px !important;
+    padding-bottom: 18px !important;
+    text-align: left !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-logo-svg,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > :has(.hero-logo-svg),
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-logo-svg,
+  body > main section.hero:not(:has(.hero-intro)):has(.hero-logo-svg) > :has(.hero-logo-svg) {
+    grid-column: 1;
+    grid-row: 1 / span 10;
+    justify-self: center;
+    align-self: center;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-badge,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-eyebrow,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .hero-sub,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .mode-tabs,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .mode-selector,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .input-wrap,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .input-wrapper,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .input-box,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .question-input-wrapper,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .perspektiven-selector,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .cta-btn,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .chip-toggle-btn,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .chip-row,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .error-msg,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .error-panel,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > div:not(:has(.hero-logo-svg)):not(.book-shelf):not(.writing-deco) {
+    grid-column: 2;
+    justify-self: stretch;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .cta-btn,
+  body > main > .hero:not(:has(.hero-intro)):has(.hero-logo-svg) > .chip-toggle-btn {
+    justify-self: start;
+    width: auto !important;
+  }
+
+  .book-shelf,
+  .writing-deco {
+    display: none !important;
+  }
+
+  .hero-logo-svg,
+  .hero-main {
+    width: min(100%, 500px) !important;
+    max-height: 54svh;
+  }
+
+  .hero-sub {
+    margin-bottom: 10px !important;
+  }
+
+  .question-input,
+  .input-wrap textarea,
+  .input-wrapper textarea,
+  .question-input-wrapper textarea {
+    min-height: 76px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  body > main,
+  .container,
+  .aufstellung-wrap,
+  .results,
+  .results-section,
+  .mode-section > .container {
+    width: calc(100% - 20px) !important;
+  }
+
+  nav {
+    min-height: 56px;
+  }
+
+  .hero-logo-svg,
+  .hero-main {
+    width: min(100%, 390px) !important;
+    max-height: 32svh;
+  }
+
+  .perspective-cards,
+  .perspectives-grid,
+  #translated-cards,
+  #dt-translated-cards {
+    grid-template-columns: 1fr !important;
+  }
+}

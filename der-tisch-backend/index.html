@@ -19,6 +19,7 @@
 <link rel="author" href="https://www.perplexity.ai/computer">
 
 <meta charset="UTF-8">
+<link rel="icon" href="icons/team-tisch-192.png">
 <link rel="manifest" href="/manifest-team-tisch.json">
 <meta name="theme-color" content="#3A6F73">
 <meta name="mobile-web-app-capable" content="yes">
@@ -79,31 +80,6 @@
 }
 
 [data-theme="dark"] {
-  --color-bg:              #f5f4f0;
-  --color-surface:         #faf9f7;
-  --color-surface-2:       #fff;
-  --color-surface-offset:  #efede9;
-  --color-surface-hover:   #e8e6e2;
-  --color-divider:         #e0ded9;
-  --color-border:          #d5d3ce;
-  --color-text:            #1e1c18;
-  --color-text-muted:      #6b6966;
-  --color-text-faint:      #a8a6a2;
-  --color-accent:          #c8993a;
-  --color-accent-dim:      rgba(200, 153, 58, 0.12);
-  --color-accent-glow:     rgba(200, 153, 58, 0.05);
-  --color-friction:        #c0574a;
-  --color-friction-dim:    rgba(192, 87, 74, 0.10);
-  --color-integration:     #5a8fb8;
-  --color-integration-dim: rgba(90, 143, 184, 0.10);
-  --color-einfach:         #6bab7e;
-  --color-einfach-dim:     rgba(107, 171, 126, 0.10);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.09);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
-}
-
-[data-theme="light"] {
   --color-bg:              #0e0d0b;
   --color-surface:         #141311;
   --color-surface-2:       #1a1917;
@@ -126,6 +102,31 @@
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
   --shadow-lg: 0 16px 48px rgba(0,0,0,0.6);
+}
+
+[data-theme="light"] {
+  --color-bg:              #f5f4f0;
+  --color-surface:         #faf9f7;
+  --color-surface-2:       #fff;
+  --color-surface-offset:  #efede9;
+  --color-surface-hover:   #e8e6e2;
+  --color-divider:         #e0ded9;
+  --color-border:          #d5d3ce;
+  --color-text:            #1e1c18;
+  --color-text-muted:      #6b6966;
+  --color-text-faint:      #a8a6a2;
+  --color-accent:          #c8993a;
+  --color-accent-dim:      rgba(200, 153, 58, 0.12);
+  --color-accent-glow:     rgba(200, 153, 58, 0.05);
+  --color-friction:        #c0574a;
+  --color-friction-dim:    rgba(192, 87, 74, 0.10);
+  --color-integration:     #5a8fb8;
+  --color-integration-dim: rgba(90, 143, 184, 0.10);
+  --color-einfach:         #6bab7e;
+  --color-einfach-dim:     rgba(107, 171, 126, 0.10);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.09);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -573,26 +574,26 @@ a, button { transition: color var(--duration) var(--ease-out), background var(--
    GLASSY CARDS + HOVER (UI Upgrade)
 ============================================= */
 .perspective-card {
-  position: relative; z-index: 1;
-  background: var(--color-card-glass, rgba(255,255,255,0.06)) !important;
-  backdrop-filter: blur(12px) saturate(1.4) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(1.4) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
+  position: relative; z-index: 2;
+  background: var(--color-surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--color-border) !important;
   border-top: 2.5px solid var(--card-accent, var(--color-accent)) !important;
-  border-radius: var(--radius-2xl) !important;
+  border-radius: var(--radius-md) !important;
   padding: var(--space-8) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.12) !important;
+  box-shadow: var(--shadow-sm) !important;
   transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), border-color 0.22s !important;
 }
 .perspective-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-md) !important;
   border-top-color: var(--card-accent, var(--color-accent)) !important;
 }
 html[data-theme="light"] .perspective-card {
-  background: rgba(255,255,255,0.72) !important;
-  border-color: rgba(0,0,0,0.07) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.06) !important;
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 /* Agent icon in card header */
@@ -3152,6 +3153,7 @@ html[data-stil] body {
   text-align: center;
 }
 </style>
+<link rel="stylesheet" href="tisch-responsive.css">
 </head>
 <body>
 
@@ -6107,7 +6109,7 @@ function renderCardConnectionsTeam(perspectives, edges) {
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('id','teamCardConnSvg');
-  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0;';
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;';
 
   // Ampel colors: magnitude determines intensity, valence determines color
   const VALENCE_COLOR = { positive: '#4CAF50', ambivalent: '#FFC107', negative: '#F44336' };
@@ -6127,60 +6129,32 @@ function renderCardConnectionsTeam(perspectives, edges) {
     const color = VALENCE_COLOR[edge.valence] || '#FFC107';
     const mag = edge.magnitude;
     const isStrong = mag >= STRONG_THRESH;
-    const sw = mag > 0.85 ? 3.2 : mag > 0.65 ? 2.4 : 1.6;
-    const anim = mag > 0.85 ? 'pulse-strong' : mag > 0.65 ? 'pulse-medium' : 'pulse-soft';
-    const dur  = mag > 0.85 ? '1.0s' : mag > 0.65 ? '1.6s' : '2.4s';
+    const sw = mag > 0.85 ? 1.5 : mag > 0.65 ? 1.25 : 1;
     const pathD = gutterPath(rA, rB, gridRect);
 
-    // Group — hidden for weak lines, shown on hover
+    // Thin in-between line, routed through the gutters between cards.
     const g = document.createElementNS('http://www.w3.org/2000/svg','g');
     g.setAttribute('data-role-a', edge.roleA);
     g.setAttribute('data-role-b', edge.roleB);
     g.setAttribute('data-mag', mag);
-    g.style.opacity = isStrong ? '1' : '0';
-    g.style.transition = 'opacity 0.3s';
+    g.style.opacity = isStrong ? '0.62' : '0';
+    g.style.transition = 'opacity 0.18s';
     g.style.pointerEvents = 'none';
-
-    // Glow layer
-    const glow = document.createElementNS('http://www.w3.org/2000/svg','path');
-    glow.setAttribute('d', pathD); glow.setAttribute('fill','none');
-    glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', sw * 3.5);
-    glow.setAttribute('stroke-opacity', '0.2'); glow.setAttribute('stroke-linecap','round');
-    glow.style.animation = `${anim} ${dur} ease-in-out infinite`;
-    glow.style.color = color; glow.style.pointerEvents = 'none';
 
     // Core line
     const vis = document.createElementNS('http://www.w3.org/2000/svg','path');
     vis.setAttribute('d', pathD); vis.setAttribute('fill','none');
     vis.setAttribute('stroke', color); vis.setAttribute('stroke-width', sw);
+    vis.setAttribute('stroke-opacity', '0.72');
     vis.setAttribute('stroke-linecap','round');
-    vis.style.animation = `${anim} ${dur} ease-in-out infinite`;
+    vis.setAttribute('vector-effect', 'non-scaling-stroke');
     vis.style.color = color; vis.style.pointerEvents = 'none';
 
-    g.appendChild(glow); g.appendChild(vis);
+    g.appendChild(vis);
     svg.appendChild(g);
-
-    // Separate clickable hit area — MUST be outside pointer-events:none group
-    const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
-    hit.setAttribute('d', pathD); hit.setAttribute('fill','none');
-    hit.setAttribute('stroke','transparent'); hit.setAttribute('stroke-width','24');
-    hit.setAttribute('stroke-linecap','round');
-    hit.style.cursor = 'pointer';
-    hit.style.pointerEvents = 'stroke';
-    hit.style.opacity = isStrong ? '1' : '0';
-    hit.setAttribute('data-role-a', edge.roleA);
-    hit.setAttribute('data-role-b', edge.roleB);
-    const _color = color;
-    const _edge  = { ...edge };
-    hit.addEventListener('click', ev => {
-      ev.stopPropagation();
-      openEdgePanelTeam(_edge.roleA, _edge.roleB, _edge.valence, _edge.summary || '', _color);
-    });
-    svg.appendChild(hit);
   });
 
-  // SVG must allow pointer events for hit areas to work
-  svg.style.pointerEvents = 'all';
+  svg.style.pointerEvents = 'none';
 
   // Card hover → reveal weak lines connected to that card
   grid.querySelectorAll('.perspective-card, .block-selectable').forEach(card => {
@@ -6189,18 +6163,12 @@ function renderCardConnectionsTeam(perspectives, edges) {
     const roleName = role.textContent.trim();
     card.addEventListener('mouseenter', () => {
       svg.querySelectorAll('g[data-role-a], g[data-role-b]').forEach(g => {
-        if (g.dataset.roleA === roleName || g.dataset.roleB === roleName) g.style.opacity = '1';
-      });
-      svg.querySelectorAll('path[data-role-a], path[data-role-b]').forEach(p => {
-        if (p.dataset.roleA === roleName || p.dataset.roleB === roleName) p.style.opacity = '1';
+        if (g.dataset.roleA === roleName || g.dataset.roleB === roleName) g.style.opacity = '0.78';
       });
     });
     card.addEventListener('mouseleave', () => {
       svg.querySelectorAll('g[data-mag]').forEach(g => {
-        g.style.opacity = parseFloat(g.dataset.mag) >= STRONG_THRESH ? '1' : '0';
-      });
-      svg.querySelectorAll('path[data-role-a]').forEach(p => {
-        p.style.opacity = parseFloat(p.parentElement?.dataset?.mag || p.getAttribute('stroke-width') > 20 ? 0 : 1) >= STRONG_THRESH ? '1' : '0';
+        g.style.opacity = parseFloat(g.dataset.mag) >= STRONG_THRESH ? '0.62' : '0';
       });
     });
   });

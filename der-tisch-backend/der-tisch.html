@@ -27,6 +27,7 @@
 <meta name="apple-mobile-web-app-title" content="DER TiSCH">
 <meta name="application-name" content="DER TiSCH">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="icons/team-tisch-192.png">
 <title>DER TiSCH — Mehrere Stimmen. Ein Tisch.</title>
 <meta name="description" content="DER TiSCH: Stell eine Frage, und mehrere Perspektiven antworten. KI-gestützte Multiperspektiven-Analyse.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -960,6 +961,7 @@
   margin: 0 auto 12px;
 }
 </style>
+<link rel="stylesheet" href="tisch-responsive.css">
 </head>
 <body>
 
@@ -1641,7 +1643,7 @@
       });
     })();
     // Show translation button
-    dtLastQuestion = question || '';
+    dtLastQuestion = lastQuestion || '';
     dtLastData = data;
     var transLbl = document.getElementById('dt-translate-lbl');
     if (transLbl) transLbl.textContent = dtRegister === 'alltag' ? 'In Fachsprache übersetzen' : 'In Alltagssprache übersetzen';

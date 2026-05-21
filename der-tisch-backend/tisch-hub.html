@@ -4,18 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="TiSCH HUB — Zehn spezialisierte KI-Tische. Eine Frage, unendlich viele Perspektiven.">
+  <link rel="icon" href="icons/team-tisch-192.png">
   <title>TiSCH HUB — KI-gestützte Multiperspektiv-Analyse</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #090908;
+      --bg-elevated: #0f0f0e;
+      --surface: #141413;
+      --surface-2: #191816;
+      --border: rgba(240,237,232,0.12);
+      --border-soft: rgba(240,237,232,0.08);
+      --text: #F0EDE8;
+      --muted: rgba(240,237,232,0.62);
+      --faint: rgba(240,237,232,0.38);
+      --gold: #C9A84C;
+      --gold-strong: #DDB95A;
+      --shadow: 0 18px 48px rgba(0,0,0,0.34);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: var(--bg);
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #070707;
-      color: #F0EDE8;
+      background:
+        linear-gradient(180deg, #0c0c0b 0%, var(--bg) 42%, #070707 100%);
+      color: var(--text);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
     /* NAV */
@@ -23,11 +47,11 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(7,7,7,0.94);
+      background: rgba(9,9,8,0.88);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 14px 24px;
+      border-bottom: 1px solid var(--border-soft);
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -38,71 +62,116 @@
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.2em;
-      color: rgba(240,237,232,0.4);
+      color: rgba(240,237,232,0.72);
       white-space: nowrap;
       flex-shrink: 0;
     }
 
     .nav-links {
       display: flex;
-      gap: 14px;
+      gap: 6px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
 
     .nav-links a {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.02em;
       text-decoration: none;
-      color: rgba(240,237,232,0.35);
-      transition: color 0.18s;
+      color: rgba(240,237,232,0.48);
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 6px 9px;
+      transition: color 0.18s, background 0.18s, border-color 0.18s;
       white-space: nowrap;
     }
 
     .nav-links a:hover {
-      color: rgba(240,237,232,0.75);
+      color: rgba(240,237,232,0.9);
+      background: rgba(240,237,232,0.05);
+      border-color: var(--border-soft);
     }
 
     /* HERO */
     .hero {
-      text-align: center;
-      padding: 80px 24px 60px;
+      width: min(1120px, calc(100% - 48px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) 360px;
+      gap: 40px;
+      align-items: end;
+      padding: 72px 0 48px;
     }
 
     .hero h1 {
-      font-size: clamp(24px, 4vw, 42px);
+      max-width: 680px;
+      font-size: clamp(34px, 5.4vw, 72px);
       font-weight: 300;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
-      color: #F0EDE8;
+      letter-spacing: 0;
+      line-height: 0.98;
+      margin-bottom: 18px;
+      color: var(--text);
     }
 
     .hero p {
-      font-size: 16px;
-      color: rgba(240,237,232,0.55);
-      max-width: 480px;
-      margin: 0 auto 48px;
+      font-size: clamp(15px, 1.4vw, 18px);
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 0;
+    }
+
+    .hero-logo {
+      width: min(100%, 520px);
+      height: auto;
+      display: block;
+      margin-bottom: 34px;
+    }
+
+    .hero-panel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .panel-copy {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 20px;
     }
 
     /* STATS ROW */
     .stats-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 40px;
-      margin-bottom: 0;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
 
     .stat-item {
-      text-align: center;
+      min-width: 0;
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.16);
+      padding: 14px 10px;
     }
 
     .stat-number {
       font-size: 28px;
       font-weight: 700;
-      color: #C9A84C;
+      color: var(--gold-strong);
       line-height: 1;
       margin-bottom: 4px;
     }
@@ -110,34 +179,34 @@
     .stat-label {
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.15em;
-      color: rgba(240,237,232,0.35);
+      letter-spacing: 0.08em;
+      color: var(--faint);
       text-transform: uppercase;
     }
 
     .stat-divider {
-      width: 1px;
-      height: 32px;
-      background: rgba(255,255,255,0.08);
+      display: none;
     }
 
     /* SECTION LABEL */
     .section-label {
-      text-align: center;
+      width: min(1120px, calc(100% - 48px));
+      margin: 0 auto;
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.25em;
-      color: rgba(240,237,232,0.3);
+      letter-spacing: 0.18em;
+      color: var(--faint);
       text-transform: uppercase;
-      padding: 48px 24px 24px;
+      padding: 14px 0 18px;
+      border-top: 1px solid var(--border-soft);
     }
 
     /* GRID */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      max-width: 1100px;
+      gap: 16px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 0 24px 80px;
     }
@@ -147,23 +216,28 @@
       display: block;
       text-decoration: none;
       color: inherit;
-      background: #111;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.038), rgba(255,255,255,0.014)),
+        var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
       overflow: hidden;
+      min-height: 238px;
       transition: transform 0.22s cubic-bezier(0.25,0.46,0.45,0.94),
-                  box-shadow 0.22s cubic-bezier(0.25,0.46,0.45,0.94);
+                  box-shadow 0.22s cubic-bezier(0.25,0.46,0.45,0.94),
+                  border-color 0.22s;
       cursor: pointer;
     }
 
     .app-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent);
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+      box-shadow: 0 16px 42px rgba(0,0,0,0.42);
     }
 
     .card-accent-bar {
-      height: 3px;
-      background: var(--accent);
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent 72%);
     }
 
     .card-body {
@@ -173,9 +247,9 @@
     .card-index {
       font-size: 9px;
       font-weight: 700;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       color: var(--accent);
-      opacity: 0.6;
+      opacity: 0.78;
       margin-bottom: 8px;
       text-transform: uppercase;
     }
@@ -183,14 +257,14 @@
     .app-name {
       font-size: 18px;
       font-weight: 700;
-      letter-spacing: -0.01em;
+      letter-spacing: 0;
       margin-bottom: 6px;
       line-height: 1.2;
     }
 
     .tagline {
       font-size: 13px;
-      color: rgba(240,237,232,0.5);
+      color: var(--muted);
       margin-bottom: 16px;
     }
 
@@ -202,7 +276,7 @@
 
     .examples li {
       font-size: 12px;
-      color: rgba(240,237,232,0.38);
+      color: var(--faint);
       padding: 3px 0;
       padding-left: 14px;
       position: relative;
@@ -214,7 +288,7 @@
       position: absolute;
       left: 0;
       color: var(--accent);
-      opacity: 0.6;
+      opacity: 0.72;
     }
 
     .card-cta {
@@ -244,7 +318,7 @@
       text-align: center;
       padding: 32px 24px;
       border-top: 1px solid rgba(255,255,255,0.06);
-      color: rgba(240,237,232,0.3);
+      color: var(--faint);
       font-size: 12px;
     }
 
@@ -273,48 +347,86 @@
 
     /* RESPONSIVE */
     @media (max-width: 600px) {
+      nav {
+        padding: 12px 16px;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        max-width: calc(100vw - 118px);
+        padding-bottom: 4px;
+        scrollbar-width: none;
+      }
+
+      .nav-links::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-links a {
+        padding: 5px 7px;
+      }
+
+      .hero {
+        width: calc(100% - 32px);
+        display: block;
+        padding: 48px 0 42px;
+      }
+
+      .hero-logo {
+        width: min(100%, 360px);
+        margin: 0 auto 28px;
+      }
+
+      .hero h1 {
+        font-size: 31px;
+        line-height: 1.06;
+        text-align: center;
+      }
+
+      .hero p {
+        text-align: center;
+        margin: 0 auto 26px;
+      }
+
+      .hero-panel {
+        padding: 14px;
+      }
+
+      .panel-copy {
+        display: none;
+      }
+
       .grid {
         grid-template-columns: 1fr;
         padding: 0 16px 60px;
       }
 
-      .hero {
-        padding: 48px 16px 40px;
-      }
-
-      .nav-links {
-        gap: 10px;
-      }
-
       .stats-row {
-        gap: 20px;
+        gap: 8px;
       }
 
-      .stat-divider {
-        display: none;
+      .stat-item {
+        padding: 12px 8px;
       }
-    }
 
-    @media (max-width: 480px) {
-      .nav-links {
-        display: none;
+      .stat-number {
+        font-size: 24px;
       }
-    }
 
-    /* SUBTLE GLOW on body bg */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -200px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 400px;
-      background: radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+      .stat-label {
+        font-size: 9px;
+        letter-spacing: 0.05em;
+      }
+
+      .section-label {
+        width: calc(100% - 32px);
+      }
     }
   </style>
+<link rel="stylesheet" href="tisch-responsive.css">
 </head>
 <body>
 
@@ -322,83 +434,78 @@
 <nav>
   <div class="nav-brand">TiSCH HUB</div>
   <div class="nav-links">
-    <a href="/team-tisch">Team</a>
-    <a href="/der-tisch.html">Der</a>
-    <a href="/integrationstisch.html">Integration</a>
-    <a href="/literatentisch.html">Literatur</a>
-    <a href="/expertentisch.html">Experten</a>
-    <a href="/trainingstisch.html">Training</a>
-    <a href="/coachingtisch.html">Coaching</a>
-    <a href="/medizintisch.html">Medizin</a>
-    <a href="/juristisch.html">JURiSTiSCH</a>
-    <a href="/familientisch.html">Familie</a>
-    <a href="/wirtschaftstisch.html">Wirtschaft</a>
+    <a href="index.html">Team</a>
+    <a href="der-tisch.html">Der</a>
+    <a href="integrationstisch.html">Integration</a>
+    <a href="literatentisch.html">Literatur</a>
+    <a href="expertentisch.html">Experten</a>
+    <a href="trainingstisch.html">Training</a>
+    <a href="coachingtisch.html">Coaching</a>
+    <a href="medizintisch.html">Medizin</a>
+    <a href="juristisch.html">JURiSTiSCH</a>
+    <a href="familientisch.html">Familie</a>
+    <a href="wirtschaftstisch.html">Wirtschaft</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <!-- TiSCH HUB Hero Logo -->
-  <svg viewBox="0 0 580 140" style="width:min(88vw,580px);height:auto;display:block;margin:0 auto 36px" aria-label="TiSCH HUB" role="img">
-    <defs>
-      <linearGradient id="hub-gold" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#DDB95A"/>
-        <stop offset="50%" stop-color="#C9A84C"/>
-        <stop offset="100%" stop-color="#9A7830"/>
-      </linearGradient>
-    </defs>
+  <div>
+    <svg class="hero-logo" viewBox="0 0 580 140" aria-label="TiSCH HUB" role="img">
+      <defs>
+        <linearGradient id="hub-gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#DDB95A"/>
+          <stop offset="50%" stop-color="#C9A84C"/>
+          <stop offset="100%" stop-color="#9A7830"/>
+        </linearGradient>
+      </defs>
 
-    <!-- Tagline -->
-    <text x="290" y="14" font-family="Inter,sans-serif" font-size="9" font-weight="600"
-      fill="#C9A84C" letter-spacing="0.28em" text-anchor="middle" opacity="0.75">11 TiSCHE · KI-PERSPEKTIVEN</text>
+      <!-- Tagline -->
+      <text x="290" y="14" font-family="Inter,sans-serif" font-size="9" font-weight="600"
+        fill="#C9A84C" letter-spacing="0.28em" text-anchor="middle" opacity="0.75">11 TiSCHE · KI-PERSPEKTIVEN</text>
 
-    <!-- ── Das T als Tisch (Tischplatte + zwei Beine) ── -->
-    <!-- Tischplatte -->
-    <rect x="22" y="24" width="200" height="13" fill="url(#hub-gold)" rx="2"/>
-    <!-- Glanzlinie -->
-    <rect x="22" y="24" width="200" height="3" fill="#DDB95A" opacity="0.4" rx="2"/>
-    <!-- Linkes Bein -->
-    <rect x="64" y="37" width="13" height="76" fill="#C9A84C" rx="1"/>
-    <!-- Rechtes Bein -->
-    <rect x="147" y="37" width="13" height="76" fill="#C9A84C" rx="1"/>
-    <!-- Schatten unten -->
-    <rect x="22" y="37" width="200" height="3" fill="#7A5820" opacity="0.3"/>
+      <rect x="22" y="24" width="200" height="13" fill="url(#hub-gold)" rx="2"/>
+      <rect x="22" y="24" width="200" height="3" fill="#DDB95A" opacity="0.4" rx="2"/>
+      <rect x="64" y="37" width="13" height="76" fill="#C9A84C" rx="1"/>
+      <rect x="147" y="37" width="13" height="76" fill="#C9A84C" rx="1"/>
+      <rect x="22" y="37" width="200" height="3" fill="#7A5820" opacity="0.3"/>
 
-    <!-- "iSCH" — direkt nach dem rechten Bein -->
-    <text x="165" y="108"
-      font-family="'Inter','Helvetica Neue',sans-serif"
-      font-size="72" font-weight="300"
-      fill="white" letter-spacing="-2">
-      <tspan fill="#C9A84C">i</tspan>SCH
-    </text>
+      <text x="165" y="108"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="72" font-weight="300"
+        fill="white" letter-spacing="0">
+        <tspan fill="#C9A84C">i</tspan>SCH
+      </text>
 
-    <!-- " HUB" — nach iSCH, gleiche Baseline, etwas spacing -->
-    <text x="374" y="108"
-      font-family="'Inter','Helvetica Neue',sans-serif"
-      font-size="72" font-weight="300"
-      fill="#C9A84C" letter-spacing="-2" opacity="0.9"> HUB</text>
+      <text x="374" y="108"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="72" font-weight="300"
+        fill="#C9A84C" letter-spacing="0" opacity="0.9"> HUB</text>
 
-  </svg>
+    </svg>
 
   <h1>KI-gestützte Multiperspektiv-Analyse</h1>
-  <p>Elf spezialisierte Tische. Eine Frage — unendlich viele Perspektiven.</p>
-
-  <div class="stats-row">
-    <div class="stat-item">
-      <div class="stat-number">11</div>
-      <div class="stat-label">Tische</div>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <div class="stat-number">80+</div>
-      <div class="stat-label">Disziplinen</div>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <div class="stat-number">∞</div>
-      <div class="stat-label">Perspektiven</div>
-    </div>
+  <p>Elf spezialisierte Tische für Fragen, die mehr als eine Antwort brauchen.</p>
   </div>
+
+  <aside class="hero-panel" aria-label="TiSCH Überblick">
+    <div class="panel-label">Systemstatus</div>
+    <p class="panel-copy">Wähle den passenden Tisch nach Kontext: Team, Entscheidung, Text, Expertise, Training, Coaching, Medizin, Recht oder Familie.</p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number">10</div>
+        <div class="stat-label">Tische</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">80+</div>
+        <div class="stat-label">Disziplinen</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Perspektiven</div>
+      </div>
+    </div>
+  </aside>
 </div>
 
 <div class="section-label">Alle Tische im Überblick</div>
@@ -407,7 +514,7 @@
 <div class="grid">
 
   <!-- 1. TEAM TiSCH -->
-  <a class="app-card" href="/team-tisch" style="--accent:#C9A84C">
+  <a class="app-card" href="index.html" style="--accent:#C9A84C">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 01</div>
@@ -428,7 +535,7 @@
   </a>
 
   <!-- 2. DER TiSCH -->
-  <a class="app-card" href="/der-tisch.html" style="--accent:#E8614A">
+  <a class="app-card" href="der-tisch.html" style="--accent:#E8614A">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 02</div>
@@ -449,7 +556,7 @@
   </a>
 
   <!-- 3. iNTEGRATiONS TiSCH -->
-  <a class="app-card" href="/integrationstisch.html" style="--accent:#3A6F73">
+  <a class="app-card" href="integrationstisch.html" style="--accent:#3A6F73">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 03</div>
@@ -470,7 +577,7 @@
   </a>
 
   <!-- 4. LiTERATUR TiSCH -->
-  <a class="app-card" href="/literatentisch.html" style="--accent:#C87941">
+  <a class="app-card" href="literatentisch.html" style="--accent:#C87941">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 04</div>
@@ -491,7 +598,7 @@
   </a>
 
   <!-- 5. EXPERTiSEN TiSCH -->
-  <a class="app-card" href="/expertentisch.html" style="--accent:#2C5F8A">
+  <a class="app-card" href="expertentisch.html" style="--accent:#2C5F8A">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 05</div>
@@ -512,7 +619,7 @@
   </a>
 
   <!-- 6. TRAiNiNGS TiSCH -->
-  <a class="app-card" href="/trainingstisch.html" style="--accent:#2ECC5A">
+  <a class="app-card" href="trainingstisch.html" style="--accent:#2ECC5A">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 06</div>
@@ -533,7 +640,7 @@
   </a>
 
   <!-- 7. COACHiNG TiSCH -->
-  <a class="app-card" href="/coachingtisch.html" style="--accent:#7C5CBF">
+  <a class="app-card" href="coachingtisch.html" style="--accent:#7C5CBF">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 07</div>
@@ -554,7 +661,7 @@
   </a>
 
   <!-- 8. MEDiZiN TiSCH -->
-  <a class="app-card" href="/medizintisch.html" style="--accent:#4ECDC4">
+  <a class="app-card" href="medizintisch.html" style="--accent:#4ECDC4">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 08</div>
@@ -575,7 +682,7 @@
   </a>
 
   <!-- 9. JURiSTiSCH -->
-  <a class="app-card" href="/juristisch.html" style="--accent:#C9A84C">
+  <a class="app-card" href="juristisch.html" style="--accent:#C9A84C">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 09</div>
@@ -596,7 +703,7 @@
   </a>
 
   <!-- 10. FAMiLiEN TiSCH -->
-  <a class="app-card" href="/familientisch.html" style="--accent:#C4622D">
+  <a class="app-card" href="familientisch.html" style="--accent:#C4622D">
     <div class="card-accent-bar"></div>
     <div class="card-body">
       <div class="card-index">Tisch 10</div>
@@ -645,11 +752,11 @@
     <div class="footer-logo">T<span style="color:#C9A84C">i</span>SCH HUB</div>
     <p>Zehn spezialisierte KI-Tische &mdash; gebaut für tiefes, multiperspektivisches Denken.</p>
     <p style="margin-top:10px;">
-      <a href="/team-tisch">Team TiSCH</a> &nbsp;&middot;&nbsp;
-      <a href="/der-tisch.html">Der TiSCH</a> &nbsp;&middot;&nbsp;
-      <a href="/expertentisch.html">Experten TiSCH</a> &nbsp;&middot;&nbsp;
-      <a href="/medizintisch.html">Medizin TiSCH</a> &nbsp;&middot;&nbsp;
-      <a href="/wirtschaftstisch.html">Wirtschaft TiSCH</a>
+      <a href="index.html">Team TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="der-tisch.html">Der TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="expertentisch.html">Experten TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="medizintisch.html">Medizin TiSCH</a> &nbsp;&middot;&nbsp;
+      <a href="wirtschaftstisch.html">Wirtschaft TiSCH</a>
     </p>
   </div>
 </footer>
