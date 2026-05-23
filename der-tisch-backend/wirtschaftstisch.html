@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WiRTSCHAFT TiSCH — Wirtschaftliche Perspektiven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #1B7340;
+  --accent-dim: rgba(27,115,64,0.12);
+  --accent-glow: rgba(27,115,64,0.28);
+  --bg: #060D08;
+  --surface: #0D1B10;
+  --text: #E8F0EB;
+  --muted: #6A8A72;
+  --faint: #1A3020;
+  --border: #152018;
+  --font: 'Inter', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(6,13,8,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-svg{flex-shrink:0}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.nav-btn svg{flex-shrink:0}
+
+/* HERO */
+.hero{text-align:center;padding:48px 24px 36px;position:relative;overflow:hidden}
+.hero-tagline{font-size:11px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
+.hero-svg-wrap{position:relative;display:flex;align-items:center;justify-content:center;max-width:780px;margin:0 auto}
+.hero-svg-wrap svg.hero-main{width:100%;max-width:760px;height:auto}
+.hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
+
+/* MODE TABS */
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:460px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
+.mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
+.mode-tab:not(.active):hover{color:var(--text)}
+
+/* SECTION CONTAINERS */
+.mode-section{display:none}
+.mode-section.active{display:block}
+
+/* PERSPEKTIVEN MODE */
+.container{max-width:860px;margin:0 auto;padding:0 20px}
+.section{padding:32px 0}
+
+/* FILTER BUTTONS */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;justify-content:center}
+.filter-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:12px;letter-spacing:.05em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* EXAMPLE CHIPS */
+.chips-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
+.chip{padding:7px 14px;border:1px solid var(--faint);border-radius:16px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent}
+.chip:hover{border-color:var(--accent);color:var(--text);background:var(--accent-dim)}
+
+/* INPUT AREA */
+.input-wrap{position:relative;margin-bottom:20px}
+.input-wrap textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 52px 16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;max-height:200px;outline:none;transition:border-color .2s;line-height:1.6}
+.input-wrap textarea::placeholder{color:var(--muted)}
+.input-wrap textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.input-wrap .send-btn{position:absolute;right:12px;bottom:14px;background:var(--accent);border:none;color:#fff;width:34px;height:34px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s}
+.input-wrap .send-btn:hover{opacity:.85}
+.input-wrap .send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* PERSPECTIVE GRID */
+.persp-grid-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+.persp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:24px}
+.persp-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.persp-card.active{border-color:var(--accent);background:var(--accent-dim);color:var(--text)}
+.persp-card:hover:not(.active){border-color:var(--faint);color:var(--text)}
+.persp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* CONTROLS ROW */
+.controls-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+.ctrl-group{display:flex;gap:4px}
+.ctrl-btn{padding:7px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;letter-spacing:.04em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.ctrl-btn:hover,.ctrl-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* RESULTS */
+.results{margin-top:28px}
+.results-header{font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;transition:border-color .3s}
+.result-card:hover{border-color:var(--faint)}
+.result-card-header{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.result-card-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.result-card-title{flex:1;font-size:14px;font-weight:600;color:var(--text)}
+.result-card-badge{font-size:10px;letter-spacing:.08em;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:10px}
+.result-card-chevron{color:var(--muted);transition:transform .3s}
+.result-card.open .result-card-chevron{transform:rotate(180deg)}
+.result-card-body{padding:0 16px 0;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.result-card.open .result-card-body{max-height:2000px;padding:0 16px 16px}
+.result-card-body p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:10px}
+.result-card-body p:last-child{margin-bottom:0}
+.streaming-text{color:var(--muted);font-size:14px;line-height:1.7}
+
+/* LOADER */
+.loader{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;padding:20px 0}
+.loader-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 1.2s infinite}
+.loader-dot:nth-child(2){animation-delay:.2s}
+.loader-dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+/* KINTEGRITY */
+.kintegrity{margin-top:32px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.kintegrity-title{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.kintegrity-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.kintegrity-items{display:flex;flex-wrap:wrap;gap:8px}
+.kintegrity-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px}
+.kintegrity-item svg{color:var(--accent);flex-shrink:0}
+
+/* HISTORY PANEL */
+.history-panel{position:fixed;top:0;right:0;width:320px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:200;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:20px}
+.history-panel.open{transform:translateX(0)}
+.history-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.history-panel-title{font-size:13px;letter-spacing:.1em;color:var(--text);text-transform:uppercase}
+.history-close{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px}
+.history-item{padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:border-color .2s}
+.history-item:hover{border-color:var(--accent)}
+.history-item-q{font-size:13px;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item-meta{font-size:11px;color:var(--muted)}
+.history-empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 0}
+
+/* SZENARIO MODE */
+.szenario-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.szenario-info{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.6}
+.szenario-info strong{color:var(--text)}
+.szenario-form{display:flex;flex-direction:column;gap:20px}
+.szenario-field{display:flex;flex-direction:column;gap:8px}
+.szenario-label{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.szenario-label-row{display:flex;align-items:center;justify-content:space-between}
+.szenario-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:var(--font);font-size:14px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6}
+.szenario-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.szenario-textarea::placeholder{color:var(--muted)}
+.horizon-row{display:flex;gap:8px;flex-wrap:wrap}
+.horizon-btn{padding:9px 18px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.horizon-btn:hover,.horizon-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.faktoren-list{display:flex;flex-direction:column;gap:8px}
+.faktor-row{display:flex;gap:8px;align-items:center}
+.faktor-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.faktor-input:focus{border-color:var(--accent)}
+.faktor-input::placeholder{color:var(--muted)}
+.faktor-remove{background:none;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.faktor-remove:hover{border-color:rgba(255,100,100,0.5);color:#FF6B6B}
+.add-faktor-btn{background:none;border:1px solid var(--faint);color:var(--accent);padding:6px 12px;border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.add-faktor-btn:hover{border-color:var(--accent);background:var(--accent-dim)}
+.szenario-analyse-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);border:none;color:#fff;padding:14px 28px;border-radius:10px;font-size:15px;font-family:var(--font);font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:8px}
+.szenario-analyse-btn:hover{opacity:.88}
+.szenario-analyse-btn:disabled{opacity:.4;cursor:not-allowed}
+.szenario-results{margin-top:28px}
+.szenario-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.szenario-card-head{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.szenario-card.open .result-card-chevron{transform:rotate(180deg)}
+.szenario-card-body{padding:0 16px 0;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.szenario-card.open .szenario-card-body{max-height:2000px;padding:0 16px 16px}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.active{opacity:1;pointer-events:all}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ERROR */
+.error-card{background:rgba(27,115,64,0.08);border:1px solid rgba(27,115,64,0.3);border-radius:10px;padding:16px;color:var(--accent);font-size:14px;margin-top:16px}
+
+/* SELECT ALL */
+.select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .persp-grid{grid-template-columns:repeat(2,1fr)}
+  .controls-row{flex-direction:column;align-items:flex-start}
+  .hero{padding:32px 16px 24px}
+  nav{padding:0 16px}
+  .mode-tabs{margin:16px 12px 0}
+  .horizon-row{flex-direction:column}
+  .horizon-btn{width:100%}
+}
+@media(max-width:400px){
+  .persp-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HISTORY OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeHistory()"></div>
+
+<!-- HISTORY PANEL -->
+<div class="history-panel" id="historyPanel">
+  <div class="history-panel-header">
+    <span class="history-panel-title">Verlauf</span>
+    <button class="history-close" onclick="closeHistory()">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <svg class="nav-logo-svg" width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="60" y="9" font-family="Inter,sans-serif" font-size="6" font-weight="500" letter-spacing="1.8" fill="#6A8A72" text-anchor="middle">WiRTSCHAFT</text>
+      <rect x="10" y="13" width="100" height="5" rx="1.5" fill="#1B7340" opacity="0.85"/>
+      <rect x="28" y="18" width="5" height="14" rx="1" fill="#6A8A72"/>
+      <rect x="87" y="18" width="5" height="14" rx="1" fill="#6A8A72"/>
+      <text x="60" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#E8F0EB" text-anchor="middle">T</text>
+      <text x="67" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#1B7340" text-anchor="middle">i</text>
+      <text x="73" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#E8F0EB" text-anchor="middle">SCH</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <button class="nav-btn active" id="langBtn" onclick="toggleLang()">DE</button>
+    <button class="nav-btn" id="toneBtn" onclick="toggleTone()">
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L10 18M6 6l4-4 4 4"/></svg>
+      <span id="toneBtnLabel">analytisch</span>
+    </button>
+    <button class="nav-btn" onclick="openHistory()">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 13"/></svg>
+      Verlauf
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tagline">WIRTSCHAFTLICHE PERSPEKTIVEN AM TiSCH</div>
+  <div class="hero-svg-wrap">
+
+    <!-- Left: economic symbols -->
+    <svg style="position:absolute;left:0;top:50%;transform:translateY(-50%);width:130px;height:200px;opacity:0.25" viewBox="0 0 130 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Bar chart -->
+      <rect x="18" y="100" width="12" height="40" stroke="#1B7340" stroke-width="1.5" rx="1"/>
+      <rect x="34" y="80" width="12" height="60" stroke="#1B7340" stroke-width="1.5" rx="1"/>
+      <rect x="50" y="60" width="12" height="80" stroke="#1B7340" stroke-width="1.5" rx="1"/>
+      <rect x="66" y="40" width="12" height="100" stroke="#1B7340" stroke-width="1.5" rx="1"/>
+      <!-- X axis -->
+      <line x1="14" y1="142" x2="82" y2="142" stroke="#1B7340" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Upward trend arrow -->
+      <polyline points="20,155 35,148 50,152 65,140 80,130" stroke="#1B7340" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <polyline points="74,125 80,130 75,136" stroke="#1B7340" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- Coin -->
+      <circle cx="42" cy="30" r="16" stroke="#1B7340" stroke-width="1.5"/>
+      <text x="42" y="35" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#1B7340" text-anchor="middle">€</text>
+    </svg>
+
+    <!-- Main Hero SVG -->
+    <svg class="hero-main" viewBox="0 0 760 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wirt-platte" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3AAA60"/>
+          <stop offset="45%" stop-color="#1B7340"/>
+          <stop offset="100%" stop-color="#0D4A24"/>
+        </linearGradient>
+        <linearGradient id="wirt-sockel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1B7340"/>
+          <stop offset="100%" stop-color="#083818"/>
+        </linearGradient>
+        <radialGradient id="wirt-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1B7340" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#1B7340" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Glow -->
+      <ellipse cx="380" cy="185" rx="120" ry="14" fill="url(#wirt-glow)"/>
+
+      <!-- Table top -->
+      <rect x="130" y="52" width="500" height="15" fill="url(#wirt-platte)" rx="2"/>
+      <rect x="130" y="52" width="500" height="3" fill="#3AAA60" opacity="0.35" rx="2"/>
+      <rect x="130" y="65" width="500" height="3" fill="#083818" opacity="0.4" rx="1"/>
+
+      <!-- Center leg -->
+      <rect x="373" y="67" width="14" height="100" fill="#1B7340" rx="2"/>
+      <rect x="373" y="67" width="3" height="100" fill="#3AAA60" opacity="0.25" rx="1"/>
+
+      <!-- Base -->
+      <rect x="305" y="168" width="150" height="14" fill="url(#wirt-sockel)" rx="6"/>
+      <rect x="305" y="168" width="150" height="3" fill="#3AAA60" opacity="0.3" rx="5"/>
+      <rect x="310" y="180" width="140" height="3" fill="#031A0C" opacity="0.35" rx="3"/>
+      <ellipse cx="380" cy="184" rx="85" ry="6" fill="#020A04" opacity="0.4"/>
+
+      <!-- "WiRTSCHAFT" left of leg -->
+      <text text-anchor="end" x="368" y="152"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="42" font-weight="300"
+        fill="#E8F0EB" letter-spacing="-1">W<tspan fill="#1B7340">i</tspan>RTSCHAFT</text>
+
+      <!-- "iSCH" right of leg -->
+      <text x="392" y="152"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="42" font-weight="300"
+        fill="#E8F0EB" letter-spacing="-1"><tspan fill="#1B7340">i</tspan>SCH</text>
+
+    </svg>
+
+    <!-- Right: more economic symbols -->
+    <svg style="position:absolute;right:0;top:50%;transform:translateY(-50%);width:130px;height:200px;opacity:0.23" viewBox="0 0 130 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Line chart / growth curve -->
+      <polyline points="15,160 35,130 55,140 75,100 95,80 115,50" stroke="#1B7340" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- Axes -->
+      <line x1="12" y1="165" x2="118" y2="165" stroke="#1B7340" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="12" y1="165" x2="12" y2="40" stroke="#1B7340" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Network nodes (economy = interconnected) -->
+      <circle cx="35" cy="38" r="6" stroke="#1B7340" stroke-width="1.5"/>
+      <circle cx="60" cy="25" r="6" stroke="#1B7340" stroke-width="1.5"/>
+      <circle cx="88" cy="35" r="6" stroke="#1B7340" stroke-width="1.5"/>
+      <circle cx="62" cy="50" r="5" stroke="#1B7340" stroke-width="1.5"/>
+      <line x1="41" y1="36" x2="54" y2="28" stroke="#1B7340" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="66" y1="26" x2="83" y2="33" stroke="#1B7340" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="60" y1="31" x2="62" y2="45" stroke="#1B7340" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="41" y1="41" x2="57" y2="47" stroke="#1B7340" stroke-width="1" stroke-dasharray="2,2"/>
+    </svg>
+
+  </div>
+  <div class="hero-sub">Multiperspektivische KI-Analyse für wirtschaftliche Fragen</div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-perspektiven" onclick="setMode('perspektiven')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+      Perspektiven
+    </button>
+    <button class="mode-tab" id="tab-szenario" onclick="setMode('szenario')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      SZENARIO-ANALYSE
+    </button>
+  </div>
+</section>
+
+<!-- ==================== PERSPEKTIVEN MODE ==================== -->
+<div class="mode-section active" id="mode-perspektiven">
+  <div class="container">
+    <div class="section">
+
+      <!-- Filter row -->
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Alle Themen
+        </button>
+        <button class="filter-btn" data-filter="strategie" onclick="setFilter(this,'strategie')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 12 2 21 11 21 20 3 20"/><line x1="9" y1="20" x2="9" y2="14"/><line x1="15" y1="20" x2="15" y2="14"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+          Strategie
+        </button>
+        <button class="filter-btn" data-filter="persoenlich" onclick="setFilter(this,'persoenlich')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="4"/><path d="M4 19v-2a6 6 0 0112 0v2"/></svg>
+          Persönlich
+        </button>
+        <button class="filter-btn" data-filter="risiko" onclick="setFilter(this,'risiko')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 14h12z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r=".5" fill="currentColor"/></svg>
+          Risiko
+        </button>
+        <button class="filter-btn" data-filter="zukunft" onclick="setFilter(this,'zukunft')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 13"/></svg>
+          Zukunft
+        </button>
+      </div>
+
+      <!-- Example chips -->
+      <div class="chips-label" id="chipsLabel">Fragen am TiSCH</div>
+      <div class="chips" id="chipsContainer"></div>
+
+      <!-- Input -->
+      <div class="input-wrap">
+        <textarea id="questionInput" placeholder="Beschreiben Sie Ihre wirtschaftliche Frage oder Entscheidung..." rows="3"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendQuestion()">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-row">
+        <div class="ctrl-group" id="toneGroup">
+          <button class="ctrl-btn active" data-tone="analytisch" onclick="setTone(this)">analytisch</button>
+          <button class="ctrl-btn" data-tone="oekonomisch" onclick="setTone(this)">ökonomisch</button>
+          <button class="ctrl-btn" data-tone="alltag" onclick="setTone(this)">alltagsnah</button>
+        </div>
+      </div>
+
+      <!-- Perspective grid -->
+      <div class="select-all-row">
+        <div class="persp-grid-label">Perspektiven auswählen</div>
+        <button class="select-all-btn" onclick="toggleAllPerspectives()">Alle / Keine</button>
+      </div>
+      <div class="persp-grid" id="perspGrid"></div>
+
+      <!-- Results -->
+      <div class="results" id="resultsArea" style="display:none">
+        <div class="results-header" id="resultsHeader">Antworten am TiSCH</div>
+        <div id="resultsList"></div>
+        <!-- kiNTEGRiTY -->
+        <div class="kintegrity">
+          <div class="kintegrity-title">kiNTEGRiTY</div>
+          <div class="kintegrity-items">
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+              Keine Anlageberatung
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="7" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg>
+              Perspektiven, keine Garantien
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg>
+              Vertraulich
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Multiperspektivisch
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SZENARIO MODE ==================== -->
+<div class="mode-section" id="mode-szenario">
+  <div class="szenario-wrap">
+
+    <div class="szenario-info" style="margin-top:32px">
+      <strong>SZENARIO-ANALYSE</strong> — Beschreiben Sie eine wirtschaftliche Entscheidung, ergänzen Sie Chancen und Risiken, und lassen Sie die KI drei Szenarien entwickeln: Best Case, Base Case und Worst Case — mit konkreten Einschätzungen aus wirtschaftlicher Perspektive.
+    </div>
+
+    <div class="szenario-form">
+
+      <!-- Decision -->
+      <div class="szenario-field">
+        <div class="szenario-label">Die Entscheidung / Situation</div>
+        <textarea class="szenario-textarea" id="szenarioInput" rows="3" placeholder="z.B. 'Ich erwäge, meinen sicheren Job zu kündigen und ein eigenes Unternehmen zu gründen.' oder 'Soll ich jetzt eine Immobilie kaufen oder weiter zur Miete wohnen?'"></textarea>
+      </div>
+
+      <!-- Time horizon -->
+      <div class="szenario-field">
+        <div class="szenario-label">Zeithorizont</div>
+        <div class="horizon-row" id="horizonRow">
+          <button class="horizon-btn active" data-horizon="kurzfristig" onclick="setHorizon(this)">Kurzfristig (0–1 Jahr)</button>
+          <button class="horizon-btn" data-horizon="mittelfristig" onclick="setHorizon(this)">Mittelfristig (1–5 Jahre)</button>
+          <button class="horizon-btn" data-horizon="langfristig" onclick="setHorizon(this)">Langfristig (5+ Jahre)</button>
+        </div>
+      </div>
+
+      <!-- Chancen -->
+      <div class="szenario-field">
+        <div class="szenario-label-row">
+          <div class="szenario-label">Chancen (optional)</div>
+          <button class="add-faktor-btn" onclick="addFaktor('chance')">+ Chance hinzufügen</button>
+        </div>
+        <div class="faktoren-list" id="chancenList"></div>
+      </div>
+
+      <!-- Risiken -->
+      <div class="szenario-field">
+        <div class="szenario-label-row">
+          <div class="szenario-label">Risiken (optional)</div>
+          <button class="add-faktor-btn" onclick="addFaktor('risiko')">+ Risiko hinzufügen</button>
+        </div>
+        <div class="faktoren-list" id="risikenList"></div>
+      </div>
+
+      <!-- Analyse button -->
+      <button class="szenario-analyse-btn" id="szenarioBtn" onclick="sendSzenario()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Szenarien analysieren
+      </button>
+
+    </div>
+
+    <!-- Szenario Results -->
+    <div class="szenario-results" id="szenarioResults"></div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// GLOBALS & CONFIG
+// ============================================================
+let currentLang = 'de';
+let currentTone = 'analytisch';
+let currentFilter = 'all';
+let activePerspectives = new Set();
+let isLoading = false;
+let historyData = [];
+let currentMode = 'perspektiven';
+let currentHorizon = 'kurzfristig';
+const API_BASE = 'https://der-tisch-production.up.railway.app';
+
+const PERSPEKTIVEN = [
+  { id: 'makro',         icon: 'globe',    de: 'Makroökonom',             en: 'Macroeconomist',          color: '#1B7340', filters: ['all','strategie','zukunft'] },
+  { id: 'bwl',           icon: 'chart',    de: 'Betriebswirtschaft',      en: 'Business Economics',      color: '#2A9A56', filters: ['all','strategie'] },
+  { id: 'verhalten',     icon: 'brain',    de: 'Verhaltensökonom',        en: 'Behavioral Economist',    color: '#50AA70', filters: ['all','persoenlich'] },
+  { id: 'finanzen',      icon: 'coins',    de: 'Finanzplanerin',          en: 'Financial Planner',       color: '#3A8A58', filters: ['all','persoenlich'] },
+  { id: 'unternehmen',   icon: 'rocket',   de: 'Unternehmerin',           en: 'Entrepreneur',            color: '#1E6B36', filters: ['all','strategie'] },
+  { id: 'sozial',        icon: 'heart',    de: 'Sozialökonom',            en: 'Social Economist',        color: '#4A9A65', filters: ['all','zukunft'] },
+  { id: 'risiko',        icon: 'shield',   de: 'Risikomanager',           en: 'Risk Manager',            color: '#166030', filters: ['all','risiko'] },
+  { id: 'innovation',    icon: 'zap',      de: 'Innovationsökonom',       en: 'Innovation Economist',    color: '#6ABB80', filters: ['all','zukunft','strategie'] },
+];
+
+const CHIPS_DATA = {
+  all: {
+    de: [
+      'Soll ich jetzt in Aktien investieren oder warten?',
+      'Wie finanziere ich meine Selbstständigkeit?',
+      'Gehalt verhandeln — wie gehe ich optimal vor?',
+      'Unternehmen gründen oder Karriere machen?',
+      'Immobilie kaufen oder Miete bezahlen?',
+      'Wie schütze ich mein Erspartes vor Inflation?',
+      'Soll ich meinen sicheren Job für ein Startup riskieren?',
+      'Wie plane ich meine Altersvorsorge sinnvoll?',
+    ],
+    en: [
+      'Should I invest in stocks now or wait?',
+      'How do I finance my self-employment?',
+      'Salary negotiation — what\'s the optimal approach?',
+      'Start a company or build a career?',
+      'Buy property or keep renting?',
+      'How do I protect my savings from inflation?',
+      'Should I risk my secure job for a startup?',
+      'How do I plan my retirement sensibly?',
+    ],
+  },
+  strategie: {
+    de: [
+      'Unternehmen gründen oder Karriere machen?',
+      'Wie positioniere ich mein Produkt gegen starke Konkurrenz?',
+      'International expandieren oder zuerst den Heimatmarkt stärken?',
+      'Wann ist der richtige Zeitpunkt für eine Preiserhöhung?',
+      'Make or Buy — was lohnt sich mehr?',
+      'Wie entwickle ich eine tragfähige Preisstrategie?',
+    ],
+    en: [
+      'Start a company or build a career?',
+      'How do I position my product against strong competition?',
+      'Expand internationally or strengthen the home market first?',
+      'When is the right time to raise prices?',
+      'Make or buy — what is more worthwhile?',
+      'How do I develop a sustainable pricing strategy?',
+    ],
+  },
+  persoenlich: {
+    de: [
+      'Soll ich jetzt in Aktien investieren oder warten?',
+      'Immobilie kaufen oder Miete bezahlen?',
+      'Wie plane ich meine Altersvorsorge sinnvoll?',
+      'Gehalt verhandeln — wie gehe ich optimal vor?',
+      'Wie finanziere ich meine Selbstständigkeit?',
+      'Wie diversifiziere ich mein Portfolio sinnvoll?',
+    ],
+    en: [
+      'Should I invest in stocks now or wait?',
+      'Buy property or keep renting?',
+      'How do I plan my retirement sensibly?',
+      'Salary negotiation — what\'s the optimal approach?',
+      'How do I finance my self-employment?',
+      'How do I sensibly diversify my portfolio?',
+    ],
+  },
+  risiko: {
+    de: [
+      'Wie schütze ich mein Erspartes vor Inflation?',
+      'Wie diversifiziere ich mein Portfolio sinnvoll?',
+      'Unternehmen in der Krise: Kosten senken oder investieren?',
+      'Wann ist Risikoabsicherung wichtiger als Rendite?',
+      'Wie erkenne ich wirtschaftliche Risiken frühzeitig?',
+      'Soll ich einen Kredit aufnehmen?',
+    ],
+    en: [
+      'How do I protect my savings from inflation?',
+      'How do I sensibly diversify my portfolio?',
+      'Company in crisis: cut costs or invest?',
+      'When is risk hedging more important than returns?',
+      'How do I recognize economic risks early?',
+      'Should I take out a loan?',
+    ],
+  },
+  zukunft: {
+    de: [
+      'Wie wirkt KI auf meinen Job und meine Einkommenschancen?',
+      'Welche Branchen wachsen in den nächsten 10 Jahren?',
+      'Wie investiere ich in den ökologischen Wandel?',
+      'Dezentrales Arbeiten: Was verändert sich an Wert und Arbeit?',
+      'Wie positioniere ich mich für die Wirtschaft von morgen?',
+      'Kryptowährungen — wirtschaftliche Zukunft oder Spekulation?',
+    ],
+    en: [
+      'How does AI affect my job and income prospects?',
+      'Which industries will grow in the next 10 years?',
+      'How do I invest in the ecological transition?',
+      'Decentralized work: what changes about value and labor?',
+      'How do I position myself for tomorrow\'s economy?',
+      'Cryptocurrencies — economic future or speculation?',
+    ],
+  },
+};
+
+const SVG_ICONS = {
+  globe:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="2" y1="10" x2="18" y2="10"/><path d="M10 2a14 14 0 010 16"/><path d="M10 2a14 14 0 000 16"/></svg>`,
+  chart:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="20" y2="20"/></svg>`,
+  brain:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C7 3 5 5 5 8c0 1.5.5 3 1.5 4H5a3 3 0 000 6h10a3 3 0 000-6h-1.5C14.5 11 15 9.5 15 8c0-3-2-5-5-5z"/></svg>`,
+  coins:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M17.5 8c0 3.31-2.69 6-6 6"/><path d="M14 4.5c1.5.5 2.5 1.8 2.5 3.5"/></svg>`,
+  rocket: `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2s4 2 4 8l-4 6-4-6c0-6 4-8 4-8z"/><line x1="6" y1="14" x2="3" y2="17"/><line x1="14" y1="14" x2="17" y2="17"/></svg>`,
+  heart:  `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>`,
+  shield: `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>`,
+  zap:    `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>`,
+};
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderPerspGrid();
+  loadHistory();
+  PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
+  renderPerspGrid();
+  updateChips();
+
+  document.getElementById('questionInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendQuestion();
+  });
+});
+
+// ============================================================
+// MODE SWITCH
+// ============================================================
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+  document.getElementById('tab-' + mode).classList.add('active');
+}
+
+// ============================================================
+// LANGUAGE & TONE
+// ============================================================
+function toggleLang() {
+  currentLang = currentLang === 'de' ? 'en' : 'de';
+  document.getElementById('langBtn').textContent = currentLang.toUpperCase();
+  renderPerspGrid();
+  updateChips();
+}
+
+function toggleTone() {
+  const tones = ['analytisch', 'oekonomisch', 'alltag'];
+  const idx = tones.indexOf(currentTone);
+  currentTone = tones[(idx + 1) % tones.length];
+  document.getElementById('toneBtnLabel').textContent = currentTone;
+  document.querySelectorAll('[data-tone]').forEach(b => {
+    b.classList.toggle('active', b.dataset.tone === currentTone);
+  });
+}
+
+function setTone(btn) {
+  currentTone = btn.dataset.tone;
+  document.querySelectorAll('[data-tone]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('toneBtnLabel').textContent = currentTone;
+}
+
+// ============================================================
+// FILTER
+// ============================================================
+function setFilter(btn, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPerspGrid();
+  updateChips();
+}
+
+function updateChips() {
+  document.getElementById('chipsLabel').textContent = currentLang === 'de' ? 'Fragen am TiSCH' : 'Questions at the TiSCH';
+  const container = document.getElementById('chipsContainer');
+  const filterKey = currentFilter in CHIPS_DATA ? currentFilter : 'all';
+  const chips = CHIPS_DATA[filterKey][currentLang] || CHIPS_DATA[filterKey]['de'];
+  container.innerHTML = chips.map(text =>
+    `<button class="chip" onclick="useChip(this)">${text}</button>`
+  ).join('');
+}
+
+// ============================================================
+// PERSPECTIVE GRID
+// ============================================================
+function renderPerspGrid() {
+  const grid = document.getElementById('perspGrid');
+  grid.innerHTML = '';
+  PERSPEKTIVEN.filter(p => currentFilter === 'all' || p.filters.includes(currentFilter)).forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'persp-card' + (activePerspectives.has(p.id) ? ' active' : '');
+    card.innerHTML = `
+      <div class="persp-dot" style="background:${p.color}"></div>
+      ${SVG_ICONS[p.icon] || ''}
+      <span>${currentLang === 'de' ? p.de : p.en}</span>
+    `;
+    card.addEventListener('click', () => {
+      if (activePerspectives.has(p.id)) activePerspectives.delete(p.id);
+      else activePerspectives.add(p.id);
+      card.classList.toggle('active');
+    });
+    grid.appendChild(card);
+  });
+}
+
+function toggleAllPerspectives() {
+  const all = PERSPEKTIVEN.every(p => activePerspectives.has(p.id));
+  if (all) activePerspectives.clear();
+  else PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
+  renderPerspGrid();
+}
+
+// ============================================================
+// CHIPS
+// ============================================================
+function useChip(el) {
+  document.getElementById('questionInput').value = el.textContent.trim();
+  document.getElementById('questionInput').focus();
+}
+
+// ============================================================
+// SEND QUESTION (PERSPEKTIVEN MODE)
+// ============================================================
+async function sendQuestion() {
+  const input = document.getElementById('questionInput');
+  const question = input.value.trim();
+  if (!question || isLoading) return;
+  if (activePerspectives.size === 0) { showToast('Bitte mindestens eine Perspektive auswählen.'); return; }
+
+  const selectedPersp = PERSPEKTIVEN.filter(p => activePerspectives.has(p.id));
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  const resultsArea = document.getElementById('resultsArea');
+  const resultsList = document.getElementById('resultsList');
+  resultsArea.style.display = 'block';
+  resultsList.innerHTML = '';
+
+  const loader = document.createElement('div');
+  loader.className = 'loader';
+  loader.innerHTML = `<div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang==='de'?'Der TiSCH analysiert...':'The TiSCH is analysing...'}</span>`;
+  resultsList.appendChild(loader);
+  resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const stilMap = { analytisch: 'oekonomisch', oekonomisch: 'oekonomisch', alltag: 'alltag' };
+    const payload = {
+      question,
+      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      stil: stilMap[currentTone] || 'oekonomisch',
+      register: 'wirtschaft',
+      tone: currentTone,
+      lang: currentLang,
+      app: 'WiRTSCHAFT TiSCH'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    loader.remove();
+    if (!resp.ok) throw new Error('API error ' + resp.status);
+
+    const contentType = resp.headers.get('content-type') || '';
+    if (contentType.includes('text/event-stream') || contentType.includes('stream')) {
+      await handleStream(resp, selectedPersp, resultsList);
+    } else {
+      const data = await resp.json();
+      renderResults(data, selectedPersp, resultsList);
+    }
+
+    saveHistory({ question, perspectives: selectedPersp.map(p => p.id), lang: currentLang, time: Date.now() });
+
+  } catch (err) {
+    loader.remove();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'error-card';
+    errDiv.textContent = currentLang === 'de'
+      ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.'
+      : 'The TiSCH is currently unavailable. Please try again later.';
+    resultsList.appendChild(errDiv);
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+}
+
+async function handleStream(resp, perspectives, container) {
+  const cards = {};
+  perspectives.forEach(p => {
+    const card = createResultCard(p);
+    container.appendChild(card);
+    cards[p.id] = card.querySelector('.streaming-text');
+  });
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (!line.trim() || !line.startsWith('data:')) continue;
+      try {
+        const jsonStr = line.replace(/^data:\s*/, '');
+        if (jsonStr === '[DONE]') continue;
+        const obj = JSON.parse(jsonStr);
+        const perspId = obj.perspective || obj.id;
+        const text = obj.text || obj.content || '';
+        if (perspId && cards[perspId]) cards[perspId].textContent += text;
+      } catch(e) {}
+    }
+  }
+}
+
+function renderResults(data, perspectives, container) {
+  const apiPerspectives = data.perspectives || [];
+  if (apiPerspectives.length === 0) {
+    perspectives.forEach(p => {
+      const card = createResultCard(p);
+      card.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
+      container.appendChild(card);
+    });
+    return;
+  }
+  apiPerspectives.forEach((r) => {
+    const rolle = r.rolle || '';
+    const pDef = perspectives.find(p =>
+      p.id === rolle.toLowerCase() ||
+      (p.de || '').toLowerCase() === rolle.toLowerCase()
+    ) || perspectives[0];
+    const card = createResultCard(pDef, rolle);
+    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    container.appendChild(card);
+  });
+  if (data.integration && data.integration.einfach_gesagt) {
+    const synthCard = document.createElement('div');
+    synthCard.className = 'result-card';
+    synthCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(27,115,64,0.12);color:#1B7340">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+        </div>
+        <div class="result-card-title">kiNTEGRATiON</div>
+        <div class="result-card-badge">synthese</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
+    `;
+    setTimeout(() => synthCard.classList.add('open'), 100);
+    container.appendChild(synthCard);
+  }
+}
+
+function createResultCard(p, overrideName) {
+  const displayName = overrideName || (currentLang === 'de' ? p.de : p.en);
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:${p.color}22;color:${p.color}">${SVG_ICONS[p.icon]||''}</div>
+      <div class="result-card-title">${displayName}</div>
+      <div class="result-card-badge">${p.id}</div>
+      <div class="result-card-chevron">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
+      </div>
+    </div>
+    <div class="result-card-body"><p class="streaming-text"></p></div>
+  `;
+  setTimeout(() => card.classList.add('open'), 50);
+  return card;
+}
+
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+// ============================================================
+// SZENARIO MODE
+// ============================================================
+function setHorizon(btn) {
+  currentHorizon = btn.dataset.horizon;
+  document.querySelectorAll('[data-horizon]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function addFaktor(type) {
+  const listId = type === 'chance' ? 'chancenList' : 'risikenList';
+  const list = document.getElementById(listId);
+  const placeholder = type === 'chance'
+    ? 'z.B. Wachsender Markt, starkes Netzwerk, günstige Finanzierung…'
+    : 'z.B. Hoher Kapitalbedarf, starke Konkurrenz, Marktunsicherheit…';
+  const row = document.createElement('div');
+  row.className = 'faktor-row';
+  row.innerHTML = `
+    <input class="faktor-input" type="text" placeholder="${placeholder}">
+    <button class="faktor-remove" onclick="this.parentElement.remove()">
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>
+  `;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function getListValues(listId) {
+  return Array.from(document.querySelectorAll(`#${listId} .faktor-input`))
+    .map(inp => inp.value.trim())
+    .filter(v => v.length > 0);
+}
+
+async function sendSzenario() {
+  const decision = document.getElementById('szenarioInput').value.trim();
+  if (!decision) { showToast('Bitte zuerst eine Entscheidung oder Situation beschreiben.'); return; }
+
+  const chancen = getListValues('chancenList');
+  const risiken = getListValues('risikenList');
+  const horizonLabel = { kurzfristig: '0–1 Jahr', mittelfristig: '1–5 Jahre', langfristig: '5+ Jahre' }[currentHorizon];
+
+  let question = `Szenario-Analyse für folgende wirtschaftliche Entscheidung:\n\n"${decision}"\n\nZeithorizont: ${horizonLabel}`;
+  if (chancen.length > 0) question += `\n\nChancen:\n${chancen.map(c => '• ' + c).join('\n')}`;
+  if (risiken.length > 0) question += `\n\nRisiken:\n${risiken.map(r => '• ' + r).join('\n')}`;
+  question += `\n\nBitte entwickle drei wirtschaftliche Szenarien: Best Case (optimistisch, aber realistisch), Base Case (wahrscheinlichstes Szenario), Worst Case (pessimistisch, aber realistisch). Für jedes Szenario: Welche Bedingungen müssen eintreten? Was sind die wirtschaftlichen Konsequenzen? Welche konkreten Handlungsempfehlungen ergeben sich?`;
+
+  const btn = document.getElementById('szenarioBtn');
+  btn.disabled = true;
+  const resultsDiv = document.getElementById('szenarioResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Szenarien werden berechnet...</span></div>`;
+
+  const szenarioPerspectives = [
+    { id: 'makro',     color: '#1B7340', de: 'Makroökonom',       en: 'Macroeconomist',   icon: 'globe' },
+    { id: 'bwl',       color: '#2A9A56', de: 'Betriebswirtschaft', en: 'Business Economics', icon: 'chart' },
+    { id: 'risiko',    color: '#166030', de: 'Risikomanager',      en: 'Risk Manager',     icon: 'shield' },
+  ];
+
+  try {
+    const payload = {
+      question,
+      perspectives: szenarioPerspectives.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      stil: 'oekonomisch',
+      register: 'szenarioanalyse',
+      lang: currentLang,
+      app: 'WiRTSCHAFT TiSCH'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+
+    resultsDiv.innerHTML = '';
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r) => {
+        const rolle = r.rolle || '';
+        const pDef = szenarioPerspectives.find(p =>
+          (p.de || '').toLowerCase() === rolle.toLowerCase()
+        ) || szenarioPerspectives[0];
+        const card = createResultCard(pDef, rolle);
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    } else {
+      const fallback = createResultCard(szenarioPerspectives[0], 'Szenario-Analyse');
+      fallback.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
+      resultsDiv.appendChild(fallback);
+    }
+
+    if (data.integration && data.integration.einfach_gesagt) {
+      const synthCard = document.createElement('div');
+      synthCard.className = 'result-card';
+      synthCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(27,115,64,0.12);color:#1B7340">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="result-card-title">Szenario-Synthese</div>
+          <div class="result-card-badge">integration</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
+      `;
+      setTimeout(() => synthCard.classList.add('open'), 100);
+      resultsDiv.appendChild(synthCard);
+    }
+
+    if (data.integration && data.integration.vorlaeufiges_fazit) {
+      const fazitCard = document.createElement('div');
+      fazitCard.className = 'result-card';
+      fazitCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(27,115,64,0.12);color:#1B7340">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+          </div>
+          <div class="result-card-title">Vorläufiges Fazit</div>
+          <div class="result-card-badge">empfehlung</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.vorlaeufiges_fazit)}</p></div>
+      `;
+      setTimeout(() => fazitCard.classList.add('open'), 150);
+      resultsDiv.appendChild(fazitCard);
+    }
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> Keine Anlageberatung</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Perspektiven, keine Garantien</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({ question: 'Szenario: ' + decision.substring(0, 60), perspectives: ['makro','bwl','risiko'], lang: currentLang, time: Date.now() });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
+  }
+
+  btn.disabled = false;
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+const HISTORY_KEY = 'tisch_history_v1';
+
+function loadHistory() {
+  try { historyData = JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { historyData = []; }
+}
+
+function saveHistory(entry) {
+  historyData.unshift({ ...entry, app: 'WiRTSCHAFT TiSCH' });
+  if (historyData.length > 50) historyData = historyData.slice(0, 50);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
+}
+
+function openHistory() {
+  document.getElementById('historyPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+  renderHistoryList();
+}
+
+function closeHistory() {
+  document.getElementById('historyPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function renderHistoryList() {
+  const list = document.getElementById('historyList');
+  const items = historyData.filter(h => h.app === 'WiRTSCHAFT TiSCH');
+  if (items.length === 0) {
+    list.innerHTML = '<div class="history-empty">Noch keine Einträge</div>';
+    return;
+  }
+  list.innerHTML = items.map((h, i) => `
+    <div class="history-item" onclick="loadHistoryItem(${i})">
+      <div class="history-item-q">${h.question || '—'}</div>
+      <div class="history-item-meta">${new Date(h.time).toLocaleDateString('de-DE')} · ${(h.perspectives||[]).length} Perspektiven</div>
+    </div>
+  `).join('');
+}
+
+function loadHistoryItem(i) {
+  const items = historyData.filter(h => h.app === 'WiRTSCHAFT TiSCH');
+  const h = items[i];
+  if (!h) return;
+  document.getElementById('questionInput').value = h.question || '';
+  closeHistory();
+  if (currentMode !== 'perspektiven') setMode('perspektiven');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+<script src="/notizbuch.js"></script>
+</body>
+</html>

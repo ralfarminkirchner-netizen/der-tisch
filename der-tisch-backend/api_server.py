@@ -97,6 +97,14 @@ async def serve_juristisch():
 async def serve_juristisch_short():
     return FileResponse(Path(__file__).parent / "juristisch.html")
 
+@app.get("/wirtschaftstisch.html")
+async def serve_wirtschaftstisch():
+    return FileResponse(Path(__file__).parent / "wirtschaftstisch.html", headers=NO_CACHE)
+
+@app.get("/wirtschaftstisch")
+async def serve_wirtschaftstisch_short():
+    return FileResponse(Path(__file__).parent / "wirtschaftstisch.html", headers=NO_CACHE)
+
 @app.get("/literatentisch.html")
 async def serve_literatentisch():
     return FileResponse(Path(__file__).parent / "literatentisch.html")
