@@ -15,7 +15,8 @@
     { "source": "/literatentisch", "destination": "/literatentisch.html" },
     { "source": "/medizintisch", "destination": "/medizintisch.html" },
     { "source": "/trainingstisch", "destination": "/trainingstisch.html" },
-    { "source": "/wirtschaftstisch", "destination": "/wirtschaftstisch.html" }
+    { "source": "/wirtschaftstisch", "destination": "/wirtschaftstisch.html" },
+    { "source": "/schuletisch", "destination": "/schuletisch.html" }
   ],
   "headers": [
     {
