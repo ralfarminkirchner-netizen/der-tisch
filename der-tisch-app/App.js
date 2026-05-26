@@ -15,10 +15,10 @@ const DarkTheme = {
   colors: {
     ...DefaultTheme.colors,
     background: colors.bg,
-    card: colors.bgCard,
-    text: colors.textPrimary,
-    border: colors.border,
-    primary: colors.amber,
+    card:       colors.bgCard,
+    text:       colors.textPrimary,
+    border:     colors.border,
+    primary:    colors.terracotta,
   },
 };
 
