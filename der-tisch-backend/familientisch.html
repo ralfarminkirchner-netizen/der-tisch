@@ -192,6 +192,21 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* RESULT SUB-SECTIONS */
+.result-sub-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.result-sub-label{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.result-sub-text{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* INTEGRATION SECTIONS */
+.integration-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.integration-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px}
+.integration-card-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.einfach-gesagt{background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:8px;padding:12px;margin-bottom:12px}
+.kurzfassung-list{list-style:none;padding:0;margin:0}
+.kurzfassung-list li{font-size:13px;color:var(--muted);padding:3px 0 3px 18px;position:relative;line-height:1.5}
+.kurzfassung-list li::before{content:'—';position:absolute;left:0;color:var(--accent)}
+@media(max-width:640px){.integration-pair{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -574,6 +589,26 @@ let historyData = [];
 let currentMode = 'perspektiven';
 const API_BASE = 'https://der-tisch-production.up.railway.app';
 
+// Map frontend perspective IDs to backend agent names
+const PERSP_TO_AGENT = {
+  systemisch:    'Familiensystemisch',
+  bindung:       'Tiefenpsychologisch',
+  erziehung:     'Pädagogisch',
+  paar:          'Therapeutisch',
+  trauma:        'Körperorientiert',
+  kind:          'Aus Kinderaugen',
+  grosseltern:   'Biografisch',
+  konflikt:      'Ethisch',
+  kommunikation: 'Neurodivergent',
+  identitaet:    'Narrativ',
+};
+const AGENT_TO_PERSP_ID = {};
+Object.entries(PERSP_TO_AGENT).forEach(([id, agent]) => { AGENT_TO_PERSP_ID[agent] = id; });
+
+function stripRolePrefix(rolle) {
+  return (rolle || '').replace(/^\[(?:method|custom)\]/, '');
+}
+
 const PERSPEKTIVEN = [
   { id: 'systemisch',     icon: 'network',  de: 'Systemische Therapeutin',      en: 'Systemic Therapist',         color: '#C4622D', filters: ['all','beziehung'] },
   { id: 'bindung',        icon: 'heart',    de: 'Bindungsexpertin',              en: 'Attachment Expert',          color: '#D4845A', filters: ['all','beziehung'] },
@@ -838,6 +873,9 @@ async function sendQuestion() {
   if (activePerspectives.size === 0) { showToast('Bitte mindestens eine Perspektive auswählen.'); return; }
 
   const selectedPersp = PERSPEKTIVEN.filter(p => activePerspectives.has(p.id));
+  const methods = selectedPersp.map(p => PERSP_TO_AGENT[p.id]).filter(Boolean);
+  if (methods.length === 0) { showToast(currentLang === 'de' ? 'Keine gültigen Perspektiven ausgewählt.' : 'No valid perspectives selected.'); return; }
+
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
 
@@ -846,45 +884,34 @@ async function sendQuestion() {
   resultsArea.style.display = 'block';
   resultsList.innerHTML = '';
 
-  // Show loading
   const loader = document.createElement('div');
   loader.className = 'loader';
   loader.innerHTML = `<div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang==='de'?'Der TiSCH bereitet Antworten vor...':'The TiSCH is preparing responses...'}</span>`;
   resultsList.appendChild(loader);
-
   resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   try {
+    const tone = currentTone === 'ressourcen' ? '' : currentTone;
     const payload = {
       question,
-      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      methods,
       stil: 'therapeutisch',
-      register: 'familiensystem',
-      tone: currentTone,
+      register: '',
+      tone,
       lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      reibungsintensitaet: 'standard',
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
     loader.remove();
-
     if (!resp.ok) throw new Error('API error ' + resp.status);
-
-    // Try streaming
-    const contentType = resp.headers.get('content-type') || '';
-    if (contentType.includes('text/event-stream') || contentType.includes('stream')) {
-      await handleStream(resp, selectedPersp, resultsList);
-    } else {
-      const data = await resp.json();
-      renderResults(data, selectedPersp, resultsList);
-    }
-
-    // Save to history
+    const data = await resp.json();
+    renderResults(data, selectedPersp, resultsList);
     saveHistory({ question, perspectives: selectedPersp.map(p => p.id), lang: currentLang, time: Date.now() });
 
   } catch (err) {
@@ -901,99 +928,121 @@ async function sendQuestion() {
   document.getElementById('sendBtn').disabled = false;
 }
 
-async function handleStream(resp, perspectives, container) {
-  // Build cards first
-  const cards = {};
-  perspectives.forEach(p => {
-    const card = createResultCard(p);
-    container.appendChild(card);
-    cards[p.id] = card.querySelector('.streaming-text');
-  });
 
-  const reader = resp.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop();
-    for (const line of lines) {
-      if (!line.trim() || !line.startsWith('data:')) continue;
-      try {
-        const jsonStr = line.replace(/^data:\s*/, '');
-        if (jsonStr === '[DONE]') continue;
-        const obj = JSON.parse(jsonStr);
-        const perspId = obj.perspective || obj.id;
-        const text = obj.text || obj.content || '';
-        if (perspId && cards[perspId]) {
-          cards[perspId].textContent += text;
-        }
-      } catch(e) {}
-    }
-  }
-}
-
-function renderResults(data, perspectives, container) {
-  // API returns TableResponse: { perspectives: [{rolle, kernanalyse, ...}], friction, integration }
+function renderResults(data, perspFallbackList, container) {
   const apiPerspectives = data.perspectives || [];
   if (apiPerspectives.length === 0) {
-    perspectives.forEach(p => {
-      const card = createResultCard(p);
-      card.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
-      container.appendChild(card);
-    });
+    const fallback = (perspFallbackList || PERSPEKTIVEN)[0] || PERSPEKTIVEN[0];
+    const card = createResultCard(fallback, null, null);
+    card.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
+    container.appendChild(card);
     return;
   }
-  apiPerspectives.forEach((r) => {
-    const rolle = r.rolle || '';
-    const pDef = perspectives.find(p =>
-      p.id === rolle.toLowerCase() ||
-      (p.de || '').toLowerCase() === rolle.toLowerCase()
-    ) || perspectives[0];
-    const card = createResultCard(pDef, rolle);
-    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+  apiPerspectives.forEach(r => {
+    const cleanRolle = stripRolePrefix(r.rolle);
+    const perspId = AGENT_TO_PERSP_ID[cleanRolle];
+    const pDef = PERSPEKTIVEN.find(p => p.id === perspId)
+      || (perspFallbackList && perspFallbackList[0])
+      || PERSPEKTIVEN[0];
+    const displayName = (perspId && pDef)
+      ? (currentLang === 'de' ? pDef.de : pDef.en)
+      : cleanRolle;
+    const card = createResultCard(pDef, displayName, r);
     container.appendChild(card);
   });
-  // Integrations-Karte
-  if (data.integration && data.integration.einfach_gesagt) {
-    const synthCard = document.createElement('div');
-    synthCard.className = 'result-card';
-    synthCard.innerHTML = `
-      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-        </div>
-        <div class="result-card-title">kiNTEGRATiON</div>
-        <div class="result-card-badge">synthese</div>
-        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-      </div>
-      <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
-    `;
-    setTimeout(() => synthCard.classList.add('open'), 100);
-    container.appendChild(synthCard);
-  }
+  if (data.friction) container.appendChild(renderFriction(data.friction));
+  if (data.integration) container.appendChild(renderIntegration(data.integration));
 }
 
-function createResultCard(p, overrideName) {
+function createResultCard(p, overrideName, perspData) {
   const displayName = overrideName || (currentLang === 'de' ? p.de : p.en);
+  const badge = perspData?.anspruchstyp
+    ? escapeHTML(perspData.anspruchstyp.substring(0, 30))
+    : (p.id || '');
+  const subSections = perspData ? [
+    perspData.evidenz
+      ? `<div class="result-sub-section"><div class="result-sub-label"><svg width="10" height="10" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>${currentLang==='de'?'Evidenz':'Evidence'}</div><div class="result-sub-text">${escapeHTML(perspData.evidenz)}</div></div>`
+      : '',
+    perspData.blinder_fleck
+      ? `<div class="result-sub-section"><div class="result-sub-label"><svg width="10" height="10" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="7" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg>${currentLang==='de'?'Blinder Fleck':'Blind Spot'}</div><div class="result-sub-text">${escapeHTML(perspData.blinder_fleck)}</div></div>`
+      : '',
+  ].join('') : '';
   const card = document.createElement('div');
   card.className = 'result-card';
   card.innerHTML = `
     <div class="result-card-header" onclick="toggleCard(this.parentElement)">
       <div class="result-card-icon" style="background:${p.color}22;color:${p.color}">${SVG_ICONS[p.icon]||''}</div>
-      <div class="result-card-title">${displayName}</div>
-      <div class="result-card-badge">${p.id}</div>
-      <div class="result-card-chevron">
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
-      </div>
+      <div class="result-card-title">${escapeHTML(displayName)}</div>
+      <div class="result-card-badge">${badge}</div>
+      <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
     </div>
-    <div class="result-card-body"><p class="streaming-text"></p></div>
+    <div class="result-card-body">
+      <p class="streaming-text">${perspData ? escapeHTML(perspData.kernanalyse || '') : ''}</p>
+      ${subSections}
+    </div>
   `;
-  // Auto-open first card
   setTimeout(() => card.classList.add('open'), 50);
+  return card;
+}
+
+function renderFriction(friction) {
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  const lU = currentLang === 'de' ? 'Übersetzungsfehler' : 'Translation Gaps';
+  const lW = currentLang === 'de' ? 'Echte Widersprüche' : 'Real Contradictions';
+  const lO = currentLang === 'de' ? 'Gemeinsam übersehen' : 'Collectively Overlooked';
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+      </div>
+      <div class="result-card-title">${currentLang==='de'?'REiBUNGSPHASE':'FRICTION PHASE'}</div>
+      <div class="result-card-badge">${currentLang==='de'?'spannungen':'tensions'}</div>
+      <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+    </div>
+    <div class="result-card-body">
+      ${(friction.uebersetzungsfehler||[]).length?`<div class="result-sub-label" style="margin-bottom:6px">${lU}</div>${friction.uebersetzungsfehler.map(t=>`<p class="streaming-text">— ${escapeHTML(t)}</p>`).join('')}`:''}
+      ${(friction.echte_widersprueche||[]).length?`<div class="result-sub-label" style="margin:10px 0 6px">${lW}</div>${friction.echte_widersprueche.map(t=>`<p class="streaming-text">— ${escapeHTML(t)}</p>`).join('')}`:''}
+      ${friction.uebersehenes?`<div class="result-sub-label" style="margin:10px 0 6px">${lO}</div><p class="streaming-text">${escapeHTML(friction.uebersehenes)}</p>`:''}
+    </div>
+  `;
+  return card;
+}
+
+function renderIntegration(integration) {
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  const herzKopf = (integration.herzmensch || integration.kopfmensch) ? `
+    <div class="integration-pair">
+      ${integration.herzmensch?`<div class="integration-card"><div class="integration-card-label">&#9829; ${currentLang==='de'?'Herzmensch':'Heart'}</div><div class="result-sub-text">${escapeHTML(integration.herzmensch)}</div></div>`:''}
+      ${integration.kopfmensch?`<div class="integration-card"><div class="integration-card-label">&#9670; ${currentLang==='de'?'Kopfmensch':'Head'}</div><div class="result-sub-text">${escapeHTML(integration.kopfmensch)}</div></div>`:''}
+    </div>` : '';
+  const einfach = integration.einfach_gesagt
+    ? `<div class="einfach-gesagt"><div class="integration-card-label">${currentLang==='de'?'Einfach gesagt':'Simply put'}</div><p class="streaming-text" style="color:var(--text)">${escapeHTML(integration.einfach_gesagt)}</p></div>`
+    : '';
+  const fazit = integration.vorlaeufiges_fazit
+    ? `<div class="result-sub-section"><div class="result-sub-label">${currentLang==='de'?'Vorläufiges Fazit':'Provisional Verdict'}</div><p class="streaming-text">${escapeHTML(integration.vorlaeufiges_fazit)}</p></div>`
+    : '';
+  const kurzfassung = (integration.kurzfassung||[]).length
+    ? `<div class="result-sub-label" style="margin:12px 0 8px">${currentLang==='de'?'Kernpunkte':'Key Points'}</div><ul class="kurzfassung-list">${integration.kurzfassung.map(k=>`<li>${escapeHTML(k)}</li>`).join('')}</ul>`
+    : '';
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+      </div>
+      <div class="result-card-title">kiNTEGRATiON</div>
+      <div class="result-card-badge">synthese</div>
+      <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+    </div>
+    <div class="result-card-body">
+      ${einfach}
+      ${herzKopf}
+      ${fazit}
+      ${kurzfassung}
+    </div>
+  `;
+  setTimeout(() => card.classList.add('open'), 100);
   return card;
 }
 
@@ -1636,21 +1685,18 @@ async function analyseAufstellung() {
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
 
   try {
+    const tone = currentTone === 'ressourcen' ? '' : currentTone;
     const payload = {
       question,
-      perspectives: [
-        { id: 'systemisch', role: 'Systemische Therapeutin' },
-        { id: 'bindung', role: 'Bindungsexpertin' },
-        { id: 'konflikt', role: 'Konfliktmediation' }
-      ],
+      methods: ['Familiensystemisch', 'Tiefenpsychologisch', 'Ethisch'],
       stil: 'therapeutisch',
-      register: 'familienaufstellung',
-      tone: currentTone,
+      register: '',
+      tone,
       lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      reibungsintensitaet: 'standard',
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1665,38 +1711,7 @@ async function analyseAufstellung() {
       { id: 'bindung',    icon: 'heart',   de: 'Bindungsexpertin',         en: 'Attachment Expert',  color: '#D4845A' },
       { id: 'konflikt',   icon: 'zap',     de: 'Konfliktmediation',        en: 'Conflict Mediation', color: '#CC7040' }
     ];
-    const apiPerspectives = data.perspectives || [];
-    if (apiPerspectives.length > 0) {
-      apiPerspectives.forEach((r) => {
-        const rolle = r.rolle || '';
-        const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
-        const card = createResultCard(pDef, rolle);
-        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
-        resultsDiv.appendChild(card);
-      });
-    } else {
-      const text = data.answer || data.text || JSON.stringify(data);
-      const fallbackCard = createResultCard(aufPerspDefs[0], 'Systemische Analyse');
-      fallbackCard.querySelector('.streaming-text').textContent = text;
-      resultsDiv.appendChild(fallbackCard);
-    }
-    if (data.integration && data.integration.einfach_gesagt) {
-      const synthCard = document.createElement('div');
-      synthCard.className = 'result-card';
-      synthCard.innerHTML = `
-        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-          </div>
-          <div class="result-card-title">kiNTEGRATiON</div>
-          <div class="result-card-badge">synthese</div>
-          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-        </div>
-        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
-      `;
-      setTimeout(() => synthCard.classList.add('open'), 100);
-      resultsDiv.appendChild(synthCard);
-    }
+    renderResults(data, aufPerspDefs, resultsDiv);
     const kiDiv = document.createElement('div');
     kiDiv.className = 'kintegrity';
     kiDiv.style.marginTop = '16px';
@@ -1708,7 +1723,6 @@ async function analyseAufstellung() {
       </div>
     `;
     resultsDiv.appendChild(kiDiv);
-
     saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
 
   } catch (err) {
