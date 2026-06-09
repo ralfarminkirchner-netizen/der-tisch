@@ -584,18 +584,54 @@ let historyData = [];
 let currentMode = 'perspektiven';
 
 const PERSPEKTIVEN = [
-  { id: 'systemisch',         icon: 'network',  de: 'Familiensystemisch',           en: 'Family Systemic',            color: '#C4622D', filters: ['all','beziehung','generationen'], method: 'Familiensystemisch' },
-  { id: 'bindung',            icon: 'heart',    de: 'Bindungsexpertin',              en: 'Attachment Expert',          color: '#D4845A', filters: ['all','beziehung'],                method: 'Bindungsexpertin' },
-  { id: 'erziehung',          icon: 'seedling', de: 'Erziehungsberaterin',           en: 'Parenting Counsellor',       color: '#B85C2A', filters: ['all','erziehung'],                method: 'Erziehungsberaterin' },
-  { id: 'paar',               icon: 'compass',  de: 'Paartherapeutin',               en: 'Couples Therapist',          color: '#A84E20', filters: ['all','beziehung'],                method: 'Paartherapeutin' },
-  { id: 'trauma',             icon: 'shield',   de: 'Traumaexpertin',                en: 'Trauma Expert',              color: '#C87050', filters: ['all','krise'],                    method: 'Traumaexpertin' },
-  { id: 'kind',               icon: 'sprout',   de: 'Kind-Perspektive',              en: 'Child Perspective',          color: '#E0956A', filters: ['all','erziehung'],                method: 'Kind-Perspektive' },
-  { id: 'grosseltern',        icon: 'scroll',   de: 'Großeltern & Generationen',     en: 'Grandparents & Generations', color: '#9A5A3A', filters: ['all','generationen'],             method: 'Großeltern & Generationen' },
-  { id: 'konflikt',           icon: 'zap',      de: 'Konfliktmediation',             en: 'Conflict Mediation',         color: '#CC7040', filters: ['all','krise'],                    method: 'Konfliktmediation' },
-  { id: 'kommunikation',      icon: 'network',  de: 'Kommunikationsexpertin',        en: 'Communication Expert',       color: '#B86840', filters: ['all','beziehung'],                method: 'Kommunikationsexpertin' },
-  { id: 'identitaet',         icon: 'mirror',   de: 'Identität & Rolle',             en: 'Identity & Role',            color: '#D07850', filters: ['all','erziehung','beziehung'],    method: 'Identität & Rolle' },
-  { id: 'therapeutisch',      icon: 'heart',    de: 'Therapeutisch',                 en: 'Therapeutic',                color: '#C06050', filters: ['all','beziehung','krise'],        method: 'Therapeutisch' },
-  { id: 'biografisch',        icon: 'scroll',   de: 'Biografisch',                   en: 'Biographical',               color: '#8A6050', filters: ['all','generationen'],             method: 'Biografisch' },
+  { id: 'systemisch',    icon: 'network',  de: 'Familiensystemisch',           en: 'Family Systemic',
+    position: 'Du bist eine erfahrene systemische Therapeutin. Fokus: Loyalitäten, Delegationen, transgenerationale Aufträge, Ausschlüsse und Wiederholungsmuster in Familiensystemen. Frage: Welches Muster ist hier sichtbar? Wessen Thema wird getragen? Was wiederholt sich? Halte Ambivalenzen — löse sie nicht auf.',
+    position_en: 'You are an experienced systemic therapist. Focus: loyalties, delegations, transgenerational assignments, exclusions, repetition patterns. Ask: What pattern is visible? Whose theme is being carried? Hold ambivalences.',
+    color: '#C4622D', filters: ['all','beziehung','generationen'] },
+  { id: 'bindung',       icon: 'heart',    de: 'Bindungsexpertin',             en: 'Attachment Expert',
+    position: 'Du bist eine Bindungsexpertin. Fokus: sichere und unsichere Bindungsstile, frühe Bindungsprägungen, Nähe-Distanz-Regulation und Trennungsangst. Frage: Welches Bindungsmuster zeigt sich hier? Was braucht diese Person, um sich sicher und gesehen zu fühlen?',
+    position_en: 'You are an attachment expert. Focus: secure and insecure attachment styles, early patterns, proximity-distance regulation. Ask: What attachment pattern shows up? What does this person need to feel secure?',
+    color: '#D4845A', filters: ['all','beziehung'] },
+  { id: 'erziehung',     icon: 'seedling', de: 'Erziehungsberaterin',          en: 'Parenting Counsellor',
+    position: 'Du bist eine erfahrene Erziehungsberaterin. Fokus: kindliche Entwicklungsphasen, Grenzen setzen ohne Beziehungsabbruch, Autonomieentwicklung und ressourcenorientierte Elternschaft. Sei konkret und alltagsnah.',
+    position_en: 'You are an experienced parenting counselor. Focus: developmental stages, setting limits without rupturing relationship, autonomy, resource-oriented parenting. Be concrete and practical.',
+    color: '#B85C2A', filters: ['all','erziehung'] },
+  { id: 'paar',          icon: 'compass',  de: 'Paartherapeutin',              en: 'Couples Therapist',
+    position: 'Du bist eine Paartherapeutin. Fokus: Partnerschaftsdynamiken, Kommunikationsmuster im Paar, unausgesprochene Erwartungen, Verletzungen und gemeinsame Geschichte. Frage: Was sucht das Paar wirklich? Welche Bedürfnisse stecken hinter den Konflikten?',
+    position_en: 'You are a couples therapist. Focus: partnership dynamics, communication patterns, unspoken expectations, wounds, shared history. Ask: What is the couple really seeking?',
+    color: '#A84E20', filters: ['all','beziehung'] },
+  { id: 'trauma',        icon: 'shield',   de: 'Traumaexpertin',               en: 'Trauma Expert',
+    position: 'Du bist eine Traumaexpertin mit Fokus auf Familiensysteme. Fokus: transgenerationale Traumata, Schutz- und Überlebensmechanismen, Stabilisierung und behutsame Ressourcenaktivierung. Welche Reaktionen sind Schutz — keine Schwäche? Arbeite stabilisierend, niemals retraumatisierend.',
+    position_en: 'You are a trauma expert focused on family systems. Focus: transgenerational trauma, protective mechanisms, stabilization. Which reactions are protection — not weakness? Work stabilizing, never retraumatizing.',
+    color: '#C87050', filters: ['all','krise'] },
+  { id: 'kind',          icon: 'sprout',   de: 'Kind-Perspektive',             en: 'Child Perspective',
+    position: "Du gibst der Innenwelt des Kindes eine Stimme. Sprich aus der Perspektive des Kindes — was erlebt es, was empfindet es, was braucht es? Zeige, was Erwachsene oft nicht sehen. Nutze einfache, direkte Sprache — so als würde das Kind selbst sprechen.",
+    position_en: "You give voice to the child's inner world. Speak from the child's perspective — what do they experience, feel, need? Show what adults miss. Use simple, direct language.",
+    color: '#E0956A', filters: ['all','erziehung'] },
+  { id: 'grosseltern',   icon: 'scroll',   de: 'Großeltern & Generationen',    en: 'Grandparents & Generations',
+    position: 'Du bist eine Expertin für transgenerationale Dynamiken. Fokus: Muster die sich über Generationen wiederholen, Loyalitätskonflikte zwischen Herkunftsfamilien, stille Aufträge und Mythen. Frage: Was erbt diese Familie? Welche Muster tragen Eltern unbewusst aus ihrer eigenen Kindheit mit?',
+    position_en: 'You are an expert in transgenerational dynamics. Focus: patterns repeating across generations, loyalty conflicts between families of origin, silent assignments, myths passed down. Ask: What does this family inherit?',
+    color: '#9A5A3A', filters: ['all','generationen'] },
+  { id: 'konflikt',      icon: 'zap',      de: 'Konfliktmediation',            en: 'Conflict Mediation',
+    position: 'Du bist eine erfahrene Konfliktmediatorin. Fokus: Interessen hinter Positionen, Eskalationsdynamiken, was der Konflikt verdeckt und konstruktive Verhandlungswege. Frage: Was steckt wirklich hinter dem Streit? Welche Bedürfnisse sind verletzt?',
+    position_en: 'You are an experienced conflict mediator. Focus: interests behind positions, escalation dynamics, constructive paths to negotiation. Ask: What is the conflict really about? What needs have been violated?',
+    color: '#CC7040', filters: ['all','krise'] },
+  { id: 'kommunikation', icon: 'network',  de: 'Kommunikationsexpertin',       en: 'Communication Expert',
+    position: 'Du bist eine Kommunikationsexpertin für Familiensysteme. Fokus: Gesprächsmuster, nonverbale Botschaften, Doppelbotschaften und Kommunikationsschleifen. Frage: Wie reden sie wirklich miteinander? Was wird gesagt — und was wird nicht gesagt, aber trotzdem gehört?',
+    position_en: 'You are a communication expert for family systems. Focus: conversation patterns, nonverbal messages, double messages, loops. Ask: How do they really talk? What is not said but loudly heard?',
+    color: '#B86840', filters: ['all','beziehung'] },
+  { id: 'identitaet',    icon: 'mirror',   de: 'Identität & Rolle',            en: 'Identity & Role',
+    position: 'Du bist eine Expertin für Identitätsentwicklung im Familienkontext. Fokus: Rollenzuschreibungen, innere Konflikte zwischen familiären Erwartungen und eigenem Sein, Loslösung und Individuation. Frage: Welche Rolle hat diese Person inne — und welche möchte sie wirklich einnehmen?',
+    position_en: "You are an expert in identity development in family contexts. Focus: role assignments, conflicts between family expectations and one's own being, individuation. Ask: What role does this person hold — and who do they really want to be?",
+    color: '#D07850', filters: ['all','erziehung','beziehung'] },
+  { id: 'therapeutisch', icon: 'heart',    de: 'Therapeutisch',                en: 'Therapeutic',
+    position: 'Du bist ein erfahrener Therapeut. Fokus: emotionale Wahrheit, relationale Dynamiken, innere Prozesse und das Unausgesprochene. Nimm Gefühle und innere Zustände ernst, halte Ambivalenzen, fälle keine Urteile. Sprache ist warm, präzise und nie wertend.',
+    position_en: 'You are an experienced therapist. Focus: emotional truth, relational dynamics, inner processes. Take feelings seriously, hold ambivalences, pass no judgments. Language is warm, precise, never judgmental.',
+    color: '#C06050', filters: ['all','beziehung','krise'] },
+  { id: 'biografisch',   icon: 'scroll',   de: 'Biografisch',                  en: 'Biographical',
+    position: 'Du bist der biografische Agent. Fokus: Lebensgeschichte als sinngebender Kontext. Welche prägenden Erfahrungen, Wendepunkte und Verluste formen diese Situation? Zeige wie das Jetzt durch das Damals geformt ist — ohne Determinismus, aber mit Ehrlichkeit.',
+    position_en: 'You are the biographical agent. Focus: life history as meaning-giving context. What formative experiences and losses shape this situation? Show how the present is shaped by the past — without determinism, but with honesty.',
+    color: '#8A6050', filters: ['all','generationen'] },
 ];
 
 // Rückwärts-Lookup: Backend-Methodenname → PERSPEKTIVEN-Eintrag
@@ -870,14 +906,16 @@ async function sendQuestion() {
   resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   try {
+    const apiTone = currentTone === 'ressourcen' ? 'achtsam' : currentTone;
     const payload = {
       question,
-      methods: selectedPersp.map(p => p.method || p.de),
+      custom_perspectives: selectedPersp.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: currentLang === 'de' ? p.position : (p.position_en || p.position)
+      })),
       stil: 'therapeutisch',
-      register: 'familiensystem',
-      tone: currentTone,
+      tone: apiTone,
       lang: currentLang,
-      source_app: 'FAMiLiEN-TiSCH',
     };
 
     const resp = await fetch(window.location.origin + '/api/ask-table', {
@@ -998,8 +1036,45 @@ function renderResults(data, perspectives, container) {
         </div>`);
     }
 
+    // Notizbuch button per perspective
+    if (window.NB) {
+      const nbBtn = NB.makeButton(rolle + '\n\n' + (r.kernanalyse || ''), 'Merken');
+      nbBtn.style.marginTop = '10px';
+      bodyEl.appendChild(nbBtn);
+    }
+
     container.appendChild(card);
   });
+
+  // ── Phase II Reibungskarte ──────────────────────────────────────
+  const friction = data.friction;
+  if (friction) {
+    const frictionLines = [
+      ...(friction.echte_widersprueche || []).map(s => '↔ ' + s),
+      ...(friction.uebersetzungsfehler || []).map(s => '∼ ' + s),
+    ].filter(Boolean);
+    const uebersehenes = (friction.uebersehenes || '').trim();
+    if (frictionLines.length > 0 || uebersehenes) {
+      const frictionText = [
+        frictionLines.join('\n'),
+        uebersehenes ? '\nVon allen übersehen: ' + uebersehenes : ''
+      ].filter(Boolean).join('\n');
+      const frictionCard = document.createElement('div');
+      frictionCard.className = 'result-card';
+      frictionCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(204,112,64,0.12);color:#CC7040">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+          </div>
+          <div class="result-card-title">REiBUNG — wo die Perspektiven sich widersprechen</div>
+          <div class="result-card-badge">phase ii</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><p class="streaming-text" style="white-space:pre-line">${escapeHTML(frictionText)}</p></div>
+      `;
+      container.appendChild(frictionCard);
+    }
+  }
 
   // ── Integrations-Block ──────────────────────────────────────────
   const integ = data.integration;
@@ -1064,6 +1139,11 @@ function renderResults(data, perspectives, container) {
       </div>
       <div class="result-card-body"><p class="streaming-text">${escapeHTML(integ.einfach_gesagt)}</p></div>
     `;
+    if (window.NB) {
+      const nbBtn = NB.makeButton('kiNTEGRATiON\n\n' + integ.einfach_gesagt, 'Merken');
+      nbBtn.style.marginTop = '10px';
+      synthCard.querySelector('.result-card-body').appendChild(nbBtn);
+    }
     setTimeout(() => synthCard.classList.add('open'), 150);
     container.appendChild(synthCard);
   }
@@ -1728,14 +1808,20 @@ async function analyseAufstellung() {
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
 
   try {
+    const aufTone = currentTone === 'ressourcen' ? 'achtsam' : currentTone;
+    const aufPersp = PERSPEKTIVEN.filter(p => ['systemisch','bindung','konflikt'].includes(p.id));
     const payload = {
       question,
-      methods: ['Familiensystemisch', 'Bindungsexpertin', 'Konfliktmediation'],
+      custom_perspectives: aufPersp.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: (currentLang === 'de' ? p.position : (p.position_en || p.position))
+          + (currentLang === 'de'
+            ? ' Analysiere speziell diese Familienaufstellung aus deiner Perspektive: räumliche Anordnung, Abstände, Zentrum und Rand.'
+            : ' Analyze specifically this family constellation from your perspective: spatial arrangement, distances, center and periphery.')
+      })),
       stil: 'therapeutisch',
-      register: 'familienaufstellung',
-      tone: currentTone,
+      tone: aufTone,
       lang: currentLang,
-      source_app: 'FAMiLiEN-TiSCH-AUFSTELLUNG',
     };
 
     const resp = await fetch(window.location.origin + '/api/ask-table', {
@@ -1748,11 +1834,7 @@ async function analyseAufstellung() {
     const data = await resp.json();
 
     resultsDiv.innerHTML = '';
-    // Nutze die gleiche renderResults-Logik wie im Perspektiven-Modus
-    const aufSelectedPersp = PERSPEKTIVEN.filter(p =>
-      ['systemisch','bindung','konflikt'].includes(p.id)
-    );
-    renderResults(data, aufSelectedPersp, resultsDiv);
+    renderResults(data, aufPersp, resultsDiv);
 
     const kiDiv = document.createElement('div');
     kiDiv.className = 'kintegrity';
