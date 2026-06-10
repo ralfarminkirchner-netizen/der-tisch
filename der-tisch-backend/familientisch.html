@@ -503,6 +503,22 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="5" r="3"/><path d="M6 18v-2a4 4 0 018 0v2"/><line x1="7" y1="14" x2="5" y2="18"/></svg>
         + Ältere
       </button>
+      <button class="auf-btn" onclick="addFigure('exMale')" style="border-style:dashed">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="4"/><path d="M4 19v-2a6 6 0 0112 0v2"/><line x1="3" y1="3" x2="17" y2="17" stroke-dasharray="3,2"/></svg>
+        + Ex-M
+      </button>
+      <button class="auf-btn" onclick="addFigure('exFemale')" style="border-style:dashed">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="4"/><path d="M4 19v-2a6 6 0 0112 0v2"/><line x1="3" y1="3" x2="17" y2="17" stroke-dasharray="3,2"/></svg>
+        + Ex-F
+      </button>
+      <button class="auf-btn" onclick="addFigure('stepchild')">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M6 18v-1a4 4 0 018 0v1"/><path d="M4 10c-1 0-2 .5-2 2"/><path d="M16 10c1 0 2 .5 2 2"/></svg>
+        + Stief/Pflege
+      </button>
+      <button class="auf-btn" onclick="addFigure('resource')" style="color:#CCAA44;border-color:rgba(204,170,68,0.5)">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="10 2 12.5 7.5 18 8.2 14 12 15.1 17.5 10 14.8 4.9 17.5 6 12 2 8.2 7.5 7.5"/></svg>
+        + Ressource
+      </button>
       <button class="auf-btn" id="circleBtn" onclick="toggleCircle()">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7" stroke-dasharray="3,2"/></svg>
         Kreis zeigen
@@ -518,6 +534,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <button class="auf-btn" onclick="loadAufstellung()">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/><polyline points="8 10 12 14 16 10"/><line x1="12" y1="14" x2="12" y2="3"/></svg>
         Laden
+      </button>
+      <button class="auf-btn" onclick="exportScreenshot()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="10" cy="10" r="3"/><path d="M14 3v4"/></svg>
+        Screenshot
       </button>
       <button class="auf-btn" onclick="clearScene()">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/><path d="M8 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
@@ -539,10 +559,19 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
         <button class="rel-type-btn" data-rel="distanziert" onclick="setRelType(this)">Distanziert</button>
         <button class="rel-type-btn" data-rel="konfliktreich" onclick="setRelType(this)">Konfliktreich</button>
       </div>
-      <div style="margin-top:10px">
-        <button class="auf-btn" onclick="deleteFigure()" style="color:#FF6B6B;border-color:rgba(255,107,107,0.4)">
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <span style="font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Blickrichtung:</span>
+        <button class="auf-btn" onclick="rotateFigure(-1)" title="Links drehen" style="padding:6px 10px">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0112-7"/><polyline points="14 2 16 5 13 6"/></svg>
+          ↺ Links
+        </button>
+        <button class="auf-btn" onclick="rotateFigure(1)" title="Rechts drehen" style="padding:6px 10px">
+          Rechts ↻
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12a8 8 0 00-12-7"/><polyline points="6 2 4 5 7 6"/></svg>
+        </button>
+        <button class="auf-btn" onclick="deleteFigure()" style="color:#FF6B6B;border-color:rgba(255,107,107,0.4);margin-left:auto">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/><path d="M8 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-          Figur entfernen
+          Entfernen
         </button>
       </div>
     </div>
@@ -553,6 +582,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <div class="legend-item"><div class="legend-dot" style="background:#C4622D"></div> Erwachsen-F</div>
       <div class="legend-item"><div class="legend-dot" style="background:#8FBC8A"></div> Kind</div>
       <div class="legend-item"><div class="legend-dot" style="background:#9A8A7A"></div> Ältere</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#5A6FA0;border:1px dashed #5A6FA0;box-sizing:border-box"></div> Ex-M</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#AA6858;border:1px dashed #AA6858;box-sizing:border-box"></div> Ex-F</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6BAA8A"></div> Stief/Pflege</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#CCAA44;border-radius:2px"></div> Ressource ◆</div>
     </div>
 
     <!-- Aufstellung results -->
@@ -1094,7 +1127,7 @@ function initThreeJS() {
   const container = document.getElementById('canvasContainer');
 
   // Setup renderer
-  renderer = new THREE.WebGLRenderer({ canvas: aufCanvas, antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({ canvas: aufCanvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.shadowMap.enabled = true;
@@ -1225,18 +1258,68 @@ function setupOrbitControls() {
     e.preventDefault();
   }, { passive: false });
 
-  // Touch support
+  // Touch support — figure drag + orbit/zoom
   let lastTouchX = 0, lastTouchY = 0, lastTouchDist = 0;
+  const touchPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
   aufCanvas.addEventListener('touchstart', e => {
     autoRotate = false;
     if (e.touches.length === 1) {
-      lastTouchX = e.touches[0].clientX;
-      lastTouchY = e.touches[0].clientY;
+      const touch = e.touches[0];
+      const rect = aufCanvas.getBoundingClientRect();
+      mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const meshes = figures.flatMap(f => f.body === f.head ? [f.body] : [f.body, f.head]);
+      const hits = raycaster.intersectObjects(meshes);
+      if (hits.length > 0) {
+        const fig = figures.find(f => f.body === hits[0].object || f.head === hits[0].object);
+        if (fig) {
+          if (connectMode) {
+            handleConnectClick(fig);
+          } else {
+            selectFigure(fig);
+            dragFigure = fig;
+            isDraggingFigure = true;
+          }
+          e.preventDefault();
+          return;
+        }
+      }
+      lastTouchX = touch.clientX;
+      lastTouchY = touch.clientY;
     } else if (e.touches.length === 2) {
+      isDraggingFigure = false;
+      dragFigure = null;
       lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
     }
-  });
+    e.preventDefault();
+  }, { passive: false });
+
   aufCanvas.addEventListener('touchmove', e => {
+    if (isDraggingFigure && dragFigure && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const rect = aufCanvas.getBoundingClientRect();
+      mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const pt = new THREE.Vector3();
+      raycaster.ray.intersectPlane(touchPlane, pt);
+      if (pt) {
+        const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+        if (dist > 3.6) {
+          const a = Math.atan2(pt.z, pt.x);
+          pt.x = Math.cos(a) * 3.6;
+          pt.z = Math.sin(a) * 3.6;
+        }
+        dragFigure.group.position.x = pt.x;
+        dragFigure.group.position.z = pt.z;
+        updateRelationshipLines();
+        updateLabels();
+      }
+      e.preventDefault();
+      return;
+    }
     if (e.touches.length === 1) {
       theta -= (e.touches[0].clientX - lastTouchX) * 0.01;
       phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.touches[0].clientY - lastTouchY) * 0.01));
@@ -1250,6 +1333,13 @@ function setupOrbitControls() {
       updateCamera3D();
     }
     e.preventDefault();
+  }, { passive: false });
+
+  aufCanvas.addEventListener('touchend', () => {
+    if (isDraggingFigure) {
+      isDraggingFigure = false;
+      dragFigure = null;
+    }
   }, { passive: false });
 }
 
@@ -1330,10 +1420,14 @@ function handleConnectClick(fig) {
 
 // Figure type configs
 const FIGURE_TYPES = {
-  male:    { color: 0x4A7FA8, bodyH: 1.2, headR: 0.28 },
-  female:  { color: 0xC4622D, bodyH: 1.1, headR: 0.26 },
-  child:   { color: 0x8FBC8A, bodyH: 0.8, headR: 0.22 },
-  elderly: { color: 0x9A8A7A, bodyH: 1.0, headR: 0.25 },
+  male:      { color: 0x4A7FA8, bodyH: 1.2, headR: 0.28 },
+  female:    { color: 0xC4622D, bodyH: 1.1, headR: 0.26 },
+  child:     { color: 0x8FBC8A, bodyH: 0.8, headR: 0.22 },
+  elderly:   { color: 0x9A8A7A, bodyH: 1.0, headR: 0.25 },
+  exMale:    { color: 0x5A6FA0, bodyH: 1.2, headR: 0.28 },
+  exFemale:  { color: 0xAA6858, bodyH: 1.1, headR: 0.26 },
+  stepchild: { color: 0x6BAA8A, bodyH: 0.75, headR: 0.21 },
+  resource:  { color: 0xCCAA44, bodyH: 0.3, headR: 0.36 },
 };
 
 let figureCounter = 0;
@@ -1343,27 +1437,49 @@ function addFigure(type) {
   const cfg = FIGURE_TYPES[type];
   const group = new THREE.Group();
 
-  // Body
-  const bodyGeo = new THREE.CylinderGeometry(0.18, 0.18, cfg.bodyH, 12);
-  const bodyMat = new THREE.MeshLambertMaterial({ color: cfg.color });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.position.y = cfg.bodyH / 2 + 0.11;
-  body.castShadow = true;
-  group.add(body);
+  let body, head;
 
-  // Head
-  const headGeo = new THREE.SphereGeometry(cfg.headR, 16, 12);
-  const headMat = new THREE.MeshLambertMaterial({ color: cfg.color });
-  const head = new THREE.Mesh(headGeo, headMat);
-  head.position.y = cfg.bodyH + 0.11 + cfg.headR + 0.05;
-  head.castShadow = true;
-  group.add(head);
+  if (type === 'resource') {
+    // Diamond/octahedron shape for resource figures
+    const symGeo = new THREE.OctahedronGeometry(cfg.headR);
+    const symMat = new THREE.MeshLambertMaterial({ color: cfg.color });
+    body = new THREE.Mesh(symGeo, symMat);
+    head = body;
+    body.position.y = 0.5;
+    body.castShadow = true;
+    group.add(body);
+  } else {
+    // Body
+    const bodyGeo = new THREE.CylinderGeometry(0.18, 0.18, cfg.bodyH, 12);
+    const bodyMat = new THREE.MeshLambertMaterial({ color: cfg.color });
+    body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = cfg.bodyH / 2 + 0.11;
+    body.castShadow = true;
+    group.add(body);
+
+    // Head
+    const headGeo = new THREE.SphereGeometry(cfg.headR, 16, 12);
+    const headMat = new THREE.MeshLambertMaterial({ color: cfg.color });
+    head = new THREE.Mesh(headGeo, headMat);
+    head.position.y = cfg.bodyH + 0.11 + cfg.headR + 0.05;
+    head.castShadow = true;
+    group.add(head);
+  }
+
+  // Direction arrow (Blickrichtung)
+  const arrowGeo = new THREE.ConeGeometry(0.07, 0.22, 8);
+  const arrowMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF, opacity: 0.65, transparent: true });
+  const arrow = new THREE.Mesh(arrowGeo, arrowMat);
+  arrow.rotation.z = -Math.PI / 2;
+  const arrowY = type === 'resource' ? 0.5 : cfg.bodyH / 2 + 0.2;
+  arrow.position.set(0.32, arrowY, 0);
+  group.add(arrow);
 
   // Distribute around circle
   const n = figures.length;
-  const angle = (n / Math.max(8, n + 1)) * Math.PI * 2;
+  const placeAngle = (n / Math.max(8, n + 1)) * Math.PI * 2;
   const r = 1.8 + (n % 3) * 0.4;
-  group.position.set(Math.cos(angle) * r, 0, Math.sin(angle) * r);
+  group.position.set(Math.cos(placeAngle) * r, 0, Math.sin(placeAngle) * r);
 
   scene.add(group);
 
@@ -1375,8 +1491,10 @@ function addFigure(type) {
     group,
     body,
     head,
+    arrow,
     color: cfg.color,
-    selected: false
+    selected: false,
+    facing: 0,
   };
   figures.push(fig);
   updateLabels();
@@ -1385,10 +1503,14 @@ function addFigure(type) {
 
 function getDefaultName(type, id) {
   const names = {
-    male: ['Vater', 'Sohn', 'Großvater', 'Onkel'],
-    female: ['Mutter', 'Tochter', 'Großmutter', 'Tante'],
-    child: ['Kind 1', 'Kind 2', 'Kind 3', 'Kind 4'],
-    elderly: ['Oma', 'Opa', 'Urgroßmutter', 'Urgroßvater'],
+    male:      ['Vater', 'Sohn', 'Großvater', 'Onkel'],
+    female:    ['Mutter', 'Tochter', 'Großmutter', 'Tante'],
+    child:     ['Kind 1', 'Kind 2', 'Kind 3', 'Kind 4'],
+    elderly:   ['Oma', 'Opa', 'Urgroßmutter', 'Urgroßvater'],
+    exMale:    ['Ex-Partner', 'Ex-Ehemann', 'Bio. Vater'],
+    exFemale:  ['Ex-Partnerin', 'Ex-Ehefrau', 'Bio. Mutter'],
+    stepchild: ['Stiefkind', 'Pflegekind', 'Adoptivkind'],
+    resource:  ['Sicherheit', 'Stärke', 'Heimat', 'Vertrauen'],
   };
   const arr = names[type] || ['Person'];
   return arr[(id - 1) % arr.length];
@@ -1507,6 +1629,23 @@ function updateRelationshipLines() {
   });
 }
 
+function rotateFigure(dir) {
+  if (!selectedFigure) return;
+  selectedFigure.facing = (selectedFigure.facing || 0) + dir * Math.PI / 4;
+  selectedFigure.group.rotation.y = selectedFigure.facing;
+}
+
+function exportScreenshot() {
+  if (!renderer) { showToast('3D-Ansicht noch nicht geladen.'); return; }
+  renderer.render(scene, camera);
+  const url = renderer.domElement.toDataURL('image/png');
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'familienaufstellung.png';
+  a.click();
+  showToast('Screenshot gespeichert.');
+}
+
 function toggleCircle() {
   showCircle = !showCircle;
   if (circleMesh) circleMesh.visible = showCircle;
@@ -1553,6 +1692,7 @@ function saveAufstellung() {
       name: f.name,
       x: parseFloat(f.group.position.x.toFixed(3)),
       z: parseFloat(f.group.position.z.toFixed(3)),
+      facing: parseFloat((f.facing || 0).toFixed(3)),
     })),
     relationships: relationships.map(r => ({
       aIdx: figures.indexOf(r.a),
@@ -1576,6 +1716,7 @@ function loadAufstellung() {
       fig.name = fd.name || fig.name;
       fig.group.position.x = fd.x;
       fig.group.position.z = fd.z;
+      if (fd.facing) { fig.facing = fd.facing; fig.group.rotation.y = fd.facing; }
     });
     data.relationships.forEach(rd => {
       if (figures[rd.aIdx] && figures[rd.bIdx]) {
@@ -1620,17 +1761,54 @@ function startAnimateOnce() {
 async function analyseAufstellung() {
   if (figures.length === 0) { showToast('Bitte erst Figuren hinzufügen.'); return; }
 
-  // Build description
-  const center = new THREE.Vector3(0, 0, 0);
+  // Build description with spatial analysis
   const figDescs = figures.map(f => {
     const pos = f.group.position;
-    const dist = Math.sqrt(pos.x * pos.x + pos.z * pos.z).toFixed(2);
+    const distFromCenter = Math.sqrt(pos.x * pos.x + pos.z * pos.z).toFixed(2);
     const angle = ((Math.atan2(pos.z, pos.x) * 180 / Math.PI + 360) % 360).toFixed(0);
-    return `${f.name} (${f.type}): Abstand vom Zentrum ${dist}, Winkel ${angle}°`;
+    const facingDeg = (((f.facing || 0) * 180 / Math.PI) + 360) % 360;
+    return `${f.name} (${f.type}): Abstand Zentrum ${distFromCenter}, Pos-Winkel ${angle}°, Blickrichtung ${facingDeg.toFixed(0)}°`;
   });
+
+  // Pairwise distances for structural insight
+  const pairDescs = [];
+  for (let i = 0; i < figures.length; i++) {
+    for (let j = i + 1; j < figures.length; j++) {
+      const a = figures[i], b = figures[j];
+      const dx = a.group.position.x - b.group.position.x;
+      const dz = a.group.position.z - b.group.position.z;
+      pairDescs.push(`${a.name} ↔ ${b.name}: ${Math.sqrt(dx*dx + dz*dz).toFixed(2)}`);
+    }
+  }
+
+  // Structural patterns
+  const isolated = figures.filter(f => {
+    const hasRel = relationships.some(r => r.a === f || r.b === f);
+    const distC = Math.sqrt(f.group.position.x**2 + f.group.position.z**2);
+    return !hasRel && distC > 2.4;
+  });
+
   const relDescs = relationships.map(r => `${r.a.name} ↔ ${r.b.name}: ${r.type}`);
 
-  const question = `Familienaufstellung mit ${figures.length} Figuren:\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
+  const question = `Familienaufstellung mit ${figures.length} Figuren:
+
+Figuren (Position & Blickrichtung):
+${figDescs.join('\n')}
+
+Paarweise Abstände:
+${pairDescs.length ? pairDescs.join('\n') : 'nur eine Figur'}
+
+Gezeichnete Beziehungen:
+${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}
+
+${isolated.length ? `Möglicherweise isolierte Figuren (keine Verbindung, weit vom Zentrum): ${isolated.map(f => f.name).join(', ')}` : ''}
+
+Bitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive:
+1. Was fällt in der Gesamtdynamik auf? Wer ist nah, wer ist fern, wer ist isoliert?
+2. Welche Untergruppen oder Dreiecke sind erkennbar?
+3. Was könnten die Blickrichtungen über Orientierung und Ausrichtung der Personen aussagen?
+4. Was könnte diese Konstellation über das Familiensystem und seine Muster aussagen?
+5. Formuliere am Ende 3 konkrete Reflexionsfragen, die die Familie erkunden könnte — kurz, offen und einladend.`;
 
   const resultsDiv = document.getElementById('aufstellungResults');
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
