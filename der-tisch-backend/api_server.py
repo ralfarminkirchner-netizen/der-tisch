@@ -31,6 +31,7 @@ except Exception:
 # --- TiSCH Shared Core — Dual-Core-Memory-Router (HANDOFF 2026-05-18) ---
 from tisch_shared_core.api import router as tisch_shared_core_router
 app.include_router(tisch_shared_core_router, prefix="")
+from tisch_shared_core.auto_capture import save_tisch_run
 
 NO_CACHE = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
 
@@ -144,6 +145,14 @@ async def serve_hub_short():
 @app.get("/integrationstisch")
 async def serve_integrationstisch_short():
     return FileResponse(Path(__file__).parent / "integrationstisch.html", headers=NO_CACHE)
+
+@app.get("/dich-raum.html")
+async def serve_dich_raum():
+    return FileResponse(Path(__file__).parent / "dich-raum.html", headers=NO_CACHE)
+
+@app.get("/dich-raum")
+async def serve_dich_raum_short():
+    return FileResponse(Path(__file__).parent / "dich-raum.html", headers=NO_CACHE)
 
 # PWA Manifests
 @app.get("/manifest-team-tisch.json")
@@ -1355,7 +1364,9 @@ async def ask_the_table(req: QueryRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        _resp = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        asyncio.create_task(save_tisch_run(req.question, _resp.model_dump()))
+        return _resp
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -1445,7 +1456,9 @@ async def ask_simple(req: QueryRequest):
         perspectives = list(await asyncio.gather(*tasks))
         friction = await fetch_friction(perspectives, q, lang, stil, "standard", tone)
         integration = await fetch_integration(perspectives, friction, q, lang, stil, tone)
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        _resp = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        asyncio.create_task(save_tisch_run(q, _resp.model_dump()))
+        return _resp
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -1639,7 +1652,9 @@ async def ask_the_custom_table(req: TableRequest):
         friction = await fetch_friction(perspectives, req.question, req.lang, stil, reibung, tone)
         integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
 
-        return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        _resp = TableResponse(perspectives=perspectives, friction=friction, integration=integration)
+        asyncio.create_task(save_tisch_run(req.question, _resp.model_dump(), "custom-tisch"))
+        return _resp
 
     except HTTPException:
         raise
@@ -1700,7 +1715,9 @@ async def ask_clarify(req: ClarifyRequest):
         custom_perspectives=[party_a_cp, party_b_cp],
         methods=methods,
     )
-    return await ask_the_custom_table(table_req)
+    _resp = await ask_the_custom_table(table_req)
+    asyncio.create_task(save_tisch_run(req.question, _resp.model_dump(), "der-tisch"))
+    return _resp
 
 
 
