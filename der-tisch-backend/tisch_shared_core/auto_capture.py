@@ -3,18 +3,26 @@ tisch_shared_core/auto_capture.py — Automatik-Schalter.
 
 Speichert TiSCH-Laufergebnisse automatisch als MemoryCandidate im TiSCH
 Shared Core. Wird vom api_server nach jedem erfolgreichen Ask-Durchlauf via
-asyncio.create_task aufgerufen. Niemals wirft diese Funktion nach außen —
+fire_and_forget_save aufgerufen. Niemals wirft diese Funktion nach außen —
 Fehler werden nur geloggt, der Response-Flow bleibt unberührt.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Set
 
 from .capture import capture_candidate
-from .models import CurationState, FamilyLine, MemoryLayer, SourceRole
+from .models import (
+    CurationState, FamilyLine, MemoryLayer, SourceRole, content_fingerprint,
+)
 
 logger = logging.getLogger(__name__)
+
+# Starke Referenzen auf laufende Tasks — verhindert GC vor Task-Abschluss.
+_background_tasks: Set[asyncio.Task] = set()
+# Content-Hashes aktuell laufender Saves — verhindert konkurrierende Duplikate.
+_active_saves: Set[str] = set()
 
 
 def _build_content(integration: Dict[str, Any]) -> str:
@@ -30,6 +38,42 @@ def _build_content(integration: Dict[str, Any]) -> str:
     if fazit:
         parts.append(fazit)
     return "\n\n".join(parts)
+
+
+def fire_and_forget_save(
+    question: str,
+    response_data: Dict[str, Any],
+    source_app: str = "der-tisch",
+) -> None:
+    """TiSCH-Laufergebnis sicher im Hintergrund speichern (fire-and-forget).
+
+    Hält eine starke Referenz auf den Task, damit der GC ihn nicht vorzeitig
+    abbricht. Überspringt den Start, wenn derselbe Inhalt gerade schon
+    gespeichert wird (in-flight-Dedupe via content_hash).
+    """
+    try:
+        integration = response_data.get("integration") or {}
+        content = _build_content(integration)
+        if not content.strip():
+            logger.debug("auto_capture: leerer Inhalt, übersprungen (q=%r)", question[:60])
+            return
+
+        chash = content_fingerprint(content)
+        if chash in _active_saves:
+            logger.debug("auto_capture: Save für diesen Inhalt läuft bereits (q=%r)", question[:60])
+            return
+
+        _active_saves.add(chash)
+        task = asyncio.create_task(save_tisch_run(question, response_data, source_app))
+        _background_tasks.add(task)
+
+        def _cleanup(t: asyncio.Task) -> None:
+            _background_tasks.discard(t)
+            _active_saves.discard(chash)
+
+        task.add_done_callback(_cleanup)
+    except Exception as exc:
+        logger.warning("auto_capture: Fehler beim Initiieren des Saves — %r", exc)
 
 
 async def save_tisch_run(
