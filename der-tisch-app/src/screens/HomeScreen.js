@@ -9,16 +9,16 @@ import { colors, spacing, radius, typography } from "../theme";
 import { askFamilientisch } from "../services/api";
 
 const PERSPEKTIVEN = [
-  { id: 'systemisch',    de: 'Systemische Therapeutin',  color: '#C4622D' },
-  { id: 'bindung',       de: 'Bindungsexpertin',          color: '#D4845A' },
-  { id: 'erziehung',     de: 'Erziehungsberaterin',       color: '#B85C2A' },
-  { id: 'paar',          de: 'Paartherapeutin',           color: '#A84E20' },
-  { id: 'trauma',        de: 'Traumaexpertin',            color: '#C87050' },
-  { id: 'kind',          de: 'Kind-Perspektive',          color: '#E0956A' },
-  { id: 'grosseltern',   de: 'Generationen',              color: '#9A5A3A' },
-  { id: 'konflikt',      de: 'Konfliktmediation',         color: '#CC7040' },
-  { id: 'kommunikation', de: 'Kommunikation',             color: '#B86840' },
-  { id: 'identitaet',    de: 'Identität & Rolle',         color: '#D07850' },
+  { id: 'systemisch',    de: 'Systemische Therapeutin',    color: '#C4622D' },
+  { id: 'bindung',       de: 'Bindungsexpertin',           color: '#D4845A' },
+  { id: 'erziehung',     de: 'Erziehungsberaterin',        color: '#B85C2A' },
+  { id: 'paar',          de: 'Paartherapeutin',            color: '#A84E20' },
+  { id: 'trauma',        de: 'Traumaexpertin',             color: '#C87050' },
+  { id: 'kind',          de: 'Kind-Perspektive',           color: '#E0956A' },
+  { id: 'grosseltern',   de: 'Großeltern & Generationen',  label: 'Generationen',    color: '#9A5A3A' },
+  { id: 'konflikt',      de: 'Konfliktmediation',          color: '#CC7040' },
+  { id: 'kommunikation', de: 'Kommunikationsexpertin',     label: 'Kommunikation',   color: '#B86840' },
+  { id: 'identitaet',    de: 'Identität & Rolle',          color: '#D07850' },
 ];
 
 const EXAMPLES = [
@@ -166,7 +166,7 @@ export default function HomeScreen({ navigation }) {
                     <View key={p.id} style={styles.loadingAgent}>
                       <ActivityIndicator size="small" color={p.color} />
                       <Text style={styles.loadingAgentText}>
-                        {p.de.split(' ')[0]}
+                        {(p.label || p.de).split(' ')[0]}
                       </Text>
                     </View>
                   ) : null;
@@ -213,7 +213,7 @@ export default function HomeScreen({ navigation }) {
                       styles.perspLabel,
                       active && { color: colors.textPrimary },
                     ]}>
-                      {p.de}
+                      {p.label || p.de}
                     </Text>
                   </TouchableOpacity>
                 );
