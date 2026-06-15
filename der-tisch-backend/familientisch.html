@@ -1146,7 +1146,11 @@ function createResultCard(p, overrideName) {
 function copyCard(btn) {
   const body = btn.closest('.result-card').querySelector('.streaming-text');
   if (!body) return;
-  navigator.clipboard.writeText(body.textContent.trim()).then(() => showToast('Kopiert.'));
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(body.textContent.trim()).then(() => showToast('Kopiert.'));
+  } else {
+    showToast('Kopieren fehlgeschlagen.');
+  }
 }
 
 function toggleCard(card) {
@@ -1819,7 +1823,11 @@ async function analyseAufstellung() {
       apiPerspectives.forEach((r) => {
         const rolle = (r.rolle || '').replace(/^\[.*?\]\s*/, '');
         const rolleLow = rolle.toLowerCase();
-        const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolleLow) || aufPerspDefs[0];
+        const pDef = aufPerspDefs.find(p =>
+          p.id === rolleLow ||
+          (p.de || '').toLowerCase() === rolleLow ||
+          (p.en || '').toLowerCase() === rolleLow
+        ) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
         card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
         resultsDiv.appendChild(card);
@@ -1912,9 +1920,9 @@ function initGenogramm() {
 }
 
 function resizeGenCanvas() {
-  if (!genCanvas) return;
+  if (!genCanvas || currentMode !== 'genogramm') return;
   const wrap = document.getElementById('genCanvasWrap');
-  if (!wrap) return;
+  if (!wrap || wrap.clientWidth === 0) return;
   genCanvas.width = wrap.clientWidth;
   genCanvas.height = wrap.clientHeight;
 }
@@ -1957,6 +1965,7 @@ function _addGenConn(a, b, type) {
 
 function renderGenLoop() {
   requestAnimationFrame(renderGenLoop);
+  if (currentMode !== 'genogramm') return;
   if (!genCtx || !genCanvas) return;
   _renderGen();
 }
@@ -2258,7 +2267,11 @@ async function analyseGenogramm() {
       apiP.forEach(r => {
         const rolle = (r.rolle||'').replace(/^\[.*?\]\s*/,'');
         const rolleLow = rolle.toLowerCase();
-        const pDef = genPerspDefs.find(p => (p.de||'').toLowerCase()===rolleLow) || genPerspDefs[0];
+        const pDef = genPerspDefs.find(p =>
+          p.id === rolleLow ||
+          (p.de || '').toLowerCase() === rolleLow ||
+          (p.en || '').toLowerCase() === rolleLow
+        ) || genPerspDefs[0];
         const card = createResultCard(pDef, rolle);
         card.querySelector('.streaming-text').textContent = r.kernanalyse||'';
         resultsDiv.appendChild(card);
