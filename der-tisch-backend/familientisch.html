@@ -44,7 +44,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
 
 /* MODE TABS */
-.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:640px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
 .mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
 .mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
 .mode-tab:not(.active):hover{color:var(--text)}
@@ -192,6 +192,41 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* COPY BUTTON */
+.copy-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;transition:color .15s;margin-left:auto;flex-shrink:0}
+.copy-btn:hover{color:var(--accent)}
+
+/* GENOGRAMM */
+.genogramm-wrap{max-width:960px;margin:0 auto;padding:0 20px 40px}
+.gen-canvas-container{position:relative;width:100%;height:520px;background:#0C0805;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.gen-canvas-container canvas{display:block;width:100%;height:100%}
+.gen-canvas-container.add-mode{cursor:crosshair}
+.gen-canvas-container.connect-mode{cursor:cell}
+.gen-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.gen-btn{display:flex;align-items:center;gap:6px;padding:9px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.gen-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.gen-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.gen-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.gen-btn.primary:hover{opacity:.88}
+.gen-connect-controls{display:none;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.gen-rel-btn{padding:6px 12px;border:1px solid var(--border);background:var(--bg);color:var(--muted);border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.gen-rel-btn:hover,.gen-rel-btn.active{border-color:var(--accent);color:var(--accent)}
+.gen-info{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;font-size:13px;color:var(--muted);line-height:1.6}
+.gen-info strong{color:var(--text)}
+.gen-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.gen-panel-label{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.gen-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:8px;box-sizing:border-box}
+.gen-input:focus{border-color:var(--accent)}
+.gen-check-row{display:flex;gap:14px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.gen-check-label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer}
+.gen-check-label input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;cursor:pointer}
+.gen-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);margin-bottom:16px;align-items:center}
+.gen-legend-item{display:flex;align-items:center;gap:6px}
+.gen-legend-sym{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:1.5px solid var(--muted);font-size:10px}
+.gen-legend-sym.circle{border-radius:50%}
+.gen-results{margin-top:20px}
+@media(max-width:640px){.gen-canvas-container{height:380px}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -381,6 +416,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="10" rx="1"/><rect x="7" y="4" width="6" height="14" rx="1"/><rect x="12" y="10" width="6" height="8" rx="1"/></svg>
       FAMiLiENAUFSTELLUNG
     </button>
+    <button class="mode-tab" id="tab-genogramm" onclick="setMode('genogramm')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="3" r="2"/><circle cx="4" cy="13" r="2"/><circle cx="16" cy="13" r="2"/><line x1="10" y1="5" x2="4" y2="11"/><line x1="10" y1="5" x2="16" y2="11"/><line x1="10" y1="5" x2="10" y2="18"/></svg>
+      GENOGRAMM
+    </button>
   </div>
 </section>
 
@@ -561,6 +600,87 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== GENOGRAMM MODE ==================== -->
+<div class="mode-section" id="mode-genogramm">
+  <div class="genogramm-wrap">
+
+    <div class="gen-info">
+      <strong>GENOGRAMM</strong> — Zeichnen Sie Ihren Familienbaum nach systemischer Methodik. Klicken Sie auf „+ Person" und dann auf die Fläche, um Personen zu platzieren. Verbinden Sie sie und lassen Sie die KI das Muster analysieren.
+    </div>
+
+    <div class="gen-canvas-container" id="genCanvasWrap">
+      <canvas id="genogrammCanvas"></canvas>
+    </div>
+
+    <div class="gen-controls">
+      <button class="gen-btn" id="genAddMaleBtn" onclick="setGenAddMode('male')">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1"/></svg>
+        + Mann
+      </button>
+      <button class="gen-btn" id="genAddFemaleBtn" onclick="setGenAddMode('female')">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/></svg>
+        + Frau
+      </button>
+      <button class="gen-btn" id="genAddDiverseBtn" onclick="setGenAddMode('diverse')">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="10 2 18 10 10 18 2 10"/></svg>
+        + Divers
+      </button>
+      <button class="gen-btn" id="genConnectBtn" onclick="toggleGenConnect()">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="16" x2="16" y2="4"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="4" r="2"/></svg>
+        Verbindung
+      </button>
+      <button class="gen-btn" onclick="clearGenogramm()">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Leeren
+      </button>
+      <button class="gen-btn primary" onclick="analyseGenogramm()">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Analyse starten
+      </button>
+    </div>
+
+    <!-- Connect controls (shown only in connect mode) -->
+    <div class="gen-connect-controls" id="genConnectControls">
+      <span style="font-size:12px;color:var(--muted)">Verbindungstyp:</span>
+      <button class="gen-rel-btn active" data-genrel="married" onclick="setGenRelType(this)">═══ Verheiratet</button>
+      <button class="gen-rel-btn" data-genrel="partner" onclick="setGenRelType(this)">- - Partnerschaft</button>
+      <button class="gen-rel-btn" data-genrel="separated" onclick="setGenRelType(this)">╲╱ Getrennt</button>
+      <button class="gen-rel-btn" data-genrel="parent-child" onclick="setGenRelType(this)">│ Eltern-Kind</button>
+    </div>
+
+    <!-- Selected figure panel -->
+    <div class="gen-panel" id="genPanel" style="display:none">
+      <div class="gen-panel-label" id="genPanelLabel">Person bearbeiten</div>
+      <input type="text" class="gen-input" id="genNameInput" placeholder="Name..." oninput="updateGenName()">
+      <input type="number" class="gen-input" id="genBirthInput" placeholder="Geburtsjahr (z. B. 1965)..." oninput="updateGenBirth()">
+      <div class="gen-check-row">
+        <label class="gen-check-label"><input type="checkbox" id="genDeceasedCheck" onchange="updateGenDeceased()"> Verstorben</label>
+        <label class="gen-check-label"><input type="checkbox" id="genProbandCheck" onchange="updateGenProband()"> Proband/in (Index)</label>
+      </div>
+      <button class="auf-btn" onclick="deleteGenFigure()" style="color:#FF6B6B;border-color:rgba(255,107,107,0.4)">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Person entfernen
+      </button>
+    </div>
+
+    <!-- Legend -->
+    <div class="gen-legend">
+      <div class="gen-legend-item"><div class="gen-legend-sym">□</div> Männlich</div>
+      <div class="gen-legend-item"><div class="gen-legend-sym circle">○</div> Weiblich</div>
+      <div class="gen-legend-item"><div class="gen-legend-sym" style="transform:rotate(45deg)">□</div> Divers</div>
+      <div class="gen-legend-item"><span style="color:var(--accent);font-size:13px">✕</span> Verstorben</div>
+      <div class="gen-legend-item"><span style="color:var(--accent);font-size:11px">◉</span> Proband/in</div>
+      <div class="gen-legend-item" style="border-top:2px solid var(--accent);width:22px;margin-right:2px"></div>Verheiratet
+      <div class="gen-legend-item" style="border-top:2px dashed var(--muted);width:22px;margin-right:2px"></div>Partnerschaft
+      <div class="gen-legend-item" style="border-top:1.5px solid #4A3028;width:22px;margin-right:2px"></div>Eltern-Kind
+    </div>
+
+    <!-- Results -->
+    <div class="gen-results" id="genogrammResults"></div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -688,6 +808,20 @@ const CHIPS_DATA = {
   },
 };
 
+// Therapeutic role descriptions for /api/ask-table
+const PERSPEKTIVEN_POSITIONS = {
+  systemisch:    'Analysiert als Systemische Therapeutin familiäre Muster, Rollenzuweisungen und Kreisläufe. Fragt nach Grenzen zwischen Subsystemen und wie das Symptom eine systemische Funktion erfüllen könnte. Bezieht mehrere Generationen ein.',
+  bindung:       'Betrachtet die Situation als Bindungsexpertin durch die Linse der Bindungstheorie. Fragt nach sicherer vs. unsicherer Bindung, Trennungsängsten und wie frühe Bindungserfahrungen aktuelle Beziehungsmuster prägen.',
+  erziehung:     'Analysiert als Erziehungsberaterin elterliche Haltungen und Erziehungsstile sowie deren Wirkung auf Kinder. Gibt konkrete pädagogische Handlungsempfehlungen und beleuchtet die kindliche Perspektive.',
+  paar:          'Arbeitet als Paartherapeutin mit dem Paar-Subsystem. Analysiert Kommunikationsmuster, ungelöste Konflikte, geteilte und unterschiedliche Bedürfnisse sowie die Auswirkungen der Paardynamik auf die Kinder.',
+  trauma:        'Betrachtet als Traumaexpertin mögliche transgenerationale Weitergabe von Traumata, Trigger und Schutzreaktionen. Fragt nach belastenden Erfahrungen in der Familiengeschichte und deren Wirkung auf heutige Muster.',
+  kind:          'Nimmt explizit die Perspektive des Kindes ein. Fragt: Was erlebt, braucht und fühlt das Kind in dieser Situation? Welche Botschaft sendet das Familiensystem dem Kind über sich selbst und Beziehungen?',
+  grosseltern:   'Betrachtet als Generationen-Therapeutin die mehrgenerationale Perspektive. Welche Muster, Werte, Loyalitäten und Traumata wurden weitergegeben? Wie wirken Familienlegenden und implizite Aufträge?',
+  konflikt:      'Analysiert als Konfliktmediatorin die Konfliktstruktur: Beteiligte, tieferliegende Bedürfnisse und Positionen. Entwickelt Lösungsräume, die alle Perspektiven würdigen und nachhaltig tragen.',
+  kommunikation: 'Untersucht als Kommunikationsexpertin Gesprächsmuster, Schweigen, Doppelbotschaften und Metakommunikation in der Familie. Welche Themen sind tabuisiert? Wie wird Konflikt kommunikativ reguliert oder vermieden?',
+  identitaet:    'Fragt als Identitäts- und Rollenexpertin: Welche Rollen werden Familienmitgliedern zugeteilt? Wie wirken diese auf die Identitätsentwicklung? Was passiert, wenn jemand seine Rolle in Frage stellt?',
+};
+
 const SVG_ICONS = {
   network: `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>`,
   heart:   `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>`,
@@ -736,6 +870,12 @@ function setMode(mode) {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
       }
+    }, 100);
+  }
+  if (mode === 'genogramm') {
+    setTimeout(() => {
+      initGenogramm();
+      resizeGenCanvas();
     }, 100);
   }
 }
@@ -857,15 +997,17 @@ async function sendQuestion() {
   try {
     const payload = {
       question,
-      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      custom_perspectives: selectedPersp.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: PERSPEKTIVEN_POSITIONS[p.id] || p.de
+      })),
       stil: 'therapeutisch',
       register: 'familiensystem',
-      tone: currentTone,
-      lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      tone: currentTone === 'ressourcen' ? 'achtsam' : (currentTone || ''),
+      lang: currentLang
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -948,10 +1090,12 @@ function renderResults(data, perspectives, container) {
     return;
   }
   apiPerspectives.forEach((r) => {
-    const rolle = r.rolle || '';
+    const rolle = (r.rolle || '').replace(/^\[.*?\]\s*/, '');
+    const rolleLow = rolle.toLowerCase();
     const pDef = perspectives.find(p =>
-      p.id === rolle.toLowerCase() ||
-      (p.de || '').toLowerCase() === rolle.toLowerCase()
+      p.id === rolleLow ||
+      (p.de || '').toLowerCase() === rolleLow ||
+      (p.en || '').toLowerCase() === rolleLow
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
     card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
@@ -986,15 +1130,23 @@ function createResultCard(p, overrideName) {
       <div class="result-card-icon" style="background:${p.color}22;color:${p.color}">${SVG_ICONS[p.icon]||''}</div>
       <div class="result-card-title">${displayName}</div>
       <div class="result-card-badge">${p.id}</div>
+      <button class="copy-btn" onclick="event.stopPropagation();copyCard(this)" title="Kopieren">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="10" height="10" rx="1"/><path d="M4 12H3a1 1 0 01-1-1V3a1 1 0 011-1h8a1 1 0 011 1v1"/></svg>
+      </button>
       <div class="result-card-chevron">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
       </div>
     </div>
     <div class="result-card-body"><p class="streaming-text"></p></div>
   `;
-  // Auto-open first card
   setTimeout(() => card.classList.add('open'), 50);
   return card;
+}
+
+function copyCard(btn) {
+  const body = btn.closest('.result-card').querySelector('.streaming-text');
+  if (!body) return;
+  navigator.clipboard.writeText(body.textContent.trim()).then(() => showToast('Kopiert.'));
 }
 
 function toggleCard(card) {
@@ -1636,21 +1788,23 @@ async function analyseAufstellung() {
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
 
   try {
+    const aufPerspDefs = [
+      { id: 'systemisch', icon: 'network', de: 'Systemische Therapeutin', en: 'Systemic Therapist', color: '#C4622D' },
+      { id: 'bindung',    icon: 'heart',   de: 'Bindungsexpertin',         en: 'Attachment Expert',  color: '#D4845A' },
+      { id: 'konflikt',   icon: 'zap',     de: 'Konfliktmediation',        en: 'Conflict Mediation', color: '#CC7040' }
+    ];
     const payload = {
       question,
-      perspectives: [
-        { id: 'systemisch', role: 'Systemische Therapeutin' },
-        { id: 'bindung', role: 'Bindungsexpertin' },
-        { id: 'konflikt', role: 'Konfliktmediation' }
-      ],
+      custom_perspectives: aufPerspDefs.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: PERSPEKTIVEN_POSITIONS[p.id] || p.de
+      })),
       stil: 'therapeutisch',
-      register: 'familienaufstellung',
-      tone: currentTone,
-      lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      tone: currentTone === 'ressourcen' ? 'achtsam' : (currentTone || ''),
+      lang: currentLang
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1660,16 +1814,12 @@ async function analyseAufstellung() {
     const data = await resp.json();
 
     resultsDiv.innerHTML = '';
-    const aufPerspDefs = [
-      { id: 'systemisch', icon: 'network', de: 'Systemische Therapeutin', en: 'Systemic Therapist', color: '#C4622D' },
-      { id: 'bindung',    icon: 'heart',   de: 'Bindungsexpertin',         en: 'Attachment Expert',  color: '#D4845A' },
-      { id: 'konflikt',   icon: 'zap',     de: 'Konfliktmediation',        en: 'Conflict Mediation', color: '#CC7040' }
-    ];
     const apiPerspectives = data.perspectives || [];
     if (apiPerspectives.length > 0) {
       apiPerspectives.forEach((r) => {
-        const rolle = r.rolle || '';
-        const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
+        const rolle = (r.rolle || '').replace(/^\[.*?\]\s*/, '');
+        const rolleLow = rolle.toLowerCase();
+        const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolleLow) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
         card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
         resultsDiv.appendChild(card);
@@ -1718,6 +1868,428 @@ async function analyseAufstellung() {
 
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ============================================================
+// GENOGRAMM — 2D Canvas systemischer Familienbaum-Editor
+// ============================================================
+let genCanvas, genCtx;
+let genFigures = [];
+let genConnections = [];
+let genSelectedFig = null;
+let genConnectMode = false;
+let genConnectFirst = null;
+let genDragFig = null;
+let genDragOffX = 0, genDragOffY = 0;
+let genCurrentRelType = 'married';
+let genFigId = 0;
+let genAddMode = null;
+let genAnimStarted = false;
+const GEN_R = 22;
+
+const GEN_TYPE_LABELS = { male: 'Männlich', female: 'Weiblich', diverse: 'Divers' };
+const GEN_DEFAULT_NAMES = {
+  male:    ['Großvater', 'Vater', 'Sohn', 'Onkel', 'Bruder'],
+  female:  ['Großmutter', 'Mutter', 'Tochter', 'Tante', 'Schwester'],
+  diverse: ['Ich', 'Person', 'Partner:in', 'Freund:in'],
+};
+
+function getGenDefaultName(type) {
+  const arr = GEN_DEFAULT_NAMES[type] || ['Person'];
+  return arr[genFigId % arr.length];
+}
+
+function initGenogramm() {
+  if (genCanvas) return;
+  genCanvas = document.getElementById('genogrammCanvas');
+  if (!genCanvas) return;
+  genCtx = genCanvas.getContext('2d');
+  resizeGenCanvas();
+  window.addEventListener('resize', resizeGenCanvas);
+  setupGenEvents();
+  createDefaultGenogramm();
+  if (!genAnimStarted) { genAnimStarted = true; renderGenLoop(); }
+}
+
+function resizeGenCanvas() {
+  if (!genCanvas) return;
+  const wrap = document.getElementById('genCanvasWrap');
+  if (!wrap) return;
+  genCanvas.width = wrap.clientWidth;
+  genCanvas.height = wrap.clientHeight;
+}
+
+function createDefaultGenogramm() {
+  genFigures = []; genConnections = []; genFigId = 0;
+  const cw = (genCanvas ? genCanvas.width : 800);
+  const ch = (genCanvas ? genCanvas.height : 520);
+  const cx = cw / 2;
+
+  // Gen 1 — Großeltern
+  const gv = _addGenFig('male',   cx - 100, ch * 0.15, 'Großvater', 1940);
+  const gm = _addGenFig('female', cx + 20,  ch * 0.15, 'Großmutter', 1944);
+  _addGenConn(gv, gm, 'married');
+
+  // Gen 2 — Eltern
+  const va = _addGenFig('male',   cx - 60, ch * 0.44, 'Vater', 1967);
+  const mu = _addGenFig('female', cx + 70, ch * 0.44, 'Mutter', 1971);
+  _addGenConn(va, mu, 'married');
+  _addGenConn(gv, va, 'parent-child');
+
+  // Gen 3 — Index + Geschwister
+  const ich = _addGenFig('diverse', cx - 10, ch * 0.74, 'Ich', 1998, false, true);
+  const gsw = _addGenFig('female',  cx + 100, ch * 0.74, 'Geschwister', 2002);
+  _addGenConn(va, ich, 'parent-child');
+  _addGenConn(mu, ich, 'parent-child');
+  _addGenConn(va, gsw, 'parent-child');
+  _addGenConn(mu, gsw, 'parent-child');
+}
+
+function _addGenFig(type, x, y, name, birthYear, deceased, proband) {
+  const fig = { id: ++genFigId, type, x, y, name: name||'', birthYear: birthYear||null, deceased: !!deceased, proband: !!proband };
+  genFigures.push(fig);
+  return fig;
+}
+
+function _addGenConn(a, b, type) {
+  genConnections.push({ a, b, type });
+}
+
+function renderGenLoop() {
+  requestAnimationFrame(renderGenLoop);
+  if (!genCtx || !genCanvas) return;
+  _renderGen();
+}
+
+function _renderGen() {
+  const c = genCtx, W = genCanvas.width, H = genCanvas.height;
+  c.clearRect(0, 0, W, H);
+  c.fillStyle = '#0C0805'; c.fillRect(0, 0, W, H);
+  genConnections.forEach(conn => _drawGenConn(c, conn));
+  genFigures.forEach(fig => _drawGenFig(c, fig));
+}
+
+function _drawGenConn(c, conn) {
+  const ax = conn.a.x, ay = conn.a.y, bx = conn.b.x, by = conn.b.y;
+  const isSel = (conn.a === genSelectedFig || conn.b === genSelectedFig);
+  c.save(); c.lineCap = 'round';
+
+  if (conn.type === 'married') {
+    const dx = bx-ax, dy = by-ay, len = Math.sqrt(dx*dx+dy*dy)||1;
+    const nx = -dy/len*3.5, ny = dx/len*3.5;
+    c.strokeStyle = isSel ? '#C4622D' : '#A84E20'; c.lineWidth = 1.5; c.setLineDash([]);
+    c.beginPath(); c.moveTo(ax+nx,ay+ny); c.lineTo(bx+nx,by+ny); c.stroke();
+    c.beginPath(); c.moveTo(ax-nx,ay-ny); c.lineTo(bx-nx,by-ny); c.stroke();
+
+  } else if (conn.type === 'partner') {
+    c.strokeStyle = isSel ? '#C4622D' : '#9A7A6A'; c.lineWidth = 1.5; c.setLineDash([6,3]);
+    c.beginPath(); c.moveTo(ax,ay); c.lineTo(bx,by); c.stroke();
+
+  } else if (conn.type === 'separated') {
+    c.strokeStyle = '#9A7A6A'; c.lineWidth = 1.5; c.setLineDash([5,3]);
+    c.beginPath(); c.moveTo(ax,ay); c.lineTo(bx,by); c.stroke();
+    // // slash marks
+    c.setLineDash([]); c.lineWidth = 1.5;
+    [0.38, 0.52].forEach(t => {
+      const mx = ax+(bx-ax)*t, my = ay+(by-ay)*t;
+      const ddx = bx-ax, ddy = by-ay, ll = Math.sqrt(ddx*ddx+ddy*ddy)||1;
+      const px = -ddy/ll*7, py = ddx/ll*7;
+      c.beginPath(); c.moveTo(mx-px-3,my-py-3); c.lineTo(mx+px+3,my+py+3); c.stroke();
+    });
+
+  } else { // parent-child — L-shaped
+    c.strokeStyle = isSel ? '#D07850' : '#4A3028'; c.lineWidth = 1.5; c.setLineDash([]);
+    const midY = (ay + by) / 2;
+    c.beginPath();
+    c.moveTo(ax, ay); c.lineTo(ax, midY); c.lineTo(bx, midY); c.lineTo(bx, by);
+    c.stroke();
+  }
+  c.restore();
+}
+
+function _drawGenFig(c, fig) {
+  const x = fig.x, y = fig.y, r = GEN_R;
+  const isSel = fig === genSelectedFig;
+  const isFirst = fig === genConnectFirst;
+  c.save();
+
+  // Proband double ring
+  if (fig.proband) {
+    c.strokeStyle = 'rgba(196,98,45,0.4)'; c.lineWidth = 1.5; c.setLineDash([]);
+    c.beginPath();
+    if (fig.type === 'male') { c.rect(x-r-7, y-r-7, (r+7)*2, (r+7)*2); }
+    else if (fig.type === 'female') { c.arc(x, y, r+7, 0, Math.PI*2); }
+    else { c.moveTo(x,y-r-9); c.lineTo(x+r+9,y); c.lineTo(x,y+r+9); c.lineTo(x-r-9,y); c.closePath(); }
+    c.stroke();
+  }
+
+  c.fillStyle = isSel || isFirst ? 'rgba(196,98,45,0.14)' : '#1A100A';
+  c.strokeStyle = isFirst ? '#FFCC44' : (isSel ? '#C4622D' : '#9A7A6A');
+  c.lineWidth = isSel || isFirst ? 2.5 : 1.5; c.setLineDash([]);
+
+  c.beginPath();
+  if (fig.type === 'male') { c.rect(x-r, y-r, r*2, r*2); }
+  else if (fig.type === 'female') { c.arc(x, y, r, 0, Math.PI*2); }
+  else { c.moveTo(x,y-r); c.lineTo(x+r,y); c.lineTo(x,y+r); c.lineTo(x-r,y); c.closePath(); }
+  c.fill(); c.stroke();
+
+  // Deceased X
+  if (fig.deceased) {
+    c.strokeStyle = '#C4622D'; c.lineWidth = 1.5;
+    const d = r * 0.62;
+    c.beginPath(); c.moveTo(x-d,y-d); c.lineTo(x+d,y+d); c.moveTo(x+d,y-d); c.lineTo(x-d,y+d); c.stroke();
+  }
+
+  // Name
+  c.fillStyle = '#F5EDE6'; c.font = '11px Inter,sans-serif'; c.textAlign = 'center'; c.textBaseline = 'top';
+  if (fig.name) c.fillText(fig.name, x, y+r+5);
+  if (fig.birthYear) { c.fillStyle = '#6A5048'; c.font = '10px Inter,sans-serif'; c.fillText(String(fig.birthYear), x, y+r+18); }
+  c.restore();
+}
+
+function _figAtPt(px, py) {
+  for (let i = genFigures.length-1; i >= 0; i--) {
+    const f = genFigures[i];
+    if (Math.abs(px-f.x) < GEN_R+6 && Math.abs(py-f.y) < GEN_R+6) return f;
+  }
+  return null;
+}
+
+function _genXY(e) {
+  const rect = genCanvas.getBoundingClientRect();
+  const sx = genCanvas.width / rect.width, sy = genCanvas.height / rect.height;
+  const src = e.touches ? e.touches[0] : e;
+  return { x: (src.clientX-rect.left)*sx, y: (src.clientY-rect.top)*sy };
+}
+
+function setupGenEvents() {
+  genCanvas.addEventListener('mousedown', _onGenDown);
+  window.addEventListener('mousemove', _onGenMove);
+  window.addEventListener('mouseup', _onGenUp);
+  genCanvas.addEventListener('touchstart', e => { e.preventDefault(); _onGenDown(e.touches[0]); }, { passive:false });
+  window.addEventListener('touchmove', e => { if (genDragFig) { e.preventDefault(); _onGenMove(e.touches[0]); } }, { passive:false });
+  window.addEventListener('touchend', _onGenUp);
+}
+
+function _onGenDown(e) {
+  if (!genCanvas) return;
+  const {x,y} = _genXY(e);
+  const fig = _figAtPt(x, y);
+  if (fig) {
+    if (genConnectMode) { _handleGenConnect(fig); }
+    else { selectGenFig(fig); genDragFig = fig; genDragOffX = x-fig.x; genDragOffY = y-fig.y; }
+  } else {
+    if (genAddMode) {
+      const nf = _addGenFig(genAddMode, x, y, getGenDefaultName(genAddMode));
+      selectGenFig(nf);
+      setGenAddMode(null);
+    } else if (!genConnectMode) {
+      selectGenFig(null);
+    }
+  }
+}
+
+function _onGenMove(e) {
+  if (!genDragFig) return;
+  const {x,y} = _genXY(e);
+  genDragFig.x = x - genDragOffX;
+  genDragFig.y = y - genDragOffY;
+}
+
+function _onGenUp() { genDragFig = null; }
+
+function _handleGenConnect(fig) {
+  if (!genConnectFirst) {
+    genConnectFirst = fig;
+    showToast('Zweite Person auswählen...');
+  } else if (genConnectFirst !== fig) {
+    // Remove existing connection between these two
+    genConnections = genConnections.filter(c => !((c.a===genConnectFirst&&c.b===fig)||(c.a===fig&&c.b===genConnectFirst)));
+    _addGenConn(genConnectFirst, fig, genCurrentRelType);
+    genConnectFirst = null;
+    showToast('Verbindung erstellt.');
+  }
+}
+
+function selectGenFig(fig) {
+  genSelectedFig = fig;
+  const panel = document.getElementById('genPanel');
+  if (!panel) return;
+  if (fig) {
+    panel.style.display = 'block';
+    document.getElementById('genPanelLabel').textContent = GEN_TYPE_LABELS[fig.type] + ' — ' + (fig.name||'Unbenannt');
+    document.getElementById('genNameInput').value = fig.name||'';
+    document.getElementById('genBirthInput').value = fig.birthYear||'';
+    document.getElementById('genDeceasedCheck').checked = fig.deceased;
+    document.getElementById('genProbandCheck').checked = fig.proband;
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function updateGenName() {
+  if (!genSelectedFig) return;
+  genSelectedFig.name = document.getElementById('genNameInput').value;
+  document.getElementById('genPanelLabel').textContent = GEN_TYPE_LABELS[genSelectedFig.type] + ' — ' + (genSelectedFig.name||'Unbenannt');
+}
+
+function updateGenBirth() {
+  if (!genSelectedFig) return;
+  const v = parseInt(document.getElementById('genBirthInput').value);
+  genSelectedFig.birthYear = isNaN(v) ? null : v;
+}
+
+function updateGenDeceased() {
+  if (!genSelectedFig) return;
+  genSelectedFig.deceased = document.getElementById('genDeceasedCheck').checked;
+}
+
+function updateGenProband() {
+  if (!genSelectedFig) return;
+  if (document.getElementById('genProbandCheck').checked) {
+    genFigures.forEach(f => f.proband = false);
+    genSelectedFig.proband = true;
+  } else {
+    genSelectedFig.proband = false;
+  }
+}
+
+function deleteGenFigure() {
+  if (!genSelectedFig) return;
+  genConnections = genConnections.filter(c => c.a!==genSelectedFig && c.b!==genSelectedFig);
+  genFigures = genFigures.filter(f => f!==genSelectedFig);
+  if (genConnectFirst===genSelectedFig) genConnectFirst = null;
+  genSelectedFig = null;
+  document.getElementById('genPanel').style.display = 'none';
+  showToast('Person entfernt.');
+}
+
+function setGenAddMode(type) {
+  genAddMode = type;
+  const wrap = document.getElementById('genCanvasWrap');
+  if (wrap) { wrap.classList.toggle('add-mode', !!type); if (type) wrap.classList.remove('connect-mode'); }
+  ['genAddMaleBtn','genAddFemaleBtn','genAddDiverseBtn'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.classList.remove('active');
+  });
+  const map = { male:'genAddMaleBtn', female:'genAddFemaleBtn', diverse:'genAddDiverseBtn' };
+  if (type && map[type]) { const el = document.getElementById(map[type]); if (el) el.classList.add('active'); }
+  if (type && genConnectMode) toggleGenConnect();
+}
+
+function toggleGenConnect() {
+  genConnectMode = !genConnectMode;
+  genConnectFirst = null;
+  const wrap = document.getElementById('genCanvasWrap');
+  const ctrlEl = document.getElementById('genConnectControls');
+  const btn = document.getElementById('genConnectBtn');
+  if (genConnectMode) {
+    setGenAddMode(null);
+    if (wrap) wrap.classList.add('connect-mode');
+    if (ctrlEl) ctrlEl.style.display = 'flex';
+    if (btn) btn.classList.add('active');
+    showToast('Verbindungsmodus: Erste Person auswählen...');
+  } else {
+    if (wrap) wrap.classList.remove('connect-mode');
+    if (ctrlEl) ctrlEl.style.display = 'none';
+    if (btn) btn.classList.remove('active');
+  }
+}
+
+function setGenRelType(btn) {
+  genCurrentRelType = btn.dataset.genrel;
+  document.querySelectorAll('[data-genrel]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function clearGenogramm() {
+  genFigures = []; genConnections = []; genSelectedFig = null; genConnectFirst = null; genFigId = 0;
+  setGenAddMode(null);
+  if (genConnectMode) toggleGenConnect();
+  const p = document.getElementById('genPanel'); if (p) p.style.display = 'none';
+  const r = document.getElementById('genogrammResults'); if (r) r.innerHTML = '';
+}
+
+async function analyseGenogramm() {
+  if (genFigures.length === 0) { showToast('Bitte erst Personen hinzufügen.'); return; }
+
+  const figDescs = genFigures.map(f => {
+    let d = `${f.name||'(unbenannt)'} (${GEN_TYPE_LABELS[f.type]||f.type}`;
+    if (f.birthYear) d += `, *${f.birthYear}`;
+    if (f.deceased) d += ', verstorben';
+    if (f.proband) d += ', Proband/in';
+    return d + ')';
+  });
+  const TYPE_MAP = { partner:'Partnerschaft', married:'verheiratet', separated:'getrennt/geschieden', 'parent-child':'Eltern-Kind' };
+  const connDescs = genConnections.map(c => `${c.a.name||'?'} ↔ ${c.b.name||'?'}: ${TYPE_MAP[c.type]||c.type}`);
+
+  const question = `Genogramm-Analyse (${genFigures.length} Personen):\n\nPersonen:\n${figDescs.join('\n')}\n\nBeziehungen:\n${connDescs.length ? connDescs.join('\n') : 'keine eingetragen'}\n\nBitte analysiere dieses Genogramm aus systemisch-therapeutischer Perspektive. Welche Muster, Generationendynamiken oder Beziehungsthemen sind sichtbar? Was könnte die Position des Probanden/der Probandin im System bedeuten?`;
+
+  const resultsDiv = document.getElementById('genogrammResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Genogramm wird analysiert...</span></div>`;
+  resultsDiv.scrollIntoView({ behavior:'smooth', block:'start' });
+
+  const genPerspDefs = [
+    { id:'systemisch',  icon:'network', de:'Systemische Therapeutin',    en:'Systemic Therapist',         color:'#C4622D' },
+    { id:'grosseltern', icon:'scroll',  de:'Großeltern & Generationen',  en:'Grandparents & Generations', color:'#9A5A3A' },
+    { id:'bindung',     icon:'heart',   de:'Bindungsexpertin',            en:'Attachment Expert',          color:'#D4845A' },
+  ];
+
+  try {
+    const payload = {
+      question,
+      custom_perspectives: genPerspDefs.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: PERSPEKTIVEN_POSITIONS[p.id] || p.de
+      })),
+      stil: 'therapeutisch',
+      tone: currentTone === 'ressourcen' ? 'achtsam' : (currentTone||''),
+      lang: currentLang
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+
+    resultsDiv.innerHTML = '';
+    const apiP = data.perspectives || [];
+    if (apiP.length > 0) {
+      apiP.forEach(r => {
+        const rolle = (r.rolle||'').replace(/^\[.*?\]\s*/,'');
+        const rolleLow = rolle.toLowerCase();
+        const pDef = genPerspDefs.find(p => (p.de||'').toLowerCase()===rolleLow) || genPerspDefs[0];
+        const card = createResultCard(pDef, rolle);
+        card.querySelector('.streaming-text').textContent = r.kernanalyse||'';
+        resultsDiv.appendChild(card);
+      });
+    } else {
+      const fb = createResultCard(genPerspDefs[0], 'Systemische Analyse');
+      fb.querySelector('.streaming-text').textContent = data.answer||data.text||JSON.stringify(data);
+      resultsDiv.appendChild(fb);
+    }
+
+    if (data.integration && data.integration.einfach_gesagt) {
+      const sc = document.createElement('div');
+      sc.className = 'result-card';
+      sc.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg></div>
+          <div class="result-card-title">kiNTEGRATiON</div>
+          <div class="result-card-badge">synthese</div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyCard(this)" title="Kopieren"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="10" height="10" rx="1"/><path d="M4 12H3a1 1 0 01-1-1V3a1 1 0 011-1h8a1 1 0 011 1v1"/></svg></button>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>`;
+      setTimeout(() => sc.classList.add('open'), 100);
+      resultsDiv.appendChild(sc);
+    }
+
+    saveHistory({ question:`Genogramm: ${genFigures.map(f=>f.name).join(', ')}`, perspectives:['systemisch','grosseltern','bindung'], lang:currentLang, time:Date.now() });
+
+  } catch(err) {
+    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später versuchen.</div>`;
+  }
 }
 </script>
 <script src="/notizbuch.js"></script>
