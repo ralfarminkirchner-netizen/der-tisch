@@ -948,7 +948,7 @@ function renderResults(data, perspectives, container) {
   }
   apiPerspectives.forEach((r) => {
     const rolle = r.rolle || '';
-    const pDef = perspectives.find(p =>
+    const pDef = PERSPEKTIVEN.find(p =>
       p.id === rolle.toLowerCase() ||
       (p.de || '').toLowerCase() === rolle.toLowerCase() ||
       (p.en || '').toLowerCase() === rolle.toLowerCase()

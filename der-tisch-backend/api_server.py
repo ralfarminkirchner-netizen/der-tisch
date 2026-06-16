@@ -1690,8 +1690,11 @@ async def ask_familien(req: FamilienRequest):
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
 
-    agents_map = FAMILIEN_AGENTS_EN if req.lang == "en" else FAMILIEN_AGENTS_DE
-    id_map = FAMILIEN_ID_MAP_EN if req.lang == "en" else FAMILIEN_ID_MAP_DE
+    # Normalize lang to prevent KeyError in STIL_INSTRUCTIONS[stil][lang]
+    lang = "en" if req.lang and req.lang.lower() == "en" else "de"
+
+    agents_map = FAMILIEN_AGENTS_EN if lang == "en" else FAMILIEN_AGENTS_DE
+    id_map = FAMILIEN_ID_MAP_EN if lang == "en" else FAMILIEN_ID_MAP_DE
 
     # Perspective IDs → Agenten auflösen
     selected_agents: dict = {}
@@ -1711,12 +1714,12 @@ async def ask_familien(req: FamilienRequest):
 
     try:
         tasks = [
-            fetch_perspective(role, prompt, req.question, stil, req.lang, "familiensystem", tone)
+            fetch_perspective(role, prompt, req.question, stil, lang, "familiensystem", tone)
             for role, prompt in selected_agents.items()
         ]
         perspectives = list(await asyncio.gather(*tasks))
-        friction = await fetch_friction(perspectives, req.question, req.lang, stil, "standard", tone)
-        integration = await fetch_integration(perspectives, friction, req.question, req.lang, stil, tone)
+        friction = await fetch_friction(perspectives, req.question, lang, stil, "standard", tone)
+        integration = await fetch_integration(perspectives, friction, req.question, lang, stil, tone)
         return TableResponse(perspectives=perspectives, friction=friction, integration=integration)
     except Exception as e:
         import traceback
