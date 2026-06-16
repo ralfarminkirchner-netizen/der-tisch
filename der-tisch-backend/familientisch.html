@@ -857,15 +857,14 @@ async function sendQuestion() {
   try {
     const payload = {
       question,
-      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      perspectives: selectedPersp.map(p => p.id),
       stil: 'therapeutisch',
-      register: 'familiensystem',
       tone: currentTone,
       lang: currentLang,
       app: 'FAMiLiEN TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-familien`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -951,7 +950,8 @@ function renderResults(data, perspectives, container) {
     const rolle = r.rolle || '';
     const pDef = perspectives.find(p =>
       p.id === rolle.toLowerCase() ||
-      (p.de || '').toLowerCase() === rolle.toLowerCase()
+      (p.de || '').toLowerCase() === rolle.toLowerCase() ||
+      (p.en || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
     card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
@@ -1638,19 +1638,14 @@ async function analyseAufstellung() {
   try {
     const payload = {
       question,
-      perspectives: [
-        { id: 'systemisch', role: 'Systemische Therapeutin' },
-        { id: 'bindung', role: 'Bindungsexpertin' },
-        { id: 'konflikt', role: 'Konfliktmediation' }
-      ],
+      perspectives: ['systemisch', 'bindung', 'konflikt'],
       stil: 'therapeutisch',
-      register: 'familienaufstellung',
       tone: currentTone,
       lang: currentLang,
       app: 'FAMiLiEN TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-familien`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
