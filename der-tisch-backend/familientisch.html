@@ -958,16 +958,17 @@ async function handleStream(resp, perspectives, container) {
   }
 
   // Add Notizbuch buttons after streaming completes
-  if (window.NB) {
-    Object.entries(cards).forEach(([id, el]) => {
-      const text = el.textContent;
-      if (!text) return;
-      const footer = document.createElement('div');
-      footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
-      footer.appendChild(NB.makeButton(text, 'Merken'));
-      cardEls[id].querySelector('.result-card-body').appendChild(footer);
-    });
-  }
+  Object.entries(cards).forEach(([id, el]) => {
+    appendNBButton(cardEls[id], el.textContent);
+  });
+}
+
+function appendNBButton(card, text) {
+  if (!window.NB || !text) return;
+  const footer = document.createElement('div');
+  footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
+  footer.appendChild(NB.makeButton(text, 'Merken'));
+  card.querySelector('.result-card-body').appendChild(footer);
 }
 
 function renderResults(data, perspectives, container) {
@@ -978,12 +979,7 @@ function renderResults(data, perspectives, container) {
       const card = createResultCard(p);
       const text = data.answer || data.text || JSON.stringify(data);
       card.querySelector('.streaming-text').textContent = text;
-      if (window.NB && text) {
-        const footer = document.createElement('div');
-        footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
-        footer.appendChild(NB.makeButton(text, 'Merken'));
-        card.querySelector('.result-card-body').appendChild(footer);
-      }
+      appendNBButton(card, text);
       container.appendChild(card);
     });
     return;
@@ -997,12 +993,7 @@ function renderResults(data, perspectives, container) {
     const card = createResultCard(pDef, rolle);
     const text = r.kernanalyse || '';
     card.querySelector('.streaming-text').textContent = text;
-    if (window.NB && text) {
-      const footer = document.createElement('div');
-      footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
-      footer.appendChild(NB.makeButton(text, 'Merken'));
-      card.querySelector('.result-card-body').appendChild(footer);
-    }
+    appendNBButton(card, text);
     container.appendChild(card);
   });
   // Integrations-Karte
@@ -1294,8 +1285,7 @@ function setupOrbitControls() {
       raycaster.setFromCamera(mouse, camera);
       const pt = new THREE.Vector3();
       const touchPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      raycaster.ray.intersectPlane(touchPlane, pt);
-      if (pt) {
+      if (raycaster.ray.intersectPlane(touchPlane, pt)) {
         const d = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
         if (d > 3.6) {
           const a = Math.atan2(pt.z, pt.x);
@@ -1408,9 +1398,10 @@ function setupFigureDrag() {
           dragFigure = fig;
           isDraggingFigure = true;
         }
+        e.preventDefault(); // prevent synthetic mousedown / orbit double-trigger
       }
     }
-  }, { passive: true });
+  }, { passive: false });
 
   window.addEventListener('touchend', () => {
     if (isDraggingFigure) {
@@ -1778,24 +1769,14 @@ async function analyseAufstellung() {
         const card = createResultCard(pDef, rolle);
         const text = r.kernanalyse || '';
         card.querySelector('.streaming-text').textContent = text;
-        if (window.NB && text) {
-          const footer = document.createElement('div');
-          footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
-          footer.appendChild(NB.makeButton(text, 'Merken'));
-          card.querySelector('.result-card-body').appendChild(footer);
-        }
+        appendNBButton(card, text);
         resultsDiv.appendChild(card);
       });
     } else {
       const text = data.answer || data.text || JSON.stringify(data);
       const fallbackCard = createResultCard(aufPerspDefs[0], 'Systemische Analyse');
       fallbackCard.querySelector('.streaming-text').textContent = text;
-      if (window.NB && text) {
-        const footer = document.createElement('div');
-        footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
-        footer.appendChild(NB.makeButton(text, 'Merken'));
-        fallbackCard.querySelector('.result-card-body').appendChild(footer);
-      }
+      appendNBButton(fallbackCard, text);
       resultsDiv.appendChild(fallbackCard);
     }
     if (data.integration && data.integration.einfach_gesagt) {
