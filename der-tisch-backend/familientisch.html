@@ -192,6 +192,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* AUFSTELLUNGSTHEMA */
+.aufstellung-thema{margin-bottom:14px}
+.aufstellung-thema input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.aufstellung-thema input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.aufstellung-thema input::placeholder{color:var(--muted)}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -486,6 +492,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <div class="figure-labels" id="figureLabels"></div>
     </div>
 
+    <div class="aufstellung-thema">
+      <input type="text" id="aufstellungsthema" placeholder="Was möchten Sie in der Aufstellung erkunden? (optional — gibt der Analyse Richtung)">
+    </div>
+
     <div class="aufstellung-controls">
       <button class="auf-btn" onclick="addFigure('male')">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="4"/><path d="M4 19v-2a6 6 0 0112 0v2"/></svg>
@@ -585,6 +595,8 @@ const PERSPEKTIVEN = [
   { id: 'konflikt',       icon: 'zap',      de: 'Konfliktmediation',             en: 'Conflict Mediation',         color: '#CC7040', filters: ['all','krise'] },
   { id: 'kommunikation',  icon: 'network',  de: 'Kommunikationsexpertin',        en: 'Communication Expert',       color: '#B86840', filters: ['all','beziehung'] },
   { id: 'identitaet',     icon: 'mirror',   de: 'Identität & Rolle',             en: 'Identity & Role',            color: '#D07850', filters: ['all','erziehung','beziehung'] },
+  { id: 'neuro',          icon: 'zap',      de: 'Neurodiversität',               en: 'Neurodiversity',             color: '#BF9B7A', filters: ['all','erziehung'] },
+  { id: 'werte',          icon: 'scroll',   de: 'Werte & Familienrituale',       en: 'Values & Family Rituals',    color: '#8A9A70', filters: ['all','generationen'] },
 ];
 
 const CHIPS_DATA = {
@@ -622,6 +634,8 @@ const CHIPS_DATA = {
       'Bildschirmzeit reduzieren ohne Machtkampf.',
       'Mein Kind hat Angst vor der Schule.',
       'Wie stärke ich das Selbstbewusstsein meines Kindes?',
+      'Unser Kind ist neurodivergent — wie gehen wir als Familie damit um?',
+      'Struktur vs. Flexibilität: Wie finden wir die richtige Balance?',
     ],
     en: [
       'My child does what they want — how do I set limits?',
@@ -630,6 +644,8 @@ const CHIPS_DATA = {
       'Reducing screen time without a power struggle.',
       'My child is afraid of school.',
       'How do I build my child\'s self-confidence?',
+      'Our child is neurodivergent — how do we handle this as a family?',
+      'Structure vs. flexibility: how do we find the right balance?',
     ],
   },
   beziehung: {
@@ -658,6 +674,8 @@ const CHIPS_DATA = {
       'Meine Eltern haben hohe Erwartungen — wie grenze ich mich ab?',
       'Was vererben wir unseren Kindern unbewusst?',
       'Familiäre Traumata — wie breche ich den Kreislauf?',
+      'Welche Werte wollen wir bewusst als Familie weitergeben?',
+      'Familienrituale stärken — was bedeutet uns gemeinsamer Zusammenhalt?',
     ],
     en: [
       'My grandparents have different values — how to handle this?',
@@ -666,6 +684,8 @@ const CHIPS_DATA = {
       'My parents have high expectations — how do I set limits?',
       'What do we unconsciously pass on to our children?',
       'Family trauma — how do I break the cycle?',
+      'Which values do we want to consciously pass on as a family?',
+      'Strengthening family rituals — what does togetherness mean to us?',
     ],
   },
   krise: {
@@ -908,10 +928,12 @@ async function sendQuestion() {
 
 async function handleStream(resp, perspectives, container) {
   // Build cards first
+  const cardEls = {};
   const cards = {};
   perspectives.forEach(p => {
     const card = createResultCard(p);
     container.appendChild(card);
+    cardEls[p.id] = card;
     cards[p.id] = card.querySelector('.streaming-text');
   });
 
@@ -939,6 +961,19 @@ async function handleStream(resp, perspectives, container) {
       } catch(e) {}
     }
   }
+
+  // Add Notizbuch buttons after streaming completes
+  Object.entries(cards).forEach(([id, el]) => {
+    appendNBButton(cardEls[id], el.textContent);
+  });
+}
+
+function appendNBButton(card, text) {
+  if (!window.NB || !text) return;
+  const footer = document.createElement('div');
+  footer.style.cssText = 'padding-top:10px;border-top:1px solid var(--border);margin-top:10px;';
+  footer.appendChild(NB.makeButton(text, 'Merken'));
+  card.querySelector('.result-card-body').appendChild(footer);
 }
 
 function renderResults(data, perspectives, container) {
@@ -947,7 +982,9 @@ function renderResults(data, perspectives, container) {
   if (apiPerspectives.length === 0) {
     perspectives.forEach(p => {
       const card = createResultCard(p);
-      card.querySelector('.streaming-text').textContent = data.answer || data.text || JSON.stringify(data);
+      const text = data.answer || data.text || JSON.stringify(data);
+      card.querySelector('.streaming-text').textContent = text;
+      appendNBButton(card, text);
       container.appendChild(card);
     });
     return;
@@ -959,7 +996,9 @@ function renderResults(data, perspectives, container) {
       (p.de || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
-    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    const text = r.kernanalyse || '';
+    card.querySelector('.streaming-text').textContent = text;
+    appendNBButton(card, text);
     container.appendChild(card);
   });
   // Integrations-Karte
@@ -1242,6 +1281,30 @@ function setupOrbitControls() {
     }
   });
   aufCanvas.addEventListener('touchmove', e => {
+    // Figure drag takes priority over orbit
+    if (isDraggingFigure && dragFigure && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const rect = aufCanvas.getBoundingClientRect();
+      mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const pt = new THREE.Vector3();
+      const touchPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      if (raycaster.ray.intersectPlane(touchPlane, pt)) {
+        const d = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+        if (d > 3.6) {
+          const a = Math.atan2(pt.z, pt.x);
+          pt.x = Math.cos(a) * 3.6;
+          pt.z = Math.sin(a) * 3.6;
+        }
+        dragFigure.group.position.x = pt.x;
+        dragFigure.group.position.z = pt.z;
+        updateRelationshipLines();
+        updateLabels();
+      }
+      e.preventDefault();
+      return;
+    }
     if (e.touches.length === 1) {
       theta -= (e.touches[0].clientX - lastTouchX) * 0.01;
       phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.touches[0].clientY - lastTouchY) * 0.01));
@@ -1313,6 +1376,39 @@ function setupFigureDrag() {
   });
 
   window.addEventListener('mouseup', () => {
+    if (isDraggingFigure) {
+      isDraggingFigure = false;
+      dragFigure = null;
+    }
+  });
+
+  // Touch figure drag — single-finger tap on a figure starts drag
+  aufCanvas.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = figures.flatMap(f => [f.body, f.head]);
+    const hits = raycaster.intersectObjects(meshes);
+    if (hits.length > 0) {
+      const hit = hits[0].object;
+      const fig = figures.find(f => f.body === hit || f.head === hit);
+      if (fig) {
+        if (connectMode) {
+          handleConnectClick(fig);
+        } else {
+          selectFigure(fig);
+          dragFigure = fig;
+          isDraggingFigure = true;
+        }
+        e.preventDefault(); // prevent synthetic mousedown / orbit double-trigger
+      }
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
     if (isDraggingFigure) {
       isDraggingFigure = false;
       dragFigure = null;
@@ -1626,7 +1722,6 @@ async function analyseAufstellung() {
   if (figures.length === 0) { showToast('Bitte erst Figuren hinzufügen.'); return; }
 
   // Build description
-  const center = new THREE.Vector3(0, 0, 0);
   const figDescs = figures.map(f => {
     const pos = f.group.position;
     const dist = Math.sqrt(pos.x * pos.x + pos.z * pos.z).toFixed(2);
@@ -1634,8 +1729,9 @@ async function analyseAufstellung() {
     return `${f.name} (${f.type}): Abstand vom Zentrum ${dist}, Winkel ${angle}°`;
   });
   const relDescs = relationships.map(r => `${r.a.name} ↔ ${r.b.name}: ${r.type}`);
+  const thema = document.getElementById('aufstellungsthema')?.value?.trim() || '';
 
-  const question = `Familienaufstellung mit ${figures.length} Figuren:\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
+  const question = `Familienaufstellung mit ${figures.length} Figuren:${thema ? '\n\nThema: ' + thema : ''}\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
 
   const resultsDiv = document.getElementById('aufstellungResults');
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
@@ -1682,13 +1778,16 @@ async function analyseAufstellung() {
         const rolle = r.rolle || '';
         const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
-        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        const text = r.kernanalyse || '';
+        card.querySelector('.streaming-text').textContent = text;
+        appendNBButton(card, text);
         resultsDiv.appendChild(card);
       });
     } else {
       const text = data.answer || data.text || JSON.stringify(data);
       const fallbackCard = createResultCard(aufPerspDefs[0], 'Systemische Analyse');
       fallbackCard.querySelector('.streaming-text').textContent = text;
+      appendNBButton(fallbackCard, text);
       resultsDiv.appendChild(fallbackCard);
     }
     if (data.integration && data.integration.einfach_gesagt) {
