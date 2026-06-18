@@ -192,6 +192,50 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* PERSP DETAILS */
+.persp-detail{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.persp-detail-item{margin-bottom:8px}
+.persp-detail-item:last-child{margin-bottom:0}
+.persp-detail-label{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+.persp-detail-text{font-size:13px;color:rgba(154,122,106,0.8);line-height:1.6}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin:14px 0 7px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* FRICTION CARD */
+.friction-card{border-color:rgba(196,98,45,0.25)!important;background:rgba(196,98,45,0.03)!important}
+.friction-list{list-style:none;padding:0;margin:0}
+.friction-list li{padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.5;display:flex;gap:8px;align-items:flex-start}
+.friction-list li:last-child{border-bottom:none}
+.friction-list li::before{content:'↔';color:var(--accent);flex-shrink:0;font-size:11px;margin-top:2px}
+.friction-echo li::before{content:'⚡';color:#FF6B6B}
+
+/* INTEGRATION FULL */
+.herzkopp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.herzkopp-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px}
+.herzkopp-title{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.herzkopp-text{font-size:13px;color:var(--muted);line-height:1.65}
+.options-list{margin:0;padding:0;list-style:none}
+.options-list li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.5}
+.options-list li:last-child{border-bottom:none}
+.options-num{color:var(--accent);font-weight:700;flex-shrink:0;min-width:18px;font-size:12px}
+.bullet-list{margin:0;padding:0;list-style:none}
+.bullet-list li{padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.5;display:flex;gap:9px;align-items:flex-start}
+.bullet-list li:last-child{border-bottom:none}
+.bullet-dot{color:var(--accent);font-size:14px;line-height:1.4;flex-shrink:0}
+.integration-summary{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:4px}
+.fazit-text{font-size:13px;color:var(--muted);line-height:1.65;font-style:italic;border-left:2px solid var(--accent);padding-left:12px}
+
+/* COPY / EXPORT */
+.results-actions{display:flex;gap:8px;margin-bottom:14px}
+.action-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;letter-spacing:.04em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+@media(max-width:640px){
+  .herzkopp-row{grid-template-columns:1fr}
+}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -444,6 +488,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <!-- Results -->
       <div class="results" id="resultsArea" style="display:none">
         <div class="results-header" id="resultsHeader">Antworten am TiSCH</div>
+        <div class="results-actions">
+          <button class="action-btn" onclick="copyResults()">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="10" height="10" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Ergebnisse kopieren
+          </button>
+        </div>
         <div id="resultsList"></div>
         <!-- kiNTEGRiTY -->
         <div class="kintegrity">
@@ -522,6 +572,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <button class="auf-btn" onclick="clearScene()">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/><path d="M8 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
         Leeren
+      </button>
+      <button class="auf-btn" onclick="exportAufstellungPNG()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/><polyline points="8 10 12 14 16 10"/><line x1="12" y1="14" x2="12" y2="3"/></svg>
+        Als Bild
       </button>
       <button class="auf-btn primary" onclick="analyseAufstellung()">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -941,8 +995,19 @@ async function handleStream(resp, perspectives, container) {
   }
 }
 
+function buildPerspCardBody(r) {
+  let html = `<p class="streaming-text">${escapeHTML(r.kernanalyse || '')}</p>`;
+  if (r.anspruchstyp || r.evidenz || r.blinder_fleck) {
+    html += `<div class="persp-detail">`;
+    if (r.anspruchstyp) html += `<div class="persp-detail-item"><div class="persp-detail-label">Anspruchstyp</div><div class="persp-detail-text">${escapeHTML(r.anspruchstyp)}</div></div>`;
+    if (r.evidenz) html += `<div class="persp-detail-item"><div class="persp-detail-label">Evidenz</div><div class="persp-detail-text">${escapeHTML(r.evidenz)}</div></div>`;
+    if (r.blinder_fleck) html += `<div class="persp-detail-item"><div class="persp-detail-label">Blinder Fleck</div><div class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</div></div>`;
+    html += `</div>`;
+  }
+  return html;
+}
+
 function renderResults(data, perspectives, container) {
-  // API returns TableResponse: { perspectives: [{rolle, kernanalyse, ...}], friction, integration }
   const apiPerspectives = data.perspectives || [];
   if (apiPerspectives.length === 0) {
     perspectives.forEach(p => {
@@ -959,27 +1024,103 @@ function renderResults(data, perspectives, container) {
       (p.de || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
-    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    card.querySelector('.result-card-body').innerHTML = buildPerspCardBody(r);
     container.appendChild(card);
   });
-  // Integrations-Karte
-  if (data.integration && data.integration.einfach_gesagt) {
-    const synthCard = document.createElement('div');
-    synthCard.className = 'result-card';
-    synthCard.innerHTML = `
-      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-        </div>
-        <div class="result-card-title">kiNTEGRATiON</div>
-        <div class="result-card-badge">synthese</div>
-        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-      </div>
-      <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
-    `;
-    setTimeout(() => synthCard.classList.add('open'), 100);
-    container.appendChild(synthCard);
+
+  if (data.friction) {
+    container.appendChild(buildFrictionCard(data.friction));
   }
+  if (data.integration) {
+    container.appendChild(buildIntegrationCard(data.integration));
+  }
+}
+
+function buildFrictionCard(friction) {
+  const card = document.createElement('div');
+  card.className = 'result-card friction-card';
+  let bodyHtml = '';
+  if (friction.uebersetzungsfehler && friction.uebersetzungsfehler.length) {
+    bodyHtml += `<div class="section-label">Übersetzungsfehler</div>
+    <ul class="friction-list">${friction.uebersetzungsfehler.map(t => `<li>${escapeHTML(t)}</li>`).join('')}</ul>`;
+  }
+  if (friction.echte_widersprueche && friction.echte_widersprueche.length) {
+    bodyHtml += `<div class="section-label">Echte Widersprüche</div>
+    <ul class="friction-list friction-echo">${friction.echte_widersprueche.map(t => `<li>${escapeHTML(t)}</li>`).join('')}</ul>`;
+  }
+  if (friction.uebersehenes) {
+    bodyHtml += `<div class="section-label">Gemeinsam Übersehenes</div>
+    <p class="streaming-text">${escapeHTML(friction.uebersehenes)}</p>`;
+  }
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:rgba(196,98,45,0.1);color:#C4622D">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 11-13h-7l1-9z"/></svg>
+      </div>
+      <div class="result-card-title">REiBUNGSANALYSE</div>
+      <div class="result-card-badge">widersprüche</div>
+      <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+    </div>
+    <div class="result-card-body">${bodyHtml}</div>
+  `;
+  setTimeout(() => card.classList.add('open'), 100);
+  return card;
+}
+
+function buildIntegrationCard(integration) {
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  let bodyHtml = '';
+  if (integration.einfach_gesagt) {
+    bodyHtml += `<p class="integration-summary">${escapeHTML(integration.einfach_gesagt)}</p>`;
+  }
+  if (integration.herzmensch || integration.kopfmensch) {
+    bodyHtml += `<div class="section-label">Herzmensch · Kopfmensch</div><div class="herzkopp-row">`;
+    if (integration.herzmensch) {
+      bodyHtml += `<div class="herzkopp-card">
+        <div class="herzkopp-title">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+          Herzmensch
+        </div>
+        <div class="herzkopp-text">${escapeHTML(integration.herzmensch)}</div>
+      </div>`;
+    }
+    if (integration.kopfmensch) {
+      bodyHtml += `<div class="herzkopp-card">
+        <div class="herzkopp-title">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="8" r="5"/><path d="M7 13.5c0 2 1 4 3 4s3-2 3-4"/></svg>
+          Kopfmensch
+        </div>
+        <div class="herzkopp-text">${escapeHTML(integration.kopfmensch)}</div>
+      </div>`;
+    }
+    bodyHtml += `</div>`;
+  }
+  if (integration.vorlaeufiges_fazit) {
+    bodyHtml += `<div class="section-label">Vorläufiges Fazit</div>
+    <p class="fazit-text">${escapeHTML(integration.vorlaeufiges_fazit)}</p>`;
+  }
+  if (integration.kurzfassung && integration.kurzfassung.length) {
+    bodyHtml += `<div class="section-label">Kurzfassung</div>
+    <ul class="bullet-list">${integration.kurzfassung.map(k => `<li><span class="bullet-dot">·</span>${escapeHTML(k)}</li>`).join('')}</ul>`;
+  }
+  if (integration.praktische_optionen && integration.praktische_optionen.length) {
+    bodyHtml += `<div class="section-label">Praktische Optionen</div>
+    <ol class="options-list">${integration.praktische_optionen.map((o, i) => `<li><span class="options-num">${i + 1}</span>${escapeHTML(o)}</li>`).join('')}</ol>`;
+  }
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+      </div>
+      <div class="result-card-title">kiNTEGRATiON</div>
+      <div class="result-card-badge">synthese</div>
+      <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+    </div>
+    <div class="result-card-body">${bodyHtml}</div>
+  `;
+  setTimeout(() => card.classList.add('open'), 100);
+  return card;
 }
 
 function createResultCard(p, overrideName) {
@@ -1099,7 +1240,7 @@ function initThreeJS() {
   const container = document.getElementById('canvasContainer');
 
   // Setup renderer
-  renderer = new THREE.WebGLRenderer({ canvas: aufCanvas, antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({ canvas: aufCanvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.shadowMap.enabled = true;
@@ -1682,7 +1823,7 @@ async function analyseAufstellung() {
         const rolle = r.rolle || '';
         const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
-        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        card.querySelector('.result-card-body').innerHTML = buildPerspCardBody(r);
         resultsDiv.appendChild(card);
       });
     } else {
@@ -1691,22 +1832,11 @@ async function analyseAufstellung() {
       fallbackCard.querySelector('.streaming-text').textContent = text;
       resultsDiv.appendChild(fallbackCard);
     }
-    if (data.integration && data.integration.einfach_gesagt) {
-      const synthCard = document.createElement('div');
-      synthCard.className = 'result-card';
-      synthCard.innerHTML = `
-        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-          </div>
-          <div class="result-card-title">kiNTEGRATiON</div>
-          <div class="result-card-badge">synthese</div>
-          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-        </div>
-        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
-      `;
-      setTimeout(() => synthCard.classList.add('open'), 100);
-      resultsDiv.appendChild(synthCard);
+    if (data.friction) {
+      resultsDiv.appendChild(buildFrictionCard(data.friction));
+    }
+    if (data.integration) {
+      resultsDiv.appendChild(buildIntegrationCard(data.integration));
     }
     const kiDiv = document.createElement('div');
     kiDiv.className = 'kintegrity';
@@ -1720,11 +1850,56 @@ async function analyseAufstellung() {
     `;
     resultsDiv.appendChild(kiDiv);
 
+    const copyRow = document.createElement('div');
+    copyRow.className = 'results-actions';
+    copyRow.style.marginTop = '12px';
+    copyRow.innerHTML = `<button class="action-btn" onclick="copyResults('aufstellungResults')">
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="10" height="10" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Ergebnisse kopieren
+    </button>`;
+    resultsDiv.appendChild(copyRow);
+
     saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
   }
+}
+
+// ============================================================
+// COPY & EXPORT
+// ============================================================
+function copyResults(containerId) {
+  const id = containerId || (currentMode === 'aufstellung' ? 'aufstellungResults' : 'resultsList');
+  const list = document.getElementById(id);
+  if (!list || !list.innerText.trim()) { showToast('Keine Ergebnisse zum Kopieren.'); return; }
+  const lines = [];
+  list.querySelectorAll('.result-card').forEach(card => {
+    const title = card.querySelector('.result-card-title');
+    if (title) lines.push('\n=== ' + title.innerText.trim() + ' ===');
+    card.querySelectorAll('p, li, .persp-detail-item, .herzkopp-card').forEach(el => {
+      const t = el.innerText.trim().replace(/\n+/g, ': ');
+      if (t) lines.push(t);
+    });
+  });
+  const text = lines.join('\n').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Ergebnisse kopiert.');
+  }).catch(() => {
+    showToast('Kopieren fehlgeschlagen — bitte manuell markieren.');
+  });
+}
+
+function exportAufstellungPNG() {
+  if (!renderer) { showToast('Bitte zuerst die Aufstellung öffnen.'); return; }
+  // Re-render one frame with preserveDrawingBuffer (renderer was created with alpha:true)
+  renderer.render(scene, camera);
+  const dataURL = renderer.domElement.toDataURL('image/png');
+  const a = document.createElement('a');
+  a.href = dataURL;
+  a.download = 'familienaufstellung.png';
+  a.click();
+  showToast('Aufstellung als PNG gespeichert.');
 }
 
 function escapeHTML(str) {
