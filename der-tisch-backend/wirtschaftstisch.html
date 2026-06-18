@@ -767,15 +767,20 @@ async function sendQuestion() {
     const stilMap = { analytisch: 'oekonomisch', oekonomisch: 'oekonomisch', alltag: 'alltag' };
     const payload = {
       question,
-      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      custom_perspectives: selectedPersp.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: currentLang === 'de'
+          ? `Wirtschaftliche Fachperspektive: ${currentLang === 'de' ? p.de : p.en}. Analysiere die Frage aus dieser ökonomischen Rolle mit Fokus auf Marktdynamiken, Risiken, Chancen und Handlungsoptionen.`
+          : `Economic perspective: ${currentLang === 'de' ? p.de : p.en}. Analyze the question from this economic role with focus on market dynamics, risks, opportunities and options.`
+      })),
+      methods: [],
       stil: stilMap[currentTone] || 'oekonomisch',
-      register: 'wirtschaft',
       tone: currentTone,
       lang: currentLang,
-      app: 'WiRTSCHAFT TiSCH'
+      source_app: 'WiRTSCHAFT-TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -962,14 +967,19 @@ async function sendSzenario() {
   try {
     const payload = {
       question,
-      perspectives: szenarioPerspectives.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      custom_perspectives: szenarioPerspectives.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: currentLang === 'de'
+          ? `Szenario-Analyse Perspektive: ${currentLang === 'de' ? p.de : p.en}. Entwickle Best-, Base- und Worst-Case-Szenarien aus dieser wirtschaftlichen Rolle.`
+          : `Scenario analysis perspective: ${currentLang === 'de' ? p.de : p.en}. Develop best-, base- and worst-case scenarios from this economic role.`
+      })),
+      methods: [],
       stil: 'oekonomisch',
-      register: 'szenarioanalyse',
       lang: currentLang,
-      app: 'WiRTSCHAFT TiSCH'
+      source_app: 'WiRTSCHAFT-TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

@@ -813,11 +813,17 @@ async function submitQuestion() {
     if (!perspectives.length) perspectives = PERSPEKTIVEN.slice(0,6).map(p=>lang==='de'?p.de:p.en);
   }
 
-  const payload = { question: q, perspectives, stil: 'akademisch', register: 'fachsprache', tone, lang, app: 'medizintisch' };
+  const custom_perspectives = perspectives.map(name => ({
+    name,
+    position: lang === 'de'
+      ? `Medizinische Fachperspektive: ${name}. Analysiere die Frage aus dieser Rolle. Nenne Befunde, Differenzialdiagnosen, Behandlungsoptionen, Risiken und konkrete Empfehlungen.`
+      : `Medical perspective: ${name}. Analyze the question from this role. Name findings, differential diagnoses, treatment options, risks and concrete recommendations.`
+  }));
+  const payload = { question: q, custom_perspectives, methods: [], stil: 'akademisch', register: 'fachsprache', tone, lang, source_app: 'MEDiZiN-TiSCH' };
   const _ctrl = new AbortController();
   const _tid = setTimeout(() => _ctrl.abort(), 120000);
   try {
-    const res = await fetch(API + '/api/ask', { signal: _ctrl.signal, method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const res = await fetch(API + '/api/ask-table', { signal: _ctrl.signal, method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     clearTimeout(_tid);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     renderResults(await res.json(), q, perspectives);

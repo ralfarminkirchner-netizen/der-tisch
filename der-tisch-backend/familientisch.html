@@ -857,15 +857,20 @@ async function sendQuestion() {
   try {
     const payload = {
       question,
-      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
+      custom_perspectives: selectedPersp.map(p => ({
+        name: currentLang === 'de' ? p.de : p.en,
+        position: currentLang === 'de'
+          ? `Familien-therapeutische Perspektive: ${currentLang === 'de' ? p.de : p.en}. Analysiere die Familiensituation aus dieser therapeutischen Rolle.`
+          : `Family therapeutic perspective: ${currentLang === 'de' ? p.de : p.en}. Analyze the family situation from this therapeutic role.`
+      })),
+      methods: [],
       stil: 'therapeutisch',
-      register: 'familiensystem',
       tone: currentTone,
       lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      source_app: 'FAMiLiEN-TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1636,21 +1641,27 @@ async function analyseAufstellung() {
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
 
   try {
+    const aufstellungRollen = [
+      { de: 'Systemische Therapeutin', en: 'Systemic Therapist' },
+      { de: 'Bindungsexpertin', en: 'Attachment Expert' },
+      { de: 'Konfliktmediation', en: 'Conflict Mediation' }
+    ];
     const payload = {
       question,
-      perspectives: [
-        { id: 'systemisch', role: 'Systemische Therapeutin' },
-        { id: 'bindung', role: 'Bindungsexpertin' },
-        { id: 'konflikt', role: 'Konfliktmediation' }
-      ],
+      custom_perspectives: aufstellungRollen.map(r => ({
+        name: currentLang === 'de' ? r.de : r.en,
+        position: currentLang === 'de'
+          ? `Therapeutische Aufstellungs-Perspektive: ${currentLang === 'de' ? r.de : r.en}. Beleuchte die Familienkonstellation aus dieser spezifischen therapeutischen Rolle.`
+          : `Therapeutic constellation perspective: ${currentLang === 'de' ? r.de : r.en}. Illuminate the family constellation from this specific therapeutic role.`
+      })),
+      methods: [],
       stil: 'therapeutisch',
-      register: 'familienaufstellung',
       tone: currentTone,
       lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      source_app: 'FAMiLiEN-TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

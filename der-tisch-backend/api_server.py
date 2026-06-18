@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# TISCH-PATCH-APPLIED
 """Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
    Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
 """
@@ -1283,6 +1284,11 @@ class QueryRequest(BaseModel):
     stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
     register: str = ""  # "" | "fachsprache" | "einfach"
     tone: str = ""  # "" | "achtsam" | "direkt"
+    # ── TISCH-PATCH: extended fields ──────────────────────────────────
+    source_app: Optional[str] = None            # App identifier for Shared Core (e.g. "JURiSTiSCH")
+    custom_perspectives: List[CustomPerspective] = []  # Routes to /api/ask-table logic when present
+    methods: List[str] = []                     # Subset of methods to invoke
+    reibungsintensitaet: str = "standard"       # standard | eskaliert | maximal
 
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
@@ -1333,7 +1339,8 @@ class TableRequest(BaseModel):
     custom_perspectives: List[CustomPerspective] = []   # 0–N eigene Perspektiven (inline oder aus Custom-Slots)
     methods: List[str] = []                             # z.B. ["Philosophisch", "Systemisch"] — leere Liste = alle 8
     # Reibungsintensität: "standard" | "eskaliert" | "maximal"
-    reibungsintensitaet: str = "standard"               # eskaliert = Antagonisten-Modus, kein Weichzeichnen
+    reibungsintensitaet: str = "standard"               # eskaliert = Antagonisten-Modus
+    source_app: Optional[str] = None                    # App identifier for Shared Core, kein Weichzeichnen
 
 @app.get("/api/health")
 def health():
@@ -1344,6 +1351,18 @@ async def ask_the_table(req: QueryRequest):
     """Original-Endpunkt: immer alle 8 Methoden-Agenten."""
     if not req.question or len(req.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question too short.")
+    # TISCH-PATCH: delegate to /api/ask-table when custom perspectives or methods are active
+    if req.custom_perspectives or req.methods:
+        table_req = TableRequest(
+            question=req.question, lang=req.lang, stil=req.stil,
+            register=req.register, tone=req.tone,
+            custom_perspectives=req.custom_perspectives,
+            methods=req.methods,
+            reibungsintensitaet=req.reibungsintensitaet,
+            source_app=req.source_app,
+        )
+        return await ask_the_custom_table(table_req)
+
 
     valid_stile = {"philosophisch", "akademisch", "alltag", "oekonomisch", "kindgerecht", "therapeutisch", "jugend", "achtsam", "paedagogisch", "juristisch", "einfach", "spirituell"}
     stil = req.stil if req.stil in valid_stile else "philosophisch"
@@ -2206,6 +2225,14 @@ except Exception as _bib_err:  # Datei fehlt/defekt -> leere, aber valide Antwor
         "error": f"{type(_bib_err).__name__}: {_bib_err}",
     }
 
+
+@app.get("/dich-raum")
+async def serve_dich_raum():
+    return FileResponse(Path(__file__).parent / "dich-raum.html", headers=NO_CACHE)
+
+@app.get("/dich-raum.html")
+async def serve_dich_raum_html():
+    return FileResponse(Path(__file__).parent / "dich-raum.html", headers=NO_CACHE)
 
 @app.get("/bibliothek")
 async def serve_bibliothek():

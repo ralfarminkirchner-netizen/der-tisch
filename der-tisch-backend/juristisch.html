@@ -724,10 +724,16 @@ async function submitQuestion() {
     perspectives=raw.split(',').map(s=>s.trim()).filter(Boolean);
     if(!perspectives.length) perspectives=PERSPEKTIVEN.slice(0,6).map(p=>lang==='de'?p.de:p.en);
   }
-  const payload={question:q,perspectives,stil:'juristisch',register:'fachsprache',tone,lang,app:'juristisch'};
+  const custom_perspectives = perspectives.map(name => ({
+    name,
+    position: lang === 'de'
+      ? `Juristische Fachperspektive: ${name}. Analysiere die Rechtsfrage aus dieser Rolle. Nenne relevante Rechtsbereiche, Normen, Handlungsoptionen und Risiken.`
+      : `Legal perspective: ${name}. Analyze the legal question from this role. Name relevant legal areas, norms, options and risks.`
+  }));
+  const payload={question:q,custom_perspectives,methods:[],stil:'juristisch',register:'fachsprache',tone,lang,source_app:'JURiSTiSCH'};
   const _ctrl=new AbortController(); const _tid=setTimeout(()=>_ctrl.abort(),120000);
   try {
-    const res=await fetch(API+'/api/ask',{signal:_ctrl.signal,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const res=await fetch(API+'/api/ask-table',{signal:_ctrl.signal,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     clearTimeout(_tid);
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     renderResults(await res.json(),q,perspectives);

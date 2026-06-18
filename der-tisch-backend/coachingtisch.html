@@ -1004,13 +1004,19 @@ async function submitQuestion() {
     if (!perspectives.length) perspectives = PERSPEKTIVEN.slice(0, 6).map(p => lang === 'de' ? p.de : p.en);
   }
 
-  const payload = { question: q, perspectives, stil: 'therapeutisch', register: '', tone, lang, app: 'coachingtisch' };
+  const custom_perspectives = perspectives.map(name => ({
+    name,
+    position: lang === 'de'
+      ? `Coaching-Perspektive: ${name}. Analysiere die Coachingfrage aus dieser Rolle. Identifiziere Potenziale, Blockaden, konkrete Entwicklungsschritte und Ressourcen.`
+      : `Coaching perspective: ${name}. Analyze the coaching question from this role. Identify potentials, blockages, concrete development steps and resources.`
+  }));
+  const payload = { question: q, custom_perspectives, methods: [], stil: 'therapeutisch', tone, lang, source_app: 'COACHiNG-TiSCH' };
 
   const _ctrl0 = new AbortController();
   const _tid0 = setTimeout(() => _ctrl0.abort(), 120000);
 
   try {
-    const res = await fetch(API + '/api/ask', {
+    const res = await fetch(API + '/api/ask-table', {
       signal: _ctrl0.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
