@@ -1,19 +1,40 @@
 // ============================================================
-// API SERVICE — Der Tisch Backend
+// API SERVICE — FAMiLiEN TiSCH
+// Backend: https://der-tisch-production.up.railway.app
 // ============================================================
-// Replace this URL with your Railway deployment URL after deploy
-// Example: "https://der-tisch-production.up.railway.app"
-export const API_BASE_URL = "https://YOUR-RAILWAY-URL.up.railway.app";
+
+export const API_BASE_URL = "https://der-tisch-production.up.railway.app";
+
+// Familien-spezifische Agenten je Kategorie
+const FAMILY_METHODS = {
+  all:          ["Familiensystemisch", "Therapeutisch", "Biografisch", "Pädagogisch"],
+  erziehung:    ["Familiensystemisch", "Pädagogisch", "Therapeutisch", "Aus Kinderaugen"],
+  beziehung:    ["Familiensystemisch", "Therapeutisch", "Biografisch", "Achtsam"],
+  generationen: ["Familiensystemisch", "Biografisch", "Systemisch", "Therapeutisch"],
+  krise:        ["Familiensystemisch", "Therapeutisch", "Strategisch", "Risiko"],
+};
+
+// Exportiert damit HomeScreen die Lade-Labels kennt
+export const LOADING_LABELS = FAMILY_METHODS;
 
 /**
- * Send a question to Der Tisch and receive all three phases:
- * perspectives, friction, integration.
+ * Stellt eine Frage an den FAMiLiEN TiSCH.
+ * Wählt Agenten automatisch anhand der Kategorie.
  */
-export async function askTheTable(question) {
-  const response = await fetch(`${API_BASE_URL}/api/ask`, {
+export async function askFamilyTable(question, category = "all") {
+  const methods = FAMILY_METHODS[category] || FAMILY_METHODS.all;
+  const response = await fetch(`${API_BASE_URL}/api/ask-table`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({
+      question,
+      lang: "de",
+      stil: "therapeutisch",
+      tone: "achtsam",
+      custom_perspectives: [],
+      methods,
+      reibungsintensitaet: "standard",
+    }),
   });
 
   if (!response.ok) {
