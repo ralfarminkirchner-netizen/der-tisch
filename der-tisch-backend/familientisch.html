@@ -1069,22 +1069,38 @@ function toggleCard(card) {
 const PROFIL_KEY = 'familientisch_profil_v1';
 
 function loadProfilData() {
-  try { return JSON.parse(localStorage.getItem(PROFIL_KEY) || '{}'); }
+  try {
+    const data = JSON.parse(localStorage.getItem(PROFIL_KEY) || '{}');
+    return data && typeof data === 'object' ? data : {};
+  }
   catch { return {}; }
 }
 
 function saveProfil() {
-  const members = document.getElementById('profilMembers').value.trim();
-  const context = document.getElementById('profilContext').value.trim();
-  localStorage.setItem(PROFIL_KEY, JSON.stringify({ members, context }));
-  const status = document.getElementById('profilStatus');
-  status.textContent = '✓ Gespeichert';
-  status.style.color = 'var(--accent)';
-  setTimeout(() => { status.textContent = ''; }, 2200);
-  updateProfilPreview();
-  // Update Profil-Button styling to indicate active profile
-  const btn = document.getElementById('profilBtn');
-  if (btn) btn.classList.toggle('active', !!(members || context));
+  try {
+    const membersEl = document.getElementById('profilMembers');
+    const contextEl = document.getElementById('profilContext');
+    if (!membersEl || !contextEl) return;
+    const members = membersEl.value.trim();
+    const context = contextEl.value.trim();
+    localStorage.setItem(PROFIL_KEY, JSON.stringify({ members, context }));
+    const status = document.getElementById('profilStatus');
+    if (status) {
+      status.textContent = '✓ Gespeichert';
+      status.style.color = 'var(--accent)';
+      setTimeout(() => { status.textContent = ''; }, 2200);
+    }
+    updateProfilPreview();
+    const btn = document.getElementById('profilBtn');
+    if (btn) btn.classList.toggle('active', !!(members || context));
+  } catch (e) {
+    console.error('Failed to save profile:', e);
+    const status = document.getElementById('profilStatus');
+    if (status) {
+      status.textContent = '✗ Fehler beim Speichern';
+      status.style.color = '#C05050';
+    }
+  }
 }
 
 function updateProfilPreview() {
