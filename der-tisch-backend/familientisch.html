@@ -591,11 +591,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 <div class="mode-section" id="mode-brief">
   <div class="brief-wrap">
 
-    <div class="brief-intro">
+    <div class="brief-intro" id="briefIntroText">
       <strong>FAMiLiEN-BRIEF</strong> — Manchmal braucht man Worte, die man selbst nicht findet. Beschreiben Sie, was Sie ausdrücken möchten — und erhalten Sie Formulierungshilfe aus drei verschiedenen kommunikativen Stilen: einfühlsam-verbindend, klar-direkt, systemisch-reflektiert.
     </div>
 
-    <div class="brief-label">An wen möchten Sie schreiben?</div>
+    <div class="brief-label" id="briefRecipientLabel">An wen möchten Sie schreiben?</div>
     <div class="recipient-grid" id="recipientGrid">
       <button class="recipient-btn" data-r="Mutter" onclick="setBriefRecipient(this)">Mutter</button>
       <button class="recipient-btn" data-r="Vater" onclick="setBriefRecipient(this)">Vater</button>
@@ -603,11 +603,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <button class="recipient-btn" data-r="Kind" onclick="setBriefRecipient(this)">Kind</button>
       <button class="recipient-btn" data-r="Geschwister" onclick="setBriefRecipient(this)">Geschwister</button>
       <button class="recipient-btn" data-r="Großeltern" onclick="setBriefRecipient(this)">Großeltern</button>
-      <button class="recipient-btn" data-r="anderen" onclick="setBriefRecipient(this)">Andere...</button>
+      <button class="recipient-btn" data-r="_other_" data-custom="true" onclick="setBriefRecipient(this)">Andere...</button>
     </div>
     <input type="text" id="customRecipient" class="brief-custom-input" placeholder="An wen genau?" oninput="updateCustomRecipient()">
 
-    <div class="brief-label">Was möchten Sie ausdrücken?</div>
+    <div class="brief-label" id="briefSituationLabel">Was möchten Sie ausdrücken?</div>
     <div class="input-wrap" style="margin-bottom:4px">
       <textarea id="briefInput" placeholder="Beschreiben Sie, was Sie sagen möchten — was Sie fühlen, was Sie brauchen, was Sie klären möchten. Sie können in Stichworten oder frei schreiben." rows="5" style="max-height:280px;min-height:110px"></textarea>
       <button class="send-btn" id="briefSendBtn" onclick="sendBriefQuestion()">
@@ -615,8 +615,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       </button>
     </div>
 
-    <div class="brief-label" style="margin-top:16px">Ton des Briefes</div>
-    <div class="brief-tone-row">
+    <div class="brief-label" id="briefToneLabel" style="margin-top:16px">Ton des Briefes</div>
+    <div class="brief-tone-row" id="briefToneRow">
       <button class="brief-tone-btn active" data-bt="einfühlsam" onclick="setBriefTone(this)">einfühlsam</button>
       <button class="brief-tone-btn" data-bt="direkt" onclick="setBriefTone(this)">direkt</button>
       <button class="brief-tone-btn" data-bt="versöhnlich" onclick="setBriefTone(this)">versöhnlich</button>
@@ -625,7 +625,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 
     <!-- Brief Results -->
     <div id="briefResultArea" class="brief-result-area" style="display:none">
-      <div class="results-header">Drei Brief-Entwürfe am TiSCH</div>
+      <div class="results-header" id="briefResultsHeader">Drei Brief-Entwürfe am TiSCH</div>
       <div id="briefResultList"></div>
       <div class="kintegrity" style="margin-top:20px">
         <div class="kintegrity-title">kiNTEGRiTY</div>
@@ -806,6 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('briefInput').addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendBriefQuestion();
   });
+  updateBriefUI();
 });
 
 // ============================================================
@@ -839,6 +840,7 @@ function toggleLang() {
   document.getElementById('langBtn').textContent = currentLang.toUpperCase();
   renderPerspGrid();
   updateChips();
+  updateBriefUI();
 }
 
 function toggleTone() {
@@ -1881,25 +1883,133 @@ const BRIEF_STILE = [
   {
     id: 'einfuehlsam',
     de: 'Einfühlsam & Verbindend',
-    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der warmherzig, einfühlsam und verbindend ist. Zeige echtes Verständnis für die andere Person und ihre Sichtweise. Formuliere eigene Gefühle und Bedürfnisse klar, ohne Vorwürfe. Der Brief soll Brücken bauen und Verbindung stärken. Beginne direkt mit dem Brief (z.B. "Liebe/r ..." oder ähnlich passend).'
+    en: 'Empathic & Connecting',
+    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der warmherzig, einfühlsam und verbindend ist. Zeige echtes Verständnis für die andere Person und ihre Sichtweise. Formuliere eigene Gefühle und Bedürfnisse klar, ohne Vorwürfe. Der Brief soll Brücken bauen und Verbindung stärken. Beginne direkt mit dem Brief (z.B. "Liebe/r ..." oder ähnlich passend).',
+    en_instr: 'Write a complete draft letter that is warm, empathic, and connecting. Show genuine understanding for the other person and their perspective. Formulate your own feelings and needs clearly, without blame. The letter should build bridges and strengthen connection. Start directly with the letter (e.g., "Dear ..." or similar).'
   },
   {
     id: 'klar',
     de: 'Klar & Direkt',
-    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der klar, direkt und unmissverständlich ist. Nenne konkrete Situationen und Beobachtungen. Formuliere klare Erwartungen, Wünsche und wenn nötig Grenzen — ohne Umschweife, aber auch ohne Aggression oder Vorwürfe. Beginne direkt mit dem Brief.'
+    en: 'Clear & Direct',
+    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der klar, direkt und unmissverständlich ist. Nenne konkrete Situationen und Beobachtungen. Formuliere klare Erwartungen, Wünsche und wenn nötig Grenzen — ohne Umschweife, aber auch ohne Aggression oder Vorwürfe. Beginne direkt mit dem Brief.',
+    en_instr: 'Write a complete draft letter that is clear, direct, and unmistakable. Name concrete situations and observations. Formulate clear expectations, wishes, and if necessary limits — without beating around the bush, but also without aggression or blame. Start directly with the letter.'
   },
   {
     id: 'systemisch',
     de: 'Systemisch & Reflektiert',
-    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der systemisch reflektiert und reif ist. Erkenne die gemeinsame Geschichte, wiederkehrende Muster und die Sichtweise der anderen Person an. Lade zur gemeinsamen Reflexion und zu einem neuen Miteinander ein. Zeige, dass du das größere Bild siehst. Beginne direkt mit dem Brief.'
+    en: 'Systemic & Reflective',
+    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der systemisch reflektiert und reif ist. Erkenne die gemeinsame Geschichte, wiederkehrende Muster und die Sichtweise der anderen Person an. Lade zur gemeinsamen Reflexion und zu einem neuen Miteinander ein. Zeige, dass du das größere Bild siehst. Beginne direkt mit dem Brief.',
+    en_instr: 'Write a complete draft letter that is systemically reflective and mature. Acknowledge the shared history, recurring patterns, and the other person\'s perspective. Invite them to shared reflection and a new way of being together. Show that you see the bigger picture. Start directly with the letter.'
   },
 ];
+
+// Translation maps — data-r/data-bt stay German keys; these maps localise for API + UI
+const RECIPIENT_TR = {
+  'Mutter':               { de: 'Mutter',               en: 'mother' },
+  'Vater':                { de: 'Vater',                en: 'father' },
+  'Partner / Partnerin':  { de: 'Partner / Partnerin',  en: 'partner' },
+  'Kind':                 { de: 'Kind',                 en: 'child' },
+  'Geschwister':          { de: 'Geschwister',          en: 'sibling' },
+  'Großeltern':           { de: 'Großeltern',           en: 'grandparents' },
+};
+const TONE_TR = {
+  'einfühlsam': { de: 'einfühlsam', en: 'empathic' },
+  'direkt':     { de: 'direkt',     en: 'direct' },
+  'versöhnlich':{ de: 'versöhnlich',en: 'conciliatory' },
+  'mutig':      { de: 'mutig',      en: 'courageous' },
+};
+
+const BRIEF_I18N = {
+  de: {
+    intro: '<strong>FAMiLiEN-BRIEF</strong> — Manchmal braucht man Worte, die man selbst nicht findet. Beschreiben Sie, was Sie ausdrücken möchten — und erhalten Sie Formulierungshilfe aus drei verschiedenen kommunikativen Stilen: einfühlsam-verbindend, klar-direkt, systemisch-reflektiert.',
+    recipientLabel: 'An wen möchten Sie schreiben?',
+    recipientLabels: ['Mutter', 'Vater', 'Partner / Partnerin', 'Kind', 'Geschwister', 'Großeltern', 'Andere...'],
+    customPlaceholder: 'An wen genau?',
+    situationLabel: 'Was möchten Sie ausdrücken?',
+    briefPlaceholder: 'Beschreiben Sie, was Sie sagen möchten — was Sie fühlen, was Sie brauchen, was Sie klären möchten. Sie können in Stichworten oder frei schreiben.',
+    toneLabel: 'Ton des Briefes',
+    toneLabels: ['einfühlsam', 'direkt', 'versöhnlich', 'mutig'],
+    resultsHeader: 'Drei Brief-Entwürfe am TiSCH',
+    loading: 'Der TiSCH entwirft Ihren Brief...',
+    copyBtn: 'Kopieren',
+    copied: 'Kopiert ✓',
+    copyFail: 'Kopieren nicht möglich — bitte manuell markieren.',
+    noSituation: 'Bitte beschreiben Sie, was Sie ausdrücken möchten.',
+    noRecipient: 'Bitte wählen Sie einen Empfänger.',
+    fallbackTitle: 'Brief-Entwurf',
+    historyPrefix: 'Brief an: ',
+    questionTemplate: (r, s, t) => `Ich möchte etwas Wichtiges an meine(n) ${r} kommunizieren.\n\nWas ich ausdrücken möchte:\n${s}\n\nGewünschter Ton: ${t}\n\nBitte hilf mir, das in drei verschiedenen Brief-Stilen zu formulieren.`,
+    positionSuffix: (r, t) => ` Der Brief richtet sich an die(n) ${r}. Gewünschter Grundton: ${t}. Schreibe einen authentischen, persönlichen und konkreten Brief-Entwurf — kein Meta-Kommentar davor, direkt mit dem Brief beginnen.`,
+  },
+  en: {
+    intro: '<strong>FAMiLY LETTER</strong> — Sometimes you need words you can\'t find yourself. Describe what you want to express — and receive writing assistance in three different communication styles: empathic-connecting, clear-direct, systemic-reflective.',
+    recipientLabel: 'Who do you want to write to?',
+    recipientLabels: ['Mother', 'Father', 'Partner', 'Child', 'Siblings', 'Grandparents', 'Other...'],
+    customPlaceholder: 'Who exactly?',
+    situationLabel: 'What do you want to express?',
+    briefPlaceholder: 'Describe what you want to say — what you feel, what you need, what you want to clarify. You can write in bullet points or freely.',
+    toneLabel: 'Tone of the letter',
+    toneLabels: ['empathic', 'direct', 'conciliatory', 'courageous'],
+    resultsHeader: 'Three letter drafts at the TiSCH',
+    loading: 'The TiSCH is drafting your letter...',
+    copyBtn: 'Copy',
+    copied: 'Copied ✓',
+    copyFail: 'Copying not possible — please select manually.',
+    noSituation: 'Please describe what you want to express.',
+    noRecipient: 'Please select a recipient.',
+    fallbackTitle: 'Letter Draft',
+    historyPrefix: 'Letter to: ',
+    questionTemplate: (r, s, t) => `I want to communicate something important to my ${r}.\n\nWhat I want to express:\n${s}\n\nDesired tone: ${t}\n\nPlease help me formulate this in three different letter styles.`,
+    positionSuffix: (r, t) => ` The letter is addressed to the ${r}. Desired tone: ${t}. Write an authentic, personal, and concrete draft letter — no meta-commentary before, start directly with the letter.`,
+  },
+};
+
+function updateBriefUI() {
+  const t = BRIEF_I18N[currentLang] || BRIEF_I18N.de;
+
+  const introEl = document.getElementById('briefIntroText');
+  if (introEl) introEl.innerHTML = t.intro;
+
+  const recipLabel = document.getElementById('briefRecipientLabel');
+  if (recipLabel) recipLabel.textContent = t.recipientLabel;
+
+  const sitLabel = document.getElementById('briefSituationLabel');
+  if (sitLabel) sitLabel.textContent = t.situationLabel;
+
+  const toneLabel = document.getElementById('briefToneLabel');
+  if (toneLabel) toneLabel.textContent = t.toneLabel;
+
+  const resHeader = document.getElementById('briefResultsHeader');
+  if (resHeader) resHeader.textContent = t.resultsHeader;
+
+  const customInput = document.getElementById('customRecipient');
+  if (customInput) customInput.placeholder = t.customPlaceholder;
+
+  const briefInput = document.getElementById('briefInput');
+  if (briefInput) briefInput.placeholder = t.briefPlaceholder;
+
+  // Update recipient button labels (data-r keys stay unchanged)
+  const grid = document.getElementById('recipientGrid');
+  if (grid) {
+    grid.querySelectorAll('.recipient-btn').forEach((btn, i) => {
+      if (t.recipientLabels[i] !== undefined) btn.textContent = t.recipientLabels[i];
+    });
+  }
+
+  // Update tone button labels (data-bt keys stay unchanged)
+  const toneRow = document.getElementById('briefToneRow');
+  if (toneRow) {
+    toneRow.querySelectorAll('.brief-tone-btn').forEach((btn, i) => {
+      if (t.toneLabels[i] !== undefined) btn.textContent = t.toneLabels[i];
+    });
+  }
+}
 
 function setBriefRecipient(btn) {
   document.querySelectorAll('.recipient-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const customInput = document.getElementById('customRecipient');
-  if (btn.dataset.r === 'anderen') {
+  if (btn.dataset.custom === 'true') {
     customInput.classList.add('visible');
     currentRecipient = customInput.value || '';
     customInput.focus();
@@ -1920,10 +2030,11 @@ function setBriefTone(btn) {
 }
 
 async function sendBriefQuestion() {
+  const t = BRIEF_I18N[currentLang] || BRIEF_I18N.de;
   const input = document.getElementById('briefInput');
   const situation = input.value.trim();
-  if (!situation) { showToast('Bitte beschreiben Sie, was Sie ausdrücken möchten.'); return; }
-  if (!currentRecipient) { showToast('Bitte wählen Sie einen Empfänger.'); return; }
+  if (!situation) { showToast(t.noSituation); return; }
+  if (!currentRecipient) { showToast(t.noRecipient); return; }
   if (isBriefLoading) return;
 
   isBriefLoading = true;
@@ -1931,23 +2042,33 @@ async function sendBriefQuestion() {
 
   const resultArea = document.getElementById('briefResultArea');
   const resultList = document.getElementById('briefResultList');
+  const resHeader = document.getElementById('briefResultsHeader');
+  if (resHeader) resHeader.textContent = t.resultsHeader;
   resultArea.style.display = 'block';
   resultList.innerHTML = '';
 
   const loader = document.createElement('div');
   loader.className = 'loader';
-  loader.innerHTML = `<div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Der TiSCH entwirft Ihren Brief...</span>`;
+  loader.innerHTML = `<div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${t.loading}</span>`;
   resultList.appendChild(loader);
   resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  const question = `Ich möchte etwas Wichtiges an meine(n) ${currentRecipient} kommunizieren.\n\nWas ich ausdrücken möchte:\n${situation}\n\nGewünschter Ton: ${currentBriefTone}\n\nBitte hilf mir, das in drei verschiedenen Brief-Stilen zu formulieren.`;
+  // Localise recipient and tone for question text and position
+  const recipientText = (RECIPIENT_TR[currentRecipient] && RECIPIENT_TR[currentRecipient][currentLang])
+    ? RECIPIENT_TR[currentRecipient][currentLang]
+    : currentRecipient;
+  const toneText = (TONE_TR[currentBriefTone] && TONE_TR[currentBriefTone][currentLang])
+    ? TONE_TR[currentBriefTone][currentLang]
+    : currentBriefTone;
+
+  const question = t.questionTemplate(recipientText, situation, toneText);
 
   try {
     const payload = {
       question,
       custom_perspectives: BRIEF_STILE.map(s => ({
-        name: s.de,
-        position: s.de_instr + ` Der Brief richtet sich an die(n) ${currentRecipient}. Gewünschter Grundton: ${currentBriefTone}. Schreibe einen authentischen, persönlichen und konkreten Brief-Entwurf — kein Meta-Kommentar davor, direkt mit dem Brief beginnen.`
+        name: currentLang === 'de' ? s.de : s.en,
+        position: (currentLang === 'de' ? s.de_instr : s.en_instr) + t.positionSuffix(recipientText, toneText)
       })),
       methods: [],
       stil: 'therapeutisch',
@@ -1975,8 +2096,8 @@ async function sendBriefQuestion() {
         const card = document.createElement('div');
         card.className = 'brief-card';
         card.innerHTML = `
-          <div class="brief-card-title">${style.de}</div>
-          <button class="brief-copy-btn" onclick="copyBriefCard(this)">Kopieren</button>
+          <div class="brief-card-title">${currentLang === 'de' ? style.de : style.en}</div>
+          <button class="brief-copy-btn" onclick="copyBriefCard(this)">${t.copyBtn}</button>
           <div class="brief-card-text">${escapeHTML(text)}</div>
         `;
         resultList.appendChild(card);
@@ -1986,15 +2107,15 @@ async function sendBriefQuestion() {
       const card = document.createElement('div');
       card.className = 'brief-card';
       card.innerHTML = `
-        <div class="brief-card-title">Brief-Entwurf</div>
-        <button class="brief-copy-btn" onclick="copyBriefCard(this)">Kopieren</button>
+        <div class="brief-card-title">${t.fallbackTitle}</div>
+        <button class="brief-copy-btn" onclick="copyBriefCard(this)">${t.copyBtn}</button>
         <div class="brief-card-text">${escapeHTML(text)}</div>
       `;
       resultList.appendChild(card);
     }
 
     saveHistory({
-      question: `Brief an: ${currentRecipient} — ${situation.slice(0, 60)}${situation.length > 60 ? '…' : ''}`,
+      question: `${t.historyPrefix}${recipientText} — ${situation.slice(0, 60)}${situation.length > 60 ? '…' : ''}`,
       perspectives: ['brief'],
       lang: currentLang,
       time: Date.now()
@@ -2015,12 +2136,13 @@ async function sendBriefQuestion() {
 }
 
 function copyBriefCard(btn) {
+  const t = BRIEF_I18N[currentLang] || BRIEF_I18N.de;
   const text = btn.nextElementSibling.textContent;
   navigator.clipboard.writeText(text).then(() => {
     const orig = btn.textContent;
-    btn.textContent = 'Kopiert ✓';
+    btn.textContent = t.copied;
     setTimeout(() => btn.textContent = orig, 2200);
-  }).catch(() => showToast('Kopieren nicht möglich — bitte manuell markieren.'));
+  }).catch(() => showToast(t.copyFail));
 }
 </script>
 </body>
