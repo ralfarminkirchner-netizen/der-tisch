@@ -44,7 +44,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
 
 /* MODE TABS */
-.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:700px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
 .mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
 .mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
 .mode-tab:not(.active):hover{color:var(--text)}
@@ -192,6 +192,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* FAMILIEN-BRIEF MODE */
+.brief-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.brief-intro{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.brief-intro strong{color:var(--text)}
+.brief-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;margin-top:20px}
+.recipient-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.recipient-btn{padding:8px 16px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.recipient-btn:hover,.recipient-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.brief-custom-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:16px;display:none}
+.brief-custom-input.visible{display:block}
+.brief-custom-input:focus{border-color:var(--accent)}
+.brief-tone-row{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.brief-tone-btn{padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.brief-tone-btn:hover,.brief-tone-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.brief-result-area{margin-top:28px}
+.brief-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;position:relative}
+.brief-card:hover{border-color:var(--faint)}
+.brief-card-title{font-size:11px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;font-weight:600;padding-right:80px}
+.brief-card-text{font-size:14px;color:var(--muted);line-height:1.75;white-space:pre-wrap}
+.brief-copy-btn{position:absolute;top:16px;right:16px;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--font);transition:all .2s;letter-spacing:.04em}
+.brief-copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -381,6 +403,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="10" rx="1"/><rect x="7" y="4" width="6" height="14" rx="1"/><rect x="12" y="10" width="6" height="8" rx="1"/></svg>
       FAMiLiENAUFSTELLUNG
     </button>
+    <button class="mode-tab" id="tab-brief" onclick="setMode('brief')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+      FAMiLiEN-BRIEF
+    </button>
   </div>
 </section>
 
@@ -561,6 +587,68 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== FAMILIEN-BRIEF MODE ==================== -->
+<div class="mode-section" id="mode-brief">
+  <div class="brief-wrap">
+
+    <div class="brief-intro">
+      <strong>FAMiLiEN-BRIEF</strong> — Manchmal braucht man Worte, die man selbst nicht findet. Beschreiben Sie, was Sie ausdrücken möchten — und erhalten Sie Formulierungshilfe aus drei verschiedenen kommunikativen Stilen: einfühlsam-verbindend, klar-direkt, systemisch-reflektiert.
+    </div>
+
+    <div class="brief-label">An wen möchten Sie schreiben?</div>
+    <div class="recipient-grid" id="recipientGrid">
+      <button class="recipient-btn" data-r="Mutter" onclick="setBriefRecipient(this)">Mutter</button>
+      <button class="recipient-btn" data-r="Vater" onclick="setBriefRecipient(this)">Vater</button>
+      <button class="recipient-btn" data-r="Partner / Partnerin" onclick="setBriefRecipient(this)">Partner / Partnerin</button>
+      <button class="recipient-btn" data-r="Kind" onclick="setBriefRecipient(this)">Kind</button>
+      <button class="recipient-btn" data-r="Geschwister" onclick="setBriefRecipient(this)">Geschwister</button>
+      <button class="recipient-btn" data-r="Großeltern" onclick="setBriefRecipient(this)">Großeltern</button>
+      <button class="recipient-btn" data-r="anderen" onclick="setBriefRecipient(this)">Andere...</button>
+    </div>
+    <input type="text" id="customRecipient" class="brief-custom-input" placeholder="An wen genau?" oninput="updateCustomRecipient()">
+
+    <div class="brief-label">Was möchten Sie ausdrücken?</div>
+    <div class="input-wrap" style="margin-bottom:4px">
+      <textarea id="briefInput" placeholder="Beschreiben Sie, was Sie sagen möchten — was Sie fühlen, was Sie brauchen, was Sie klären möchten. Sie können in Stichworten oder frei schreiben." rows="5" style="max-height:280px;min-height:110px"></textarea>
+      <button class="send-btn" id="briefSendBtn" onclick="sendBriefQuestion()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+
+    <div class="brief-label" style="margin-top:16px">Ton des Briefes</div>
+    <div class="brief-tone-row">
+      <button class="brief-tone-btn active" data-bt="einfühlsam" onclick="setBriefTone(this)">einfühlsam</button>
+      <button class="brief-tone-btn" data-bt="direkt" onclick="setBriefTone(this)">direkt</button>
+      <button class="brief-tone-btn" data-bt="versöhnlich" onclick="setBriefTone(this)">versöhnlich</button>
+      <button class="brief-tone-btn" data-bt="mutig" onclick="setBriefTone(this)">mutig</button>
+    </div>
+
+    <!-- Brief Results -->
+    <div id="briefResultArea" class="brief-result-area" style="display:none">
+      <div class="results-header">Drei Brief-Entwürfe am TiSCH</div>
+      <div id="briefResultList"></div>
+      <div class="kintegrity" style="margin-top:20px">
+        <div class="kintegrity-title">kiNTEGRiTY</div>
+        <div class="kintegrity-items">
+          <div class="kintegrity-item">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+            Formulierungshilfe, keine Therapie
+          </div>
+          <div class="kintegrity-item">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg>
+            Vertraulich
+          </div>
+          <div class="kintegrity-item">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="7" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg>
+            Kein Ersatz für professionelle Beratung
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -715,6 +803,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('questionInput').addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendQuestion();
   });
+  document.getElementById('briefInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendBriefQuestion();
+  });
 });
 
 // ============================================================
@@ -859,9 +950,11 @@ async function sendQuestion() {
       question,
       custom_perspectives: selectedPersp.map(p => ({
         name: currentLang === 'de' ? p.de : p.en,
-        position: currentLang === 'de'
-          ? `Familien-therapeutische Perspektive: ${currentLang === 'de' ? p.de : p.en}. Analysiere die Familiensituation aus dieser therapeutischen Rolle.`
-          : `Family therapeutic perspective: ${currentLang === 'de' ? p.de : p.en}. Analyze the family situation from this therapeutic role.`
+        position: (PERSPEKTIVEN_PROMPTS[p.id] && PERSPEKTIVEN_PROMPTS[p.id][currentLang])
+          ? PERSPEKTIVEN_PROMPTS[p.id][currentLang]
+          : (currentLang === 'de'
+            ? `Familien-therapeutische Perspektive: ${p.de}. Analysiere die Familiensituation aus dieser therapeutischen Rolle.`
+            : `Family therapeutic perspective: ${p.en}. Analyze the family situation from this therapeutic role.`)
       })),
       methods: [],
       stil: 'therapeutisch',
@@ -1730,7 +1823,205 @@ async function analyseAufstellung() {
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
+// ============================================================
+// PERSPEKTIVEN-PROMPTS — spezifische Anweisungen pro Perspektive
+// ============================================================
+const PERSPEKTIVEN_PROMPTS = {
+  systemisch: {
+    de: 'Du bist eine erfahrene systemische Therapeutin. Betrachte die Familiensituation als Teil eines größeren Systems mit Wechselwirkungen, Rollen und Mustern. Zeige, wie das Verhalten einzelner Mitglieder das gesamte System beeinflusst, welche zirkulären Muster erkennbar sind und wie das System in Balance gehalten wird. Nutze systemische Fragen und Perspektivwechsel.',
+    en: 'You are an experienced systemic therapist. View the family situation as part of a larger system with interactions, roles, and patterns. Show how individual members\' behavior affects the entire system, what circular patterns are recognizable, and how the system maintains balance. Use systemic questions and perspective shifts.',
+  },
+  bindung: {
+    de: 'Du bist eine Bindungsexpertin (Bowlby, Ainsworth, Bretherton). Analysiere die Situation aus der Sicht der Bindungstheorie: Welche Bindungsmuster zeigen sich (sicher, ängstlich-ambivalent, vermeidend, desorganisiert)? Wie beeinflussen frühe Bindungserfahrungen das aktuelle Verhalten? Was brauchen die Beteiligten, um sich sicher gebunden zu fühlen?',
+    en: 'You are an attachment expert (Bowlby, Ainsworth, Bretherton). Analyze the situation through the lens of attachment theory: What attachment patterns are visible (secure, anxious-ambivalent, avoidant, disorganized)? How do early attachment experiences influence current behavior? What do those involved need to feel securely attached?',
+  },
+  erziehung: {
+    de: 'Du bist eine erfahrene Erziehungsberaterin mit entwicklungspsychologischem Hintergrund. Betrachte, welche Entwicklungsbedürfnisse und -aufgaben das Kind oder die Kinder haben. Welche Erziehungsansätze (autoritativ, authoritarian, permissiv) zeigen sich? Was stärkt die Autonomie und das Selbstbewusstsein des Kindes? Benenne konkrete, praktische Möglichkeiten.',
+    en: 'You are an experienced parenting counselor with a developmental psychology background. Examine the developmental needs and tasks of the child or children. What parenting styles (authoritative, authoritarian, permissive) are present? What strengthens the child\'s autonomy and self-confidence? Name concrete, practical possibilities.',
+  },
+  paar: {
+    de: 'Du bist eine erfahrene Paartherapeutin (Gottman-Methode, emotionsfokussiert). Analysiere die Paarerdynamik hinter der familiären Situation: Welche Kommunikationsmuster zeigen sich zwischen Eltern/Partnern? Gibt es die "Vier Reiter" (Kritik, Verachtung, Mauern, Rechtfertigung)? Was braucht die Paarbeziehung, um das Familiensystem zu stärken?',
+    en: 'You are an experienced couples therapist (Gottman method, emotion-focused). Analyze the couple dynamics behind the family situation: What communication patterns show between parents/partners? Are there the "Four Horsemen" (criticism, contempt, stonewalling, defensiveness)? What does the couple relationship need to strengthen the family system?',
+  },
+  trauma: {
+    de: 'Du bist eine traumasensible Expertin (Peter Levine, Bessel van der Kolk). Identifiziere potenzielle traumatische Belastungen und ihre Auswirkungen auf das Nervensystem und das Familiensystem. Zeige Wege der Stabilisierung und Resilienz auf. Benenne Überlebensstrategien und wie sie sich heute zeigen. Achte auf Ressourcen und Wachstumsmöglichkeiten.',
+    en: 'You are a trauma-sensitive expert (Peter Levine, Bessel van der Kolk). Identify potential traumatic stresses and their effects on the nervous system and family system. Show paths of stabilization and resilience. Name survival strategies and how they manifest today. Pay attention to resources and growth opportunities.',
+  },
+  kind: {
+    de: 'Du nimmst die Perspektive eines Kindes in dieser Familie ein. Sprich in der Sprache des kindlichen Erlebens: Was fühlt das Kind? Was braucht es und kann es vielleicht nicht ausdrücken? Welche Ängste oder Wünsche könnten dahinterstehen? Zeige, wie die Situation aus den Augen eines Kindes aussieht — ohne zu urteilen, mit Würde und Empathie für alle.',
+    en: 'You take the perspective of a child in this family. Speak in the language of childlike experience: What does the child feel? What does it need and perhaps cannot express? What fears or wishes might lie beneath? Show how the situation looks through a child\'s eyes — without judging, with dignity and empathy for all.',
+  },
+  grosseltern: {
+    de: 'Du bist eine Expertin für Generationendynamiken und transgenerationale Weitergabe (Ivan Boszormenyi-Nagy, Anne Ancelin Schützenberger). Betrachte die Situation im Kontext von Generationenmustern: Welche Glaubenssätze, Loyalitäten und ungelösten Themen wurden weitergegeben? Welches intergenerationelle Erbe wirkt? Was könnte aus der Familiengeschichte erklärt werden?',
+    en: 'You are an expert in generational dynamics and transgenerational transmission (Ivan Boszormenyi-Nagy, Anne Ancelin Schützenberger). View the situation in the context of generational patterns: What beliefs, loyalties, and unresolved themes have been passed down? What intergenerational legacy is at work? What could be explained from the family history?',
+  },
+  konflikt: {
+    de: 'Du bist eine Mediatorin und Konfliktexpertin (gewaltfreie Kommunikation nach Rosenberg, Harvard-Methode). Analysiere: Was sind die Kernbedürfnisse aller Beteiligten? Wo liegen die eigentlichen Konfliktquellen hinter den Positionen? Welche Lösungsräume gibt es? Zeige konkrete Wege, wie alle Beteiligten gehört und verstanden werden können.',
+    en: 'You are a mediator and conflict expert (nonviolent communication after Rosenberg, Harvard method). Analyze: What are the core needs of all involved? Where are the real sources of conflict behind the positions? What solution spaces exist? Show concrete ways how all parties can be heard and understood.',
+  },
+  kommunikation: {
+    de: 'Du bist eine Kommunikationsexpertin (Schulz von Thun, Paul Watzlawick, systemische Kommunikation). Analysiere die Kommunikationsmuster in der Familie: Was wird gesagt, was gemeint, was gehört? Welche Metabotschaften oder Doppelbindungen gibt es? Welche Kommunikationsgewohnheiten erzeugen Missverständnisse? Zeige, wie klarere und einfühlsamere Kommunikation aussehen könnte.',
+    en: 'You are a communication expert (Schulz von Thun, Paul Watzlawick, systemic communication). Analyze the communication patterns in the family: What is said, what is meant, what is heard? What meta-messages or double-binds exist? What communication habits create misunderstandings? Show what clearer and more empathic communication could look like.',
+  },
+  identitaet: {
+    de: 'Du bist eine Expertin für Identitätsentwicklung und Rollentheorie (Erikson, Virginia Satir). Betrachte, welche Rollen die einzelnen Familienmitglieder einnehmen — explizit und implizit zugewiesen. Welche Erwartungen und Rollenbilder engen ein? Welche Familienmythen und Glaubenssätze über die eigene Person wirken? Wie kann jedes Mitglied seine Authentizität innerhalb der Familie stärken?',
+    en: 'You are an expert in identity development and role theory (Erikson, Virginia Satir). Examine what roles individual family members take on — explicitly and implicitly assigned. What expectations and role images are restrictive? What family myths and beliefs about oneself are at work? How can each member strengthen their authenticity within the family?',
+  },
+};
+
+// ============================================================
+// FAMILIEN-BRIEF MODE
+// ============================================================
+let currentRecipient = '';
+let currentBriefTone = 'einfühlsam';
+let isBriefLoading = false;
+
+const BRIEF_STILE = [
+  {
+    id: 'einfuehlsam',
+    de: 'Einfühlsam & Verbindend',
+    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der warmherzig, einfühlsam und verbindend ist. Zeige echtes Verständnis für die andere Person und ihre Sichtweise. Formuliere eigene Gefühle und Bedürfnisse klar, ohne Vorwürfe. Der Brief soll Brücken bauen und Verbindung stärken. Beginne direkt mit dem Brief (z.B. "Liebe/r ..." oder ähnlich passend).'
+  },
+  {
+    id: 'klar',
+    de: 'Klar & Direkt',
+    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der klar, direkt und unmissverständlich ist. Nenne konkrete Situationen und Beobachtungen. Formuliere klare Erwartungen, Wünsche und wenn nötig Grenzen — ohne Umschweife, aber auch ohne Aggression oder Vorwürfe. Beginne direkt mit dem Brief.'
+  },
+  {
+    id: 'systemisch',
+    de: 'Systemisch & Reflektiert',
+    de_instr: 'Schreibe einen vollständigen Brief-Entwurf, der systemisch reflektiert und reif ist. Erkenne die gemeinsame Geschichte, wiederkehrende Muster und die Sichtweise der anderen Person an. Lade zur gemeinsamen Reflexion und zu einem neuen Miteinander ein. Zeige, dass du das größere Bild siehst. Beginne direkt mit dem Brief.'
+  },
+];
+
+function setBriefRecipient(btn) {
+  document.querySelectorAll('.recipient-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const customInput = document.getElementById('customRecipient');
+  if (btn.dataset.r === 'anderen') {
+    customInput.classList.add('visible');
+    currentRecipient = customInput.value || '';
+    customInput.focus();
+  } else {
+    customInput.classList.remove('visible');
+    currentRecipient = btn.dataset.r;
+  }
+}
+
+function updateCustomRecipient() {
+  currentRecipient = document.getElementById('customRecipient').value;
+}
+
+function setBriefTone(btn) {
+  document.querySelectorAll('.brief-tone-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentBriefTone = btn.dataset.bt;
+}
+
+async function sendBriefQuestion() {
+  const input = document.getElementById('briefInput');
+  const situation = input.value.trim();
+  if (!situation) { showToast('Bitte beschreiben Sie, was Sie ausdrücken möchten.'); return; }
+  if (!currentRecipient) { showToast('Bitte wählen Sie einen Empfänger.'); return; }
+  if (isBriefLoading) return;
+
+  isBriefLoading = true;
+  document.getElementById('briefSendBtn').disabled = true;
+
+  const resultArea = document.getElementById('briefResultArea');
+  const resultList = document.getElementById('briefResultList');
+  resultArea.style.display = 'block';
+  resultList.innerHTML = '';
+
+  const loader = document.createElement('div');
+  loader.className = 'loader';
+  loader.innerHTML = `<div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Der TiSCH entwirft Ihren Brief...</span>`;
+  resultList.appendChild(loader);
+  resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const question = `Ich möchte etwas Wichtiges an meine(n) ${currentRecipient} kommunizieren.\n\nWas ich ausdrücken möchte:\n${situation}\n\nGewünschter Ton: ${currentBriefTone}\n\nBitte hilf mir, das in drei verschiedenen Brief-Stilen zu formulieren.`;
+
+  try {
+    const payload = {
+      question,
+      custom_perspectives: BRIEF_STILE.map(s => ({
+        name: s.de,
+        position: s.de_instr + ` Der Brief richtet sich an die(n) ${currentRecipient}. Gewünschter Grundton: ${currentBriefTone}. Schreibe einen authentischen, persönlichen und konkreten Brief-Entwurf — kein Meta-Kommentar davor, direkt mit dem Brief beginnen.`
+      })),
+      methods: [],
+      stil: 'therapeutisch',
+      tone: 'achtsam',
+      lang: currentLang,
+      source_app: 'FAMiLiEN-BRIEF'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    loader.remove();
+    if (!resp.ok) throw new Error('API ' + resp.status);
+
+    const data = await resp.json();
+    const apiPerspectives = data.perspectives || [];
+
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const style = BRIEF_STILE[i] || BRIEF_STILE[0];
+        const text = r.kernanalyse || '';
+        const card = document.createElement('div');
+        card.className = 'brief-card';
+        card.innerHTML = `
+          <div class="brief-card-title">${style.de}</div>
+          <button class="brief-copy-btn" onclick="copyBriefCard(this)">Kopieren</button>
+          <div class="brief-card-text">${escapeHTML(text)}</div>
+        `;
+        resultList.appendChild(card);
+      });
+    } else {
+      const text = data.answer || data.text || JSON.stringify(data);
+      const card = document.createElement('div');
+      card.className = 'brief-card';
+      card.innerHTML = `
+        <div class="brief-card-title">Brief-Entwurf</div>
+        <button class="brief-copy-btn" onclick="copyBriefCard(this)">Kopieren</button>
+        <div class="brief-card-text">${escapeHTML(text)}</div>
+      `;
+      resultList.appendChild(card);
+    }
+
+    saveHistory({
+      question: `Brief an: ${currentRecipient} — ${situation.slice(0, 60)}${situation.length > 60 ? '…' : ''}`,
+      perspectives: ['brief'],
+      lang: currentLang,
+      time: Date.now()
+    });
+
+  } catch (err) {
+    loader.remove();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'error-card';
+    errDiv.textContent = currentLang === 'de'
+      ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.'
+      : 'The TiSCH is currently unavailable. Please try again later.';
+    resultList.appendChild(errDiv);
+  }
+
+  isBriefLoading = false;
+  document.getElementById('briefSendBtn').disabled = false;
+}
+
+function copyBriefCard(btn) {
+  const text = btn.nextElementSibling.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Kopiert ✓';
+    setTimeout(() => btn.textContent = orig, 2200);
+  }).catch(() => showToast('Kopieren nicht möglich — bitte manuell markieren.'));
+}
 </script>
-<script src="/notizbuch.js"></script>
 </body>
 </html>
