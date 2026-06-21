@@ -192,6 +192,32 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* KLÄRUNGSGESPRÄCH MODE */
+.klaerung-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.party-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.party-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.party-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.party-name-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;margin-bottom:10px;transition:border-color .2s}
+.party-name-input:focus{border-color:var(--accent)}
+.party-position{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-family:var(--font);font-size:14px;color:var(--text);resize:vertical;min-height:90px;outline:none;transition:border-color .2s;line-height:1.6}
+.party-position:focus{border-color:var(--accent)}
+.party-position::placeholder{color:var(--muted)}
+.klaerung-topic{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:64px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.klaerung-topic:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.klaerung-topic::placeholder{color:var(--muted)}
+.klaerung-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.klaerung-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.klaerung-send-btn:hover{opacity:.88}
+.klaerung-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.friction-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-top:12px}
+.friction-title{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.friction-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.friction-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.friction-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:16px;position:relative}
+.friction-list li::before{content:'—';position:absolute;left:0;color:var(--accent)}
+@media(max-width:640px){.parties-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -381,6 +407,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="10" rx="1"/><rect x="7" y="4" width="6" height="14" rx="1"/><rect x="12" y="10" width="6" height="8" rx="1"/></svg>
       FAMiLiENAUFSTELLUNG
     </button>
+    <button class="mode-tab" id="tab-klaerung" onclick="setMode('klaerung')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
+      KLÄRUNGSGESPRÄCh
+    </button>
   </div>
 </section>
 
@@ -557,6 +587,59 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 
     <!-- Aufstellung results -->
     <div class="aufstellung-results" id="aufstellungResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== KLÄRUNGSGESPRÄCH MODE ==================== -->
+<div class="mode-section" id="mode-klaerung">
+  <div class="klaerung-wrap">
+
+    <div style="margin-bottom:6px">
+      <div class="chips-label" style="text-align:left;margin-bottom:10px">Thema des Gesprächs</div>
+      <textarea class="klaerung-topic" id="klaerungTopic" placeholder="Worum geht es? Beschreiben Sie das Thema oder den Konflikt kurz..." rows="2"></textarea>
+    </div>
+
+    <!-- Conflict topic chips -->
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Häufige Themen</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:24px" id="klaerungChips">
+      <button class="chip" onclick="useKlaerungChip(this)">Unterschiedliche Erziehungsvorstellungen</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Streit um Bildschirmzeit</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Grenzen zwischen Eltern und Großeltern</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Pubertät: Freiheit vs. Regeln</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Ungleiche Geschwisterbehandlung</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Aufgabenteilung im Haushalt</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Patchwork: Regeln im neuen Zuhause</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Kommunikation in der Beziehung</button>
+    </div>
+
+    <div class="parties-grid">
+      <div class="party-card">
+        <div class="party-label">
+          <div class="party-dot" style="background:#4A7FA8"></div>
+          Partei A
+        </div>
+        <input class="party-name-input" id="partyAName" type="text" placeholder="Name (z.B. Mutter, Vater, Kind...)">
+        <textarea class="party-position" id="partyAPosition" placeholder="Was möchte diese Person? Was ist ihr wichtig? Was fühlt sie dabei?" rows="4"></textarea>
+      </div>
+      <div class="party-card">
+        <div class="party-label">
+          <div class="party-dot" style="background:#C4622D"></div>
+          Partei B
+        </div>
+        <input class="party-name-input" id="partyBName" type="text" placeholder="Name (z.B. Kind, Großmutter, Partner...)">
+        <textarea class="party-position" id="partyBPosition" placeholder="Was möchte diese Person? Was ist ihr wichtig? Was fühlt sie dabei?" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="klaerung-send-row">
+      <button class="klaerung-send-btn" id="klaerungSendBtn" onclick="sendKlaerung()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+        Klärungsgespräch starten
+      </button>
+    </div>
+
+    <div id="klaerungResults"></div>
 
   </div>
 </div>
@@ -953,7 +1036,7 @@ function renderResults(data, perspectives, container) {
     return;
   }
   apiPerspectives.forEach((r) => {
-    const rolle = r.rolle || '';
+    const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
     const pDef = perspectives.find(p =>
       p.id === rolle.toLowerCase() ||
       (p.de || '').toLowerCase() === rolle.toLowerCase()
@@ -1679,7 +1762,7 @@ async function analyseAufstellung() {
     const apiPerspectives = data.perspectives || [];
     if (apiPerspectives.length > 0) {
       apiPerspectives.forEach((r) => {
-        const rolle = r.rolle || '';
+        const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
         const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
         card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
@@ -1729,6 +1812,149 @@ async function analyseAufstellung() {
 
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ============================================================
+// KLÄRUNGSGESPRÄCH
+// ============================================================
+function useKlaerungChip(el) {
+  document.getElementById('klaerungTopic').value = el.textContent.trim();
+  document.getElementById('klaerungTopic').focus();
+}
+
+async function sendKlaerung() {
+  const topic   = document.getElementById('klaerungTopic').value.trim();
+  const nameA   = document.getElementById('partyAName').value.trim();
+  const posA    = document.getElementById('partyAPosition').value.trim();
+  const nameB   = document.getElementById('partyBName').value.trim();
+  const posB    = document.getElementById('partyBPosition').value.trim();
+
+  if (!topic)  { showToast('Bitte das Gesprächsthema eingeben.'); return; }
+  if (!posA)   { showToast('Bitte die Position von Partei A eingeben.'); return; }
+  if (!posB)   { showToast('Bitte die Position von Partei B eingeben.'); return; }
+  if (isLoading) return;
+
+  isLoading = true;
+  document.getElementById('klaerungSendBtn').disabled = true;
+
+  const resultsDiv = document.getElementById('klaerungResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang==='de'?'Klärungsgespräch wird vorbereitet...':'Preparing clarification...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior:'smooth', block:'start' });
+
+  const labelA = nameA || (currentLang === 'de' ? 'Partei A' : 'Party A');
+  const labelB = nameB || (currentLang === 'de' ? 'Partei B' : 'Party B');
+
+  try {
+    const payload = {
+      question:   topic,
+      lang:       currentLang,
+      stil:       'therapeutisch',
+      tone:       currentTone,
+      party_a:    { name: labelA, position: posA },
+      party_b:    { name: labelB, position: posB },
+      methods:    [],
+      source_app: 'FAMiLiEN-TiSCH'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-clarify`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    resultsDiv.innerHTML = '';
+
+    const partyDefs = [
+      { id:'party-a', icon:'compass', de:labelA, en:labelA, color:'#4A7FA8' },
+      { id:'party-b', icon:'heart',   de:labelB, en:labelB, color:'#C4622D' },
+    ];
+
+    // Perspective cards
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, idx) => {
+        const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef  = partyDefs[idx] || partyDefs[0];
+        const card  = createResultCard({ ...pDef }, rolle || pDef.de);
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    } else {
+      const text = data.answer || data.text || '';
+      const card = createResultCard(partyDefs[0], currentLang === 'de' ? 'Klärungsanalyse' : 'Clarification');
+      card.querySelector('.streaming-text').textContent = text;
+      resultsDiv.appendChild(card);
+    }
+
+    // Was trennt — friction
+    const fr = data.friction || {};
+    const trenntItems = [...(fr.echte_widersprueche || []), ...(fr.uebersetzungsfehler || [])].filter(Boolean);
+    if (trenntItems.length > 0 || fr.uebersehenes) {
+      const frCard = document.createElement('div');
+      frCard.className = 'result-card';
+      const trenntList = trenntItems.map(t => `<li>${escapeHTML(t)}</li>`).join('');
+      const uebersehenes = fr.uebersehenes ? `<p style="margin-top:10px;font-size:13px;color:var(--muted)">${escapeHTML(fr.uebersehenes)}</p>` : '';
+      frCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+          </div>
+          <div class="result-card-title">WAS TRENNT</div>
+          <div class="result-card-badge">spannung</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body">
+          <ul class="friction-list">${trenntList}</ul>
+          ${uebersehenes}
+        </div>
+      `;
+      resultsDiv.appendChild(frCard);
+    }
+
+    // Was verbindet — integration
+    const intg = data.integration || {};
+    if (intg.einfach_gesagt) {
+      const synthCard = document.createElement('div');
+      synthCard.className = 'result-card';
+      synthCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(74,127,168,0.15);color:#4A7FA8">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+          </div>
+          <div class="result-card-title">GEMEiNSAMER BODEN</div>
+          <div class="result-card-badge">klärung</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.einfach_gesagt)}</p></div>
+      `;
+      setTimeout(() => synthCard.classList.add('open'), 100);
+      resultsDiv.appendChild(synthCard);
+    }
+
+    // KiNTEGRiTY badge
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> Keine Schuldzuweisung</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Beide Seiten gehört</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> Vertraulich</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({ question: 'Klärung: ' + topic, perspectives: ['party-a','party-b'], lang: currentLang, time: Date.now() });
+
+  } catch(err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang==='de'?'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.':'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  document.getElementById('klaerungSendBtn').disabled = false;
 }
 </script>
 <script src="/notizbuch.js"></script>
