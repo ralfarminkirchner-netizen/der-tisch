@@ -19,6 +19,7 @@ function SectionHeader({ phase, title, subtitle, color }) {
 }
 
 function FieldBlock({ label, value, color }) {
+  if (!value) return null;
   return (
     <View style={styles.fieldBlock}>
       <Text style={[styles.fieldLabel, { color: color || colors.textMuted }]}>{label}</Text>
@@ -178,7 +179,7 @@ export default function ResultScreen({ route, navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>← Neue Frage</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Der Tisch</Text>
+        <Text style={styles.headerTitle}>FAMiLiEN TiSCH</Text>
         <View style={{ width: 80 }} />
       </View>
 
@@ -229,7 +230,7 @@ export default function ResultScreen({ route, navigation }) {
           onPress={() => navigation.goBack()}
           activeOpacity={0.8}
         >
-          <Text style={styles.newQuestionText}>Neue Frage auf den Tisch legen</Text>
+          <Text style={styles.newQuestionText}>Neue Frage an den TiSCH</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

@@ -27,6 +27,11 @@ export const colors = {
   blue:      "#5a8fb8",
   blueDim:   "#3d6480",
   blueBg:    "#0a1118",
+
+  // FAMiLiEN TiSCH
+  familie:    "#C4622D",
+  familieDim: "#8a3d1e",
+  familieBg:  "#140a06",
 };
 
 export const typography = {
@@ -64,10 +69,22 @@ export const radius = {
   full: 999,
 };
 
-// Agent role colors
+// Agent role colors (generic Der Tisch)
 export const agentColors = {
   "Systemisch":         { accent: "#6b9e6e", bg: "#0a120a" },
   "Tiefenpsychologisch":{ accent: "#9e7b6e", bg: "#120e0a" },
   "Empirisch-Rational": { accent: "#6e8e9e", bg: "#0a0f12" },
   "Philosophisch":      { accent: "#9e9a6e", bg: "#12110a" },
+
+  // FAMiLiEN TiSCH perspectives
+  "Systemische Therapeutin":    { accent: "#C4622D", bg: "#140a06" },
+  "Bindungsexpertin":           { accent: "#D4845A", bg: "#160b07" },
+  "Erziehungsberaterin":        { accent: "#B85C2A", bg: "#130903" },
+  "Paartherapeutin":            { accent: "#A84E20", bg: "#120803" },
+  "Traumaexpertin":             { accent: "#C87050", bg: "#150905" },
+  "Kind-Perspektive":           { accent: "#E0956A", bg: "#170c06" },
+  "Großeltern & Generationen":  { accent: "#9A5A3A", bg: "#110706" },
+  "Konfliktmediation":          { accent: "#CC7040", bg: "#150a05" },
+  "Kommunikationsexpertin":     { accent: "#B86840", bg: "#140905" },
+  "Identität & Rolle":          { accent: "#D07850", bg: "#160b06" },
 };
