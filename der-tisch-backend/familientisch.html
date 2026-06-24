@@ -189,6 +189,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* ERROR */
 .error-card{background:rgba(196,98,45,0.08);border:1px solid rgba(196,98,45,0.3);border-radius:10px;padding:16px;color:var(--accent);font-size:14px;margin-top:16px}
 
+/* PERSPEKTIVEN DETAIL (evidenz, blinder fleck) */
+.persp-detail{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.persp-detail-label{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.persp-detail-text{color:var(--muted);font-size:13px;line-height:1.6;margin:0}
+
+/* NÄCHSTE SCHRITTE & KERNERKENNTNISSE */
+.action-list,.key-points{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.action-list li,.key-points li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:18px;position:relative}
+.action-list li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+.key-points li::before{content:'·';position:absolute;left:0;color:var(--accent);font-size:18px;line-height:1.1}
+
 /* CARD NOTIZBUCH BUTTON */
 .card-nb-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:4px;display:flex;align-items:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
 .result-card-header:hover .card-nb-btn{opacity:1}
@@ -1218,7 +1229,20 @@ function renderResults(data, perspectives, container) {
       (p.de || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
-    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    const cardBody = card.querySelector('.result-card-body');
+    cardBody.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    if (r.evidenz) {
+      const ev = document.createElement('div');
+      ev.className = 'persp-detail';
+      ev.innerHTML = `<div class="persp-detail-label">Evidenz</div><p class="persp-detail-text">${escapeHTML(r.evidenz)}</p>`;
+      cardBody.appendChild(ev);
+    }
+    if (r.blinder_fleck) {
+      const bf = document.createElement('div');
+      bf.className = 'persp-detail';
+      bf.innerHTML = `<div class="persp-detail-label">Blinder Fleck</div><p class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</p>`;
+      cardBody.appendChild(bf);
+    }
     container.appendChild(card);
   });
   const intg = data.integration || {};
@@ -1270,6 +1294,73 @@ function renderResults(data, perspectives, container) {
       <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.kopfmensch)}</p></div>
     `;
     container.appendChild(kopfCard);
+  }
+  if (intg.maennlich) {
+    const maennlichCard = document.createElement('div');
+    maennlichCard.className = 'result-card';
+    maennlichCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(74,127,168,0.12);color:#4A7FA8">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><line x1="12" y1="13" x2="12" y2="19"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+        </div>
+        <div class="result-card-title">Männliche Energie</div>
+        <div class="result-card-badge">struktur</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.maennlich)}</p></div>
+    `;
+    container.appendChild(maennlichCard);
+  }
+  if (intg.weiblich) {
+    const weiblichCard = document.createElement('div');
+    weiblichCard.className = 'result-card';
+    weiblichCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="5"/><line x1="10" y1="13" x2="10" y2="19"/><line x1="7" y1="16" x2="13" y2="16"/></svg>
+        </div>
+        <div class="result-card-title">Weibliche Energie</div>
+        <div class="result-card-badge">fürsorge</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.weiblich)}</p></div>
+    `;
+    container.appendChild(weiblichCard);
+  }
+  if (intg.praktische_optionen && intg.praktische_optionen.length > 0) {
+    const aktCard = document.createElement('div');
+    aktCard.className = 'result-card';
+    const optItems = intg.praktische_optionen.map(o => `<li>${escapeHTML(o)}</li>`).join('');
+    aktCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(143,188,138,0.15);color:#8FBC8A">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div class="result-card-title">Nächste Schritte</div>
+        <div class="result-card-badge">optionen</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><ul class="action-list">${optItems}</ul></div>
+    `;
+    setTimeout(() => aktCard.classList.add('open'), 120);
+    container.appendChild(aktCard);
+  }
+  if (intg.kurzfassung && intg.kurzfassung.length > 0) {
+    const kfCard = document.createElement('div');
+    kfCard.className = 'result-card';
+    const kfItems = intg.kurzfassung.map(k => `<li>${escapeHTML(k)}</li>`).join('');
+    kfCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(154,138,122,0.15);color:#9A8A7A">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="10" x2="16" y2="10"/><line x1="4" y1="14" x2="10" y2="14"/></svg>
+        </div>
+        <div class="result-card-title">Kernerkenntnisse</div>
+        <div class="result-card-badge">kurzfassung</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><ul class="key-points">${kfItems}</ul></div>
+    `;
+    container.appendChild(kfCard);
   }
 }
 
@@ -1987,7 +2078,20 @@ async function analyseAufstellung() {
         const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
         const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
-        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        const aufBody = card.querySelector('.result-card-body');
+        aufBody.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        if (r.evidenz) {
+          const ev = document.createElement('div');
+          ev.className = 'persp-detail';
+          ev.innerHTML = `<div class="persp-detail-label">Evidenz</div><p class="persp-detail-text">${escapeHTML(r.evidenz)}</p>`;
+          aufBody.appendChild(ev);
+        }
+        if (r.blinder_fleck) {
+          const bf = document.createElement('div');
+          bf.className = 'persp-detail';
+          bf.innerHTML = `<div class="persp-detail-label">Blinder Fleck</div><p class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</p>`;
+          aufBody.appendChild(bf);
+        }
         resultsDiv.appendChild(card);
       });
     } else {
@@ -2012,6 +2116,24 @@ async function analyseAufstellung() {
       `;
       setTimeout(() => synthCard.classList.add('open'), 100);
       resultsDiv.appendChild(synthCard);
+    }
+    if (data.integration && data.integration.praktische_optionen && data.integration.praktische_optionen.length > 0) {
+      const aktCard = document.createElement('div');
+      aktCard.className = 'result-card';
+      const optItems = data.integration.praktische_optionen.map(o => `<li>${escapeHTML(o)}</li>`).join('');
+      aktCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(143,188,138,0.15);color:#8FBC8A">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="result-card-title">Nächste Schritte</div>
+          <div class="result-card-badge">optionen</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><ul class="action-list">${optItems}</ul></div>
+      `;
+      setTimeout(() => aktCard.classList.add('open'), 120);
+      resultsDiv.appendChild(aktCard);
     }
     const kiDiv = document.createElement('div');
     kiDiv.className = 'kintegrity';
@@ -2153,6 +2275,41 @@ async function sendKlaerung() {
       `;
       setTimeout(() => synthCard.classList.add('open'), 100);
       resultsDiv.appendChild(synthCard);
+    }
+    if (intg.praktische_optionen && intg.praktische_optionen.length > 0) {
+      const aktCard = document.createElement('div');
+      aktCard.className = 'result-card';
+      const optItems = intg.praktische_optionen.map(o => `<li>${escapeHTML(o)}</li>`).join('');
+      aktCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(143,188,138,0.15);color:#8FBC8A">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="result-card-title">Nächste Schritte</div>
+          <div class="result-card-badge">optionen</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><ul class="action-list">${optItems}</ul></div>
+      `;
+      setTimeout(() => aktCard.classList.add('open'), 140);
+      resultsDiv.appendChild(aktCard);
+    }
+    if (intg.kurzfassung && intg.kurzfassung.length > 0) {
+      const kfCard = document.createElement('div');
+      kfCard.className = 'result-card';
+      const kfItems = intg.kurzfassung.map(k => `<li>${escapeHTML(k)}</li>`).join('');
+      kfCard.innerHTML = `
+        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+          <div class="result-card-icon" style="background:rgba(154,138,122,0.15);color:#9A8A7A">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="10" x2="16" y2="10"/><line x1="4" y1="14" x2="10" y2="14"/></svg>
+          </div>
+          <div class="result-card-title">Das Wesentliche</div>
+          <div class="result-card-badge">kurzfassung</div>
+          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+        </div>
+        <div class="result-card-body"><ul class="key-points">${kfItems}</ul></div>
+      `;
+      resultsDiv.appendChild(kfCard);
     }
 
     // KiNTEGRiTY badge
