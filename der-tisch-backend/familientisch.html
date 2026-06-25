@@ -749,7 +749,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <div class="brief-tone-row" id="briefToneRow">
         <button class="brief-chip active" data-btone="einfuehlsam" onclick="setBriefChip(this,'tone')">Einfühlsam</button>
         <button class="brief-chip" data-btone="direkt" onclick="setBriefChip(this,'tone')">Klar &amp; Direkt</button>
-        <button class="brief-chip" data-btone="versoehнlich" onclick="setBriefChip(this,'tone')">Versöhnlich</button>
+        <button class="brief-chip" data-btone="versoehnlich" onclick="setBriefChip(this,'tone')">Versöhnlich</button>
         <button class="brief-chip" data-btone="mutig" onclick="setBriefChip(this,'tone')">Mutig &amp; Ehrlich</button>
       </div>
     </div>
@@ -1204,11 +1204,11 @@ function renderResults(data, perspectives, container) {
     const card = createResultCard(pDef, rolle);
     const body = card.querySelector('.result-card-body');
 
-    // Kernanalyse
-    const p = document.createElement('p');
-    p.className = 'streaming-text';
-    p.textContent = r.kernanalyse || '';
-    body.appendChild(p);
+    // Kernanalyse — update existing .streaming-text, don't create a duplicate
+    const streamingText = card.querySelector('.streaming-text');
+    if (streamingText) {
+      streamingText.textContent = r.kernanalyse || '';
+    }
 
     // Evidenz (aufklappbar)
     if (r.evidenz) {
@@ -1448,6 +1448,7 @@ function saveProfil() {
     localStorage.removeItem(PROFIL_KEY);
     familienProfil = null;
     updateProfilBtn();
+    updateProfilPreview();
     showToast('Profil gelöscht.');
     return;
   }
@@ -1518,7 +1519,7 @@ async function sendBrief() {
   const TONE_MAP = {
     einfuehlsam: 'einfühlsam und verbindend — warmherzig, ohne Vorwürfe, Brücken bauend',
     direkt: 'klar und direkt — unmissverständlich, konkret, mit klaren Grenzen',
-    'versoehнlich': 'versöhnlich — die gemeinsame Geschichte erkennend, zur Heilung einladend',
+    versoehnlich: 'versöhnlich — die gemeinsame Geschichte erkennend, zur Heilung einladend',
     mutig: 'mutig und ehrlich — sagt, was gesagt werden muss, mit Respekt aber ohne Umschweife',
   };
 
