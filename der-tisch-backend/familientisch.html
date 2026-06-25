@@ -192,23 +192,119 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* PROFIL PANEL */
+.profil-panel{position:fixed;top:0;right:0;width:340px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:200;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:20px}
+.profil-panel.open{transform:translateX(0)}
+.profil-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.profil-panel-title{font-size:13px;letter-spacing:.1em;color:var(--text);text-transform:uppercase}
+.profil-close{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px}
+.profil-field{margin-bottom:16px}
+.profil-field-label{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.profil-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border-color .2s;line-height:1.6}
+.profil-input:focus{border-color:var(--accent)}
+.profil-save-btn{width:100%;padding:10px;background:var(--accent);border:none;color:#fff;border-radius:8px;font-family:var(--font);font-size:14px;cursor:pointer;margin-top:8px;transition:opacity .2s;letter-spacing:.04em}
+.profil-save-btn:hover{opacity:.85}
+.profil-preview{font-size:12px;color:var(--muted);padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-top:12px;white-space:pre-wrap;line-height:1.5;display:none}
+.nav-btn.profil-active{border-color:var(--accent)!important;color:var(--accent)!important;background:var(--accent-dim)!important}
+
+/* RESULT CARD ENHANCEMENTS */
+.persp-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.persp-detail-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;opacity:.75}
+.persp-detail-text{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* FRICTION CARD */
+.reibung-section{margin-bottom:10px}
+.reibung-section-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.friction-list{list-style:none;padding:0}
+.friction-list li{font-size:13px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.friction-list li:last-child{border-bottom:none}
+.friction-list li::before{content:'→ ';color:var(--accent)}
+
+/* ACTION LIST */
+.action-list{list-style:none;padding:0;margin-top:10px}
+.action-list li{font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.5;display:flex;gap:8px;align-items:flex-start}
+.action-list li::before{content:'→';color:var(--accent);flex-shrink:0;margin-top:2px}
+.action-list li:last-child{border-bottom:none}
+
+/* KEY POINTS */
+.key-points{list-style:none;padding:0;margin-top:10px}
+.key-points li{font-size:13px;color:var(--muted);padding:5px 0;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.key-points li::before{content:'·';color:var(--accent);font-size:20px;flex-shrink:0;line-height:1.0}
+
+/* BRIEF MODE */
+.brief-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.brief-field{margin-bottom:20px}
+.brief-field-label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.brief-recipient-row,.brief-tone-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.brief-chip{padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:12px;cursor:pointer;font-family:var(--font);transition:all .2s}
+.brief-chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.brief-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}
+.brief-card-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.brief-card-text{font-size:14px;color:var(--muted);line-height:1.85;white-space:pre-wrap}
+.brief-copy-btn{display:flex;align-items:center;gap:6px;margin-top:14px;padding:7px 14px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--font);transition:all .2s}
+.brief-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.brief-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;letter-spacing:.04em}
+
+/* KLÄRUNGSGESPRÄCH MODE */
+.klaerung-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.klaerung-topic-wrap{position:relative;margin-bottom:20px}
+.klaerung-topic-wrap textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:70px;outline:none;transition:border-color .2s;line-height:1.6}
+.klaerung-topic-wrap textarea::placeholder{color:var(--muted)}
+.klaerung-topic-wrap textarea:focus{border-color:var(--accent)}
+.klaerung-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.klaerung-party-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.klaerung-party{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.klaerung-party-label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.klaerung-party-label.a{color:#4A7FA8}
+.klaerung-party-label.b{color:var(--accent)}
+.klaerung-name-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;margin-bottom:8px;transition:border-color .2s}
+.klaerung-name-input:focus{border-color:var(--accent)}
+.klaerung-pos-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6}
+.klaerung-pos-input:focus{border-color:var(--accent)}
+.klaerung-send-row{display:flex;justify-content:center}
+.klaerung-send-btn{display:flex;align-items:center;gap:8px;padding:12px 28px;background:var(--accent);border:none;color:#fff;border-radius:9px;font-family:var(--font);font-size:14px;cursor:pointer;letter-spacing:.04em;transition:opacity .2s}
+.klaerung-send-btn:hover{opacity:.85}
+.klaerung-send-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:640px){.klaerung-party-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
 <body>
 
-<!-- HISTORY OVERLAY -->
-<div class="overlay" id="overlay" onclick="closeHistory()"></div>
+<!-- OVERLAY (History + Profil) -->
+<div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
 
 <!-- HISTORY PANEL -->
 <div class="history-panel" id="historyPanel">
   <div class="history-panel-header">
     <span class="history-panel-title">Verlauf</span>
-    <button class="history-close" onclick="closeHistory()">
+    <button class="history-close" onclick="closeAllPanels()">
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
     </button>
   </div>
   <div id="historyList"></div>
+</div>
+
+<!-- FAMILIEN-PROFIL PANEL -->
+<div class="profil-panel" id="profilPanel">
+  <div class="profil-panel-header">
+    <span class="profil-panel-title">FAMiLiEN PROFiL</span>
+    <button class="profil-close" onclick="closeAllPanels()">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">Geben Sie einmalig Ihren Familienkontext ein — er wird automatisch in jede Anfrage eingebaut.</p>
+  <div class="profil-field">
+    <div class="profil-field-label">Familienmitglieder</div>
+    <textarea class="profil-input" id="profilMitglieder" rows="3" placeholder="z.B. Ich (Mutter, 42), Partner Klaus (45), Tochter Lena (16), Sohn Max (11)"></textarea>
+  </div>
+  <div class="profil-field">
+    <div class="profil-field-label">Aktuelle Situation & Kontext</div>
+    <textarea class="profil-input" id="profilKontext" rows="4" placeholder="z.B. Wir leben seit 2 Jahren nach Trennung co-elterlich. Lena hat ADHS, Max ist sehr sensibel."></textarea>
+  </div>
+  <button class="profil-save-btn" onclick="saveProfil()">Profil speichern</button>
+  <div class="profil-preview" id="profilPreview"></div>
 </div>
 
 <!-- TOAST -->
@@ -241,6 +337,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="nav-btn" onclick="openHistory()">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 13"/></svg>
       Verlauf
+    </button>
+    <button class="nav-btn" id="profilBtn" onclick="openProfil()">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"/><path d="M3 18c0-4 3-7 7-7s7 3 7 7"/></svg>
+      Profil
     </button>
   </div>
 </nav>
@@ -372,14 +472,22 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   <div class="hero-sub">Multiperspektivische KI-Analyse für das Familienleben</div>
 
   <!-- Mode Tabs -->
-  <div class="mode-tabs">
+  <div class="mode-tabs" style="max-width:700px">
     <button class="mode-tab active" id="tab-perspektiven" onclick="setMode('perspektiven')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
       Perspektiven
     </button>
     <button class="mode-tab" id="tab-aufstellung" onclick="setMode('aufstellung')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="10" rx="1"/><rect x="7" y="4" width="6" height="14" rx="1"/><rect x="12" y="10" width="6" height="8" rx="1"/></svg>
-      FAMiLiENAUFSTELLUNG
+      Aufstellung
+    </button>
+    <button class="mode-tab" id="tab-klaerung" onclick="setMode('klaerung')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Klärung
+    </button>
+    <button class="mode-tab" id="tab-brief" onclick="setMode('brief')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+      FAMiLiEN-BRIEF
     </button>
   </div>
 </section>
@@ -561,6 +669,127 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== KLÄRUNGSGESPRÄCH MODE ==================== -->
+<div class="mode-section" id="mode-klaerung">
+  <div class="klaerung-wrap">
+
+    <div class="aufstellung-info" style="margin-bottom:24px">
+      <strong>KLÄRUNGSGESPRÄCH</strong> — Zwei Standpunkte, eine Analyse. Beschreiben Sie das Thema und die Position beider Parteien. Der TiSCH zeigt, was trennt und was verbindet — ohne Schuldzuweisung.
+    </div>
+
+    <!-- Topic -->
+    <div style="margin-bottom:8px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Gesprächsthema</div>
+    <div class="klaerung-topic-wrap">
+      <textarea id="klaerungTopic" placeholder="z.B. Wie viel Bildschirmzeit darf unser Kind haben?" rows="2"></textarea>
+    </div>
+
+    <!-- Chips -->
+    <div class="klaerung-chips">
+      <button class="chip" onclick="useKlaerungChip(this)">Bildschirmzeit</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Schulleistungen</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Erziehungsstil</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Haushalt & Aufgaben</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Besuchszeiten</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Geld & Unterhalt</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Freizeitgestaltung</button>
+      <button class="chip" onclick="useKlaerungChip(this)">Schlafzeiten</button>
+    </div>
+
+    <!-- Two party grid -->
+    <div class="klaerung-party-grid">
+      <div class="klaerung-party">
+        <div class="klaerung-party-label a">Partei A — Standpunkt</div>
+        <input class="klaerung-name-input" id="partyAName" type="text" placeholder="Name (optional)">
+        <textarea class="klaerung-pos-input" id="partyAPosition" placeholder="Was ist Ihre Position zu diesem Thema?" rows="4"></textarea>
+      </div>
+      <div class="klaerung-party">
+        <div class="klaerung-party-label b">Partei B — Standpunkt</div>
+        <input class="klaerung-name-input" id="partyBName" type="text" placeholder="Name (optional)">
+        <textarea class="klaerung-pos-input" id="partyBPosition" placeholder="Was ist die andere Position?" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="klaerung-send-row">
+      <button class="klaerung-send-btn" id="klaerungSendBtn" onclick="sendKlaerung()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Klärung starten
+      </button>
+    </div>
+
+    <div id="klaerungResults" style="margin-top:28px"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMILIEN-BRIEF MODE ==================== -->
+<div class="mode-section" id="mode-brief">
+  <div class="brief-wrap">
+
+    <div class="aufstellung-info" style="margin-bottom:28px">
+      <strong>FAMiLiEN-BRIEF</strong> — Manchmal fehlen die richtigen Worte. Beschreiben Sie, was Sie sagen möchten — der TiSCH entwirft drei Briefe in unterschiedlichen Stilen.
+    </div>
+
+    <!-- Recipient -->
+    <div class="brief-field">
+      <div class="brief-field-label">An wen schreiben Sie?</div>
+      <div class="brief-recipient-row" id="briefRecipientRow">
+        <button class="brief-chip active" data-recipient="Mutter" onclick="setBriefChip(this,'recipient')">Mutter</button>
+        <button class="brief-chip" data-recipient="Vater" onclick="setBriefChip(this,'recipient')">Vater</button>
+        <button class="brief-chip" data-recipient="Partner*in" onclick="setBriefChip(this,'recipient')">Partner*in</button>
+        <button class="brief-chip" data-recipient="Kind" onclick="setBriefChip(this,'recipient')">Kind</button>
+        <button class="brief-chip" data-recipient="Geschwister" onclick="setBriefChip(this,'recipient')">Geschwister</button>
+        <button class="brief-chip" data-recipient="Großeltern" onclick="setBriefChip(this,'recipient')">Großeltern</button>
+        <button class="brief-chip" data-recipient="Andere Person" onclick="setBriefChip(this,'recipient')">Andere</button>
+      </div>
+    </div>
+
+    <!-- Tone -->
+    <div class="brief-field">
+      <div class="brief-field-label">Welchen Ton wünschen Sie?</div>
+      <div class="brief-tone-row" id="briefToneRow">
+        <button class="brief-chip active" data-btone="einfuehlsam" onclick="setBriefChip(this,'tone')">Einfühlsam</button>
+        <button class="brief-chip" data-btone="direkt" onclick="setBriefChip(this,'tone')">Klar &amp; Direkt</button>
+        <button class="brief-chip" data-btone="versoehнlich" onclick="setBriefChip(this,'tone')">Versöhnlich</button>
+        <button class="brief-chip" data-btone="mutig" onclick="setBriefChip(this,'tone')">Mutig &amp; Ehrlich</button>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div class="brief-field">
+      <div class="brief-field-label">Was möchten Sie sagen?</div>
+      <div class="input-wrap">
+        <textarea id="briefInput" placeholder="Beschreiben Sie frei, was Sie der anderen Person sagen möchten — auch unfertige Gedanken sind in Ordnung..." rows="5" onkeydown="if(event.ctrlKey&&event.key==='Enter')sendBrief()"></textarea>
+        <button class="send-btn" id="briefSendBtn" onclick="sendBrief()">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="brief-hint">Ctrl+Enter zum Absenden</div>
+    </div>
+
+    <div id="briefResults" style="margin-top:28px"></div>
+
+    <!-- kiNTEGRiTY -->
+    <div class="kintegrity" style="margin-top:24px">
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+          Formulierungshilfe
+        </div>
+        <div class="kintegrity-item">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+          Kein Therapie-Ersatz
+        </div>
+        <div class="kintegrity-item">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg>
+          Vertraulich
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -585,6 +814,8 @@ const PERSPEKTIVEN = [
   { id: 'konflikt',       icon: 'zap',      de: 'Konfliktmediation',             en: 'Conflict Mediation',         color: '#CC7040', filters: ['all','krise'] },
   { id: 'kommunikation',  icon: 'network',  de: 'Kommunikationsexpertin',        en: 'Communication Expert',       color: '#B86840', filters: ['all','beziehung'] },
   { id: 'identitaet',     icon: 'mirror',   de: 'Identität & Rolle',             en: 'Identity & Role',            color: '#D07850', filters: ['all','erziehung','beziehung'] },
+  { id: 'neurodivers',    icon: 'sprout',   de: 'Neurodiversität',               en: 'Neurodiversity',             color: '#8FBC8A', filters: ['all','erziehung','krise'] },
+  { id: 'werte',          icon: 'scroll',   de: 'Werte & Familienrituale',       en: 'Values & Family Rituals',    color: '#7A8C5A', filters: ['all','generationen'] },
 ];
 
 const CHIPS_DATA = {
@@ -704,10 +935,10 @@ const SVG_ICONS = {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-  renderPerspGrid();
   loadHistory();
-  // Select all by default
-  PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
+  loadProfil();
+  // Select default perspectives (first 6)
+  PERSPEKTIVEN.slice(0, 6).forEach(p => activePerspectives.add(p.id));
   renderPerspGrid();
   updateChips();
 
@@ -854,18 +1085,34 @@ async function sendQuestion() {
 
   resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+  // Familienkontext aus Profil einbauen
+  const profilKontext = getProfilContext();
+  const questionWithKontext = profilKontext
+    ? `[Familienkontext]\n${profilKontext}\n\n[Frage]\n${question}`
+    : question;
+
   try {
+    const toneVal = currentTone === 'ressourcen' ? 'achtsam' : currentTone;
+    const stilVal = currentTone === 'kindgerecht' ? 'kindgerecht' : 'therapeutisch';
     const payload = {
-      question,
-      perspectives: selectedPersp.map(p => ({ id: p.id, role: currentLang === 'de' ? p.de : p.en })),
-      stil: 'therapeutisch',
-      register: 'familiensystem',
-      tone: currentTone,
+      question: questionWithKontext,
+      custom_perspectives: selectedPersp.map(p => {
+        const name = currentLang === 'de' ? p.de : p.en;
+        return {
+          name,
+          position: currentLang === 'de'
+            ? `Du bist ${name}. Analysiere die beschriebene Familiensituation aus deiner spezifischen therapeutischen Perspektive. Zeige konkrete Dynamiken, Muster und mögliche nächste Schritte — ohne allgemeine Einleitungen.`
+            : `You are ${name}. Analyse the described family situation from your specific therapeutic perspective. Show concrete dynamics, patterns and possible next steps — without generic introductions.`
+        };
+      }),
+      methods: [],
+      stil: stilVal,
+      tone: toneVal !== 'kindgerecht' ? toneVal : '',
       lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      source_app: 'FAMiLiEN-TiSCH'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -937,7 +1184,6 @@ async function handleStream(resp, perspectives, container) {
 }
 
 function renderResults(data, perspectives, container) {
-  // API returns TableResponse: { perspectives: [{rolle, kernanalyse, ...}], friction, integration }
   const apiPerspectives = data.perspectives || [];
   if (apiPerspectives.length === 0) {
     perspectives.forEach(p => {
@@ -947,20 +1193,130 @@ function renderResults(data, perspectives, container) {
     });
     return;
   }
+
+  // --- Perspektiv-Karten ---
   apiPerspectives.forEach((r) => {
-    const rolle = r.rolle || '';
+    const rolle = (r.rolle || '').replace(/^\[(custom|method)\]\s*/i, '');
     const pDef = perspectives.find(p =>
       p.id === rolle.toLowerCase() ||
       (p.de || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
-    card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    const body = card.querySelector('.result-card-body');
+
+    // Kernanalyse
+    const p = document.createElement('p');
+    p.className = 'streaming-text';
+    p.textContent = r.kernanalyse || '';
+    body.appendChild(p);
+
+    // Evidenz (aufklappbar)
+    if (r.evidenz) {
+      const evDiv = document.createElement('div');
+      evDiv.className = 'persp-detail';
+      evDiv.innerHTML = `<div class="persp-detail-label">Fachliche Grundlage</div><p class="persp-detail-text">${escapeHTML(r.evidenz)}</p>`;
+      body.appendChild(evDiv);
+    }
+
+    // Blinder Fleck (aufklappbar)
+    if (r.blinder_fleck) {
+      const bfDiv = document.createElement('div');
+      bfDiv.className = 'persp-detail';
+      bfDiv.innerHTML = `<div class="persp-detail-label">Blinder Fleck</div><p class="persp-detail-text">${escapeHTML(r.blinder_fleck)}</p>`;
+      body.appendChild(bfDiv);
+    }
+
     container.appendChild(card);
   });
-  // Integrations-Karte
-  if (data.integration && data.integration.einfach_gesagt) {
+
+  // --- REiBUNG ---
+  const fr = data.friction || {};
+  const frItems = [...(fr.uebersetzungsfehler || []), ...(fr.echte_widersprueche || [])].filter(Boolean);
+  if (frItems.length > 0 || fr.uebersehenes) {
+    const frCard = document.createElement('div');
+    frCard.className = 'result-card';
+    const frListHtml = frItems.map(t => `<li>${escapeHTML(t)}</li>`).join('');
+    const uebersehenes = fr.uebersehenes
+      ? `<div class="reibung-section" style="margin-top:10px"><div class="reibung-section-label">Gemeinsam Übersehen</div><p style="font-size:13px;color:var(--muted);line-height:1.6">${escapeHTML(fr.uebersehenes)}</p></div>`
+      : '';
+    frCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(196,98,45,0.10);color:#C4622D">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+        </div>
+        <div class="result-card-title">REiBUNG</div>
+        <div class="result-card-badge">spannung</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body">
+        <ul class="friction-list">${frListHtml}</ul>
+        ${uebersehenes}
+      </div>
+    `;
+    container.appendChild(frCard);
+  }
+
+  // --- kiNTEGRATiON ---
+  const intg = data.integration || {};
+  if (intg.einfach_gesagt) {
     const synthCard = document.createElement('div');
     synthCard.className = 'result-card';
+    let synthBody = `<p class="streaming-text" style="font-size:15px;font-weight:500;color:var(--text)">${escapeHTML(intg.einfach_gesagt)}</p>`;
+
+    // Herzmensch / Kopfmensch nebeneinander
+    if (intg.herzmensch || intg.kopfmensch) {
+      synthBody += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">`;
+      if (intg.herzmensch) {
+        synthBody += `<div style="background:rgba(212,132,90,0.08);border:1px solid rgba(212,132,90,0.2);border-radius:8px;padding:12px">
+          <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#D4845A;margin-bottom:6px">Herz</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6">${escapeHTML(intg.herzmensch)}</p>
+        </div>`;
+      }
+      if (intg.kopfmensch) {
+        synthBody += `<div style="background:rgba(74,127,168,0.08);border:1px solid rgba(74,127,168,0.2);border-radius:8px;padding:12px">
+          <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#4A7FA8;margin-bottom:6px">Kopf</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6">${escapeHTML(intg.kopfmensch)}</p>
+        </div>`;
+      }
+      synthBody += `</div>`;
+    }
+
+    // Männlich / Weiblich Energie
+    if (intg.maennlich || intg.weiblich) {
+      synthBody += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">`;
+      if (intg.maennlich) {
+        synthBody += `<div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Handlung & Klarheit</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.5">${escapeHTML(intg.maennlich)}</p>
+        </div>`;
+      }
+      if (intg.weiblich) {
+        synthBody += `<div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Fürsorge & Verbindung</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.5">${escapeHTML(intg.weiblich)}</p>
+        </div>`;
+      }
+      synthBody += `</div>`;
+    }
+
+    // Vorläufiges Fazit
+    if (intg.vorlaeufiges_fazit) {
+      synthBody += `<p style="font-size:13px;color:var(--muted);font-style:italic;border-left:2px solid var(--accent);padding-left:12px;margin-top:14px;line-height:1.6">${escapeHTML(intg.vorlaeufiges_fazit)}</p>`;
+    }
+
+    // Kurzfassung als Bullet-Liste
+    if (Array.isArray(intg.kurzfassung) && intg.kurzfassung.length > 0) {
+      synthBody += `<ul class="key-points" style="margin-top:14px">` +
+        intg.kurzfassung.map(k => `<li>${escapeHTML(k)}</li>`).join('') + `</ul>`;
+    }
+
+    // Nächste Schritte
+    if (Array.isArray(intg.praktische_optionen) && intg.praktische_optionen.length > 0) {
+      synthBody += `<div style="margin-top:16px"><div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Nächste Schritte</div>`;
+      synthBody += `<ul class="action-list">` +
+        intg.praktische_optionen.map(o => `<li>${escapeHTML(o)}</li>`).join('') + `</ul></div>`;
+    }
+
     synthCard.innerHTML = `
       <div class="result-card-header" onclick="toggleCard(this.parentElement)">
         <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
@@ -970,7 +1326,7 @@ function renderResults(data, perspectives, container) {
         <div class="result-card-badge">synthese</div>
         <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
       </div>
-      <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
+      <div class="result-card-body">${synthBody}</div>
     `;
     setTimeout(() => synthCard.classList.add('open'), 100);
     container.appendChild(synthCard);
@@ -1018,16 +1374,20 @@ function saveHistory(entry) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
 }
 
+function closeAllPanels() {
+  document.getElementById('historyPanel').classList.remove('open');
+  document.getElementById('profilPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
 function openHistory() {
+  closeAllPanels();
   document.getElementById('historyPanel').classList.add('open');
   document.getElementById('overlay').classList.add('active');
   renderHistoryList();
 }
 
-function closeHistory() {
-  document.getElementById('historyPanel').classList.remove('open');
-  document.getElementById('overlay').classList.remove('active');
-}
+function closeHistory() { closeAllPanels(); }
 
 function renderHistoryList() {
   const list = document.getElementById('historyList');
@@ -1061,6 +1421,172 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// FAMILIEN-PROFIL
+// ============================================================
+const PROFIL_KEY = 'familientisch_profil_v1';
+let familienProfil = null;
+
+function loadProfil() {
+  try {
+    familienProfil = JSON.parse(localStorage.getItem(PROFIL_KEY)) || null;
+  } catch { familienProfil = null; }
+  if (familienProfil) {
+    document.getElementById('profilMitglieder').value = familienProfil.mitglieder || '';
+    document.getElementById('profilKontext').value = familienProfil.kontext || '';
+    updateProfilBtn();
+    updateProfilPreview();
+  }
+}
+
+function saveProfil() {
+  const mitglieder = document.getElementById('profilMitglieder').value.trim();
+  const kontext = document.getElementById('profilKontext').value.trim();
+  if (!mitglieder && !kontext) {
+    localStorage.removeItem(PROFIL_KEY);
+    familienProfil = null;
+    updateProfilBtn();
+    showToast('Profil gelöscht.');
+    return;
+  }
+  familienProfil = { mitglieder, kontext };
+  localStorage.setItem(PROFIL_KEY, JSON.stringify(familienProfil));
+  updateProfilBtn();
+  updateProfilPreview();
+  showToast('Profil gespeichert — wird ab jetzt in jede Anfrage eingebaut.');
+  closeAllPanels();
+}
+
+function openProfil() {
+  closeAllPanels();
+  document.getElementById('profilPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+}
+
+function updateProfilBtn() {
+  const btn = document.getElementById('profilBtn');
+  if (familienProfil && (familienProfil.mitglieder || familienProfil.kontext)) {
+    btn.classList.add('profil-active');
+  } else {
+    btn.classList.remove('profil-active');
+  }
+}
+
+function updateProfilPreview() {
+  const prev = document.getElementById('profilPreview');
+  if (familienProfil && (familienProfil.mitglieder || familienProfil.kontext)) {
+    prev.style.display = 'block';
+    prev.textContent = getProfilContext();
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
+function getProfilContext() {
+  if (!familienProfil) return '';
+  const parts = [];
+  if (familienProfil.mitglieder) parts.push('Familienmitglieder: ' + familienProfil.mitglieder);
+  if (familienProfil.kontext) parts.push('Kontext: ' + familienProfil.kontext);
+  return parts.join('\n');
+}
+
+// ============================================================
+// FAMILIEN-BRIEF
+// ============================================================
+let briefRecipient = 'Mutter';
+let briefTone = 'einfuehlsam';
+
+function setBriefChip(el, type) {
+  const row = el.closest('.brief-recipient-row, .brief-tone-row');
+  row.querySelectorAll('.brief-chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  if (type === 'recipient') briefRecipient = el.dataset.recipient;
+  if (type === 'tone') briefTone = el.dataset.btone;
+}
+
+async function sendBrief() {
+  const input = document.getElementById('briefInput');
+  const content = input.value.trim();
+  if (!content) { showToast('Bitte beschreiben Sie zunächst, was Sie sagen möchten.'); return; }
+
+  const resultsDiv = document.getElementById('briefResults');
+  const sendBtn = document.getElementById('briefSendBtn');
+  sendBtn.disabled = true;
+
+  const TONE_MAP = {
+    einfuehlsam: 'einfühlsam und verbindend — warmherzig, ohne Vorwürfe, Brücken bauend',
+    direkt: 'klar und direkt — unmissverständlich, konkret, mit klaren Grenzen',
+    'versoehнlich': 'versöhnlich — die gemeinsame Geschichte erkennend, zur Heilung einladend',
+    mutig: 'mutig und ehrlich — sagt, was gesagt werden muss, mit Respekt aber ohne Umschweife',
+  };
+
+  const question = `Ich möchte an ${briefRecipient} schreiben. Hier ist, was ich sagen möchte:\n\n${content}\n\nBitte schreibe DREI vollständige Briefentwürfe im Stil: ${TONE_MAP[briefTone] || briefTone}. Gib jedem Brief eine klare Überschrift. Die Briefe sollen sich voneinander unterscheiden — in Ton, Struktur und Formulierung. Keine Einleitungen, keine Methodenerklärungen — direkt mit dem Brief anfangen.`;
+
+  const briefRollen = [
+    { name: 'Kommunikationsexpertin', label: currentLang === 'de' ? 'Einfühlsam & Verbindend' : 'Empathic & Connecting', color: '#B86840' },
+    { name: 'Konfliktmediation', label: currentLang === 'de' ? 'Klar & Direkt' : 'Clear & Direct', color: '#CC7040' },
+    { name: 'Systemische Therapeutin', label: currentLang === 'de' ? 'Systemisch & Reflektiert' : 'Systemic & Reflective', color: '#C4622D' },
+  ];
+
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Briefe werden verfasst...</span></div>`;
+
+  try {
+    const profilKontext = getProfilContext();
+    const questionWithKontext = profilKontext ? `[Familienkontext]\n${profilKontext}\n\n${question}` : question;
+
+    const payload = {
+      question: questionWithKontext,
+      custom_perspectives: briefRollen.map(r => ({
+        name: r.name,
+        position: `Du bist ${r.name}. Verfasse einen vollständigen Brief (keine Einleitungen, kein Kommentar) an ${briefRecipient} im Stil: ${TONE_MAP[briefTone] || briefTone}.`
+      })),
+      methods: [],
+      stil: 'therapeutisch',
+      tone: 'achtsam',
+      lang: currentLang,
+      source_app: 'FAMiLiEN-BRIEF'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+
+    resultsDiv.innerHTML = '';
+    const apiPerspectives = data.perspectives || [];
+    briefRollen.forEach((r, idx) => {
+      const pData = apiPerspectives[idx] || {};
+      const text = pData.kernanalyse || '';
+      const card = document.createElement('div');
+      card.className = 'brief-card';
+      card.innerHTML = `
+        <div class="brief-card-title" style="color:${r.color}">${r.label}</div>
+        <div class="brief-card-text">${escapeHTML(text)}</div>
+        <button class="brief-copy-btn" onclick="copyBrief(this)">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Kopieren
+        </button>
+      `;
+      resultsDiv.appendChild(card);
+    });
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch(err) {
+    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
+  }
+
+  sendBtn.disabled = false;
+}
+
+function copyBrief(btn) {
+  const text = btn.closest('.brief-card').querySelector('.brief-card-text').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Kopiert.'));
 }
 
 // ============================================================
@@ -1630,7 +2156,15 @@ async function analyseAufstellung() {
   });
   const relDescs = relationships.map(r => `${r.a.name} ↔ ${r.b.name}: ${r.type}`);
 
-  const question = `Familienaufstellung mit ${figures.length} Figuren:\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
+  const baseQuestion = `Familienaufstellung mit ${figures.length} Figuren:\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
+  const profilKontextAuf = getProfilContext();
+  const question = profilKontextAuf ? `[Familienkontext]\n${profilKontextAuf}\n\n[Aufstellung]\n${baseQuestion}` : baseQuestion;
+
+  const aufPerspDefs = [
+    { id: 'systemisch', icon: 'network', de: 'Systemische Therapeutin', en: 'Systemic Therapist', color: '#C4622D' },
+    { id: 'bindung',    icon: 'heart',   de: 'Bindungsexpertin',         en: 'Attachment Expert',  color: '#D4845A' },
+    { id: 'konflikt',   icon: 'zap',     de: 'Konfliktmediation',        en: 'Conflict Mediation', color: '#CC7040' }
+  ];
 
   const resultsDiv = document.getElementById('aufstellungResults');
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
@@ -1638,19 +2172,18 @@ async function analyseAufstellung() {
   try {
     const payload = {
       question,
-      perspectives: [
-        { id: 'systemisch', role: 'Systemische Therapeutin' },
-        { id: 'bindung', role: 'Bindungsexpertin' },
-        { id: 'konflikt', role: 'Konfliktmediation' }
-      ],
+      custom_perspectives: aufPerspDefs.map(p => ({
+        name: p.de,
+        position: `Du bist ${p.de}. Analysiere die Familienaufstellung aus deiner Fachperspektive.`
+      })),
+      methods: [],
       stil: 'therapeutisch',
-      register: 'familienaufstellung',
-      tone: currentTone,
+      tone: currentTone === 'ressourcen' ? 'achtsam' : currentTone,
       lang: currentLang,
-      app: 'FAMiLiEN TiSCH'
+      source_app: 'FAMiLiEN-AUFSTELLuNG'
     };
 
-    const resp = await fetch(`${API_BASE}/api/ask`, {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1660,43 +2193,8 @@ async function analyseAufstellung() {
     const data = await resp.json();
 
     resultsDiv.innerHTML = '';
-    const aufPerspDefs = [
-      { id: 'systemisch', icon: 'network', de: 'Systemische Therapeutin', en: 'Systemic Therapist', color: '#C4622D' },
-      { id: 'bindung',    icon: 'heart',   de: 'Bindungsexpertin',         en: 'Attachment Expert',  color: '#D4845A' },
-      { id: 'konflikt',   icon: 'zap',     de: 'Konfliktmediation',        en: 'Conflict Mediation', color: '#CC7040' }
-    ];
-    const apiPerspectives = data.perspectives || [];
-    if (apiPerspectives.length > 0) {
-      apiPerspectives.forEach((r) => {
-        const rolle = r.rolle || '';
-        const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
-        const card = createResultCard(pDef, rolle);
-        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
-        resultsDiv.appendChild(card);
-      });
-    } else {
-      const text = data.answer || data.text || JSON.stringify(data);
-      const fallbackCard = createResultCard(aufPerspDefs[0], 'Systemische Analyse');
-      fallbackCard.querySelector('.streaming-text').textContent = text;
-      resultsDiv.appendChild(fallbackCard);
-    }
-    if (data.integration && data.integration.einfach_gesagt) {
-      const synthCard = document.createElement('div');
-      synthCard.className = 'result-card';
-      synthCard.innerHTML = `
-        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-          </div>
-          <div class="result-card-title">kiNTEGRATiON</div>
-          <div class="result-card-badge">synthese</div>
-          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-        </div>
-        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
-      `;
-      setTimeout(() => synthCard.classList.add('open'), 100);
-      resultsDiv.appendChild(synthCard);
-    }
+    renderResults(data, aufPerspDefs, resultsDiv);
+
     const kiDiv = document.createElement('div');
     kiDiv.className = 'kintegrity';
     kiDiv.style.marginTop = '16px';
@@ -1709,17 +2207,87 @@ async function analyseAufstellung() {
     `;
     resultsDiv.appendChild(kiDiv);
 
-    saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
+    saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: aufPerspDefs.map(p => p.id), lang: currentLang, time: Date.now() });
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
   }
 }
 
+async function sendKlaerung() {
+  const topic = document.getElementById('klaerungTopic').value.trim();
+  const partyAName = document.getElementById('partyAName').value.trim() || 'Partei A';
+  const partyAPos  = document.getElementById('partyAPosition').value.trim();
+  const partyBName = document.getElementById('partyBName').value.trim() || 'Partei B';
+  const partyBPos  = document.getElementById('partyBPosition').value.trim();
+
+  if (!topic && !partyAPos && !partyBPos) {
+    showToast('Bitte Thema oder mindestens eine Position eingeben.');
+    return;
+  }
+
+  const sendBtn = document.getElementById('klaerungSendBtn');
+  const resultsDiv = document.getElementById('klaerungResults');
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Klärung wird vorbereitet...</span></div>`;
+
+  const baseQuestion = [
+    topic ? `Konfliktthema: ${topic}` : '',
+    partyAPos ? `${partyAName}: ${partyAPos}` : '',
+    partyBPos ? `${partyBName}: ${partyBPos}` : '',
+  ].filter(Boolean).join('\n\n');
+
+  const profilKtx = getProfilContext();
+  const question = profilKtx ? `[Familienkontext]\n${profilKtx}\n\n[Klärungsgespräch]\n${baseQuestion}` : baseQuestion;
+
+  const klaerungPerspDefs = [
+    { id: 'mediation',   icon: 'scale', de: 'Mediatorin',          en: 'Mediator',           color: '#C4622D' },
+    { id: 'kommunik',    icon: 'speech-bubble', de: 'Kommunikationsexpertin', en: 'Communication Expert', color: '#CC7040' },
+    { id: 'systemisch2', icon: 'network', de: 'Systemische Therapeutin', en: 'Systemic Therapist', color: '#D4845A' },
+  ];
+
+  try {
+    const payload = {
+      question,
+      custom_perspectives: klaerungPerspDefs.map(p => ({
+        name: p.de,
+        position: `Du bist ${p.de}. Unterstütze das Gespräch zwischen ${partyAName} und ${partyBName}. Erkenne Gemeinsamkeiten, benenne blinde Flecken beider Seiten, und zeige konstruktive Wege zur Klärung.`
+      })),
+      methods: [],
+      stil: 'therapeutisch',
+      tone: 'achtsam',
+      lang: currentLang,
+      source_app: 'FAMiLiEN-KLAERUNG'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+
+    resultsDiv.innerHTML = '';
+    renderResults(data, klaerungPerspDefs, resultsDiv);
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch(err) {
+    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
+  }
+
+  sendBtn.disabled = false;
+}
+
+function useKlaerungChip(el) {
+  const topic = document.getElementById('klaerungTopic');
+  topic.value = el.textContent;
+}
+
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 </script>
-<script src="/notizbuch.js"></script>
 </body>
 </html>
