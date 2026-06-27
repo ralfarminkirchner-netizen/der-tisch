@@ -1723,8 +1723,8 @@ function setupFigureDrag() {
     mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     const pt = new THREE.Vector3();
-    raycaster.ray.intersectPlane(touchTablePlane, pt);
-    if (pt) {
+    const hit = raycaster.ray.intersectPlane(touchTablePlane, pt);
+    if (hit) {
       const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
       if (dist > 3.6) {
         const angle = Math.atan2(pt.z, pt.x);
@@ -1739,12 +1739,14 @@ function setupFigureDrag() {
     e.preventDefault();
   }, { passive: false });
 
-  aufCanvas.addEventListener('touchend', () => {
+  const stopTouchDrag = () => {
     if (isDraggingFigure) {
       isDraggingFigure = false;
       dragFigure = null;
     }
-  });
+  };
+  aufCanvas.addEventListener('touchend', stopTouchDrag);
+  aufCanvas.addEventListener('touchcancel', stopTouchDrag);
 }
 
 function handleConnectClick(fig) {
