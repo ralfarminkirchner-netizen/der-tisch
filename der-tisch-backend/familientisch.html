@@ -189,6 +189,19 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* ERROR */
 .error-card{background:rgba(196,98,45,0.08);border:1px solid rgba(196,98,45,0.3);border-radius:10px;padding:16px;color:var(--accent);font-size:14px;margin-top:16px}
 
+/* CARD META (Evidenz, Blinder Fleck) */
+.card-meta{margin-top:12px;border-top:1px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.card-meta-item{display:flex;gap:8px;font-size:12px;line-height:1.5}
+.card-meta-label{color:var(--accent);font-weight:600;white-space:nowrap;flex-shrink:0;min-width:88px;padding-top:1px}
+.card-meta-text{color:var(--muted);font-style:italic}
+
+/* WAS JETZT — Nächste Schritte */
+.naechste-schritte-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.naechste-schritte-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:22px;position:relative}
+.naechste-schritte-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:600}
+.orientierungshilfe{margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.orientierungshilfe-label{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+
 /* CARD NOTIZBUCH BUTTON */
 .card-nb-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:4px;display:flex;align-items:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
 .result-card-header:hover .card-nb-btn{opacity:1}
@@ -1200,6 +1213,53 @@ async function handleStream(resp, perspectives, container) {
   }
 }
 
+function enrichCard(card, r) {
+  if (!r || (!r.evidenz && !r.blinder_fleck)) return;
+  const body = card.querySelector('.result-card-body');
+  if (!body) return;
+  const meta = document.createElement('div');
+  meta.className = 'card-meta';
+  if (r.evidenz) {
+    const item = document.createElement('div');
+    item.className = 'card-meta-item';
+    item.innerHTML = `<span class="card-meta-label">Grundlage</span><span class="card-meta-text">${escapeHTML(r.evidenz)}</span>`;
+    meta.appendChild(item);
+  }
+  if (r.blinder_fleck) {
+    const item = document.createElement('div');
+    item.className = 'card-meta-item';
+    item.innerHTML = `<span class="card-meta-label">Blinder Fleck</span><span class="card-meta-text">${escapeHTML(r.blinder_fleck)}</span>`;
+    meta.appendChild(item);
+  }
+  body.appendChild(meta);
+}
+
+function renderWasJetzt(container, intg) {
+  const optionen = intg.praktische_optionen || [];
+  const entscheidung = intg.entscheidungshilfe || [];
+  if (optionen.length === 0 && entscheidung.length === 0) return;
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  const optList = optionen.map(o => `<li>${escapeHTML(o)}</li>`).join('');
+  const entList = entscheidung.map(e => `<li>${escapeHTML(e)}</li>`).join('');
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+      <div class="result-card-icon" style="background:rgba(143,188,138,0.12);color:#8FBC8A">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+      <div class="result-card-title">WAS JETZT?</div>
+      <div class="result-card-badge">nächste schritte</div>
+      <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+    </div>
+    <div class="result-card-body">
+      ${optList ? `<ul class="naechste-schritte-list">${optList}</ul>` : ''}
+      ${entList ? `<div class="orientierungshilfe"><div class="orientierungshilfe-label">Orientierungshilfe</div><ul class="naechste-schritte-list">${entList}</ul></div>` : ''}
+    </div>
+  `;
+  setTimeout(() => card.classList.add('open'), 200);
+  container.appendChild(card);
+}
+
 function renderResults(data, perspectives, container) {
   // API returns TableResponse: { perspectives: [{rolle, kernanalyse, ...}], friction, integration }
   const apiPerspectives = data.perspectives || [];
@@ -1219,6 +1279,7 @@ function renderResults(data, perspectives, container) {
     ) || perspectives[0];
     const card = createResultCard(pDef, rolle);
     card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+    enrichCard(card, r);
     container.appendChild(card);
   });
   const intg = data.integration || {};
@@ -1271,6 +1332,7 @@ function renderResults(data, perspectives, container) {
     `;
     container.appendChild(kopfCard);
   }
+  renderWasJetzt(container, intg);
 }
 
 function createResultCard(p, overrideName) {
@@ -1547,6 +1609,7 @@ function setupOrbitControls() {
     }
   });
   aufCanvas.addEventListener('touchmove', e => {
+    if (isDraggingFigure) return; // Figure drag handler takes over
     if (e.touches.length === 1) {
       theta -= (e.touches[0].clientX - lastTouchX) * 0.01;
       phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.touches[0].clientY - lastTouchY) * 0.01));
@@ -1623,6 +1686,67 @@ function setupFigureDrag() {
       dragFigure = null;
     }
   });
+
+  // Touch figure dragging
+  const touchTablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+  aufCanvas.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = figures.flatMap(f => [f.body, f.head]);
+    const hits = raycaster.intersectObjects(meshes);
+    if (hits.length > 0) {
+      const hit = hits[0].object;
+      const fig = figures.find(f => f.body === hit || f.head === hit);
+      if (fig) {
+        if (connectMode) {
+          handleConnectClick(fig);
+        } else {
+          selectFigure(fig);
+          dragFigure = fig;
+          isDraggingFigure = true;
+        }
+        e.preventDefault();
+      }
+    }
+  }, { passive: false });
+
+  aufCanvas.addEventListener('touchmove', e => {
+    if (!isDraggingFigure || !dragFigure || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const pt = new THREE.Vector3();
+    const hit = raycaster.ray.intersectPlane(touchTablePlane, pt);
+    if (hit) {
+      const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+      if (dist > 3.6) {
+        const angle = Math.atan2(pt.z, pt.x);
+        pt.x = Math.cos(angle) * 3.6;
+        pt.z = Math.sin(angle) * 3.6;
+      }
+      dragFigure.group.position.x = pt.x;
+      dragFigure.group.position.z = pt.z;
+      updateRelationshipLines();
+      updateLabels();
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  const stopTouchDrag = () => {
+    if (isDraggingFigure) {
+      isDraggingFigure = false;
+      dragFigure = null;
+    }
+  };
+  aufCanvas.addEventListener('touchend', stopTouchDrag);
+  aufCanvas.addEventListener('touchcancel', stopTouchDrag);
 }
 
 function handleConnectClick(fig) {
@@ -1930,17 +2054,38 @@ function startAnimateOnce() {
 async function analyseAufstellung() {
   if (figures.length === 0) { showToast('Bitte erst Figuren hinzufügen.'); return; }
 
-  // Build description
-  const center = new THREE.Vector3(0, 0, 0);
+  // Build description — human-readable spatial language
+  const DIRS = ['Ost','Südost','Süd','Südwest','West','Nordwest','Nord','Nordost'];
   const figDescs = figures.map(f => {
     const pos = f.group.position;
-    const dist = Math.sqrt(pos.x * pos.x + pos.z * pos.z).toFixed(2);
-    const angle = ((Math.atan2(pos.z, pos.x) * 180 / Math.PI + 360) % 360).toFixed(0);
-    return `${f.name} (${f.type}): Abstand vom Zentrum ${dist}, Winkel ${angle}°`;
+    const dist = Math.sqrt(pos.x * pos.x + pos.z * pos.z);
+    let distLabel;
+    if (dist < 0.8) distLabel = 'im Zentrum';
+    else if (dist < 1.8) distLabel = 'nahe dem Zentrum';
+    else if (dist < 2.8) distLabel = 'im mittleren Bereich';
+    else distLabel = 'am äußeren Rand';
+    const angle = (Math.atan2(pos.z, pos.x) * 180 / Math.PI + 360) % 360;
+    const dir = DIRS[Math.round(angle / 45) % 8];
+    return `${f.name} (${f.type}): ${distLabel}${dist >= 0.8 ? ', Richtung ' + dir : ''}`;
   });
+  const pairDescs = [];
+  for (let i = 0; i < figures.length; i++) {
+    for (let j = i + 1; j < figures.length; j++) {
+      const a = figures[i], b = figures[j];
+      const dx = a.group.position.x - b.group.position.x;
+      const dz = a.group.position.z - b.group.position.z;
+      const d = Math.sqrt(dx * dx + dz * dz);
+      let prox;
+      if (d < 0.8) prox = 'sehr nah beieinander';
+      else if (d < 1.8) prox = 'nah beieinander';
+      else if (d < 3.0) prox = 'in mittlerer Distanz';
+      else prox = 'weit voneinander entfernt';
+      pairDescs.push(`${a.name} ↔ ${b.name}: ${prox}`);
+    }
+  }
   const relDescs = relationships.map(r => `${r.a.name} ↔ ${r.b.name}: ${r.type}`);
 
-  const question = `Familienaufstellung mit ${figures.length} Figuren:\n\nFiguren:\n${figDescs.join('\n')}\n\nBeziehungen:\n${relDescs.length ? relDescs.join('\n') : 'keine explizit gezeichnet'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Welche Dynamiken sind sichtbar? Wo gibt es Nähe, Distanz, Isolation? Was könnte diese Konstellation über das Familiensystem aussagen?`;
+  const question = `Familienaufstellung mit ${figures.length} Figuren:\n\nPositionen:\n${figDescs.join('\n')}\n\nPaarweise Abstände:\n${pairDescs.length ? pairDescs.join('\n') : 'nur eine Figur'}\n\nBeziehungen (explizit gezeichnet):\n${relDescs.length ? relDescs.join('\n') : 'keine'}\n\nBitte analysiere diese Aufstellung aus systemisch-therapeutischer Perspektive: Was fällt auf? Wer steht nahe bei wem, wer ist isoliert, wer hält das Zentrum? Welche Dynamiken und Muster sind in dieser räumlichen Konstellation sichtbar?`;
 
   const resultsDiv = document.getElementById('aufstellungResults');
   resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Aufstellung wird analysiert...</span></div>`;
@@ -1988,6 +2133,7 @@ async function analyseAufstellung() {
         const pDef = aufPerspDefs.find(p => (p.de || '').toLowerCase() === rolle.toLowerCase()) || aufPerspDefs[0];
         const card = createResultCard(pDef, rolle);
         card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        enrichCard(card, r);
         resultsDiv.appendChild(card);
       });
     } else {
@@ -2154,6 +2300,7 @@ async function sendKlaerung() {
       setTimeout(() => synthCard.classList.add('open'), 100);
       resultsDiv.appendChild(synthCard);
     }
+    renderWasJetzt(resultsDiv, intg);
 
     // KiNTEGRiTY badge
     const kiDiv = document.createElement('div');
