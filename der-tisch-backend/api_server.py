@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # TISCH-PATCH-APPLIED
 """Der Tisch — Agenten-Orchestrierungs-Engine via Anthropic Tool Use
-   Version 5.1: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch.
+   Version 5.2: Pädagogisch + Neurodivergent Agenten + Klärungsgespräch-Modus + Herzmensch/Kopfmensch + Klärende/Verbindende Kraft + Praktische Schritte + Kern-Einsichten.
 """
 import asyncio
 import json as _json
