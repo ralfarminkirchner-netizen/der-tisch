@@ -1716,6 +1716,7 @@ function setupFigureDrag() {
       const hit = hits[0].object;
       const fig = figures.find(f => f.body === hit || f.head === hit);
       if (fig) {
+        e.preventDefault();
         if (connectMode) {
           handleConnectClick(fig);
         } else {
@@ -1724,7 +1725,7 @@ function setupFigureDrag() {
         }
       }
     }
-  }, { passive: true });
+  }, { passive: false });
 
   aufCanvas.addEventListener('touchmove', e => {
     if (!touchFigureDrag || e.touches.length !== 1) return;
@@ -2265,7 +2266,7 @@ function resetKompass() {
 
 async function sendKompass() {
   const rated = KOMPASS_DIMS.filter(d => kompassValues[d.id] !== undefined);
-  if (rated.length < 3) { showToast('Bitte mindestens 3 Bereiche bewerten.'); return; }
+  if (rated.length < 3) { showToast(currentLang === 'de' ? 'Bitte mindestens 3 Bereiche bewerten.' : 'Please rate at least 3 areas.'); return; }
   if (isLoading) return;
 
   isLoading = true;
@@ -2273,7 +2274,7 @@ async function sendKompass() {
 
   const context = (document.getElementById('kompassContext').value || '').trim();
   const resultsDiv = document.getElementById('kompassResults');
-  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Familienportrait wird erstellt…</span></div>`;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Familienportrait wird erstellt…' : 'Creating family portrait…'}</span></div>`;
   resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const dimLines = rated.map(d => `${d.de}: ${kompassValues[d.id]}/5 — von "${d.low}" bis "${d.high}"`).join('\n');
@@ -2295,8 +2296,8 @@ async function sendKompass() {
           : 'Analyze this family self-assessment from your specific role. Focus on strengths, growth areas, and concrete actionable impulses.',
       })),
       methods: [],
-      stil: 'ressourcen',
-      tone: 'ressourcenorientiert',
+      stil: 'therapeutisch',
+      tone: currentTone,
       lang: currentLang,
       source_app: 'FAMiLiEN-TiSCH-KOMPASS',
     };
@@ -2417,7 +2418,7 @@ async function sendKompass() {
     });
 
   } catch (err) {
-    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
   }
 
   isLoading = false;
