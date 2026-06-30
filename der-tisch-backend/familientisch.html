@@ -1035,11 +1035,15 @@ function copyResults(containerSelector) {
     const body = card.querySelector('.streaming-text')?.textContent?.trim() || '';
     if (title || body) text += `## ${title}\n\n${body}\n\n`;
   });
-  navigator.clipboard.writeText(text.trim()).then(() => {
-    showToast('Ergebnisse kopiert.');
-  }).catch(() => {
-    showToast('Kopieren nicht möglich.');
-  });
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      showToast('Ergebnisse kopiert.');
+    }).catch(() => {
+      showToast('Kopieren nicht möglich.');
+    });
+  } else {
+    showToast('Kopieren nicht unterstützt (kein HTTPS?).');
+  }
 }
 
 function addCopyButton(containerEl, sourceId) {
@@ -1120,6 +1124,7 @@ function updateAddBtn() {
 }
 
 async function sendWochenrunde() {
+  if (isLoading) return;
   const container = document.getElementById('mitgliederContainer');
   const cards = container.querySelectorAll('.mitglied-card');
   const members = [];
@@ -1134,7 +1139,6 @@ async function sendWochenrunde() {
     members.push({ name, stimmung, situation, wunsch });
   });
   if (!hasInput) { showToast('Bitte mindestens eine Stimmung oder Situation eingeben.'); return; }
-  if (isLoading) return;
   isLoading = true;
   document.getElementById('wochenrundeSendBtn').disabled = true;
   const resultsDiv = document.getElementById('wochenrundeResults');
@@ -1882,6 +1886,7 @@ function setupFigureDrag() {
   });
 
   // Touch support for figure dragging
+  const touchPt = new THREE.Vector3();
   aufCanvas.addEventListener('touchstart', e => {
     if (e.touches.length !== 1) return;
     const rect = aufCanvas.getBoundingClientRect();
@@ -1916,18 +1921,16 @@ function setupFigureDrag() {
     mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
-    const touchTablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    const pt = new THREE.Vector3();
-    raycaster.ray.intersectPlane(touchTablePlane, pt);
-    if (pt) {
-      const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+    raycaster.ray.intersectPlane(tablePlane, touchPt);
+    if (touchPt) {
+      const dist = Math.sqrt(touchPt.x * touchPt.x + touchPt.z * touchPt.z);
       if (dist > 3.6) {
-        const angle = Math.atan2(pt.z, pt.x);
-        pt.x = Math.cos(angle) * 3.6;
-        pt.z = Math.sin(angle) * 3.6;
+        const angle = Math.atan2(touchPt.z, touchPt.x);
+        touchPt.x = Math.cos(angle) * 3.6;
+        touchPt.z = Math.sin(angle) * 3.6;
       }
-      dragFigure.group.position.x = pt.x;
-      dragFigure.group.position.z = pt.z;
+      dragFigure.group.position.x = touchPt.x;
+      dragFigure.group.position.z = touchPt.z;
       updateRelationshipLines();
       updateLabels();
     }
