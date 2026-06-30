@@ -44,7 +44,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
 
 /* MODE TABS */
-.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:680px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;flex-wrap:wrap}
 .mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
 .mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
 .mode-tab:not(.active):hover{color:var(--text)}
@@ -223,6 +223,44 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .friction-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:16px;position:relative}
 .friction-list li::before{content:'—';position:absolute;left:0;color:var(--accent)}
 @media(max-width:640px){.parties-grid{grid-template-columns:1fr}}
+
+/* WOCHENRUNDE MODE */
+.wochenrunde-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.wochenrunde-intro{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.6}
+.wochenrunde-intro strong{color:var(--text)}
+.mitglieder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:20px}
+.mitglied-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;transition:border-color .2s}
+.mitglied-card:hover{border-color:var(--faint)}
+.mitglied-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mitglied-nr{font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.mitglied-remove{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px;border-radius:4px;display:flex;align-items:center;transition:color .2s}
+.mitglied-remove:hover{color:#FF6B6B}
+.mitglied-name{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--font);font-size:14px;font-weight:500;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:12px}
+.mitglied-name:focus{border-color:var(--accent)}
+.stimmung-label{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.stimmung-row{display:flex;gap:6px;margin-bottom:14px}
+.stimmung-btn{flex:1;padding:8px 2px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s;text-align:center;line-height:1}
+.stimmung-btn:hover{border-color:var(--accent);background:var(--accent-dim)}
+.stimmung-btn.active{border-color:var(--accent);background:var(--accent-dim);transform:scale(1.08)}
+.mitglied-text{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);resize:vertical;min-height:64px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:10px}
+.mitglied-text:focus{border-color:var(--accent)}
+.mitglied-text::placeholder{color:var(--muted)}
+.mitglied-wunsch{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);resize:none;min-height:52px;outline:none;transition:border-color .2s;line-height:1.6}
+.mitglied-wunsch:focus{border-color:var(--accent)}
+.mitglied-wunsch::placeholder{color:var(--muted)}
+.wochenrunde-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.add-mitglied-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border:1px dashed var(--border);background:transparent;color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.add-mitglied-btn:hover{border-color:var(--accent);color:var(--accent)}
+.wochenrunde-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 28px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.wochenrunde-send-btn:hover{opacity:.88}
+.wochenrunde-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.wochenrunde-results{margin-top:8px}
+
+/* COPY BUTTON */
+.copy-results-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s;margin-bottom:12px}
+.copy-results-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+@media(max-width:640px){.mitglieder-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -415,6 +453,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-klaerung" onclick="setMode('klaerung')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
       KLÄRUNGSGESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-wochenrunde" onclick="setMode('wochenrunde')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2"/><circle cx="15" cy="8" r="2"/><circle cx="5" cy="14" r="2"/><circle cx="14" cy="15" r="2"/><line x1="10" y1="6" x2="13" y2="8"/><line x1="6.5" y1="13" x2="8" y2="8"/><line x1="7" y1="14" x2="12" y2="15"/></svg>
+      WoCHENRUNDE
     </button>
   </div>
 </section>
@@ -646,6 +688,32 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="klaerungResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== WOCHENRUNDE MODE ==================== -->
+<div class="mode-section" id="mode-wochenrunde">
+  <div class="wochenrunde-wrap">
+
+    <div class="wochenrunde-intro">
+      <strong>FAMiLiEN-WOCHENRUNDE</strong> — Jedes Familienmitglied teilt kurz, wie es ihm gerade geht. Die KI gibt eine empathische Übersicht und zeigt, was die Familie diese Woche bewegt — ohne Wertung, alle gehört.
+    </div>
+
+    <div id="mitgliederContainer" class="mitglieder-grid"></div>
+
+    <div class="wochenrunde-actions">
+      <button class="add-mitglied-btn" onclick="addMitglied()" id="addMitgliedBtn">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+        Person hinzufügen
+      </button>
+      <button class="wochenrunde-send-btn" id="wochenrundeSendBtn" onclick="sendWochenrunde()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+        Wochenrunde analysieren
+      </button>
+    </div>
+
+    <div id="wochenrundeResults" class="wochenrunde-results"></div>
 
   </div>
 </div>
@@ -954,6 +1022,191 @@ const SVG_ICONS = {
 };
 
 // ============================================================
+// COPY RESULTS
+// ============================================================
+function copyResults(containerSelector) {
+  const container = document.getElementById(containerSelector);
+  if (!container) return;
+  const cards = container.querySelectorAll('.result-card');
+  if (cards.length === 0) { showToast('Keine Ergebnisse zum Kopieren.'); return; }
+  let text = '';
+  cards.forEach(card => {
+    const title = card.querySelector('.result-card-title')?.textContent?.trim() || '';
+    const body = card.querySelector('.streaming-text')?.textContent?.trim() || '';
+    if (title || body) text += `## ${title}\n\n${body}\n\n`;
+  });
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    showToast('Ergebnisse kopiert.');
+  }).catch(() => {
+    showToast('Kopieren nicht möglich.');
+  });
+}
+
+function addCopyButton(containerEl, sourceId) {
+  const existing = containerEl.querySelector('.copy-results-btn');
+  if (existing) existing.remove();
+  const btn = document.createElement('button');
+  btn.className = 'copy-results-btn';
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="10" height="14" rx="2"/><path d="M4 6H3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-1"/></svg> Ergebnisse kopieren`;
+  btn.onclick = () => copyResults(sourceId);
+  containerEl.insertBefore(btn, containerEl.firstChild);
+}
+
+// ============================================================
+// WOCHENRUNDE MODE
+// ============================================================
+let wochenrundeCount = 0;
+let wochenrundeInitialized = false;
+
+const STIMMUNGEN = [
+  { emoji: '😊', label: 'Gut' },
+  { emoji: '🙂', label: 'Okay' },
+  { emoji: '😔', label: 'Müde' },
+  { emoji: '😤', label: 'Angespannt' },
+  { emoji: '😢', label: 'Traurig' },
+];
+
+function initWochenrunde() {
+  wochenrundeInitialized = true;
+  addMitglied('Mutter');
+  addMitglied('Vater');
+  addMitglied('Kind');
+}
+
+function addMitglied(defaultName) {
+  const container = document.getElementById('mitgliederContainer');
+  if (container.children.length >= 6) { showToast('Maximal 6 Personen.'); return; }
+  const id = ++wochenrundeCount;
+  const card = document.createElement('div');
+  card.className = 'mitglied-card';
+  card.dataset.id = id;
+  const stimmungBtns = STIMMUNGEN.map(s =>
+    `<button class="stimmung-btn" data-emoji="${s.emoji}" data-label="${s.label}" title="${s.label}" onclick="selectStimmung(this)">${s.emoji}</button>`
+  ).join('');
+  const name = defaultName || '';
+  card.innerHTML = `
+    <div class="mitglied-card-header">
+      <span class="mitglied-nr">Person ${id}</span>
+      <button class="mitglied-remove" onclick="removeMitglied(this)" title="Entfernen">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+      </button>
+    </div>
+    <input class="mitglied-name" type="text" placeholder="Name (z.B. Mama, Papa, Kind...)" value="${name}">
+    <div class="stimmung-label">Aktuelle Stimmung</div>
+    <div class="stimmung-row">${stimmungBtns}</div>
+    <textarea class="mitglied-text" placeholder="Was beschäftigt mich gerade? (1–2 Sätze)" rows="2"></textarea>
+    <textarea class="mitglied-wunsch" placeholder="Was wünsche ich mir von der Familie? (optional)" rows="2"></textarea>
+  `;
+  container.appendChild(card);
+  updateAddBtn();
+}
+
+function removeMitglied(btn) {
+  const container = document.getElementById('mitgliederContainer');
+  if (container.children.length <= 1) { showToast('Mindestens eine Person nötig.'); return; }
+  btn.closest('.mitglied-card').remove();
+  updateAddBtn();
+}
+
+function selectStimmung(btn) {
+  btn.closest('.stimmung-row').querySelectorAll('.stimmung-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateAddBtn() {
+  const container = document.getElementById('mitgliederContainer');
+  const btn = document.getElementById('addMitgliedBtn');
+  if (btn) btn.style.display = container.children.length >= 6 ? 'none' : 'flex';
+}
+
+async function sendWochenrunde() {
+  const container = document.getElementById('mitgliederContainer');
+  const cards = container.querySelectorAll('.mitglied-card');
+  const members = [];
+  let hasInput = false;
+  cards.forEach(card => {
+    const name = card.querySelector('.mitglied-name').value.trim() || 'Person';
+    const stimmungBtn = card.querySelector('.stimmung-btn.active');
+    const stimmung = stimmungBtn ? `${stimmungBtn.dataset.emoji} ${stimmungBtn.dataset.label}` : '';
+    const situation = card.querySelector('.mitglied-text').value.trim();
+    const wunsch = card.querySelector('.mitglied-wunsch').value.trim();
+    if (stimmung || situation) hasInput = true;
+    members.push({ name, stimmung, situation, wunsch });
+  });
+  if (!hasInput) { showToast('Bitte mindestens eine Stimmung oder Situation eingeben.'); return; }
+  if (isLoading) return;
+  isLoading = true;
+  document.getElementById('wochenrundeSendBtn').disabled = true;
+  const resultsDiv = document.getElementById('wochenrundeResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Wochenrunde wird analysiert...</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const memberLines = members.map(m => {
+    const parts = [m.name];
+    if (m.stimmung) parts.push(`Stimmung: ${m.stimmung}`);
+    if (m.situation) parts.push(`Thema: ${m.situation}`);
+    if (m.wunsch) parts.push(`Wunsch: ${m.wunsch}`);
+    return '— ' + parts.join(' | ');
+  });
+  const question = `Familienrunde — Wie geht es allen gerade?\n\n${memberLines.join('\n')}\n\nBitte analysiere diese Wochenrunde: Was bewegt die Familie gerade? Welche Bedürfnisse und Themen tauchen auf? Was könnte helfen, dass sich alle gehört fühlen?`;
+  try {
+    const payload = {
+      question,
+      custom_perspectives: [
+        {
+          name: currentLang === 'de' ? 'Systemische Therapeutin' : 'Systemic Therapist',
+          position: 'Blicke auf das Familiensystem als Ganzes. Was zeigt sich in dieser Momentaufnahme? Welche Dynamiken, Stimmungen und Bedürfnisse prägen das Familiensystem diese Woche?'
+        },
+        {
+          name: currentLang === 'de' ? 'Bindungsexpertin' : 'Attachment Expert',
+          position: 'Was sagen Stimmungen und Wünsche über Bindungsbedürfnisse aus? Wer braucht gerade besonders Nähe, Sicherheit oder Raum?'
+        },
+        {
+          name: currentLang === 'de' ? 'Kommunikationsexpertin' : 'Communication Expert',
+          position: 'Was wird ausgedrückt — und was vielleicht noch nicht? Welche Botschaften stecken hinter den Stimmungen? Wie kann die Familie besser miteinander ins Gespräch kommen?'
+        }
+      ],
+      methods: [],
+      stil: 'achtsam',
+      tone: currentTone,
+      lang: currentLang,
+      source_app: 'FAMiLiEN-TiSCH'
+    };
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    resultsDiv.innerHTML = '';
+    const wochenrundePerspDefs = [
+      { id: 'systemisch',    icon: 'network', de: 'Systemische Therapeutin',  en: 'Systemic Therapist',     color: '#C4622D' },
+      { id: 'bindung',       icon: 'heart',   de: 'Bindungsexpertin',           en: 'Attachment Expert',      color: '#D4845A' },
+      { id: 'kommunikation', icon: 'network', de: 'Kommunikationsexpertin',    en: 'Communication Expert',   color: '#B86840' },
+    ];
+    renderResults(data, wochenrundePerspDefs, resultsDiv);
+    addCopyButton(resultsDiv, 'wochenrundeResults');
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> Alle gehört</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Keine Wertung</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> Vertraulich</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+    saveHistory({ question: `Wochenrunde (${members.length} Personen)`, perspectives: ['systemisch', 'bindung', 'kommunikation'], lang: currentLang, time: Date.now() });
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
+  }
+  isLoading = false;
+  document.getElementById('wochenrundeSendBtn').disabled = false;
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -982,7 +1235,6 @@ function setMode(mode) {
   if (mode === 'aufstellung') {
     setTimeout(() => {
       if (!threeInit) initThreeJS();
-      // Force resize so canvas fills the now-visible container
       if (renderer && aufCanvas) {
         const container = document.getElementById('canvasContainer');
         renderer.setSize(container.clientWidth, container.clientHeight);
@@ -990,6 +1242,9 @@ function setMode(mode) {
         camera.updateProjectionMatrix();
       }
     }, 100);
+  }
+  if (mode === 'wochenrunde' && !wochenrundeInitialized) {
+    initWochenrunde();
   }
 }
 
@@ -1148,6 +1403,7 @@ async function sendQuestion() {
       renderResults(data, selectedPersp, resultsList);
     }
 
+    addCopyButton(resultsList, 'resultsList');
     // Save to history
     saveHistory({ question, perspectives: selectedPersp.map(p => p.id), lang: currentLang, time: Date.now() });
 
@@ -1547,6 +1803,7 @@ function setupOrbitControls() {
     }
   });
   aufCanvas.addEventListener('touchmove', e => {
+    if (isDraggingFigure) { e.preventDefault(); return; }
     if (e.touches.length === 1) {
       theta -= (e.touches[0].clientX - lastTouchX) * 0.01;
       phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.touches[0].clientY - lastTouchY) * 0.01));
@@ -1618,6 +1875,65 @@ function setupFigureDrag() {
   });
 
   window.addEventListener('mouseup', () => {
+    if (isDraggingFigure) {
+      isDraggingFigure = false;
+      dragFigure = null;
+    }
+  });
+
+  // Touch support for figure dragging
+  aufCanvas.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    const rect = aufCanvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = figures.flatMap(f => [f.body, f.head]);
+    const hits = raycaster.intersectObjects(meshes);
+    if (hits.length > 0) {
+      const hit = hits[0].object;
+      const fig = figures.find(f => f.body === hit || f.head === hit);
+      if (fig) {
+        e.preventDefault();
+        if (connectMode) {
+          handleConnectClick(fig);
+        } else {
+          selectFigure(fig);
+          dragFigure = fig;
+          isDraggingFigure = true;
+        }
+      }
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchmove', e => {
+    if (!isDraggingFigure || !dragFigure) return;
+    if (e.touches.length !== 1) return;
+    e.preventDefault();
+    const rect = aufCanvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const touchTablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const pt = new THREE.Vector3();
+    raycaster.ray.intersectPlane(touchTablePlane, pt);
+    if (pt) {
+      const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+      if (dist > 3.6) {
+        const angle = Math.atan2(pt.z, pt.x);
+        pt.x = Math.cos(angle) * 3.6;
+        pt.z = Math.sin(angle) * 3.6;
+      }
+      dragFigure.group.position.x = pt.x;
+      dragFigure.group.position.z = pt.z;
+      updateRelationshipLines();
+      updateLabels();
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
     if (isDraggingFigure) {
       isDraggingFigure = false;
       dragFigure = null;
@@ -2169,6 +2485,7 @@ async function sendKlaerung() {
     `;
     resultsDiv.appendChild(kiDiv);
 
+    addCopyButton(resultsDiv, 'klaerungResults');
     saveHistory({ question: 'Klärung: ' + topic, perspectives: ['party-a','party-b'], lang: currentLang, time: Date.now() });
 
   } catch(err) {
