@@ -1822,13 +1822,13 @@ async def ask_wochenrunde(req: WochenrundeRequest):
         data = _json.loads(raw)
 
         # Normalisierung: member_notes als WochenrundeMemberNote-Liste
-        raw_notes = data.get("member_notes", [])
+        raw_notes = data.get("member_notes") or []
         if isinstance(raw_notes, dict):
             raw_notes = [{"name": k, "note": v} for k, v in raw_notes.items()]
         member_notes = [
             WochenrundeMemberNote(
-                name=str(n.get("name", "")).strip(),
-                note=str(n.get("note", "")).strip(),
+                name=str(n.get("name") or "").strip(),
+                note=str(n.get("note") or "").strip(),
             )
             for n in raw_notes
             if isinstance(n, dict)
@@ -1847,21 +1847,21 @@ async def ask_wochenrunde(req: WochenrundeRequest):
                     ),
                 ))
 
-        themen = [str(t).strip() for t in data.get("gemeinsame_themen", []) if t][:3]
+        themen = [str(t).strip() for t in (data.get("gemeinsame_themen") or []) if t][:3]
         if not themen:
             themen = ["Alltag", "Miteinander"] if req.lang == "de" else ["Daily life", "Together"]
 
         return WochenrundeResponse(
-            familienklima=str(data.get("familienklima", "")).strip() or (
+            familienklima=str(data.get("familienklima") or "").strip() or (
                 "Die Familie ist diese Woche beisammen." if req.lang == "de" else "The family is together this week."
             ),
             member_notes=member_notes,
             gemeinsame_themen=themen,
-            einladung=str(data.get("einladung", "")).strip() or (
+            einladung=str(data.get("einladung") or "").strip() or (
                 "Was braucht ihr gerade am meisten voneinander?" if req.lang == "de"
                 else "What do you need most from each other right now?"
             ),
-            eine_idee=str(data.get("eine_idee", "")).strip() or (
+            eine_idee=str(data.get("eine_idee") or "").strip() or (
                 "Findet heute Abend fünf Minuten, um euch kurz anzuhören — ohne Handy, ohne Ablenkung."
                 if req.lang == "de"
                 else "Find five minutes tonight to listen to each other — no phones, no distractions."

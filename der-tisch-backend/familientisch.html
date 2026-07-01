@@ -1154,7 +1154,7 @@ function renderWochenrundeResults(data, resultsDiv, members) {
   if (data.familienklima) {
     const klimaBox = document.createElement('div');
     klimaBox.className = 'wr-klimabox';
-    klimaBox.innerHTML = `<div class="wr-klimabox-label">${currentLang === 'de' ? 'Familienstimmung' : 'Family Climate'}</div><div class="wr-klimabox-text">${data.familienklima}</div>`;
+    klimaBox.innerHTML = `<div class="wr-klimabox-label">${currentLang === 'de' ? 'Familienstimmung' : 'Family Climate'}</div><div class="wr-klimabox-text">${escapeHTML(data.familienklima)}</div>`;
     resultsDiv.appendChild(klimaBox);
   }
 
@@ -1169,7 +1169,7 @@ function renderWochenrundeResults(data, resultsDiv, members) {
     data.member_notes.forEach(n => {
       const card = document.createElement('div');
       card.className = 'wr-note-card';
-      card.innerHTML = `<div class="wr-note-name">${n.name || '—'}</div><div class="wr-note-text">${n.note || ''}</div>`;
+      card.innerHTML = `<div class="wr-note-name">${escapeHTML(n.name || '—')}</div><div class="wr-note-text">${escapeHTML(n.note || '')}</div>`;
       grid.appendChild(card);
     });
     resultsDiv.appendChild(grid);
@@ -1204,7 +1204,7 @@ function renderWochenrundeResults(data, resultsDiv, members) {
   if (data.eine_idee) {
     const ideeBox = document.createElement('div');
     ideeBox.className = 'wr-idee-box';
-    ideeBox.innerHTML = `<div class="wr-idee-label">${currentLang === 'de' ? 'Eine Idee für diese Woche' : 'One idea for this week'}</div><div class="wr-idee-text">${data.eine_idee}</div>`;
+    ideeBox.innerHTML = `<div class="wr-idee-label">${currentLang === 'de' ? 'Eine Idee für diese Woche' : 'One idea for this week'}</div><div class="wr-idee-text">${escapeHTML(data.eine_idee)}</div>`;
     resultsDiv.appendChild(ideeBox);
   }
 
