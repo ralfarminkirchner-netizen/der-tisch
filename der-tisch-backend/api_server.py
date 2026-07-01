@@ -1723,6 +1723,160 @@ async def ask_clarify(req: ClarifyRequest):
 
 
 
+# ==========================================
+# FAMILIEN-WOCHENRUNDE — Strukturierter Endpunkt
+# ==========================================
+
+class WochenrundeMember(BaseModel):
+    name: str
+    stimmung: str = ""   # z.B. "😊 Gut" | "😔 Müde" | "😤 Angespannt"
+    situation: str = ""  # Was beschäftigt mich gerade?
+    wunsch: str = ""     # Was wünsche ich mir von der Familie? (optional)
+
+class WochenrundeRequest(BaseModel):
+    members: List[WochenrundeMember]  # 1–6 Familienmitglieder
+    lang: str = "de"
+    tone: str = "achtsam"
+    source_app: str = "FAMiLiEN-TiSCH"
+
+class WochenrundeMemberNote(BaseModel):
+    name: str
+    note: str
+
+class WochenrundeResponse(BaseModel):
+    familienklima: str
+    member_notes: List[WochenrundeMemberNote]
+    gemeinsame_themen: List[str]
+    einladung: str
+    eine_idee: str
+
+@app.post("/api/wochenrunde", response_model=WochenrundeResponse)
+async def ask_wochenrunde(req: WochenrundeRequest):
+    """Familien-Wochenrunde: Individuelle Würdigungen + Familienklima + Einladung."""
+    if not req.members or len(req.members) < 1:
+        raise HTTPException(status_code=400, detail="Mindestens ein Familienmitglied erforderlich.")
+    if len(req.members) > 6:
+        raise HTTPException(status_code=400, detail="Maximal 6 Familienmitglieder.")
+
+    members_text = []
+    for m in req.members:
+        parts = [f"**{m.name.strip() or 'Person'}**"]
+        if m.stimmung:
+            parts.append(f"Stimmung: {m.stimmung}")
+        if m.situation:
+            parts.append(f"Thema: {m.situation}")
+        if m.wunsch:
+            parts.append(f"Wunsch: {m.wunsch}")
+        members_text.append(" — ".join(parts))
+
+    if req.lang == "de":
+        system_prompt = (
+            "Du bist eine einfühlsame Familientherapeutin mit Schwerpunkt systemische Therapie "
+            "und Bindungstheorie. Du begleitest eine Familien-Wochenrunde: Jedes Mitglied hat kurz "
+            "geteilt, wie es ihm gerade geht. Deine Aufgabe: Alle wirklich hören, würdigen und "
+            "verbinden — ohne zu werten, ohne Ratschläge aufzudrängen. Antworte auf Deutsch."
+        )
+        user_prompt = (
+            f"Familien-Wochenrunde — {len(req.members)} Personen:\n\n"
+            + "\n".join(members_text)
+            + "\n\nAntworte als JSON mit diesen Feldern:\n"
+            "- familienklima: Gesamtstimmung der Familie in 2-3 einfühlsamen Sätzen.\n"
+            "- member_notes: Array mit einem Objekt pro Person: {\"name\": \"...\", \"note\": \"...\"} "
+            "— je eine empathische, persönliche Würdigung (2-3 Sätze), die diese Person wirklich gehört fühlen lässt.\n"
+            "- gemeinsame_themen: 2-3 kurze Stichworte (max. 4 Wörter je), was die Familie diese Woche bewegt.\n"
+            "- einladung: Eine einladende, offene Frage an die ganze Familie (kein Imperativ, kein Ratschlag).\n"
+            "- eine_idee: Ein konkreter, kleiner Vorschlag für diese Woche (1-2 Sätze).\n\n"
+            "Antworte NUR als gültiges JSON, kein Text davor oder danach."
+        )
+    else:
+        system_prompt = (
+            "You are a compassionate family therapist specializing in systemic therapy and attachment theory. "
+            "You facilitate a weekly family check-in where each member briefly shared how they are doing. "
+            "Your task: truly hear, acknowledge, and connect everyone — without judging or pushing advice. Respond in English."
+        )
+        user_prompt = (
+            f"Family weekly check-in — {len(req.members)} people:\n\n"
+            + "\n".join(members_text)
+            + "\n\nRespond as JSON with these fields:\n"
+            "- familienklima: Overall family climate in 2-3 empathetic sentences.\n"
+            "- member_notes: Array with one object per person: {\"name\": \"...\", \"note\": \"...\"} "
+            "— one empathetic, personal acknowledgement (2-3 sentences) that makes each person feel truly heard.\n"
+            "- gemeinsame_themen: 2-3 short keywords (max. 4 words each), themes moving the family this week.\n"
+            "- einladung: One inviting, open question for the whole family (no imperative, no advice).\n"
+            "- eine_idee: One concrete, small suggestion for this week (1-2 sentences).\n\n"
+            "Respond ONLY as valid JSON, no text before or after."
+        )
+
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            max_tokens=1200,
+            temperature=0.7,
+            response_format={"type": "json_object"},
+        )
+        raw = resp.choices[0].message.content or "{}"
+        data = _json.loads(raw)
+
+        # Normalisierung: member_notes als WochenrundeMemberNote-Liste
+        raw_notes = data.get("member_notes", [])
+        if isinstance(raw_notes, dict):
+            raw_notes = [{"name": k, "note": v} for k, v in raw_notes.items()]
+        member_notes = [
+            WochenrundeMemberNote(
+                name=str(n.get("name", "")).strip(),
+                note=str(n.get("note", "")).strip(),
+            )
+            for n in raw_notes
+            if isinstance(n, dict)
+        ]
+        # Fallback: für fehlende Mitglieder aus dem Request ergänzen
+        noted_names = {n.name.lower() for n in member_notes}
+        for m in req.members:
+            mn = (m.name.strip() or "Person").lower()
+            if mn not in noted_names:
+                member_notes.append(WochenrundeMemberNote(
+                    name=m.name.strip() or "Person",
+                    note=(
+                        f"{m.name.strip() or 'Du'} bist dabei — das zählt."
+                        if req.lang == "de"
+                        else f"{m.name.strip() or 'You'} are here — that counts."
+                    ),
+                ))
+
+        themen = [str(t).strip() for t in data.get("gemeinsame_themen", []) if t][:3]
+        if not themen:
+            themen = ["Alltag", "Miteinander"] if req.lang == "de" else ["Daily life", "Together"]
+
+        return WochenrundeResponse(
+            familienklima=str(data.get("familienklima", "")).strip() or (
+                "Die Familie ist diese Woche beisammen." if req.lang == "de" else "The family is together this week."
+            ),
+            member_notes=member_notes,
+            gemeinsame_themen=themen,
+            einladung=str(data.get("einladung", "")).strip() or (
+                "Was braucht ihr gerade am meisten voneinander?" if req.lang == "de"
+                else "What do you need most from each other right now?"
+            ),
+            eine_idee=str(data.get("eine_idee", "")).strip() or (
+                "Findet heute Abend fünf Minuten, um euch kurz anzuhören — ohne Handy, ohne Ablenkung."
+                if req.lang == "de"
+                else "Find five minutes tonight to listen to each other — no phones, no distractions."
+            ),
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)}\n\n{tb}")
+
+
+
 # =============================================
 # V5.7 — ANTAGONISTEN-SYSTEM / FACH-ARENA
 # Datenstruktur für hierarchisch geordnete Konfrontationsmodelle
