@@ -363,6 +363,7 @@ class Integration(BaseModel):
     kopfmensch: str = ""             # Was sagt der Kopf — Logik, Fakten, Strategie, Konsequenz?
     maennlich: str = ""              # Männliche Energie-Perspektive — Handlung, Klarheit, Struktur, Fokus
     weiblich: str = ""               # Weibliche Energie-Perspektive — Fürsorge, Verbindung, Intuition, Ganzheit
+    naechste_schritte: List[str] = []  # Konkrete, sofort umsetzbare Schritte (besonders für FAMiLiEN TiSCH)
 
 class TableResponse(BaseModel):
     perspectives: List[Perspective]
@@ -549,6 +550,17 @@ INTEGRATION_TOOL = {
                     "What does the feminine energy perspective say? "
                     "Not about gender — about archetypal feminine qualities: care, connection, intuition, receptivity, wholeness, nurturing. "
                     "2-3 sentences. What does the energy of relation, feeling into, and holding complexity say here?"
+                )
+            },
+            "naechste_schritte": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "3-4 concrete, immediately actionable next steps — not analysis, but real things to DO. "
+                    "Each step should be specific, warm, achievable within this week, and address the actual situation. "
+                    "Format each as a direct instruction: [Who/When] + [What specifically]. "
+                    "Example: 'Setzt euch heute Abend 15 Minuten ohne Handys zusammen und jeder sagt einen Satz, der beginnt mit: Ich wünsche mir...' "
+                    "Avoid generic advice — make it concrete to the situation."
                 )
             },
         },
@@ -1120,6 +1132,9 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"PART 10 — FEMININE ENERGY (weiblich): Not about gender — archetypal feminine qualities: "
             f"care, connection, intuition, receptivity, wholeness, holding complexity. "
             f"What does this energy say about this question? 2-3 sentences.\\n\\n"
+            f"PART 11 — NEXT STEPS (naechste_schritte): Give 3-4 concrete, immediately actionable next steps. "
+            f"Not analysis — real things to DO this week. Each step: specific person, specific action, specific time. "
+            f"Make them warm and achievable. Example: 'Set aside 15 minutes tonight, without phones, each person completes: I wish...'\\n\\n"
             f"QUESTION: {question}\n\n"
             f"PERSPECTIVES:\n{perspectives_text}\n\n"
             f"FRICTION:\n{friction_text}\n\n"
@@ -1157,6 +1172,9 @@ def sync_call_integration(perspectives_text: str, friction_text: str, question: 
             f"TEIL 10 — WEIBLICHE ENERGIE (weiblich): Nicht Geschlecht — archetypische weibliche Qualitäten: "
             f"Fürsorge, Verbindung, Intuition, Empfänglichkeit, Ganzheit, Komplexität halten. "
             f"Was sagt diese Energie zu dieser Frage? 2-3 Sätze.\\n\\n"
+            f"TEIL 11 — NÄCHSTE SCHRITTE (naechste_schritte): 3-4 konkrete, sofort umsetzbare Schritte — keine Analyse, "
+            f"echte Handlungen diese Woche. Jeder Schritt: wer, was konkret, wann. Warm und machbar. "
+            f"Beispiel: 'Setzt euch heute Abend 15 Minuten ohne Handys zusammen, jeder sagt einen Satz: Ich wünsche mir...'\\n\\n"
             f"FRAGE: {question}\\n\\n"
             f"PERSPEKTIVEN:\n{perspectives_text}\n\n"
             f"REIBUNG:\n{friction_text}\n\n"
@@ -1272,6 +1290,8 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         data["maennlich"] = "Die männliche Energie fragt: Was ist jetzt zu tun? Welcher Schritt bringt Klarheit — unabhängig von Unsicherheit?" if lang == "de" else "The masculine energy asks: What is to be done now? Which step brings clarity — regardless of uncertainty?"
     if not str(data.get("weiblich", "")).strip():
         data["weiblich"] = "Die weibliche Energie fragt: Was darf gehört werden, bevor entschieden wird? Welche Verbindung, welches Gefühl, welche Beziehung spricht hier?" if lang == "de" else "The feminine energy asks: What deserves to be heard before deciding? Which connection, which feeling, which relationship speaks here?"
+    if not data.get("naechste_schritte"):
+        data["naechste_schritte"] = data.get("next_steps") or []
 
     return Integration(**data)
 
