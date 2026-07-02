@@ -1290,7 +1290,8 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
         data["maennlich"] = "Die männliche Energie fragt: Was ist jetzt zu tun? Welcher Schritt bringt Klarheit — unabhängig von Unsicherheit?" if lang == "de" else "The masculine energy asks: What is to be done now? Which step brings clarity — regardless of uncertainty?"
     if not str(data.get("weiblich", "")).strip():
         data["weiblich"] = "Die weibliche Energie fragt: Was darf gehört werden, bevor entschieden wird? Welche Verbindung, welches Gefühl, welche Beziehung spricht hier?" if lang == "de" else "The feminine energy asks: What deserves to be heard before deciding? Which connection, which feeling, which relationship speaks here?"
-    data.setdefault("naechste_schritte", data.get("next_steps", []))
+    if not data.get("naechste_schritte"):
+        data["naechste_schritte"] = data.get("next_steps") or []
 
     return Integration(**data)
 

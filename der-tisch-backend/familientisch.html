@@ -192,7 +192,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* SCHRITTE CARD */
 .schritte-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;counter-reset:step}
 .schritte-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:28px;position:relative}
-.schritte-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:1px;width:18px;height:18px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-align:center;line-height:18px}
+.schritte-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:1px;width:18px;height:18px;border-radius:50%;background:rgba(107,153,128,0.15);border:1px solid #6B9980;color:#6B9980;font-size:10px;font-weight:700;text-align:center;line-height:18px}
 
 /* CARD NOTIZBUCH BUTTON */
 .card-nb-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:4px;display:flex;align-items:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
@@ -2004,19 +2004,25 @@ function escapeHTML(str) {
 // ============================================================
 // INTEGRATION CARDS — wiederverwendbar in allen 3 Modi
 // ============================================================
-function renderIntegrationCards(intg, container) {
+function renderIntegrationCards(intg, container, mode = 'perspektiven') {
   if (!intg) return;
 
   if (intg.einfach_gesagt) {
+    const isKlaerung = mode === 'klaerung';
+    const title    = isKlaerung ? 'GEMEiNSAMER BODEN' : 'kiNTEGRATiON';
+    const badge    = isKlaerung ? 'klärung' : 'synthese';
+    const iconBg   = isKlaerung ? 'rgba(74,127,168,0.15)' : 'rgba(196,98,45,0.12)';
+    const iconCol  = isKlaerung ? '#4A7FA8' : '#C4622D';
+    const iconSvg  = isKlaerung
+      ? `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>`
+      : `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>`;
     const synthCard = document.createElement('div');
     synthCard.className = 'result-card';
     synthCard.innerHTML = `
       <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-        </div>
-        <div class="result-card-title">kiNTEGRATiON</div>
-        <div class="result-card-badge">synthese</div>
+        <div class="result-card-icon" style="background:${iconBg};color:${iconCol}">${iconSvg}</div>
+        <div class="result-card-title">${title}</div>
+        <div class="result-card-badge">${badge}</div>
         <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
       </div>
       <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.einfach_gesagt)}</p></div>
@@ -2186,7 +2192,7 @@ async function sendKlaerung() {
     }
 
     // Was verbindet + Nächste Schritte — integration
-    renderIntegrationCards(data.integration || {}, resultsDiv);
+    renderIntegrationCards(data.integration || {}, resultsDiv, 'klaerung');
 
     // KiNTEGRiTY badge
     const kiDiv = document.createElement('div');
