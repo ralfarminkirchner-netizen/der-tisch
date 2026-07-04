@@ -1036,6 +1036,10 @@ async function submitQuestion() {
 }
 
 // ─── Render ────────────────────────────────────────────────────
+function escHTML(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 function renderResults(data, question, perspectives) {
   lastResults = data;
   document.getElementById('loadingWrap').classList.remove('visible');
@@ -1049,10 +1053,10 @@ function renderResults(data, question, perspectives) {
   const cards = document.getElementById('perspectiveCards');
   cards.innerHTML = '';
   (data.perspectives || []).forEach((p, i) => {
-    const def = PERSPEKTIVEN.find(x => (lang==='de'?x.de:x.en).toLowerCase() === (p.role||'').toLowerCase());
+    const rolle = (p.rolle || p.role || '').replace(/^\[(custom|method)\]/, '');
+    const def = PERSPEKTIVEN.find(x => (lang==='de'?x.de:x.en).toLowerCase() === rolle.toLowerCase());
     const color = def ? def.color : `hsl(${i*42%360},60%,60%)`;
-    const icon = def ? def.icon : '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/><polygon points="10 16 11.5 11 10 9.5 8.5 11" fill="currentColor" stroke="none" opacity="0.4"/></svg>';
-    const portrait = getPortrait(p.role);
+    const portrait = getPortrait(rolle);
     const card = document.createElement('div');
     card.className = 'perspective-card';
     card.style.borderTopColor = color;
@@ -1061,19 +1065,62 @@ function renderResults(data, question, perspectives) {
       <div class="card-header">
         <div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">${portrait}</div>
         <div>
-          <div class="card-role" style="color:${color}">${p.role||''}</div>
-          <div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div>
+          <div class="card-role" style="color:${color}">${escHTML(rolle)}</div>
+          <div class="card-title">${escHTML((p.kernanalyse||'').slice(0,60))}</div>
         </div>
       </div>
-      <div class="card-body">${p.kernanalyse||''}</div>
+      <div class="card-body">${escHTML(p.kernanalyse||'')}</div>
     `;
     cards.appendChild(card);
   });
 
-  if (data.synthese) {
-    document.getElementById('syntheseContent').textContent = data.synthese;
-    document.getElementById('syntheseCard').style.display = '';
+  // Integration — Einfach gesagt as Synthese
+  const intg = data.integration || {};
+  const syntheseCard = document.getElementById('syntheseCard');
+  if (intg.einfach_gesagt) {
+    document.getElementById('syntheseContent').textContent = intg.einfach_gesagt;
+    syntheseCard.style.display = '';
   }
+
+  // Dynamic cards: friction + energy perspectives
+  let dynEl = document.getElementById('dynamicIntegration');
+  if (!dynEl) {
+    dynEl = document.createElement('div');
+    dynEl.id = 'dynamicIntegration';
+    syntheseCard.parentNode.insertBefore(dynEl, syntheseCard.nextSibling);
+  }
+  let dynHTML = '';
+
+  const fr = data.friction || {};
+  const frItems = [...(fr.echte_widersprueche || []), ...(fr.uebersetzungsfehler || [])].filter(Boolean);
+  if (frItems.length > 0 || fr.uebersehenes) {
+    dynHTML += `<div class="synthese-card" style="border-top-color:var(--accent-2);margin-bottom:16px">
+      <div class="synthese-label" style="color:var(--accent-2)">${lang==='de'?'SPANNUNGEN & LÜCKEN':'TENSIONS & GAPS'}</div>
+      <div class="synthese-content" style="font-size:13px">
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">
+          ${frItems.map(t=>`<li style="padding-left:14px;position:relative;color:var(--muted);line-height:1.6"><span style="position:absolute;left:0;color:var(--accent)">—</span>${escHTML(t)}</li>`).join('')}
+        </ul>
+        ${fr.uebersehenes ? `<p style="margin-top:10px;font-style:italic;color:var(--muted);line-height:1.6">${escHTML(fr.uebersehenes)}</p>` : ''}
+      </div>
+    </div>`;
+  }
+
+  const energyDefs = [
+    { key: 'herzmensch', label: lang==='de'?'WAS DAS HERZ SAGT':'WHAT THE HEART SAYS', color: '#D4845A' },
+    { key: 'kopfmensch', label: lang==='de'?'WAS DER KOPF SAGT':'WHAT THE MIND SAYS',  color: '#4A7FA8' },
+    { key: 'maennlich',  label: lang==='de'?'AKTIVE KRAFT':'ACTIVE FORCE',              color: '#5A82B4' },
+    { key: 'weiblich',   label: lang==='de'?'HALTENDE KRAFT':'HOLDING FORCE',           color: '#A064A0' },
+  ];
+  energyDefs.forEach(ec => {
+    if (intg[ec.key]) {
+      dynHTML += `<div class="synthese-card" style="border-top-color:${ec.color};margin-bottom:16px">
+        <div class="synthese-label" style="color:${ec.color}">${ec.label}</div>
+        <div class="synthese-content">${escHTML(intg[ec.key])}</div>
+      </div>`;
+    }
+  });
+  dynEl.innerHTML = dynHTML;
+
   document.getElementById('kintegrityWrap').classList.add('visible');
   document.getElementById('integrityField').value = '';
   document.getElementById('kintegrityPanels').innerHTML = '';
@@ -1107,7 +1154,7 @@ async function runKintegrity() {
 
 function copyResults() {
   if (!lastResults) return;
-  const txt = (lastResults.perspectives||[]).map(p=>`${p.role}:\n${p.kernanalyse}`).join('\n\n');
+  const txt = (lastResults.perspectives||[]).map(p=>`${p.rolle||p.role||''}:\n${p.kernanalyse}`).join('\n\n');
   navigator.clipboard.writeText(lastQuestion+'\n\n'+txt);
 }
 
