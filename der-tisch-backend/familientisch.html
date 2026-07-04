@@ -198,6 +198,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
 
+/* CARD META — Anspruchstyp, Evidenz, Blinder Fleck */
+.card-meta{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px}
+.card-meta-item{font-size:12px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.card-meta-label{flex-shrink:0;letter-spacing:.06em;text-transform:uppercase;font-size:10px;color:var(--faint);min-width:52px;padding-top:1px}
+.card-meta-text{color:var(--muted)}
+.friction-seen{font-size:13px;color:var(--muted);margin-top:10px;padding:8px 12px;background:rgba(196,98,45,0.06);border-radius:6px;font-style:italic;line-height:1.6}
+
 /* KLÄRUNGSGESPRÄCH MODE */
 .klaerung-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
 .parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
@@ -1201,7 +1208,7 @@ async function handleStream(resp, perspectives, container) {
 }
 
 function renderResults(data, perspectives, container) {
-  // API returns TableResponse: { perspectives: [{rolle, kernanalyse, ...}], friction, integration }
+  // API returns TableResponse: { perspectives: [{rolle, kernanalyse, evidenz, blinder_fleck, anspruchstyp}], friction, integration }
   const apiPerspectives = data.perspectives || [];
   if (apiPerspectives.length === 0) {
     perspectives.forEach(p => {
@@ -1217,10 +1224,41 @@ function renderResults(data, perspectives, container) {
       p.id === rolle.toLowerCase() ||
       (p.de || '').toLowerCase() === rolle.toLowerCase()
     ) || perspectives[0];
-    const card = createResultCard(pDef, rolle);
+    const meta = {
+      anspruchstyp: r.anspruchstyp || '',
+      evidenz: r.evidenz || '',
+      blinder_fleck: r.blinder_fleck || '',
+    };
+    const card = createResultCard(pDef, rolle, meta);
     card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
     container.appendChild(card);
   });
+
+  // FRICTION — Spannungen & Lücken zwischen Perspektiven
+  const fr = data.friction || {};
+  const frItems = [...(fr.echte_widersprueche || []), ...(fr.uebersetzungsfehler || [])].filter(Boolean);
+  if (frItems.length > 0 || fr.uebersehenes) {
+    const frCard = document.createElement('div');
+    frCard.className = 'result-card';
+    const frList = frItems.map(t => `<li>${escapeHTML(t)}</li>`).join('');
+    const uebersehenes = fr.uebersehenes ? `<p class="friction-seen">${escapeHTML(fr.uebersehenes)}</p>` : '';
+    frCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(196,98,45,0.10);color:#C4622D">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+        </div>
+        <div class="result-card-title">${currentLang==='de'?'SPANNUNGEN & LÜCKEN':'TENSIONS & GAPS'}</div>
+        <div class="result-card-badge">reibung</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body">
+        <ul class="friction-list">${frList}</ul>
+        ${uebersehenes}
+      </div>
+    `;
+    container.appendChild(frCard);
+  }
+
   const intg = data.integration || {};
   if (intg.einfach_gesagt) {
     const synthCard = document.createElement('div');
@@ -1271,12 +1309,52 @@ function renderResults(data, perspectives, container) {
     `;
     container.appendChild(kopfCard);
   }
+  if (intg.maennlich) {
+    const maennlichCard = document.createElement('div');
+    maennlichCard.className = 'result-card';
+    maennlichCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(90,130,180,0.12);color:#5A82B4">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="11" r="6"/><line x1="13.5" y1="6.5" x2="18" y2="2"/><polyline points="15 2 18 2 18 5"/></svg>
+        </div>
+        <div class="result-card-title">${currentLang==='de'?'Was die aktive Kraft sagt':'What the Active Force Says'}</div>
+        <div class="result-card-badge">maennlich</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.maennlich)}</p></div>
+    `;
+    container.appendChild(maennlichCard);
+  }
+  if (intg.weiblich) {
+    const weiblichCard = document.createElement('div');
+    weiblichCard.className = 'result-card';
+    weiblichCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(160,100,160,0.12);color:#A064A0">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="6"/><line x1="10" y1="14" x2="10" y2="18"/><line x1="7" y1="17" x2="13" y2="17"/></svg>
+        </div>
+        <div class="result-card-title">${currentLang==='de'?'Was die haltende Kraft sagt':'What the Holding Force Says'}</div>
+        <div class="result-card-badge">weiblich</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.weiblich)}</p></div>
+    `;
+    container.appendChild(weiblichCard);
+  }
 }
 
-function createResultCard(p, overrideName) {
+function createResultCard(p, overrideName, meta) {
   const displayName = overrideName || (currentLang === 'de' ? p.de : p.en);
   const card = document.createElement('div');
   card.className = 'result-card';
+  let metaHTML = '';
+  if (meta) {
+    const parts = [];
+    if (meta.anspruchstyp) parts.push(`<div class="card-meta-item"><span class="card-meta-label">${currentLang==='de'?'Anspruch':'Claim'}</span><span class="card-meta-text">${escapeHTML(meta.anspruchstyp)}</span></div>`);
+    if (meta.evidenz) parts.push(`<div class="card-meta-item"><span class="card-meta-label">${currentLang==='de'?'Basis':'Basis'}</span><span class="card-meta-text">${escapeHTML(meta.evidenz)}</span></div>`);
+    if (meta.blinder_fleck) parts.push(`<div class="card-meta-item"><span class="card-meta-label">${currentLang==='de'?'Blind':'Blind'}</span><span class="card-meta-text">${escapeHTML(meta.blinder_fleck)}</span></div>`);
+    if (parts.length) metaHTML = `<div class="card-meta">${parts.join('')}</div>`;
+  }
   card.innerHTML = `
     <div class="result-card-header" onclick="toggleCard(this.parentElement)">
       <div class="result-card-icon" style="background:${p.color}22;color:${p.color}">${SVG_ICONS[p.icon]||''}</div>
@@ -1289,7 +1367,7 @@ function createResultCard(p, overrideName) {
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
       </div>
     </div>
-    <div class="result-card-body"><p class="streaming-text"></p></div>
+    <div class="result-card-body"><p class="streaming-text"></p>${metaHTML}</div>
   `;
   setTimeout(() => card.classList.add('open'), 50);
   return card;

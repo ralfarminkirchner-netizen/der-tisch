@@ -197,6 +197,9 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 .synthese-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-off) 100%); border: 1.5px solid var(--border); border-top: 3px solid var(--accent); border-radius: var(--r-card); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-lg); }
 .synthese-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
 .synthese-content { font-size: 15px; line-height: 1.75; color: var(--text); }
+.friction-list{margin:0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:6px}
+.friction-list li{font-size:13px;line-height:1.6;color:var(--muted)}
+.friction-seen{font-size:13px;color:var(--muted);margin-top:10px;padding:8px 12px;background:rgba(196,98,45,0.06);border-radius:6px;font-style:italic;line-height:1.6}
 
 /* ── History ─────────────────────────────────────────────── */
 .history-panel { position: fixed; inset-y: 0; right: 0; width: 380px; max-width: 100vw; background: var(--surface); border-left: 1px solid var(--border); z-index: 500; transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
@@ -846,18 +849,34 @@ function renderResults(data, question, perspectives) {
   const cards = document.getElementById('perspectiveCards');
   cards.innerHTML = '';
   (data.perspectives||[]).forEach((p,i) => {
-    const def = PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===(p.role||'').toLowerCase());
+    const rolle = p.rolle||p.role||'';
+    const def = PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===rolle.toLowerCase());
     const color = def ? def.color : `hsl(${i*38%360},55%,55%)`;
     const icon = def ? def.icon : '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v6a4 4 0 008 0v-1"/><circle cx="17" cy="9" r="2"/></svg>';
-    const portrait = getPortrait(p.role);
+    const portrait = getPortrait(rolle);
     const card = document.createElement('div');
     card.className = 'perspective-card';
     card.style.borderTopColor = color; card.style.borderTopWidth = '3px';
-    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">${portrait}</div><div><div class="card-role" style="color:${color}">${p.role||''}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
+    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">${portrait}</div><div><div class="card-role" style="color:${color}">${escHTML(rolle)}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
     cards.appendChild(card);
   });
 
-  if (data.synthese) { document.getElementById('syntheseContent').textContent=data.synthese; document.getElementById('syntheseCard').style.display=''; }
+  const intg = data.integration||{};
+  if (intg.einfach_gesagt) { document.getElementById('syntheseContent').textContent=intg.einfach_gesagt; document.getElementById('syntheseCard').style.display=''; }
+  let dynDiv = document.getElementById('dynamicIntegration');
+  if (dynDiv) dynDiv.remove();
+  dynDiv = document.createElement('div'); dynDiv.id = 'dynamicIntegration';
+  const fr = data.friction||{};
+  const frItems = [...(fr.echte_widersprueche||[]).map(x=>`<li>${escHTML(x)}</li>`),...(fr.uebersetzungsfehler||[]).map(x=>`<li>${escHTML(x)}</li>`)].join('');
+  const frSeen = fr.uebersehenes?`<p class="friction-seen">${escHTML(fr.uebersehenes)}</p>`:'';
+  dynDiv.innerHTML = [
+    frItems||frSeen?`<div class="synthese-card" style="border-top-color:var(--accent-2)"><div class="synthese-label">SPANNUNGEN &amp; LÜCKEN</div>${frItems?`<ul class="friction-list">${frItems}</ul>`:''} ${frSeen}</div>`:'',
+    intg.herzmensch?`<div class="synthese-card" style="border-top-color:#D4845A"><div class="synthese-label" style="color:#D4845A">WAS DAS HERZ SAGT</div><div class="synthese-content">${escHTML(intg.herzmensch)}</div></div>`:'',
+    intg.kopfmensch?`<div class="synthese-card" style="border-top-color:#4A7FA8"><div class="synthese-label" style="color:#4A7FA8">WAS DER KOPF SAGT</div><div class="synthese-content">${escHTML(intg.kopfmensch)}</div></div>`:'',
+    intg.maennlich?`<div class="synthese-card" style="border-top-color:#5A82B4"><div class="synthese-label" style="color:#5A82B4">AKTIVE KRAFT</div><div class="synthese-content">${escHTML(intg.maennlich)}</div></div>`:'',
+    intg.weiblich?`<div class="synthese-card" style="border-top-color:#A064A0"><div class="synthese-label" style="color:#A064A0">HALTENDE KRAFT</div><div class="synthese-content">${escHTML(intg.weiblich)}</div></div>`:'',
+  ].join('');
+  document.getElementById('syntheseCard').insertAdjacentElement('afterend', dynDiv);
   document.getElementById('kintegrityWrap').classList.add('visible');
   document.getElementById('integrityField').value='';
   document.getElementById('kintegrityPanels').innerHTML='';
@@ -883,9 +902,10 @@ async function runKintegrity() {
   } catch(err) { clearTimeout(_tid); document.getElementById('kintegrityPanels').innerHTML=`<p style="color:var(--red);font-size:13px;">Fehler: ${err.message}</p>`; }
 }
 
+function escHTML(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function copyResults() {
   if (!lastResults) return;
-  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${p.role}:\n${p.kernanalyse}`).join('\n\n'));
+  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${p.rolle||p.role||''}:\n${p.kernanalyse}`).join('\n\n'));
 }
 
 const HISTORY_KEY = 'tisch_history_v1';
