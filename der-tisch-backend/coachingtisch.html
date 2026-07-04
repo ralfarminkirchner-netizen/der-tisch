@@ -1080,6 +1080,8 @@ function renderResults(data, question, perspectives) {
   if (intg.einfach_gesagt) {
     document.getElementById('syntheseContent').textContent = intg.einfach_gesagt;
     syntheseCard.style.display = '';
+  } else {
+    syntheseCard.style.display = 'none';
   }
 
   // Dynamic cards: friction + energy perspectives
@@ -1154,7 +1156,7 @@ async function runKintegrity() {
 
 function copyResults() {
   if (!lastResults) return;
-  const txt = (lastResults.perspectives||[]).map(p=>`${p.rolle||p.role||''}:\n${p.kernanalyse}`).join('\n\n');
+  const txt = (lastResults.perspectives||[]).map(p=>`${(p.rolle||p.role||'').replace(/^\[(custom|method)\]/,'')}:\n${p.kernanalyse}`).join('\n\n');
   navigator.clipboard.writeText(lastQuestion+'\n\n'+txt);
 }
 

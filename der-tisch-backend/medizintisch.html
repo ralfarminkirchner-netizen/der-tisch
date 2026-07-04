@@ -849,7 +849,7 @@ function renderResults(data, question, perspectives) {
   const cards = document.getElementById('perspectiveCards');
   cards.innerHTML = '';
   (data.perspectives||[]).forEach((p,i) => {
-    const rolle = p.rolle||p.role||'';
+    const rolle = (p.rolle||p.role||'').replace(/^\[(custom|method)\]/, '');
     const def = PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===rolle.toLowerCase());
     const color = def ? def.color : `hsl(${i*38%360},55%,55%)`;
     const icon = def ? def.icon : '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v6a4 4 0 008 0v-1"/><circle cx="17" cy="9" r="2"/></svg>';
@@ -857,12 +857,12 @@ function renderResults(data, question, perspectives) {
     const card = document.createElement('div');
     card.className = 'perspective-card';
     card.style.borderTopColor = color; card.style.borderTopWidth = '3px';
-    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">${portrait}</div><div><div class="card-role" style="color:${color}">${escHTML(rolle)}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
+    card.innerHTML = `<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">${portrait}</div><div><div class="card-role" style="color:${color}">${escHTML(rolle)}</div><div class="card-title">${escHTML((p.kernanalyse||'').slice(0,60))}</div></div></div><div class="card-body">${escHTML(p.kernanalyse||'')}</div>`;
     cards.appendChild(card);
   });
 
   const intg = data.integration||{};
-  if (intg.einfach_gesagt) { document.getElementById('syntheseContent').textContent=intg.einfach_gesagt; document.getElementById('syntheseCard').style.display=''; }
+  if (intg.einfach_gesagt) { document.getElementById('syntheseContent').textContent=intg.einfach_gesagt; document.getElementById('syntheseCard').style.display=''; } else { document.getElementById('syntheseCard').style.display='none'; }
   let dynDiv = document.getElementById('dynamicIntegration');
   if (dynDiv) dynDiv.remove();
   dynDiv = document.createElement('div'); dynDiv.id = 'dynamicIntegration';
@@ -905,7 +905,7 @@ async function runKintegrity() {
 function escHTML(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function copyResults() {
   if (!lastResults) return;
-  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${p.rolle||p.role||''}:\n${p.kernanalyse}`).join('\n\n'));
+  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${(p.rolle||p.role||'').replace(/^\[(custom|method)\]/, '')}:\n${p.kernanalyse}`).join('\n\n'));
 }
 
 const HISTORY_KEY = 'tisch_history_v1';

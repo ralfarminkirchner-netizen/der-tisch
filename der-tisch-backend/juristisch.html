@@ -756,17 +756,17 @@ function renderResults(data,question,perspectives) {
   document.getElementById('resultsMeta').textContent=lang==='de'?`${perspectives.length} Perspektiven analysiert`:`${perspectives.length} perspectives analysed`;
   const cards=document.getElementById('perspectiveCards'); cards.innerHTML='';
   (data.perspectives||[]).forEach((p,i)=>{
-    const rolle=p.rolle||p.role||'';
+    const rolle=(p.rolle||p.role||'').replace(/^\[(custom|method)\]/,'');
     const def=PERSPEKTIVEN.find(x=>(lang==='de'?x.de:x.en).toLowerCase()===rolle.toLowerCase());
     const color=def?def.color:`hsl(${40+i*15},55%,55%)`;
     const icon=def?def.icon:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ><line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="4" x2="18" y2="4"/><path d="M4 4 Q1 10 4 14 Q7 18 10 14"/><path d="M16 4 Q19 10 16 14 Q13 18 10 14"/></svg>';
     const card=document.createElement('div'); card.className='perspective-card';
     card.style.borderTopColor=color; card.style.borderTopWidth='3px';
-    card.innerHTML=`<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;">${icon}</div><div><div class="card-role" style="color:${color}">${escHTML(rolle)}</div><div class="card-title">${(p.kernanalyse||'').slice(0,60)}</div></div></div><div class="card-body">${p.kernanalyse||''}</div>`;
+    card.innerHTML=`<div class="card-header"><div class="card-icon" style="background:${color}18;border-color:${color}40;">${icon}</div><div><div class="card-role" style="color:${color}">${escHTML(rolle)}</div><div class="card-title">${escHTML((p.kernanalyse||'').slice(0,60))}</div></div></div><div class="card-body">${escHTML(p.kernanalyse||'')}</div>`;
     cards.appendChild(card);
   });
   const intg=data.integration||{};
-  if(intg.einfach_gesagt){document.getElementById('syntheseContent').textContent=intg.einfach_gesagt;document.getElementById('syntheseCard').style.display='';}
+  if(intg.einfach_gesagt){document.getElementById('syntheseContent').textContent=intg.einfach_gesagt;document.getElementById('syntheseCard').style.display='';}else{document.getElementById('syntheseCard').style.display='none';}
   let dynDiv=document.getElementById('dynamicIntegration');
   if(dynDiv)dynDiv.remove();
   dynDiv=document.createElement('div'); dynDiv.id='dynamicIntegration';
@@ -805,7 +805,7 @@ async function runKintegrity() {
 function escHTML(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function copyResults() {
   if(!lastResults) return;
-  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${p.rolle||p.role||''}:\n${p.kernanalyse}`).join('\n\n'));
+  navigator.clipboard.writeText(lastQuestion+'\n\n'+(lastResults.perspectives||[]).map(p=>`${(p.rolle||p.role||'').replace(/^\[(custom|method)\]/,'')}:\n${p.kernanalyse}`).join('\n\n'));
 }
 const HISTORY_KEY='tisch_history_v1';
 function saveToHistory(q,data,perspectives){
