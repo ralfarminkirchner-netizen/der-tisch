@@ -44,7 +44,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
 
 /* MODE TABS */
-.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:680px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
 .mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
 .mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
 .mode-tab:not(.active):hover{color:var(--text)}
@@ -223,6 +223,31 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .friction-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:16px;position:relative}
 .friction-list li::before{content:'—';position:absolute;left:0;color:var(--accent)}
 @media(max-width:640px){.parties-grid{grid-template-columns:1fr}}
+
+/* FAMiLiENRAT MODE */
+.rat-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.rat-topic{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:64px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.rat-topic:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.rat-topic::placeholder{color:var(--muted)}
+.members-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.member-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative}
+.member-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.member-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.member-remove-btn{background:none;border:none;color:var(--faint);cursor:pointer;padding:2px;border-radius:4px;transition:color .2s;line-height:0}
+.member-remove-btn:hover{color:#FF6B6B}
+.member-name-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;margin-bottom:8px;transition:border-color .2s}
+.member-name-input:focus{border-color:var(--accent)}
+.member-position{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-family:var(--font);font-size:14px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6}
+.member-position:focus{border-color:var(--accent)}
+.member-position::placeholder{color:var(--muted)}
+.rat-add-member{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border:1px dashed var(--faint);background:none;color:var(--muted);border-radius:10px;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:16px}
+.rat-add-member:hover{border-color:var(--accent);color:var(--accent)}
+.rat-add-member:disabled{opacity:.3;cursor:not-allowed}
+.rat-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.rat-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.rat-send-btn:hover{opacity:.88}
+.rat-send-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:640px){.members-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -415,6 +440,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-klaerung" onclick="setMode('klaerung')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
       KLÄRUNGSGESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-rat" onclick="setMode('rat')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="8" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="15" cy="8" r="2"/><line x1="5" y1="10" x2="5" y2="16"/><line x1="10" y1="7" x2="10" y2="16"/><line x1="15" y1="10" x2="15" y2="16"/><line x1="5" y1="16" x2="15" y2="16"/></svg>
+      FAMiLiENRAT
     </button>
   </div>
 </section>
@@ -646,6 +675,46 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="klaerungResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiENRAT MODE ==================== -->
+<div class="mode-section" id="mode-rat">
+  <div class="rat-wrap">
+
+    <div style="margin-bottom:6px">
+      <div class="chips-label" style="text-align:left;margin-bottom:10px">Thema des Familienrats</div>
+      <textarea class="rat-topic" id="ratTopic" placeholder="Welches Thema steht heute auf der Tagesordnung der Familie?" rows="2"></textarea>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Typische Themen</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="ratChips">
+      <button class="chip" onclick="useRatChip(this)">Haushaltsaufgaben fair verteilen</button>
+      <button class="chip" onclick="useRatChip(this)">Urlaubsplanung — was wollen alle?</button>
+      <button class="chip" onclick="useRatChip(this)">Bildschirmzeit und Medienregeln</button>
+      <button class="chip" onclick="useRatChip(this)">Taschengeld und Finanzen</button>
+      <button class="chip" onclick="useRatChip(this)">Teenager möchte mehr Freiheit</button>
+      <button class="chip" onclick="useRatChip(this)">Oma oder Opa zieht zu uns — wie gestalten wir das?</button>
+      <button class="chip" onclick="useRatChip(this)">Wir brauchen neue Familienregeln</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:12px">Familienmitglieder am Rat</div>
+    <div class="members-grid" id="membersGrid"></div>
+
+    <button class="rat-add-member" id="ratAddBtn" onclick="addRatMember()">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+      Familienmitglied hinzufügen
+    </button>
+
+    <div class="klaerung-send-row">
+      <button class="klaerung-send-btn" id="ratSendBtn" onclick="sendRat()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="8" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="15" cy="8" r="2"/><line x1="5" y1="10" x2="5" y2="16"/><line x1="10" y1="7" x2="10" y2="16"/><line x1="15" y1="10" x2="15" y2="16"/><line x1="5" y1="16" x2="15" y2="16"/></svg>
+        Familienrat starten
+      </button>
+    </div>
+
+    <div id="ratResults"></div>
 
   </div>
 </div>
@@ -963,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', () => {
   PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
   renderPerspGrid();
   updateChips();
+  initRatMembers();
 
   // Keyboard send
   document.getElementById('questionInput').addEventListener('keydown', e => {
@@ -1221,56 +1291,7 @@ function renderResults(data, perspectives, container) {
     card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
     container.appendChild(card);
   });
-  const intg = data.integration || {};
-  if (intg.einfach_gesagt) {
-    const synthCard = document.createElement('div');
-    synthCard.className = 'result-card';
-    synthCard.innerHTML = `
-      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-        </div>
-        <div class="result-card-title">kiNTEGRATiON</div>
-        <div class="result-card-badge">synthese</div>
-        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-      </div>
-      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.einfach_gesagt)}</p></div>
-    `;
-    setTimeout(() => synthCard.classList.add('open'), 100);
-    container.appendChild(synthCard);
-  }
-  if (intg.herzmensch) {
-    const herzCard = document.createElement('div');
-    herzCard.className = 'result-card';
-    herzCard.innerHTML = `
-      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-        <div class="result-card-icon" style="background:rgba(212,132,90,0.15);color:#D4845A">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
-        </div>
-        <div class="result-card-title">Was das Herz sagt</div>
-        <div class="result-card-badge">herzmensch</div>
-        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-      </div>
-      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.herzmensch)}</p></div>
-    `;
-    container.appendChild(herzCard);
-  }
-  if (intg.kopfmensch) {
-    const kopfCard = document.createElement('div');
-    kopfCard.className = 'result-card';
-    kopfCard.innerHTML = `
-      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-        <div class="result-card-icon" style="background:rgba(74,127,168,0.15);color:#4A7FA8">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M7 8h6M7 12h4"/></svg>
-        </div>
-        <div class="result-card-title">Was der Kopf sagt</div>
-        <div class="result-card-badge">kopfmensch</div>
-        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-      </div>
-      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.kopfmensch)}</p></div>
-    `;
-    container.appendChild(kopfCard);
-  }
+  appendIntegrationCards(data.integration || {}, container);
 }
 
 function createResultCard(p, overrideName) {
@@ -1996,23 +2017,7 @@ async function analyseAufstellung() {
       fallbackCard.querySelector('.streaming-text').textContent = text;
       resultsDiv.appendChild(fallbackCard);
     }
-    if (data.integration && data.integration.einfach_gesagt) {
-      const synthCard = document.createElement('div');
-      synthCard.className = 'result-card';
-      synthCard.innerHTML = `
-        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-          <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-          </div>
-          <div class="result-card-title">kiNTEGRATiON</div>
-          <div class="result-card-badge">synthese</div>
-          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-        </div>
-        <div class="result-card-body"><p class="streaming-text">${escapeHTML(data.integration.einfach_gesagt)}</p></div>
-      `;
-      setTimeout(() => synthCard.classList.add('open'), 100);
-      resultsDiv.appendChild(synthCard);
-    }
+    appendIntegrationCards(data.integration || {}, resultsDiv);
     const kiDiv = document.createElement('div');
     kiDiv.className = 'kintegrity';
     kiDiv.style.marginTop = '16px';
@@ -2034,6 +2039,91 @@ async function analyseAufstellung() {
 
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ============================================================
+// INTEGRATION CARDS — shared renderer for all modes
+// ============================================================
+function appendIntegrationCards(intg, container, opts) {
+  if (!intg) return;
+  const {
+    synthesisTitle = 'kiNTEGRATiON',
+    synthesisSubtitle = 'synthese',
+    synthesisColor = '#C4622D',
+    autoOpen = true,
+  } = opts || {};
+
+  if (intg.einfach_gesagt) {
+    const synthCard = document.createElement('div');
+    synthCard.className = 'result-card';
+    synthCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:${synthesisColor}22;color:${synthesisColor}">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+        </div>
+        <div class="result-card-title">${synthesisTitle}</div>
+        <div class="result-card-badge">${synthesisSubtitle}</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.einfach_gesagt)}</p></div>
+    `;
+    if (autoOpen) setTimeout(() => synthCard.classList.add('open'), 100);
+    container.appendChild(synthCard);
+  }
+
+  if (intg.herzmensch) {
+    const herzCard = document.createElement('div');
+    herzCard.className = 'result-card';
+    herzCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(212,132,90,0.15);color:#D4845A">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+        </div>
+        <div class="result-card-title">Was das Herz sagt</div>
+        <div class="result-card-badge">herzmensch</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.herzmensch)}</p></div>
+    `;
+    container.appendChild(herzCard);
+  }
+
+  if (intg.kopfmensch) {
+    const kopfCard = document.createElement('div');
+    kopfCard.className = 'result-card';
+    kopfCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(74,127,168,0.15);color:#4A7FA8">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M7 8h6M7 12h4"/></svg>
+        </div>
+        <div class="result-card-title">Was der Kopf sagt</div>
+        <div class="result-card-badge">kopfmensch</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.kopfmensch)}</p></div>
+    `;
+    container.appendChild(kopfCard);
+  }
+
+  const steps = Array.isArray(intg.entscheidungshilfe) ? intg.entscheidungshilfe.filter(Boolean) : [];
+  if (steps.length > 0) {
+    const stepsCard = document.createElement('div');
+    stepsCard.className = 'result-card';
+    stepsCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(143,188,138,0.15);color:#8FBC8A">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/><polyline points="4 18 10 12 4 6"/></svg>
+        </div>
+        <div class="result-card-title">Was jetzt?</div>
+        <div class="result-card-badge">nächste schritte</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body">
+        <ul class="friction-list">${steps.map(s => `<li>${escapeHTML(s)}</li>`).join('')}</ul>
+      </div>
+    `;
+    container.appendChild(stepsCard);
+  }
 }
 
 // ============================================================
@@ -2136,24 +2226,11 @@ async function sendKlaerung() {
     }
 
     // Was verbindet — integration
-    const intg = data.integration || {};
-    if (intg.einfach_gesagt) {
-      const synthCard = document.createElement('div');
-      synthCard.className = 'result-card';
-      synthCard.innerHTML = `
-        <div class="result-card-header" onclick="toggleCard(this.parentElement)">
-          <div class="result-card-icon" style="background:rgba(74,127,168,0.15);color:#4A7FA8">
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
-          </div>
-          <div class="result-card-title">GEMEiNSAMER BODEN</div>
-          <div class="result-card-badge">klärung</div>
-          <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
-        </div>
-        <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.einfach_gesagt)}</p></div>
-      `;
-      setTimeout(() => synthCard.classList.add('open'), 100);
-      resultsDiv.appendChild(synthCard);
-    }
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle: 'GEMEiNSAMER BODEN',
+      synthesisSubtitle: 'klärung',
+      synthesisColor: '#4A7FA8',
+    });
 
     // KiNTEGRiTY badge
     const kiDiv = document.createElement('div');
@@ -2177,6 +2254,169 @@ async function sendKlaerung() {
 
   isLoading = false;
   document.getElementById('klaerungSendBtn').disabled = false;
+}
+
+// ============================================================
+// FAMiLiENRAT
+// ============================================================
+const RAT_COLORS = ['#4A7FA8', '#C4622D', '#8FBC8A', '#9A6A3A'];
+const RAT_DEFAULT_NAMES = {
+  de: ['Mutter / Elternteil', 'Vater / Partner', 'Kind / Jugendliche·r', 'Großeltern'],
+  en: ['Mother / Parent', 'Father / Partner', 'Child / Teen', 'Grandparent'],
+};
+const RAT_ICONS = ['heart', 'compass', 'sprout', 'scroll'];
+let ratMemberCount = 0;
+
+function initRatMembers() {
+  ratMemberCount = 0;
+  document.getElementById('membersGrid').innerHTML = '';
+  addRatMember();
+  addRatMember();
+}
+
+function addRatMember() {
+  if (ratMemberCount >= 4) return;
+  const idx = ratMemberCount;
+  ratMemberCount++;
+  const color = RAT_COLORS[idx];
+  const defaultName = RAT_DEFAULT_NAMES[currentLang][idx] || `Mitglied ${idx + 1}`;
+  const removeBtnHtml = idx >= 2 ? `
+    <button class="member-remove-btn" onclick="removeRatMember(${idx})" title="Entfernen">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>` : '';
+  const posPlaceholder = currentLang === 'de'
+    ? 'Was ist dieser Person wichtig? Was wünscht, fühlt, braucht sie in dieser Situation?'
+    : 'What matters to this person? What do they wish, feel, or need here?';
+  const card = document.createElement('div');
+  card.className = 'member-card';
+  card.id = `member-card-${idx}`;
+  card.innerHTML = `
+    <div class="member-header">
+      <div class="member-label">
+        <div class="persp-dot" style="background:${color}"></div>
+        Mitglied ${idx + 1}
+      </div>
+      ${removeBtnHtml}
+    </div>
+    <input class="member-name-input" id="member-name-${idx}" type="text" placeholder="${defaultName}">
+    <textarea class="member-position" id="member-pos-${idx}" placeholder="${posPlaceholder}" rows="3"></textarea>
+  `;
+  document.getElementById('membersGrid').appendChild(card);
+  updateRatAddBtn();
+}
+
+function removeRatMember(idx) {
+  if (idx < 2) return;
+  const card = document.getElementById(`member-card-${idx}`);
+  if (card) card.remove();
+  ratMemberCount--;
+  updateRatAddBtn();
+}
+
+function updateRatAddBtn() {
+  const btn = document.getElementById('ratAddBtn');
+  if (btn) btn.disabled = ratMemberCount >= 4;
+}
+
+function useRatChip(el) {
+  document.getElementById('ratTopic').value = el.textContent.trim();
+  document.getElementById('ratTopic').focus();
+}
+
+async function sendRat() {
+  const topic = document.getElementById('ratTopic').value.trim();
+  if (!topic) { showToast('Bitte das Thema des Familienrats eingeben.'); return; }
+
+  // Collect members with content — query DOM so gaps from removal don't matter
+  const members = [];
+  document.querySelectorAll('[id^="member-pos-"]').forEach(el => {
+    const idx = parseInt(el.id.replace('member-pos-', ''), 10);
+    const name = document.getElementById(`member-name-${idx}`)?.value?.trim()
+      || RAT_DEFAULT_NAMES[currentLang][idx] || `Mitglied ${idx + 1}`;
+    const position = el.value.trim();
+    if (position) members.push({ name, position, idx });
+  });
+  if (members.length < 2) { showToast('Bitte mindestens 2 Familienmitglieder mit Position eintragen.'); return; }
+  if (isLoading) return;
+
+  isLoading = true;
+  document.getElementById('ratSendBtn').disabled = true;
+
+  const resultsDiv = document.getElementById('ratResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang==='de'?'Der Familienrat tagt...':'Family council in session...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question: topic,
+      lang: currentLang,
+      stil: currentTone === 'kindgerecht' ? 'kindgerecht' : 'therapeutisch',
+      tone: currentTone !== 'kindgerecht' ? currentTone : '',
+      custom_perspectives: members.map(m => ({
+        name: m.name,
+        position: m.position,
+        grundhaltung: currentLang === 'de'
+          ? `Ich spreche als Familienmitglied aus meiner eigenen Erfahrung und meinem eigenen Gefühl heraus.`
+          : `I speak as a family member from my own experience and feelings.`,
+      })),
+      methods: [],
+      source_app: 'FAMiLiEN-TiSCH',
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    resultsDiv.innerHTML = '';
+
+    const memberDefs = members.map(m => ({
+      id: `member-${m.idx}`,
+      icon: RAT_ICONS[m.idx] || 'heart',
+      de: m.name, en: m.name,
+      color: RAT_COLORS[m.idx] || RAT_COLORS[0],
+    }));
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef = memberDefs[i] || memberDefs[0];
+        const card = createResultCard(pDef, rolle || pDef.de);
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle: 'GEMEiNSAMER BODEN',
+      synthesisSubtitle: 'beschluss',
+      synthesisColor: '#C4622D',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="8" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="15" cy="8" r="2"/><line x1="5" y1="10" x2="5" y2="16"/><line x1="10" y1="7" x2="10" y2="16"/><line x1="15" y1="10" x2="15" y2="16"/><line x1="5" y1="16" x2="15" y2="16"/></svg> Alle Stimmen gehört</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Keine Schuldzuweisung</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> Vertraulich</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({ question: 'Rat: ' + topic, perspectives: members.map(m => m.name), lang: currentLang, time: Date.now() });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang==='de'?'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.':'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  document.getElementById('ratSendBtn').disabled = false;
 }
 </script>
 <script src="/notizbuch.js"></script>
