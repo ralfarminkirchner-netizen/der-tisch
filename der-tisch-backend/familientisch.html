@@ -182,6 +182,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   .persp-grid{grid-template-columns:1fr}
 }
 
+/* KRISENHILFE PANEL */
+.krisenhilfe-panel{background:rgba(196,98,45,0.06);border:1px solid rgba(196,98,45,0.25);border-radius:10px;padding:14px 16px;margin-bottom:20px}
+.krisenhilfe-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.krisenhilfe-header-icon{color:var(--accent);flex-shrink:0}
+.krisenhilfe-header-text{font-size:11px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;font-weight:600}
+.krisenhilfe-links{display:flex;flex-wrap:wrap;gap:8px}
+.krisenhilfe-link{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--surface);border:1px solid rgba(196,98,45,0.2);border-radius:8px;text-decoration:none;color:var(--text);font-size:12px;transition:border-color .2s}
+.krisenhilfe-link:hover{border-color:var(--accent)}
+.krisenhilfe-link-label{font-weight:600;display:block}
+.krisenhilfe-link-desc{color:var(--muted);font-size:11px;display:block}
+
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -193,6 +204,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .card-nb-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:4px;display:flex;align-items:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
 .result-card-header:hover .card-nb-btn{opacity:1}
 .card-nb-btn:hover{color:var(--accent)}
+
+/* PROTOKOLL EXPORT */
+.protokoll-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s;margin-top:16px}
+.protokoll-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 
 /* SELECT ALL */
 .select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -248,6 +263,33 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .rat-send-btn:hover{opacity:.88}
 .rat-send-btn:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:640px){.members-grid{grid-template-columns:1fr}}
+
+/* RITUAL MODE */
+.ritual-wrap{max-width:860px;margin:0 auto;padding:0 20px 48px}
+.ritual-intro{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.65}
+.ritual-intro strong{color:var(--text)}
+.ritual-category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.ritual-cat-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;text-align:left;transition:all .2s;font-family:var(--font)}
+.ritual-cat-btn:hover,.ritual-cat-btn.active{border-color:var(--accent);background:var(--accent-dim)}
+.ritual-cat-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.ritual-cat-desc{font-size:11px;color:var(--muted)}
+.ritual-situation-label{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.ritual-situation{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:var(--font);font-size:14px;color:var(--text);resize:vertical;min-height:70px;max-height:160px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.ritual-situation:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.ritual-situation::placeholder{color:var(--muted)}
+.ritual-send-row{display:flex;justify-content:flex-end;margin-bottom:28px}
+.ritual-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.ritual-send-btn:hover{opacity:.88}
+.ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.ritual-results{margin-top:4px}
+.ritual-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.ritual-card-head{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.ritual-card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.ritual-card-info{flex:1}
+.ritual-card-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.ritual-card-freq{font-size:11px;color:var(--muted);letter-spacing:.06em}
+.ritual-card-body{padding:0 16px 14px;font-size:13px;color:var(--muted);line-height:1.7}
+@media(max-width:640px){.ritual-category-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -445,6 +487,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="8" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="15" cy="8" r="2"/><line x1="5" y1="10" x2="5" y2="16"/><line x1="10" y1="7" x2="10" y2="16"/><line x1="15" y1="10" x2="15" y2="16"/><line x1="5" y1="16" x2="15" y2="16"/></svg>
       FAMiLiENRAT
     </button>
+    <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 11l-3.7 2.5 1.4-4.3L4 6.5h4.5z"/></svg>
+      RiTUALE
+    </button>
   </div>
 </section>
 
@@ -475,6 +521,44 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
           <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
           Krise
         </button>
+      </div>
+
+      <!-- Krisenhilfe panel (visible only in Krise filter) -->
+      <div class="krisenhilfe-panel" id="krisenhilfePanel" style="display:none">
+        <div class="krisenhilfe-header">
+          <svg class="krisenhilfe-header-icon" width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+          <span class="krisenhilfe-header-text" id="krisenhilfeTitle">Wenn Sie gerade in einer akuten Krise sind</span>
+        </div>
+        <div class="krisenhilfe-links">
+          <a href="tel:08001110111" class="krisenhilfe-link">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.1 12.9c-.8-.8-1.8-1.3-2.8-1.3s-2 .5-2.8 1.3l-1.4 1.4c-1.6-1-3-2.4-4-4l1.4-1.4c.8-.8 1.3-1.8 1.3-2.8s-.5-2-1.3-2.8L3.9 2A2 2 0 001 2.1C-.4 5.4 1.5 10.5 5.4 14.6c4 4 9 5.8 12.5 4.4a2 2 0 00.1-2.9l-2.9-3.2z"/></svg>
+            <div>
+              <span class="krisenhilfe-link-label">Telefonseelsorge</span>
+              <span class="krisenhilfe-link-desc">0800 111 0 111 — kostenlos, 24/7</span>
+            </div>
+          </a>
+          <a href="https://www.bke-onlineberatung.de" target="_blank" rel="noopener" class="krisenhilfe-link">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
+            <div>
+              <span class="krisenhilfe-link-label">BKE Online-Elternberatung</span>
+              <span class="krisenhilfe-link-desc">Kostenlos für Eltern &amp; Jugendliche</span>
+            </div>
+          </a>
+          <a href="https://www.caritas.de/hilfeundberatung/ratgeber/familie" target="_blank" rel="noopener" class="krisenhilfe-link">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+            <div>
+              <span class="krisenhilfe-link-label">Caritas Familienberatung</span>
+              <span class="krisenhilfe-link-desc">Beratungsstellen vor Ort finden</span>
+            </div>
+          </a>
+          <a href="https://www.nummergegenkummer.de" target="_blank" rel="noopener" class="krisenhilfe-link">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M6 18v-1a4 4 0 018 0v1"/></svg>
+            <div>
+              <span class="krisenhilfe-link-label">Nummer gegen Kummer</span>
+              <span class="krisenhilfe-link-desc">Für Kinder &amp; Jugendliche: 116 111</span>
+            </div>
+          </a>
+        </div>
       </div>
 
       <!-- Example chips -->
@@ -532,6 +616,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
             </div>
           </div>
         </div>
+        <button class="protokoll-btn" id="protokollBtn" onclick="exportProtokoll()" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2z"/><polyline points="14 2 14 8 8 8"/><line x1="8" y1="13" x2="12" y2="13"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+          Protokoll kopieren
+        </button>
       </div>
 
     </div>
@@ -719,6 +807,74 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== RITUAL MODE ==================== -->
+<div class="mode-section" id="mode-ritual">
+  <div class="ritual-wrap">
+
+    <div class="ritual-intro">
+      <strong>FAMiLiEN-RiTUALE</strong> — Rituale sind das stille Fundament des Familienlebens. Sie schaffen Sicherheit, stärken Zusammengehörigkeit und helfen durch schwierige Phasen. Wählen Sie einen Bereich und beschreiben Sie Ihre Familiensituation — der TiSCH schlägt konkrete, alltagstaugliche Rituale vor.
+    </div>
+
+    <div class="ritual-category-grid" id="ritualCatGrid">
+      <button class="ritual-cat-btn active" data-cat="verbindung" onclick="selectRitualCat(this)">
+        <div class="ritual-cat-title">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+          Verbindung
+        </div>
+        <div class="ritual-cat-desc">Nähe und Zusammengehörigkeit stärken</div>
+      </button>
+      <button class="ritual-cat-btn" data-cat="alltag" onclick="selectRitualCat(this)">
+        <div class="ritual-cat-title">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg>
+          Alltagsstruktur
+        </div>
+        <div class="ritual-cat-desc">Sicherheit durch Wiederkehrendes</div>
+      </button>
+      <button class="ritual-cat-btn" data-cat="konflikt" onclick="selectRitualCat(this)">
+        <div class="ritual-cat-title">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
+          Konfliktlösung
+        </div>
+        <div class="ritual-cat-desc">Streit konstruktiv abschließen</div>
+      </button>
+      <button class="ritual-cat-btn" data-cat="uebergang" onclick="selectRitualCat(this)">
+        <div class="ritual-cat-title">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5 5 5"/><path d="M12 19V7"/></svg>
+          Übergänge
+        </div>
+        <div class="ritual-cat-desc">Veränderungen gemeinsam meistern</div>
+      </button>
+      <button class="ritual-cat-btn" data-cat="feier" onclick="selectRitualCat(this)">
+        <div class="ritual-cat-title">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 11l-3.7 2.5 1.4-4.3L4 6.5h4.5z"/></svg>
+          Feiern & Dankbarkeit
+        </div>
+        <div class="ritual-cat-desc">Gutes gemeinsam anerkennen</div>
+      </button>
+      <button class="ritual-cat-btn" data-cat="resilienz" onclick="selectRitualCat(this)">
+        <div class="ritual-cat-title">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+          Stärke & Resilienz
+        </div>
+        <div class="ritual-cat-desc">Widerstandskraft als Familie aufbauen</div>
+      </button>
+    </div>
+
+    <div class="ritual-situation-label">Ihre Familiensituation (optional)</div>
+    <textarea class="ritual-situation" id="ritualSituation" placeholder="Beschreiben Sie kurz Ihre Familie: Alter der Kinder, aktuelle Herausforderungen, was gut klappt und was nicht..."></textarea>
+
+    <div class="ritual-send-row">
+      <button class="ritual-send-btn" id="ritualSendBtn" onclick="sendRitual()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 11l-3.7 2.5 1.4-4.3L4 6.5h4.5z"/></svg>
+        Rituale vorschlagen
+      </button>
+    </div>
+
+    <div class="ritual-results" id="ritualResults"></div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -743,6 +899,9 @@ const PERSPEKTIVEN = [
   { id: 'konflikt',       icon: 'zap',      de: 'Konfliktmediation',             en: 'Conflict Mediation',         color: '#CC7040', filters: ['all','krise'] },
   { id: 'kommunikation',  icon: 'network',  de: 'Kommunikationsexpertin',        en: 'Communication Expert',       color: '#B86840', filters: ['all','beziehung'] },
   { id: 'identitaet',     icon: 'mirror',   de: 'Identität & Rolle',             en: 'Identity & Role',            color: '#D07850', filters: ['all','erziehung','beziehung'] },
+  { id: 'neurodivergenz', icon: 'zap',      de: 'Neurodivergenz-Expertise',      en: 'Neurodivergence Expert',     color: '#8E7FD4', filters: ['all','erziehung'] },
+  { id: 'alleinerziehend',icon: 'shield',   de: 'Alleinerziehende',              en: 'Single Parent',              color: '#6BA68E', filters: ['all','beziehung','krise'] },
+  { id: 'interkulturell', icon: 'compass',  de: 'Interkulturelle Brücke',        en: 'Intercultural Bridge',       color: '#C4A028', filters: ['all','generationen','beziehung'] },
 ];
 
 const CHIPS_DATA = {
@@ -780,6 +939,9 @@ const CHIPS_DATA = {
       'Bildschirmzeit reduzieren ohne Machtkampf.',
       'Mein Kind hat Angst vor der Schule.',
       'Wie stärke ich das Selbstbewusstsein meines Kindes?',
+      'Mein Kind hat ADHS — wie schaffe ich Struktur ohne Machtkampf?',
+      'Mein Kind ist hochbegabt und gelangweilt in der Schule.',
+      'Mein autistisches Kind versteht soziale Regeln anders — wie kommunizieren wir besser?',
     ],
     en: [
       'My child does what they want — how do I set limits?',
@@ -788,6 +950,9 @@ const CHIPS_DATA = {
       'Reducing screen time without a power struggle.',
       'My child is afraid of school.',
       'How do I build my child\'s self-confidence?',
+      'My child has ADHD — how do I create structure without power struggles?',
+      'My child is gifted and bored at school.',
+      'My autistic child understands social rules differently — how do we communicate better?',
     ],
   },
   beziehung: {
@@ -798,6 +963,8 @@ const CHIPS_DATA = {
       'Geschwisterkonflikt — wie vermitteln?',
       'Ich fühle mich in meiner Familie unsichtbar.',
       'Wie spreche ich schwierige Themen in der Familie an?',
+      'Mein Partner und ich haben sehr unterschiedliche kulturelle Vorstellungen von Erziehung.',
+      'Unsere Kinder wachsen zwischen zwei Kulturen auf — wie stärken wir ihre Identität?',
     ],
     en: [
       'My mother keeps interfering.',
@@ -806,6 +973,8 @@ const CHIPS_DATA = {
       'Sibling conflict — how to mediate?',
       'I feel invisible in my family.',
       'How do I address difficult topics in the family?',
+      'My partner and I have very different cultural ideas about parenting.',
+      'Our children are growing up between two cultures — how do we strengthen their identity?',
     ],
   },
   generationen: {
@@ -816,6 +985,8 @@ const CHIPS_DATA = {
       'Meine Eltern haben hohe Erwartungen — wie grenze ich mich ab?',
       'Was vererben wir unseren Kindern unbewusst?',
       'Familiäre Traumata — wie breche ich den Kreislauf?',
+      'Mein Partner und ich haben sehr unterschiedliche kulturelle Vorstellungen von Erziehung.',
+      'Unsere Kinder wachsen zwischen zwei Kulturen auf — wie stärken wir ihre Identität?',
     ],
     en: [
       'My grandparents have different values — how to handle this?',
@@ -824,6 +995,8 @@ const CHIPS_DATA = {
       'My parents have high expectations — how do I set limits?',
       'What do we unconsciously pass on to our children?',
       'Family trauma — how do I break the cycle?',
+      'My partner and I have very different cultural ideas about parenting.',
+      'Our children are growing up between two cultures — how do we strengthen their identity?',
     ],
   },
   krise: {
@@ -834,6 +1007,8 @@ const CHIPS_DATA = {
       'Schwere Erkrankung in der Familie — wie sprechen wir darüber?',
       'Trennung der Eltern — wie schütze ich meine Kinder?',
       'Wie überstehen wir eine Familienphase ohne Geld?',
+      'Als Alleinerziehende erschöpfe ich mich — wie finde ich Balance?',
+      'Ich erziehe allein und brauche endlich Grenzen für mich selbst.',
     ],
     en: [
       'How do we handle a death in the family?',
@@ -842,6 +1017,8 @@ const CHIPS_DATA = {
       'Serious illness in the family — how do we talk about it?',
       'Parents separating — how do I protect my children?',
       'How do we get through a financially difficult time as a family?',
+      'As a single parent I am exhausted — how do I find balance?',
+      'I am raising my child alone and need to set limits for myself.',
     ],
   },
 };
@@ -1008,6 +1185,54 @@ const PERSP_PROFILES = {
       fachgebiet: 'Role theory (Moreno), developmental psychology, identity formation, individuation (Jung)',
     }
   },
+  neurodivergenz: {
+    de: {
+      grundhaltung: 'Neurodivergenz ist eine natürliche Variante menschlicher Gehirnentwicklung, keine Fehlfunktion. ADHS, Autismus, Hochbegabung und andere Neurotypen brauchen Verständnis — nicht Normalisierungsdruck.',
+      argumentationsstil: 'Erklärt Verhaltensweisen über neurobiologische Grundlagen. Unterscheidet sorgfältig zwischen "kann nicht" und "will nicht". Sucht angepasste Strategien statt Beschämung oder Vergleich.',
+      prioritaeten: 'Stärkenorientierung, angepasste Umgebungsgestaltung, Emotionsregulation, Selbstwert des neurodivergenten Familienmitglieds, Entlastung der begleitenden Eltern',
+      blinde_flecken: 'Kann die Erschöpfung der begleitenden Eltern unterschätzen. Diagnostik allein löst keine Familienkonflikte. Neurodivergenz erklärt viel — aber nicht alles.',
+      fachgebiet: 'ADHS-Coaching, Autismus-Begleitung, Hochbegabtenberatung, Inklusionspädagogik, neurodiversitätsinformierte Psychotherapie',
+    },
+    en: {
+      grundhaltung: 'Neurodivergence is a natural variation in human brain development, not a malfunction. ADHD, autism, giftedness and other neurotypes need understanding — not pressure to conform.',
+      argumentationsstil: 'Explains behaviors through neurobiological foundations. Carefully distinguishes "cannot" from "will not". Seeks adapted strategies rather than shame or comparison.',
+      prioritaeten: 'Strengths orientation, adapted environment design, emotion regulation, self-worth of the neurodivergent family member, relief for supporting parents',
+      blinde_flecken: 'May underestimate the exhaustion of supporting parents. Diagnosis alone does not resolve family conflicts. Neurodivergence explains much — but not everything.',
+      fachgebiet: 'ADHD coaching, autism support, gifted counseling, inclusive education, neurodiversity-informed psychotherapy',
+    }
+  },
+  alleinerziehend: {
+    de: {
+      grundhaltung: 'Alleinerziehende leisten täglich Außerordentliches — mit weniger Unterstützung als sie verdienen. Diese Perspektive stärkt Ressourcen, benennt Schuldgefühle als strukturelles Problem und erlaubt Grenzen.',
+      argumentationsstil: 'Fragt nach vorhandenen Ressourcen und Netzwerken — nicht nach dem Fehlen des anderen Elternteils. Unterscheidet, was veränderbar ist von dem, was zunächst akzeptiert werden muss.',
+      prioritaeten: 'Selbstfürsorge der Alleinerziehenden, stabile Bindung trotz Erschöpfung, gesunde Grenzen zum Kind, Ressourcenaktivierung, Entlastung ohne Schuld',
+      blinde_flecken: 'Kann gesellschaftliche und finanzielle Strukturprobleme ausblenden. Nicht jede Herausforderung ist psychologisch lösbar. Manchmal braucht es konkrete Unterstützung, keine Perspektive.',
+      fachgebiet: 'Resilienzforschung, Einelternfamilien-Beratung, Selbstwirksamkeitsforschung, Stressbewältigung, Sozialrecht',
+    },
+    en: {
+      grundhaltung: 'Single parents accomplish something extraordinary every day — with less support than they deserve. This perspective strengthens resources, names guilt as a structural problem, and permits limits.',
+      argumentationsstil: 'Asks about available resources and networks — not about the absence of the other parent. Distinguishes what can be changed from what must, for now, be accepted.',
+      prioritaeten: 'Self-care for the single parent, stable attachment despite exhaustion, healthy limits with the child, resource activation, relief without guilt',
+      blinde_flecken: 'May overlook structural social and financial problems. Not every challenge is psychologically solvable. Sometimes concrete support is needed, not perspective.',
+      fachgebiet: 'Resilience research, single-parent family counseling, self-efficacy research, stress management, social law',
+    }
+  },
+  interkulturell: {
+    de: {
+      grundhaltung: 'Interkulturelle Familien leben in zwei oder mehr Welten gleichzeitig — und das ist eine Stärke. Unterschiedliche kulturelle Prägungen bereichern, können aber auch zu Missverständnissen über Werte, Rollen und Grenzen führen.',
+      argumentationsstil: 'Übersetzt zwischen kulturellen Logiken. Fragt: Was ist kulturell geprägt? Was ist universell menschlich? Was ist echter Wert — und was ist nur Gewohnheit?',
+      prioritaeten: 'Kulturelle Identität aller Familienmitglieder, Sprachbrücken, Respekt vor verschiedenen Wertesystemen, Zugehörigkeit ohne Anpassungsdruck, bikulturelle Identität der Kinder',
+      blinde_flecken: 'Kann reale Konflikte zwischen unvereinbaren Wertesystemen manchmal relativieren. Nicht alle Unterschiede sind kulturell erklärbar — manche sind einfach persönlich.',
+      fachgebiet: 'Interkulturelle Psychologie, migrationssensible Beratung, bikulturelle Identitätsentwicklung, Transkulturalität, Sprachpsychologie',
+    },
+    en: {
+      grundhaltung: 'Intercultural families live in two or more worlds simultaneously — and that is a strength. Different cultural backgrounds enrich, but can also lead to misunderstandings about values, roles and limits.',
+      argumentationsstil: 'Translates between cultural logics. Asks: What is culturally shaped? What is universally human? What is a real value — and what is just habit?',
+      prioritaeten: 'Cultural identity of all family members, language bridges, respect for different value systems, belonging without pressure to conform, bicultural identity of children',
+      blinde_flecken: 'May sometimes relativize real conflicts between incompatible value systems. Not all differences are culturally explainable — some are simply personal.',
+      fachgebiet: 'Intercultural psychology, migration-sensitive counseling, bicultural identity development, transculturality, language psychology',
+    }
+  },
 };
 
 const SVG_ICONS = {
@@ -1100,6 +1325,8 @@ function setFilter(btn, filter) {
   btn.classList.add('active');
   renderPerspGrid();
   updateChips();
+  const panel = document.getElementById('krisenhilfePanel');
+  if (panel) panel.style.display = filter === 'krise' ? 'block' : 'none';
 }
 
 
@@ -1292,6 +1519,26 @@ function renderResults(data, perspectives, container) {
     container.appendChild(card);
   });
   appendIntegrationCards(data.integration || {}, container);
+  const btn = document.getElementById('protokollBtn');
+  if (btn) btn.style.display = 'inline-flex';
+}
+
+function exportProtokoll() {
+  const date = new Date().toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const question = (document.getElementById('questionInput')?.value || '').trim();
+  let text = `FAMiLiEN TiSCH — Protokoll\n${date}\n`;
+  if (question) text += `\nFrage: ${question}\n`;
+  text += '\n' + '─'.repeat(40) + '\n\n';
+  document.querySelectorAll('#resultsList .result-card').forEach(card => {
+    const title = card.querySelector('.result-card-title')?.textContent?.trim() || '';
+    const body = card.querySelector('.streaming-text')?.textContent?.trim() || '';
+    if (title && body) text += `${title.toUpperCase()}\n${body}\n\n`;
+  });
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    showToast(currentLang === 'de' ? 'Protokoll kopiert ✓' : 'Protocol copied ✓');
+  }).catch(() => {
+    showToast(currentLang === 'de' ? 'Kopieren fehlgeschlagen.' : 'Copy failed.');
+  });
 }
 
 function createResultCard(p, overrideName) {
@@ -2417,6 +2664,130 @@ async function sendRat() {
 
   isLoading = false;
   document.getElementById('ratSendBtn').disabled = false;
+}
+
+// ============================================================
+// RITUAL MODE
+// ============================================================
+let currentRitualCat = 'verbindung';
+
+const RITUAL_CAT_LABELS = {
+  verbindung: { de: 'Verbindungsrituale', en: 'Connection Rituals' },
+  alltag:     { de: 'Alltagsrituale',     en: 'Daily Rituals' },
+  konflikt:   { de: 'Konfliktlösungsrituale', en: 'Conflict Resolution Rituals' },
+  uebergang:  { de: 'Übergangsrituale',   en: 'Transition Rituals' },
+  feier:      { de: 'Feiern & Dankbarkeit', en: 'Celebration & Gratitude' },
+  resilienz:  { de: 'Resilienzrituale',   en: 'Resilience Rituals' },
+};
+
+function selectRitualCat(btn) {
+  currentRitualCat = btn.dataset.cat;
+  document.querySelectorAll('.ritual-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function sendRitual() {
+  const situation = (document.getElementById('ritualSituation')?.value || '').trim();
+  const catLabel = RITUAL_CAT_LABELS[currentRitualCat]?.[currentLang] || currentRitualCat;
+  if (isLoading) return;
+  isLoading = true;
+  const sendBtn = document.getElementById('ritualSendBtn');
+  sendBtn.disabled = true;
+  const resultsDiv = document.getElementById('ritualResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Der TiSCH denkt nach...' : 'The TiSCH is thinking...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const situationClause = situation
+    ? (currentLang === 'de'
+        ? `\n\nFamiliensituation: ${situation}`
+        : `\n\nFamily situation: ${situation}`)
+    : '';
+
+  const prompt = currentLang === 'de'
+    ? `Du bist ein erfahrener Familientherapeut. Schlage 4 konkrete, alltagstaugliche Familienrituale für den Bereich "${catLabel}" vor. Für jedes Ritual gib an: einen kurzen prägnanten Namen, wie oft es stattfinden sollte (täglich/wöchentlich/monatlich), eine konkrete Beschreibung in 2-3 Sätzen, und warum es psychologisch wirksam ist. Antwortformat: Gib exakt 4 Rituale aus, jeweils im Format: RITUAL: [Name] | FREQUENZ: [wie oft] | BESCHREIBUNG: [Erklärung + Wirksamkeit]${situationClause}`
+    : `You are an experienced family therapist. Suggest 4 concrete, practical family rituals for the area "${catLabel}". For each ritual provide: a short, memorable name, how often it should happen (daily/weekly/monthly), a concrete description in 2-3 sentences, and why it works psychologically. Response format: Provide exactly 4 rituals, each in the format: RITUAL: [Name] | FREQUENCY: [how often] | DESCRIPTION: [explanation + effectiveness]${situationClause}`;
+
+  const ritualPerspective = [{
+    name: 'Familientherapeut',
+    position: prompt,
+    grundhaltung: currentLang === 'de'
+      ? 'Ich schlage konkrete, wissenschaftlich fundierte Familienrituale vor. Jedes Ritual ist klar benannt, mit Frequenz und Wirkungsweise beschrieben.'
+      : 'I suggest concrete, evidence-based family rituals. Each ritual is clearly named with frequency and mechanism described.',
+  }];
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: currentLang === 'de'
+          ? `Welche Familienrituale empfehlen Sie für den Bereich ${catLabel}?${situation ? ' Familiensituation: ' + situation : ''}`
+          : `Which family rituals do you recommend for ${catLabel}?${situation ? ' Family situation: ' + situation : ''}`,
+        lang: currentLang,
+        stil: 'therapeutisch',
+        tone: 'achtsam',
+        custom_perspectives: ritualPerspective,
+        methods: [],
+        source_app: 'FAMiLiEN-TiSCH-RiTUAL',
+      }),
+    });
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    resultsDiv.innerHTML = '';
+    const rawText = data.perspectives?.[0]?.kernanalyse || data.answer || '';
+    renderRitualCards(rawText, resultsDiv, catLabel);
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+function renderRitualCards(text, container, catLabel) {
+  const ritualEmojis = { verbindung: '❤️', alltag: '🌅', konflikt: '🤝', uebergang: '🌱', feier: '✨', resilienz: '🛡️' };
+  const catEmoji = ritualEmojis[currentRitualCat] || '⭐';
+  const accentColor = '#C4622D';
+
+  // Parse RITUAL: ... | FREQUENZ: ... | BESCHREIBUNG: ... blocks
+  const pattern = /RITUAL\s*:\s*([^|]+)\|[^:]*:\s*([^|]+)\|[^:]*:\s*([^\n]+(?:\n(?!RITUAL)[^\n]+)*)/gi;
+  const matches = [...text.matchAll(pattern)];
+
+  if (matches.length > 0) {
+    matches.forEach(m => {
+      const name = m[1].trim();
+      const freq = m[2].trim();
+      const desc = m[3].trim().replace(/\n/g, ' ');
+      const card = document.createElement('div');
+      card.className = 'ritual-card';
+      card.innerHTML = `
+        <div class="ritual-card-head">
+          <div class="ritual-card-icon" style="background:${accentColor}22">${catEmoji}</div>
+          <div class="ritual-card-info">
+            <div class="ritual-card-name">${name}</div>
+            <div class="ritual-card-freq">${freq}</div>
+          </div>
+        </div>
+        <div class="ritual-card-body">${desc}</div>
+      `;
+      container.appendChild(card);
+    });
+  } else {
+    // Fallback: render as single card
+    const card = document.createElement('div');
+    card.className = 'ritual-card';
+    card.innerHTML = `
+      <div class="ritual-card-head">
+        <div class="ritual-card-icon" style="background:${accentColor}22">${catEmoji}</div>
+        <div class="ritual-card-info">
+          <div class="ritual-card-name">${catLabel}</div>
+          <div class="ritual-card-freq">${currentLang === 'de' ? 'Empfehlungen' : 'Recommendations'}</div>
+        </div>
+      </div>
+      <div class="ritual-card-body">${text.replace(/\n/g, '<br>')}</div>
+    `;
+    container.appendChild(card);
+  }
 }
 </script>
 <script src="/notizbuch.js"></script>
