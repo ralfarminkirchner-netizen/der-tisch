@@ -618,7 +618,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
         </div>
         <button class="protokoll-btn" id="protokollBtn" onclick="exportProtokoll()" style="display:none">
           <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2z"/><polyline points="14 2 14 8 8 8"/><line x1="8" y1="13" x2="12" y2="13"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
-          Protokoll kopieren
+          <span id="protokollBtnText">Protokoll kopieren</span>
         </button>
       </div>
 
@@ -811,62 +811,20 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 <div class="mode-section" id="mode-ritual">
   <div class="ritual-wrap">
 
-    <div class="ritual-intro">
-      <strong>FAMiLiEN-RiTUALE</strong> — Rituale sind das stille Fundament des Familienlebens. Sie schaffen Sicherheit, stärken Zusammengehörigkeit und helfen durch schwierige Phasen. Wählen Sie einen Bereich und beschreiben Sie Ihre Familiensituation — der TiSCH schlägt konkrete, alltagstaugliche Rituale vor.
+    <div class="ritual-intro" id="ritualIntro">
+      <strong>FAMiLiEN-RiTUALE</strong><span id="ritualIntroText"> — Rituale sind das stille Fundament des Familienlebens. Sie schaffen Sicherheit, stärken Zusammengehörigkeit und helfen durch schwierige Phasen. Wählen Sie einen Bereich und beschreiben Sie Ihre Familiensituation — der TiSCH schlägt konkrete, alltagstaugliche Rituale vor.</span>
     </div>
 
-    <div class="ritual-category-grid" id="ritualCatGrid">
-      <button class="ritual-cat-btn active" data-cat="verbindung" onclick="selectRitualCat(this)">
-        <div class="ritual-cat-title">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
-          Verbindung
-        </div>
-        <div class="ritual-cat-desc">Nähe und Zusammengehörigkeit stärken</div>
-      </button>
-      <button class="ritual-cat-btn" data-cat="alltag" onclick="selectRitualCat(this)">
-        <div class="ritual-cat-title">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg>
-          Alltagsstruktur
-        </div>
-        <div class="ritual-cat-desc">Sicherheit durch Wiederkehrendes</div>
-      </button>
-      <button class="ritual-cat-btn" data-cat="konflikt" onclick="selectRitualCat(this)">
-        <div class="ritual-cat-title">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
-          Konfliktlösung
-        </div>
-        <div class="ritual-cat-desc">Streit konstruktiv abschließen</div>
-      </button>
-      <button class="ritual-cat-btn" data-cat="uebergang" onclick="selectRitualCat(this)">
-        <div class="ritual-cat-title">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5 5 5"/><path d="M12 19V7"/></svg>
-          Übergänge
-        </div>
-        <div class="ritual-cat-desc">Veränderungen gemeinsam meistern</div>
-      </button>
-      <button class="ritual-cat-btn" data-cat="feier" onclick="selectRitualCat(this)">
-        <div class="ritual-cat-title">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 11l-3.7 2.5 1.4-4.3L4 6.5h4.5z"/></svg>
-          Feiern & Dankbarkeit
-        </div>
-        <div class="ritual-cat-desc">Gutes gemeinsam anerkennen</div>
-      </button>
-      <button class="ritual-cat-btn" data-cat="resilienz" onclick="selectRitualCat(this)">
-        <div class="ritual-cat-title">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
-          Stärke & Resilienz
-        </div>
-        <div class="ritual-cat-desc">Widerstandskraft als Familie aufbauen</div>
-      </button>
-    </div>
+    <!-- Category grid is rendered dynamically by renderRitualCats() -->
+    <div class="ritual-category-grid" id="ritualCatGrid"></div>
 
-    <div class="ritual-situation-label">Ihre Familiensituation (optional)</div>
+    <div class="ritual-situation-label" id="ritualSituationLabel">Ihre Familiensituation (optional)</div>
     <textarea class="ritual-situation" id="ritualSituation" placeholder="Beschreiben Sie kurz Ihre Familie: Alter der Kinder, aktuelle Herausforderungen, was gut klappt und was nicht..."></textarea>
 
     <div class="ritual-send-row">
       <button class="ritual-send-btn" id="ritualSendBtn" onclick="sendRitual()">
         <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 11l-3.7 2.5 1.4-4.3L4 6.5h4.5z"/></svg>
-        Rituale vorschlagen
+        <span id="ritualSendBtnText">Rituale vorschlagen</span>
       </button>
     </div>
 
@@ -1258,6 +1216,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPerspGrid();
   updateChips();
   initRatMembers();
+  renderRitualCats();
+  syncDynLabels();
 
   // Keyboard send
   document.getElementById('questionInput').addEventListener('keydown', e => {
@@ -1296,6 +1256,8 @@ function toggleLang() {
   document.getElementById('langBtn').textContent = currentLang.toUpperCase();
   renderPerspGrid();
   updateChips();
+  renderRitualCats();
+  syncDynLabels();
 }
 
 function toggleTone() {
@@ -1534,11 +1496,15 @@ function exportProtokoll() {
     const body = card.querySelector('.streaming-text')?.textContent?.trim() || '';
     if (title && body) text += `${title.toUpperCase()}\n${body}\n\n`;
   });
-  navigator.clipboard.writeText(text.trim()).then(() => {
-    showToast(currentLang === 'de' ? 'Protokoll kopiert ✓' : 'Protocol copied ✓');
-  }).catch(() => {
-    showToast(currentLang === 'de' ? 'Kopieren fehlgeschlagen.' : 'Copy failed.');
-  });
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      showToast(currentLang === 'de' ? 'Protokoll kopiert ✓' : 'Protocol copied ✓');
+    }).catch(() => {
+      showToast(currentLang === 'de' ? 'Kopieren fehlgeschlagen.' : 'Copy failed.');
+    });
+  } else {
+    showToast(currentLang === 'de' ? 'Kopieren nicht verfügbar (kein HTTPS?).' : 'Copy not available (no HTTPS?).');
+  }
 }
 
 function createResultCard(p, overrideName) {
@@ -2667,9 +2633,89 @@ async function sendRat() {
 }
 
 // ============================================================
+// DYNAMIC LABEL LOCALIZATION
+// ============================================================
+const DYN_LABELS = {
+  krisenhilfeTitle: {
+    de: 'Wenn Sie gerade in einer akuten Krise sind',
+    en: 'If you are currently in an acute crisis',
+  },
+  ritualIntroText: {
+    de: ' — Rituale sind das stille Fundament des Familienlebens. Sie schaffen Sicherheit, stärken Zusammengehörigkeit und helfen durch schwierige Phasen. Wählen Sie einen Bereich und beschreiben Sie Ihre Familiensituation — der TiSCH schlägt konkrete, alltagstaugliche Rituale vor.',
+    en: ' — Rituals are the quiet foundation of family life. They create safety, strengthen belonging, and help through difficult phases. Choose a category and describe your family situation — the TiSCH suggests concrete, everyday rituals.',
+  },
+  ritualSituationLabel: {
+    de: 'Ihre Familiensituation (optional)',
+    en: 'Your family situation (optional)',
+  },
+  ritualSendBtnText: {
+    de: 'Rituale vorschlagen',
+    en: 'Suggest rituals',
+  },
+  protokollBtnText: {
+    de: 'Protokoll kopieren',
+    en: 'Copy protocol',
+  },
+};
+
+const RITUAL_SITUATION_PLACEHOLDER = {
+  de: 'Beschreiben Sie kurz Ihre Familie: Alter der Kinder, aktuelle Herausforderungen, was gut klappt und was nicht...',
+  en: "Briefly describe your family: children's ages, current challenges, what works well and what doesn't...",
+};
+
+function syncDynLabels() {
+  const lang = currentLang;
+  Object.entries(DYN_LABELS).forEach(([id, vals]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = vals[lang] || vals['de'];
+  });
+  const textarea = document.getElementById('ritualSituation');
+  if (textarea) textarea.placeholder = RITUAL_SITUATION_PLACEHOLDER[lang] || RITUAL_SITUATION_PLACEHOLDER['de'];
+}
+
+// ============================================================
 // RITUAL MODE
 // ============================================================
 let currentRitualCat = 'verbindung';
+
+const RITUAL_CATS = [
+  {
+    cat: 'verbindung',
+    de: 'Verbindung', en: 'Connection',
+    descDe: 'Nähe und Zusammengehörigkeit stärken', descEn: 'Strengthen closeness and belonging',
+    icon: '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>',
+  },
+  {
+    cat: 'alltag',
+    de: 'Alltagsstruktur', en: 'Daily Structure',
+    descDe: 'Sicherheit durch Wiederkehrendes', descEn: 'Safety through routines',
+    icon: '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg>',
+  },
+  {
+    cat: 'konflikt',
+    de: 'Konfliktlösung', en: 'Conflict Resolution',
+    descDe: 'Streit konstruktiv abschließen', descEn: 'Close disputes constructively',
+    icon: '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>',
+  },
+  {
+    cat: 'uebergang',
+    de: 'Übergänge', en: 'Transitions',
+    descDe: 'Veränderungen gemeinsam meistern', descEn: 'Navigate change together',
+    icon: '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5 5 5"/><path d="M12 19V7"/></svg>',
+  },
+  {
+    cat: 'feier',
+    de: 'Feiern & Dankbarkeit', en: 'Celebration & Gratitude',
+    descDe: 'Gutes gemeinsam anerkennen', descEn: 'Acknowledge the good together',
+    icon: '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 11l-3.7 2.5 1.4-4.3L4 6.5h4.5z"/></svg>',
+  },
+  {
+    cat: 'resilienz',
+    de: 'Stärke & Resilienz', en: 'Strength & Resilience',
+    descDe: 'Widerstandskraft als Familie aufbauen', descEn: 'Build resilience as a family',
+    icon: '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>',
+  },
+];
 
 const RITUAL_CAT_LABELS = {
   verbindung: { de: 'Verbindungsrituale', en: 'Connection Rituals' },
@@ -2679,6 +2725,31 @@ const RITUAL_CAT_LABELS = {
   feier:      { de: 'Feiern & Dankbarkeit', en: 'Celebration & Gratitude' },
   resilienz:  { de: 'Resilienzrituale',   en: 'Resilience Rituals' },
 };
+
+function renderRitualCats() {
+  const grid = document.getElementById('ritualCatGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  RITUAL_CATS.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'ritual-cat-btn' + (currentRitualCat === cat.cat ? ' active' : '');
+    btn.dataset.cat = cat.cat;
+    btn.onclick = function() { selectRitualCat(this); };
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'ritual-cat-title';
+    titleDiv.innerHTML = cat.icon; // Safe — hardcoded SVG string from this file
+    titleDiv.appendChild(document.createTextNode(currentLang === 'de' ? cat.de : cat.en));
+
+    const descDiv = document.createElement('div');
+    descDiv.className = 'ritual-cat-desc';
+    descDiv.textContent = currentLang === 'de' ? cat.descDe : cat.descEn;
+
+    btn.appendChild(titleDiv);
+    btn.appendChild(descDiv);
+    grid.appendChild(btn);
+  });
+}
 
 function selectRitualCat(btn) {
   currentRitualCat = btn.dataset.cat;
@@ -2749,44 +2820,45 @@ function renderRitualCards(text, container, catLabel) {
   const catEmoji = ritualEmojis[currentRitualCat] || '⭐';
   const accentColor = '#C4622D';
 
-  // Parse RITUAL: ... | FREQUENZ: ... | BESCHREIBUNG: ... blocks
+  function makeCard(emoji, name, freq, descText) {
+    const card = document.createElement('div');
+    card.className = 'ritual-card';
+    const head = document.createElement('div');
+    head.className = 'ritual-card-head';
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'ritual-card-icon';
+    iconDiv.style.background = `${accentColor}22`;
+    iconDiv.textContent = emoji;
+    const info = document.createElement('div');
+    info.className = 'ritual-card-info';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'ritual-card-name';
+    nameEl.textContent = name;
+    const freqEl = document.createElement('div');
+    freqEl.className = 'ritual-card-freq';
+    freqEl.textContent = freq;
+    info.appendChild(nameEl);
+    info.appendChild(freqEl);
+    head.appendChild(iconDiv);
+    head.appendChild(info);
+    const body = document.createElement('div');
+    body.className = 'ritual-card-body';
+    body.textContent = descText;
+    card.appendChild(head);
+    card.appendChild(body);
+    return card;
+  }
+
+  // Parse RITUAL: ... | FREQUENZ/FREQUENCY: ... | BESCHREIBUNG/DESCRIPTION: ... blocks
   const pattern = /RITUAL\s*:\s*([^|]+)\|[^:]*:\s*([^|]+)\|[^:]*:\s*([^\n]+(?:\n(?!RITUAL)[^\n]+)*)/gi;
   const matches = [...text.matchAll(pattern)];
 
   if (matches.length > 0) {
     matches.forEach(m => {
-      const name = m[1].trim();
-      const freq = m[2].trim();
-      const desc = m[3].trim().replace(/\n/g, ' ');
-      const card = document.createElement('div');
-      card.className = 'ritual-card';
-      card.innerHTML = `
-        <div class="ritual-card-head">
-          <div class="ritual-card-icon" style="background:${accentColor}22">${catEmoji}</div>
-          <div class="ritual-card-info">
-            <div class="ritual-card-name">${name}</div>
-            <div class="ritual-card-freq">${freq}</div>
-          </div>
-        </div>
-        <div class="ritual-card-body">${desc}</div>
-      `;
-      container.appendChild(card);
+      container.appendChild(makeCard(catEmoji, m[1].trim(), m[2].trim(), m[3].trim().replace(/\n/g, ' ')));
     });
   } else {
-    // Fallback: render as single card
-    const card = document.createElement('div');
-    card.className = 'ritual-card';
-    card.innerHTML = `
-      <div class="ritual-card-head">
-        <div class="ritual-card-icon" style="background:${accentColor}22">${catEmoji}</div>
-        <div class="ritual-card-info">
-          <div class="ritual-card-name">${catLabel}</div>
-          <div class="ritual-card-freq">${currentLang === 'de' ? 'Empfehlungen' : 'Recommendations'}</div>
-        </div>
-      </div>
-      <div class="ritual-card-body">${text.replace(/\n/g, '<br>')}</div>
-    `;
-    container.appendChild(card);
+    container.appendChild(makeCard(catEmoji, catLabel, currentLang === 'de' ? 'Empfehlungen' : 'Recommendations', text.trim()));
   }
 }
 </script>
