@@ -3,7 +3,7 @@
 // ============================================================
 // Replace this URL with your Railway deployment URL after deploy
 // Example: "https://der-tisch-production.up.railway.app"
-export const API_BASE_URL = "https://YOUR-RAILWAY-URL.up.railway.app";
+export const API_BASE_URL = "https://der-tisch-production.up.railway.app";
 
 /**
  * Send a question to Der Tisch and receive all three phases:
