@@ -97,6 +97,5 @@ export const agentColors = {
   "Weighing":             { accent: "#c8993a", bg: "#120e03" },
   "Strategic":            { accent: "#6e9e8e", bg: "#0a120f" },
   "Risk":                 { accent: "#c07060", bg: "#120a0a" },
-  "Neurodivergent":       { accent: "#7e8eb0", bg: "#0a0f14" },
   "Through Children's Eyes": { accent: "#d4845a", bg: "#130d08" },
 };

@@ -79,7 +79,7 @@ function FrictionCard({ friction }) {
         <Text style={[styles.frictionLabel, { color: colors.red }]}>
           ECHTE WIDERSPRÜCHE
         </Text>
-        <BulletList items={friction.echte_widersprueche} color={colors.red} />
+        <BulletList items={friction?.echte_widersprueche || []} color={colors.red} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
@@ -88,7 +88,7 @@ function FrictionCard({ friction }) {
         <Text style={[styles.frictionLabel, { color: colors.redDim }]}>
           ÜBERSETZUNGSFEHLER
         </Text>
-        <BulletList items={friction.uebersetzungsfehler} color={colors.redDim} />
+        <BulletList items={friction?.uebersetzungsfehler || []} color={colors.redDim} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
@@ -109,43 +109,43 @@ function IntegrationCard({ integration }) {
   const sections = [
     {
       label: "VORLÄUFIGES FAZIT",
-      value: integration.vorlaeufiges_fazit,
+      value: integration?.vorlaeufiges_fazit,
       isList: false,
       color: colors.blue,
     },
     {
       label: "ÜBERSETZBARE BRÜCKEN",
-      value: integration.uebersetzbare_bruecken,
+      value: integration?.uebersetzbare_bruecken,
       isList: true,
       color: colors.blue,
     },
     {
       label: "KURZFASSUNG",
-      value: integration.kurzfassung,
+      value: integration?.kurzfassung,
       isList: true,
       color: colors.blueDim,
     },
     {
       label: "ECHTE UNVEREINBARKEITEN",
-      value: integration.echte_unvereinbarkeiten,
+      value: integration?.echte_unvereinbarkeiten,
       isList: true,
       color: colors.red,
     },
     {
       label: "PRAKTISCHE OPTIONEN",
-      value: integration.praktische_optionen,
+      value: integration?.praktische_optionen,
       isList: true,
       color: colors.amber,
     },
     {
       label: "OFFENE PRÜFPFADE",
-      value: integration.offene_pruefpfade,
+      value: integration?.offene_pruefpfade,
       isList: true,
       color: colors.textSecondary,
     },
   ];
 
-  const einfachGesagt = integration.einfach_gesagt;
+  const einfachGesagt = integration?.einfach_gesagt;
 
   return (
     <View>
@@ -156,7 +156,7 @@ function IntegrationCard({ integration }) {
             <View style={styles.frictionSection}>
               <Text style={[styles.frictionLabel, { color: s.color }]}>{s.label}</Text>
               {s.isList
-                ? <BulletList items={s.value} color={s.color} />
+                ? <BulletList items={s.value || []} color={s.color} />
                 : <Text style={styles.fieldValue}>{s.value}</Text>
               }
             </View>
