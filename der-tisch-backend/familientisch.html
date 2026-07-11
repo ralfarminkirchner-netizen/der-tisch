@@ -537,7 +537,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
             <div class="krisenhilfe-num">116 111</div>
             <div class="krisenhilfe-info">Kostenlos · für Kinder &amp; Jugendliche</div>
           </a>
-          <a href="https://www.bke-onlineberatung.de" target="_blank" rel="noopener" class="krisenhilfe-card">
+          <a href="https://www.bke-onlineberatung.de" target="_blank" rel="noopener noreferrer" class="krisenhilfe-card">
             <div class="krisenhilfe-org">BKE Online-Elternberatung</div>
             <div class="krisenhilfe-num">bke-onlineberatung.de</div>
             <div class="krisenhilfe-info">Kostenlos · Anonym · für Eltern</div>
@@ -1578,7 +1578,11 @@ function copyProtocol() {
       text += '\n';
     }
   });
-  navigator.clipboard.writeText(text).then(() => showToast('Protokoll kopiert!')).catch(() => showToast('Kopieren nicht möglich.'));
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast('Protokoll kopiert!')).catch(() => showToast('Kopieren nicht möglich.'));
+  } else {
+    showToast('Kopieren nicht möglich (keine sichere Verbindung?).');
+  }
 }
 
 // ============================================================
