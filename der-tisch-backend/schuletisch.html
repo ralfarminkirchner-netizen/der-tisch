@@ -970,6 +970,8 @@ function setFilter(btn, filter) {
   currentFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  activePerspectives.clear();
+  PERSPEKTIVEN.filter(p => p.filters.includes(currentFilter)).forEach(p => activePerspectives.add(p.id));
   renderPerspGrid();
   renderChips();
 }
@@ -1003,9 +1005,6 @@ function renderPerspGrid() {
   activePerspectives.forEach(id => {
     if (!visible.find(p => p.id === id)) activePerspectives.delete(id);
   });
-  if (activePerspectives.size === 0) {
-    visible.forEach(p => activePerspectives.add(p.id));
-  }
   grid.innerHTML = visible.map(p => {
     const isActive = activePerspectives.has(p.id);
     const label = currentLang === 'de' ? p.de : p.en;
@@ -1138,11 +1137,23 @@ function formatText(text) {
 }
 
 function renderResultCard(persp, text, lang) {
-  const p = PERSPEKTIVEN.find(x => x.id === persp.p_rolle || x.de === persp.name || x.en === persp.name) || {};
-  const label = lang === 'de' ? (p.de || persp.name) : (p.en || persp.name);
+  const cleanRolle = persp.rolle ? persp.rolle.replace(/^\[.*?\]/, '').trim() : '';
+  const p = PERSPEKTIVEN.find(x => x.id === cleanRolle || x.de === cleanRolle || x.en === cleanRolle) || {};
+  const label = lang === 'de' ? (p.de || cleanRolle || '—') : (p.en || cleanRolle || '—');
   const color = p.color || '#2458A8';
   const icon = p.icon || 'book';
   const fachgebiet = p.profil ? (p.profil[lang] || p.profil.de).fachgebiet : '';
+
+  let bodyHtml;
+  if (text) {
+    bodyHtml = `<p>${formatText(text)}</p>`;
+  } else {
+    bodyHtml =
+      `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Anspruchstyp' : 'Claim Type'}:</strong> ${formatText(persp.anspruchstyp || '—')}</p>` +
+      `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Kernanalyse' : 'Core Analysis'}:</strong> ${formatText(persp.kernanalyse || '—')}</p>` +
+      `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Evidenz' : 'Evidence'}:</strong> ${formatText(persp.evidenz || '—')}</p>` +
+      `<p><strong>${lang === 'de' ? 'Blinder Fleck' : 'Blind Spot'}:</strong> ${formatText(persp.blinder_fleck || '—')}</p>`;
+  }
 
   return `<div class="result-card" onclick="this.classList.toggle('open')">
     <div class="result-card-header">
@@ -1153,7 +1164,7 @@ function renderResultCard(persp, text, lang) {
       ${fachgebiet ? `<div class="result-card-badge">${fachgebiet}</div>` : ''}
       <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
     </div>
-    <div class="result-card-body"><p>${formatText(text)}</p></div>
+    <div class="result-card-body">${bodyHtml}</div>
   </div>`;
 }
 
@@ -1168,22 +1179,33 @@ function renderIntegrationCard(integration, lang) {
       <div class="result-card-title" style="color:var(--accent)">${title}</div>
       <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
     </div>
-    <div class="result-card-body"><p>${formatText(typeof integration === 'string' ? integration : JSON.stringify(integration))}</p></div>
+    <div class="result-card-body">
+      ${integration.einfach_gesagt ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Einfach gesagt' : 'Simply put'}:</strong> ${formatText(integration.einfach_gesagt)}</p>` : ''}
+      ${integration.anspruchskarte ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Anspruchskarte' : 'Claim Map'}:</strong> ${formatText(integration.anspruchskarte)}</p>` : ''}
+      ${integration.vorlaeufiges_fazit ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Vorläufiges Fazit' : 'Provisional Conclusion'}:</strong> ${formatText(integration.vorlaeufiges_fazit)}</p>` : ''}
+      ${integration.kurzfassung ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Kurzfassung' : 'Summary'}:</strong> ${formatText(integration.kurzfassung)}</p>` : ''}
+      ${integration.herzmensch ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Herzmensch' : 'Heart-led'}:</strong> ${formatText(integration.herzmensch)}</p>` : ''}
+      ${integration.kopfmensch ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Kopfmensch' : 'Head-led'}:</strong> ${formatText(integration.kopfmensch)}</p>` : ''}
+      ${integration.maennlich ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Männlich' : 'Masculine'}:</strong> ${formatText(integration.maennlich)}</p>` : ''}
+      ${integration.weiblich ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Weiblich' : 'Feminine'}:</strong> ${formatText(integration.weiblich)}</p>` : ''}
+    </div>
   </div>`;
 }
 
 function renderFrictionCard(friction, lang) {
-  if (!friction || !friction.translation_errors && !friction.genuine_contradictions) {
-    return friction ? `<div class="result-card" onclick="this.classList.toggle('open')">
+  if (!friction) return '';
+  const errors = friction.uebersetzungsfehler || friction.translation_errors || [];
+  const contradictions = friction.echte_widersprueche || friction.genuine_contradictions || [];
+  const overlooked = friction.uebersehenes || [];
+  if (!errors.length && !contradictions.length && !overlooked.length) {
+    return typeof friction === 'string' ? `<div class="result-card" onclick="this.classList.toggle('open')">
       <div class="result-card-header">
         <div class="result-card-title" style="color:var(--muted)">${lang === 'de' ? 'Reibungspunkte' : 'Friction Points'}</div>
         <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
       </div>
-      <div class="result-card-body"><p>${formatText(typeof friction === 'string' ? friction : JSON.stringify(friction))}</p></div>
+      <div class="result-card-body"><p>${formatText(friction)}</p></div>
     </div>` : '';
   }
-  const errors = friction.translation_errors || [];
-  const contradictions = friction.genuine_contradictions || [];
   const title = lang === 'de' ? 'Reibungspunkte zwischen Perspektiven' : 'Friction Between Perspectives';
   let body = '';
   if (errors.length) {
@@ -1191,6 +1213,9 @@ function renderFrictionCard(friction, lang) {
   }
   if (contradictions.length) {
     body += `<p style="margin-top:12px"><strong>${lang === 'de' ? 'Echte Widersprüche' : 'Genuine Contradictions'}:</strong></p><ul class="friction-list">${contradictions.map(c => `<li>${formatText(c)}</li>`).join('')}</ul>`;
+  }
+  if (overlooked.length) {
+    body += `<p style="margin-top:12px"><strong>${lang === 'de' ? 'Übersehenes' : 'Overlooked'}:</strong></p><ul class="friction-list">${overlooked.map(o => `<li>${formatText(o)}</li>`).join('')}</ul>`;
   }
   return `<div class="result-card" onclick="this.classList.toggle('open')">
     <div class="result-card-header">
@@ -1389,6 +1414,7 @@ document.addEventListener('keydown', e => {
 // ============================================================
 // INIT
 // ============================================================
+PERSPEKTIVEN.filter(p => p.filters.includes(currentFilter)).forEach(p => activePerspectives.add(p.id));
 renderPerspGrid();
 renderChips();
 </script>
