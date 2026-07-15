@@ -191,7 +191,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .selbst-rolle-input{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
 .selbst-rolle-input:focus{border-color:var(--accent)}
 
-/* Mobile tab overflow — 5 tabs need scroll */
+/* RiTUAL-RAUM MODE */
+.ritual-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+
+/* Mobile tab overflow — 6 tabs need scroll */
 @media(max-width:600px){
   .mode-tabs{overflow-x:auto;scrollbar-width:none;justify-content:flex-start;padding:4px 2px}
   .mode-tabs::-webkit-scrollbar{display:none}
@@ -464,6 +467,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-selbst" onclick="setMode('selbst')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"/><path d="M3 19c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke-dasharray="2,2"/><path d="M10 13v6"/></svg>
       SELBST-RAuM
+    </button>
+    <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="10 2 12.4 7.2 18 7.8 14 11.6 15.1 17 10 14 4.9 17 6 11.6 2 7.8 7.6 7.2"/></svg>
+      RiTUAL-RAUM
     </button>
   </div>
 </section>
@@ -801,6 +808,69 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="selbstResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== RiTUAL-RAUM MODE ==================== -->
+<div class="mode-section" id="mode-ritual">
+  <div class="ritual-wrap">
+
+    <div style="margin-bottom:16px">
+      <div class="chips-label" style="text-align:left;margin-bottom:10px">Lebensbereich wählen</div>
+      <div class="ctrl-group" style="flex-wrap:wrap;gap:6px">
+        <button class="ctrl-btn active" data-bereich="alltag" onclick="setRitualBereich(this)">Alltag &amp; Verbindung</button>
+        <button class="ctrl-btn" data-bereich="uebergang" onclick="setRitualBereich(this)">Übergänge</button>
+        <button class="ctrl-btn" data-bereich="feier" onclick="setRitualBereich(this)">Feiern</button>
+        <button class="ctrl-btn" data-bereich="schwierig" onclick="setRitualBereich(this)">Schwierige Zeiten</button>
+      </div>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Häufige Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:24px">
+      <button class="chip" onclick="useRitualChip(this)">Wir haben kaum noch gemeinsame Zeit als Familie.</button>
+      <button class="chip" onclick="useRitualChip(this)">Unser Kind kommt in die Pubertät — wir verlieren den Kontakt.</button>
+      <button class="chip" onclick="useRitualChip(this)">Nach einer Trennung brauchen wir neue Familienrituale.</button>
+      <button class="chip" onclick="useRitualChip(this)">Wir möchten Traditionen schaffen, die unsere Kinder einmal weitergeben.</button>
+      <button class="chip" onclick="useRitualChip(this)">Ein Familienmitglied ist gestorben — wir suchen einen Weg zu trauern.</button>
+      <button class="chip" onclick="useRitualChip(this)">Wir sind eine Patchwork-Familie und suchen gemeinsame Rituale.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was bewegt euch gerade?</div>
+    <textarea class="selbst-textarea" id="ritualSituation" placeholder="Beschreiben Sie Ihre Familiensituation: Wer gehört dazu, was ist gerade ein Thema, und was erhoffen Sie sich von neuen oder veränderten Ritualen?" rows="4"></textarea>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:8px">Eure vier Ritual-Perspektiven</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:24px">
+      <div class="persp-card active" style="background:rgba(196,98,45,0.08);border-color:rgba(196,98,45,0.3)">
+        <div class="persp-dot" style="background:#C4622D"></div>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+        <span style="color:var(--text)">Bindungs-Therapeutin</span>
+      </div>
+      <div class="persp-card active" style="background:rgba(143,188,138,0.08);border-color:rgba(143,188,138,0.3)">
+        <div class="persp-dot" style="background:#8FBC8A"></div>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#8FBC8A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg>
+        <span style="color:var(--text)">Entwicklungspsychologin</span>
+      </div>
+      <div class="persp-card active" style="background:rgba(74,127,168,0.08);border-color:rgba(74,127,168,0.3)">
+        <div class="persp-dot" style="background:#4A7FA8"></div>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#4A7FA8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>
+        <span style="color:var(--text)">Narrative Therapeutin</span>
+      </div>
+      <div class="persp-card active" style="background:rgba(212,132,90,0.08);border-color:rgba(212,132,90,0.3)">
+        <div class="persp-dot" style="background:#D4845A"></div>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#D4845A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20V10"/><path d="M10 10c0 0-4-3-4-7 2 0 4 2 4 4 0-2 2-4 4-4 0 4-4 7-4 7z"/></svg>
+        <span style="color:var(--text)">Ressourcen-Beraterin</span>
+      </div>
+    </div>
+
+    <div class="klaerung-send-row">
+      <button class="klaerung-send-btn" id="ritualSendBtn" onclick="sendRitual()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="10 2 12.4 7.2 18 7.8 14 11.6 15.1 17 10 14 4.9 17 6 11.6 2 7.8 7.6 7.2"/></svg>
+        Ritual-Raum öffnen
+      </button>
+    </div>
+
+    <div id="ritualResults"></div>
 
   </div>
 </div>
@@ -2683,6 +2753,166 @@ async function sendSelbst() {
 
   isLoading = false;
   document.getElementById('selbstSendBtn').disabled = false;
+}
+
+// ============================================================
+// RiTUAL-RAUM
+// ============================================================
+let ritualBereich = 'alltag';
+
+function setRitualBereich(btn) {
+  ritualBereich = btn.dataset.bereich;
+  document.querySelectorAll('[data-bereich]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useRitualChip(el) {
+  document.getElementById('ritualSituation').value = el.textContent.trim();
+  document.getElementById('ritualSituation').focus();
+}
+
+async function sendRitual() {
+  const situation = document.getElementById('ritualSituation').value.trim();
+  if (!situation) { showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.'); return; }
+  if (isLoading) return;
+
+  isLoading = true;
+  document.getElementById('ritualSendBtn').disabled = true;
+
+  const resultsDiv = document.getElementById('ritualResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Der RiTUAL-RAUM öffnet sich...' : 'Your ritual space is opening...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const bereichLabel = {
+    alltag:    currentLang === 'de' ? 'Alltag & Verbindung'           : 'Daily Life & Connection',
+    uebergang: currentLang === 'de' ? 'Übergänge & Veränderungen'     : 'Transitions & Changes',
+    feier:     currentLang === 'de' ? 'Feiern & besondere Momente'    : 'Celebrations & Special Moments',
+    schwierig: currentLang === 'de' ? 'Schwierige Zeiten & Heilung'   : 'Difficult Times & Healing'
+  }[ritualBereich];
+
+  const ritualPersp = [
+    {
+      name: currentLang === 'de' ? 'Bindungs-Therapeutin' : 'Attachment Therapist',
+      position: currentLang === 'de'
+        ? 'Aus bindungstherapeutischer Perspektive: Welche konkreten Rituale können das Sicherheitsgefühl, Vertrauen und die emotionale Verbindung in dieser Familie stärken? Was sagen Bindungsforschung und emotionsfokussierte Therapie über wirksame Familienrituale für diesen spezifischen Kontext?'
+        : 'From an attachment therapy perspective: Which specific rituals can strengthen the sense of safety, trust, and emotional connection in this family? What do attachment research and emotionally focused therapy say about effective family rituals for this specific context?',
+      grundhaltung: currentLang === 'de'
+        ? 'Rituale schaffen Sicherheit — sie sagen: Du gehörst dazu, wir sind verlässlich. Das Bindungssystem braucht Wiederholung und Vorhersehbarkeit.'
+        : 'Rituals create security — they say: You belong here, we are reliable. The attachment system needs repetition and predictability.',
+      fachgebiet: currentLang === 'de'
+        ? 'Bindungstheorie (Bowlby/Ainsworth), Emotionsfokussierte Familientherapie (EFT), Entwicklungspsychologie'
+        : 'Attachment theory (Bowlby/Ainsworth), Emotionally Focused Family Therapy (EFFT), developmental psychology'
+    },
+    {
+      name: currentLang === 'de' ? 'Entwicklungspsychologin' : 'Developmental Psychologist',
+      position: currentLang === 'de'
+        ? 'Aus entwicklungspsychologischer Perspektive: Wie können Rituale passend zu Alter und Entwicklungsstufe der Familienmitglieder gestaltet werden? Welche Rituale wachsen mit der Familie mit und bleiben über Lebensphasen hinweg bedeutsam?'
+        : 'From a developmental psychology perspective: How can rituals be tailored to the age and developmental stage of family members? Which rituals grow with the family and remain meaningful across life phases?',
+      grundhaltung: currentLang === 'de'
+        ? 'Was ein Kind braucht, unterscheidet sich grundlegend von dem, was ein Teenager oder ein Erwachsener braucht. Rituale müssen dem Entwicklungsstand entsprechen, um wirksam zu sein.'
+        : 'What a child needs differs fundamentally from what a teenager or adult needs. Rituals must match the developmental stage to be effective.',
+      fachgebiet: currentLang === 'de'
+        ? 'Entwicklungspsychologie (Erikson/Piaget), Systemische Familientherapie, Resilienzforschung'
+        : 'Developmental psychology (Erikson/Piaget), systemic family therapy, resilience research'
+    },
+    {
+      name: currentLang === 'de' ? 'Narrative Therapeutin' : 'Narrative Therapist',
+      position: currentLang === 'de'
+        ? 'Aus der narrativen Perspektive: Welche Rituale helfen dieser Familie, ihre gemeinsame Geschichte zu erzählen, zu feiern und weiterzugeben? Wie können Rituale ein starkes Familien-Narrativ schaffen, das Identität und Zusammengehörigkeit stärkt?'
+        : 'From a narrative perspective: Which rituals help this family tell, celebrate, and pass on their shared story? How can rituals create a strong family narrative that strengthens identity and belonging?',
+      grundhaltung: currentLang === 'de'
+        ? 'Familien sind die Geschichten, die sie sich über sich selbst erzählen. Rituale sind Kapitel in dieser Geschichte — sie geben ihr Bedeutung, Kontinuität und Richtung.'
+        : 'Families are the stories they tell about themselves. Rituals are chapters in this story — they give it meaning, continuity, and direction.',
+      fachgebiet: currentLang === 'de'
+        ? 'Narrative Therapie (White/Epston), Familiengeschichten und kollektives Gedächtnis, kulturelle Identitätsforschung'
+        : 'Narrative therapy (White/Epston), family stories and collective memory, cultural identity research'
+    },
+    {
+      name: currentLang === 'de' ? 'Ressourcen-Beraterin' : 'Resources Counselor',
+      position: currentLang === 'de'
+        ? 'Aus ressourcenorientierter Perspektive: Welche Stärken und vielleicht bereits vorhandenen Rituale kann diese Familie weiterentwickeln? Welche kleinen, alltagstauglichen Rituale lassen sich leicht einführen und langfristig durchhalten? Was hat bisher schon gut funktioniert?'
+        : 'From a resource-oriented perspective: Which strengths and perhaps already existing rituals can this family build upon? Which small, everyday rituals are easy to introduce and sustain long-term? What has already worked well?',
+      grundhaltung: currentLang === 'de'
+        ? 'Jede Familie hat bereits Rituale, auch wenn sie sie nicht als solche benennt. Der erste Schritt ist, das Vorhandene zu sehen und zu würdigen — bevor Neues entsteht.'
+        : 'Every family already has rituals, even if they don\'t name them as such. The first step is to see and appreciate what already exists — before creating something new.',
+      fachgebiet: currentLang === 'de'
+        ? 'Lösungsfokussierte Beratung (de Shazer), positive Psychologie (Seligman), Stärkenbasierte Familienarbeit'
+        : 'Solution-focused counseling (de Shazer), positive psychology (Seligman), strengths-based family work'
+    }
+  ];
+
+  try {
+    const stilMap = { alltag: 'achtsam', uebergang: 'therapeutisch', feier: 'achtsam', schwierig: 'therapeutisch' };
+    const payload = {
+      question:            (currentLang === 'de' ? `Lebensbereich: ${bereichLabel}\n\n` : `Life area: ${bereichLabel}\n\n`) + situation,
+      custom_perspectives: ritualPersp,
+      methods:             [],
+      stil:                stilMap[ritualBereich] || 'achtsam',
+      tone:                'achtsam',
+      lang:                currentLang,
+      source_app:          'FAMiLiEN-TiSCH'
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    resultsDiv.innerHTML = '';
+
+    const ritualPerspDefs = [
+      { id: 'bindung',     icon: 'heart',   color: '#C4622D', de: 'Bindungs-Therapeutin',   en: 'Attachment Therapist' },
+      { id: 'entwicklung', icon: 'seedling', color: '#8FBC8A', de: 'Entwicklungspsychologin', en: 'Developmental Psychologist' },
+      { id: 'narrativ',    icon: 'scroll',  color: '#4A7FA8', de: 'Narrative Therapeutin',   en: 'Narrative Therapist' },
+      { id: 'ressourcen',  icon: 'sprout',  color: '#D4845A', de: 'Ressourcen-Beraterin',    en: 'Resources Counselor' }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef  = ritualPerspDefs[i] || ritualPerspDefs[0];
+        const card  = createResultCard(pDef, rolle || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'RiTUAL-EMPFEHLUNG' : 'RITUAL RECOMMENDATION',
+      synthesisSubtitle: currentLang === 'de' ? 'für eure familie' : 'for your family',
+      synthesisColor:    '#C4622D',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Angepasst an eure Familie' : 'Adapted to your family'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/></svg> ${currentLang === 'de' ? 'Stärkenbasiert' : 'Strengths-based'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     situation.substring(0, 80) + (situation.length > 80 ? '...' : ''),
+      perspectives: ['bindung', 'entwicklung', 'narrativ', 'ressourcen'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  document.getElementById('ritualSendBtn').disabled = false;
 }
 </script>
 <script src="/notizbuch.js"></script>

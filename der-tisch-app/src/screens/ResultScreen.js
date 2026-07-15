@@ -77,18 +77,18 @@ function FrictionCard({ friction }) {
     <View style={styles.frictionCard}>
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.red }]}>
-          HARTE WIDERSPRÜCHE
+          ECHTE WIDERSPRÜCHE
         </Text>
-        <BulletList items={friction.harte_widersprueche} color={colors.red} />
+        <BulletList items={friction.echte_widersprueche || []} color={colors.red} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
 
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.redDim }]}>
-          SCHEINKONSENS
+          ÜBERSETZUNGSFEHLER
         </Text>
-        <BulletList items={friction.scheinkonsens} color={colors.redDim} />
+        <BulletList items={friction.uebersetzungsfehler || []} color={colors.redDim} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
@@ -97,7 +97,7 @@ function FrictionCard({ friction }) {
         <Text style={[styles.frictionLabel, { color: colors.textMuted }]}>
           KOLLEKTIV ÜBERSEHEN
         </Text>
-        <Text style={styles.fieldValue}>{friction.uebersehenes}</Text>
+        <Text style={styles.fieldValue}>{friction.uebersehenes || ''}</Text>
       </View>
     </View>
   );
@@ -108,21 +108,21 @@ function FrictionCard({ friction }) {
 function IntegrationCard({ integration }) {
   const sections = [
     {
-      label: "VORLÄUFIGER KONSENS",
-      value: integration.vorlaeufiger_konsens,
+      label: "VORLÄUFIGES FAZIT",
+      value: integration.vorlaeufiges_fazit,
       isList: false,
       color: colors.blue,
     },
     {
-      label: "FRUCHTBARE DIFFERENZEN",
-      value: integration.fruchtbare_differenzen,
+      label: "ÜBERSETZBARE BRÜCKEN",
+      value: integration.uebersetzbare_bruecken,
       isList: true,
       color: colors.blue,
     },
     {
-      label: "ÜBERSETZBARKEIT",
-      value: integration.uebersetzbarkeit,
-      isList: true,
+      label: "ANSPRUCHSKARTE",
+      value: integration.anspruchskarte,
+      isList: false,
       color: colors.blueDim,
     },
     {
@@ -153,8 +153,8 @@ function IntegrationCard({ integration }) {
           <View style={styles.frictionSection}>
             <Text style={[styles.frictionLabel, { color: s.color }]}>{s.label}</Text>
             {s.isList
-              ? <BulletList items={s.value} color={s.color} />
-              : <Text style={styles.fieldValue}>{s.value}</Text>
+              ? <BulletList items={Array.isArray(s.value) ? s.value : []} color={s.color} />
+              : <Text style={styles.fieldValue}>{s.value || ''}</Text>
             }
           </View>
         </View>
