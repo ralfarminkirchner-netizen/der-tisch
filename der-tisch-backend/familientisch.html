@@ -264,6 +264,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .rat-send-btn:hover{opacity:.88}
 .rat-send-btn:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:640px){.members-grid{grid-template-columns:1fr}}
+
+/* STÄRKENBiLD MODE */
+.staerken-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.staerken-intro{background:linear-gradient(135deg,rgba(91,160,138,0.08) 0%,rgba(143,188,138,0.04) 100%);border:1px solid rgba(91,160,138,0.2);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.staerken-intro strong{color:#8FBC8A}
+.staerken-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.staerken-input:focus{border-color:#5BA08A;box-shadow:0 0 0 2px rgba(91,160,138,0.12)}
+.staerken-input::placeholder{color:var(--muted)}
+.staerken-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.staerken-send-btn:hover{opacity:.88}
+.staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -464,6 +476,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-selbst" onclick="setMode('selbst')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"/><path d="M3 19c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke-dasharray="2,2"/><path d="M10 13v6"/></svg>
       SELBST-RAuM
+    </button>
+    <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
+      STÄRKENBiLD
     </button>
   </div>
 </section>
@@ -801,6 +817,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="selbstResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== STÄRKENBiLD MODE ==================== -->
+<div class="mode-section" id="mode-staerken">
+  <div class="staerken-wrap">
+
+    <div class="staerken-intro">
+      <strong>STÄRKENBiLD</strong> — Was macht eure Familie besonders? Dieser Modus erkundet einzigartige Stärken, Ressourcen und das, was euch als Familie trägt — jetzt und für die Zukunft. Nicht was fehlt, sondern was ist.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="staerkenChips">
+      <button class="chip" onclick="useStaerkenChip(this)">Wir halten zusammen, wenn es wirklich darauf ankommt.</button>
+      <button class="chip" onclick="useStaerkenChip(this)">Trotz allem haben wir immer einen Weg gefunden.</button>
+      <button class="chip" onclick="useStaerkenChip(this)">Lachen ist bei uns nie weit.</button>
+      <button class="chip" onclick="useStaerkenChip(this)">Jeder bringt etwas Einzigartiges mit in diese Familie.</button>
+      <button class="chip" onclick="useStaerkenChip(this)">Wir reden miteinander, auch wenn es schwierig wird.</button>
+      <button class="chip" onclick="useStaerkenChip(this)">Als Familie haben wir schon viel erlebt und überstanden.</button>
+      <button class="chip" onclick="useStaerkenChip(this)">Unsere Verschiedenheit macht uns stärker.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was macht eure Familie besonders?</div>
+    <textarea class="staerken-input" id="staerkenInput" placeholder="Beschreibt in eigenen Worten, was eure Familie auszeichnet — eure Stärken, was euch verbindet, was ihr gemeinsam erreicht habt oder was euch trägt, auch in schwierigen Zeiten..." rows="4"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="staerkenFamilienname" type="text" placeholder="Familienname (optional, z.B. Familie Müller)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-fokus="allgemein" onclick="setStaerkenFokus(this)">Allgemein</button>
+        <button class="ctrl-btn" data-fokus="vergangenheit" onclick="setStaerkenFokus(this)">Geschichte</button>
+        <button class="ctrl-btn" data-fokus="zukunft" onclick="setStaerkenFokus(this)">Zukunft</button>
+      </div>
+    </div>
+
+    <div class="staerken-send-row">
+      <button class="staerken-send-btn" id="staerkenSendBtn" onclick="sendStaerken()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
+        STÄRKENBiLD erstellen
+      </button>
+    </div>
+
+    <div id="staerkenResults"></div>
 
   </div>
 </div>
@@ -2210,6 +2269,63 @@ function appendIntegrationCards(intg, container, opts) {
     `;
     container.appendChild(stepsCard);
   }
+
+  // Kern-Erkenntnisse (kurzfassung) — collapsed by default
+  const kernItems = Array.isArray(intg.kurzfassung) ? intg.kurzfassung.filter(Boolean) : [];
+  if (kernItems.length > 0) {
+    const kernCard = document.createElement('div');
+    kernCard.className = 'result-card';
+    kernCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(91,160,138,0.15);color:#5BA08A">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 20 6"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div class="result-card-title">Kern-Erkenntnisse</div>
+        <div class="result-card-badge">kurzfassung</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body">
+        <ul class="friction-list">${kernItems.map(s => `<li>${escapeHTML(s)}</li>`).join('')}</ul>
+      </div>
+    `;
+    container.appendChild(kernCard);
+  }
+
+  // Kraft-Energie (maennlich) — collapsed by default
+  if (intg.maennlich) {
+    const maennlichCard = document.createElement('div');
+    maennlichCard.className = 'result-card';
+    maennlichCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(74,127,168,0.12);color:#4A7FA8">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><line x1="10" y1="7" x2="10" y2="13"/><line x1="7" y1="10" x2="13" y2="10"/></svg>
+        </div>
+        <div class="result-card-title">Kraft-Energie</div>
+        <div class="result-card-badge">handlung & klarheit</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.maennlich)}</p></div>
+    `;
+    container.appendChild(maennlichCard);
+  }
+
+  // Verbindungs-Energie (weiblich) — collapsed by default
+  if (intg.weiblich) {
+    const weiblichCard = document.createElement('div');
+    weiblichCard.className = 'result-card';
+    weiblichCard.innerHTML = `
+      <div class="result-card-header" onclick="toggleCard(this.parentElement)">
+        <div class="result-card-icon" style="background:rgba(196,98,45,0.12);color:#C4622D">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="9" r="6"/><line x1="10" y1="15" x2="10" y2="19"/><line x1="7" y1="19" x2="13" y2="19"/></svg>
+        </div>
+        <div class="result-card-title">Verbindungs-Energie</div>
+        <div class="result-card-badge">fürsorge & ganzheit</div>
+        <div class="result-card-chevron"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg></div>
+      </div>
+      <div class="result-card-body"><p class="streaming-text">${escapeHTML(intg.weiblich)}</p></div>
+    `;
+    container.appendChild(weiblichCard);
+  }
 }
 
 // ============================================================
@@ -2683,6 +2799,145 @@ async function sendSelbst() {
 
   isLoading = false;
   document.getElementById('selbstSendBtn').disabled = false;
+}
+
+// ─── STÄRKENBiLD MODE ────────────────────────────────────────────────────────
+
+let staerkenFokus = 'allgemein';
+
+function setStaerkenFokus(btn) {
+  staerkenFokus = btn.dataset.fokus;
+  document.querySelectorAll('#mode-staerken .ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useStaerkenChip(el) {
+  document.getElementById('staerkenInput').value = el.textContent.trim();
+  document.getElementById('staerkenInput').focus();
+}
+
+async function sendStaerken() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('staerkenInput');
+  const resultsDiv = document.getElementById('staerkenResults');
+  const sendBtn    = document.getElementById('staerkenSendBtn');
+  const famName    = (document.getElementById('staerkenFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+
+  const fokusQuestions = {
+    allgemein:       'Was sind die einzigartigen Stärken, Ressourcen und Qualitäten dieser Familie?',
+    vergangenheit:   'Welche Stärken und Überlebensfähigkeiten hat diese Familie über Generationen hinweg bewiesen?',
+    zukunft:         'Welche Potenziale und Fähigkeiten trägt diese Familie als Ressource für ihre gemeinsame Zukunft?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[staerkenFokus]} Kontext: ${text}`;
+
+  const perspectives = [
+    {
+      name: 'Stärken-Forscherin',
+      position: 'Positive Psychologin, die Stärken und Ressourcen sichtbar macht',
+      grundhaltung: 'Was ist stark, was funktioniert, was trägt?',
+      fachgebiet: 'Positive Psychologie, Stärkenidentifikation, appreciative inquiry'
+    },
+    {
+      name: 'Familien-Chronistin',
+      position: 'Systemische Beraterin mit Fokus auf Generationen-Ressourcen',
+      grundhaltung: 'Welche Stärken wurden über Generationen hinweg weitergegeben?',
+      fachgebiet: 'Familiensystemik, Resilienzforschung, Generationenperspektive'
+    },
+    {
+      name: 'Ressourcen-Coach',
+      position: 'Lösungsfokussierter Coach für Familienentwicklung',
+      grundhaltung: 'Auf welche eigenen Ressourcen kann die Familie bauen?',
+      fachgebiet: 'Lösungsfokussierte Beratung, Ressourcenaktivierung, Coaching'
+    },
+    {
+      name: 'Zukunfts-Architektin',
+      position: 'Zukunftsforscherin und Begleiterin für Familienvisionen',
+      grundhaltung: 'Welche Kraft trägt diese Familie in ihre beste Zukunft?',
+      fachgebiet: 'Appreciative Inquiry, Futures Thinking, Visionsentwicklung'
+    }
+  ];
+
+  const payload = {
+    question:     frage,
+    table_name:   famName || 'FAMiLiEN-TiSCH',
+    perspectives,
+    stil:         staerkenFokus === 'vergangenheit' ? 'therapeutisch' : 'achtsam',
+    tone:         'ressourcen',
+    source_app:   'FAMiLiEN-TiSCH',
+    lang:         currentLang
+  };
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = '<div class="loading-indicator"><span></span><span></span><span></span></div>';
+
+  try {
+    const res  = await fetch('/api/ask-table', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const staerkenPerspDefs = [
+      { id: 'staerken-forscherin',  icon: 'seedling', color: '#5BA08A', de: 'Stärken-Forscherin',  en: 'Strengths Researcher' },
+      { id: 'familien-chronistin',  icon: 'book',     color: '#4A9070', de: 'Familien-Chronistin', en: 'Family Chronicler'    },
+      { id: 'ressourcen-coach',     icon: 'compass',  color: '#3D7A60', de: 'Ressourcen-Coach',    en: 'Resources Coach'       },
+      { id: 'zukunfts-architektin', icon: 'star',     color: '#6EAF95', de: 'Zukunfts-Architektin', en: 'Future Architect'     }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = staerkenPerspDefs[i] || staerkenPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER STÄRKENBiLD' : 'YOUR STRENGTHS PORTRAIT',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#5BA08A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg> ${currentLang === 'de' ? 'Stärken-zentriert' : 'Strengths-centered'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Wertschätzend' : 'Appreciative'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 6 6 9 3-3 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Vertraulich' : 'Confidential'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['staerken-forscherin', 'familien-chronistin', 'ressourcen-coach', 'zukunfts-architektin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
 }
 </script>
 <script src="/notizbuch.js"></script>
