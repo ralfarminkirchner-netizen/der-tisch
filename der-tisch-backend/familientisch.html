@@ -3122,7 +3122,7 @@ async function sendGenerationen() {
     question:            frage,
     custom_perspectives: perspectives,
     methods:             [],
-    stil:                generationenFokus === 'neuschreiben' ? 'therapeutisch' : 'tiefenpsychologisch',
+    stil:                generationenFokus === 'neuschreiben' ? 'therapeutisch' : 'philosophisch',
     tone:                generationenFokus === 'wuerdigen' ? 'achtsam' : 'direkt',
     lang:                l,
     source_app:          'FAMiLiEN-TiSCH',
@@ -3181,12 +3181,14 @@ async function sendGenerationen() {
     `;
     resultsDiv.appendChild(kiDiv);
 
-    saveHistory({
-      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
-      perspectives: ['ahnen-forscherin', 'systemisch-familienther', 'trans-gen-heilerin', 'neue-geschichte'],
-      lang:         l,
-      time:         Date.now()
-    });
+    try {
+      saveHistory({
+        question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+        perspectives: ['ahnen-forscherin', 'systemisch-familienther', 'trans-gen-heilerin', 'neue-geschichte'],
+        lang:         l,
+        time:         Date.now()
+      });
+    } catch (e) { console.warn('saveHistory failed:', e); }
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">${l === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
