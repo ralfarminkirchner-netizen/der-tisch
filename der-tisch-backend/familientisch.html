@@ -276,6 +276,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .staerken-send-btn:hover{opacity:.88}
 .staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* GENERATiONENBRÜCKE MODE */
+.generationen-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.generationen-intro{background:linear-gradient(135deg,rgba(154,90,58,0.08) 0%,rgba(139,106,74,0.04) 100%);border:1px solid rgba(154,90,58,0.2);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.generationen-intro strong{color:#C4855A}
+.generationen-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.generationen-input:focus{border-color:#9A5A3A;box-shadow:0 0 0 2px rgba(154,90,58,0.12)}
+.generationen-input::placeholder{color:var(--muted)}
+.generationen-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.generationen-send-btn{background:#9A5A3A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.generationen-send-btn:hover{opacity:.88}
+.generationen-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -480,6 +492,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
       STÄRKENBiLD
+    </button>
+    <button class="mode-tab" id="tab-generationen" onclick="setMode('generationen')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 16c0-4 3.5-7 8-7s8 3 8 7"/><line x1="6.5" y1="11" x2="6.5" y2="16"/><line x1="13.5" y1="11" x2="13.5" y2="16"/><line x1="1" y1="16" x2="19" y2="16"/></svg>
+      GENERATiONENBRÜCKE
     </button>
   </div>
 </section>
@@ -860,6 +876,53 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="staerkenResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== GENERATiONENBRÜCKE MODE ==================== -->
+<div class="mode-section" id="mode-generationen">
+  <div class="generationen-wrap">
+
+    <div class="generationen-intro">
+      <strong>GENERATiONENBRÜCKE</strong> — Was wurde in deiner Familie von Generation zu Generation weitergegeben — bewusst und unbewusst? Dieser Modus beleuchtet Muster, Stärken und Lasten aus der Herkunftsfamilie und öffnet den Blick für das, was transformiert werden kann.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px">
+      <button class="chip" onclick="useGenerationenChip(this)">In unserer Familie wird nie direkt über Gefühle gesprochen.</button>
+      <button class="chip" onclick="useGenerationenChip(this)">Ich erkenne Muster meiner Eltern in mir — und möchte es anders machen.</button>
+      <button class="chip" onclick="useGenerationenChip(this)">Unsere Familie hat viel Stärke in schwierigen Zeiten gezeigt — ich möchte das verstehen.</button>
+      <button class="chip" onclick="useGenerationenChip(this)">Konflikte in meiner Familie wiederholen sich, wie schon bei meinen Großeltern.</button>
+      <button class="chip" onclick="useGenerationenChip(this)">Meine Eltern haben mir Werte mitgegeben, die mein Leben tragen.</button>
+      <button class="chip" onclick="useGenerationenChip(this)">Ich frage mich, welche Wunden meiner Vorfahren ich mit mir trage.</button>
+      <button class="chip" onclick="useGenerationenChip(this)">Unsere Familie hat eine Migrationsgeschichte — das prägt uns heute noch.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Welches Muster oder welche Frage bewegt dich?</div>
+    <textarea class="generationen-input" id="generationenInput" placeholder="Beschreibe ein Muster, eine Stärke oder eine Frage aus deiner Familiengeschichte — was wiederholt sich, was wurde weitergegeben, was möchtest du verstehen oder verwandeln?" rows="4"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:16px">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-genfokus="muster" onclick="setGenerationenFokus(this)">Muster erkennen</button>
+        <button class="ctrl-btn" data-genfokus="wuerdigen" onclick="setGenerationenFokus(this)">Würdigen &amp; Heilen</button>
+        <button class="ctrl-btn" data-genfokus="neuschreiben" onclick="setGenerationenFokus(this)">Neu schreiben</button>
+      </div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-gentiefe="2" onclick="setGenerationenTiefe(this)">2 Gen.</button>
+        <button class="ctrl-btn" data-gentiefe="3" onclick="setGenerationenTiefe(this)">3 Gen.</button>
+        <button class="ctrl-btn" data-gentiefe="4" onclick="setGenerationenTiefe(this)">4+ Gen.</button>
+      </div>
+    </div>
+
+    <div class="generationen-send-row">
+      <button class="generationen-send-btn" id="generationenSendBtn" onclick="sendGenerationen()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 16c0-4 3.5-7 8-7s8 3 8 7"/><line x1="6.5" y1="11" x2="6.5" y2="16"/><line x1="13.5" y1="11" x2="13.5" y2="16"/><line x1="1" y1="16" x2="19" y2="16"/></svg>
+        GENERATiONENBRÜCKE öffnen
+      </button>
+    </div>
+
+    <div id="generationenResults"></div>
 
   </div>
 </div>
@@ -2934,6 +2997,199 @@ async function sendStaerken() {
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── GENERATiONENBRÜCKE MODE ─────────────────────────────────────────────────
+
+let generationenFokus = 'muster';
+let generationenTiefe = '2';
+
+function setGenerationenFokus(btn) {
+  generationenFokus = btn.dataset.genfokus;
+  document.querySelectorAll('[data-genfokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setGenerationenTiefe(btn) {
+  generationenTiefe = btn.dataset.gentiefe;
+  document.querySelectorAll('[data-gentiefe]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useGenerationenChip(el) {
+  document.getElementById('generationenInput').value = el.textContent.trim();
+  document.getElementById('generationenInput').focus();
+}
+
+async function sendGenerationen() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('generationenInput');
+  const resultsDiv = document.getElementById('generationenResults');
+  const sendBtn    = document.getElementById('generationenSendBtn');
+
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+
+  const tiefenLabelDe = { '2': 'zwei Generationen (Eltern + eigene Generation)', '3': 'drei Generationen (Großeltern, Eltern, eigene Generation)', '4': 'vier oder mehr Generationen (tiefe Herkunftsarbeit)' };
+  const tiefenLabelEn = { '2': 'two generations (parents + current generation)', '3': 'three generations (grandparents, parents, current generation)', '4': 'four or more generations (deep ancestry work)' };
+
+  const fokusPrefix = {
+    de: {
+      muster:       'Erkenne transgenerationale Muster, Wiederholungen und unbewusste Weitergaben.',
+      wuerdigen:    'Würdige die Stärken der Vorfahren und erkunde heilsame Möglichkeiten für das Familiensystem.',
+      neuschreiben: 'Erkunde, welche neue Geschichte diese Familie schreiben kann — was wird befreit und neu gestaltet.',
+    },
+    en: {
+      muster:       'Identify transgenerational patterns, repetitions, and unconscious transmissions.',
+      wuerdigen:    'Honor the strengths of ancestors and explore healing possibilities for the family system.',
+      neuschreiben: 'Explore what new story this family can write — what is released and reshaped.',
+    }
+  };
+
+  const l = currentLang;
+  const tiefentext = l === 'de' ? tiefenLabelDe[generationenTiefe] : tiefenLabelEn[generationenTiefe];
+  const fokustext  = fokusPrefix[l][generationenFokus];
+  const frage = l === 'de'
+    ? `Familiengeschichte über ${tiefentext}. ${fokustext}\n\nKontext: ${text}`
+    : `Family history across ${tiefentext}. ${fokustext}\n\nContext: ${text}`;
+
+  const perspectives = l === 'de' ? [
+    {
+      name: 'Familien-Ahnen-Forscherin',
+      position: 'Tiefenpsychologisch geschulte Familientherapeutin mit Fokus auf Ahnenmuster und Familienlegenden',
+      grundhaltung: 'Was wurde stillschweigend weitergegeben? Welche Familienmythen, Verbote und Mandate formen die Gegenwart?',
+      argumentationsstil: 'Folgt Spuren von Familiengeheimnissen, unausgesprochenen Regeln und dem, was zwischen den Generationen ungesagt blieb.',
+      fachgebiet: 'Tiefenpsychologie, Familiengeheimnisse, Ahnendynamik, Genogramm-Arbeit',
+    },
+    {
+      name: 'Systemische Familientherapeutin',
+      position: 'Systemisch-strukturelle Therapeutin nach Hellinger und Satir',
+      grundhaltung: 'Familiensysteme haben eine eigene Logik. Loyalitäten, Delegationen und Ausschlüsse zeigen sich in der Gegenwart.',
+      argumentationsstil: 'Identifiziert systemische Wiederholungen, versteckte Loyalitäten und das, was in Aufstellungen sichtbar wird.',
+      fachgebiet: 'Familiensystemik, Aufstellungsarbeit, transgenerationale Weitergabe',
+    },
+    {
+      name: 'Transgenerationale Heilerin',
+      position: 'Trauma-Therapeutin mit Fokus auf epigenetische und psychologische Transmission über Generationen',
+      grundhaltung: 'Traumata vererben sich — und Heilung auch. Was die Vorfahren nicht auflösen konnten, zeigt sich in den Kindern.',
+      argumentationsstil: 'Verbindet Körper, Epigenetik und Psychologie. Sucht Ressourcen für Heilung und Transformation.',
+      fachgebiet: 'Transgenerationales Trauma, Epigenetik, Körperpsychotherapie, Resilienz',
+    },
+    {
+      name: 'Neue-Geschichte-Schreiberin',
+      position: 'Narrative Therapeutin und Zukunftsbegleiterin für Familien im Wandel',
+      grundhaltung: 'Wir sind nicht die Summe unserer Familiengeschichte — aber wir stehen auf ihr. Welche neue Geschichte soll geschrieben werden?',
+      argumentationsstil: 'Öffnet den Raum für neue Möglichkeiten. Erkundet Ressourcen, Re-Autorenschaft und den nächsten Schritt.',
+      fachgebiet: 'Narrative Therapie, Positive Psychologie, Zukunftsforschung, Familienentwicklung',
+    },
+  ] : [
+    {
+      name: 'Family Ancestry Researcher',
+      position: 'Depth-psychology trained family therapist focused on ancestral patterns and family legends',
+      grundhaltung: 'What was silently transmitted? Which family myths, prohibitions, and mandates shape the present?',
+      argumentationsstil: 'Follows traces of family secrets, unspoken rules, and what remained unsaid between generations.',
+      fachgebiet: 'Depth psychology, family secrets, ancestral dynamics, genogram work',
+    },
+    {
+      name: 'Systemic Family Therapist',
+      position: 'Systemic-structural therapist following Hellinger and Satir',
+      grundhaltung: 'Family systems have their own logic. Loyalties, delegations, and exclusions show up in the present.',
+      argumentationsstil: 'Identifies systemic repetitions, hidden loyalties, and what becomes visible in constellations.',
+      fachgebiet: 'Family systemic therapy, constellation work, transgenerational transmission',
+    },
+    {
+      name: 'Transgenerational Healer',
+      position: 'Trauma therapist focused on epigenetic and psychological transmission across generations',
+      grundhaltung: 'Traumas are inherited — and so is healing. What ancestors could not resolve shows up in the children.',
+      argumentationsstil: 'Connects body, epigenetics, and psychology. Seeks resources for healing and transformation.',
+      fachgebiet: 'Transgenerational trauma, epigenetics, body psychotherapy, resilience',
+    },
+    {
+      name: 'New Story Writer',
+      position: 'Narrative therapist and future companion for families in transition',
+      grundhaltung: 'We are not the sum of our family history — but we stand on it. What new story is ready to be written?',
+      argumentationsstil: 'Opens space for new possibilities. Explores resources, re-authorship, and the next step.',
+      fachgebiet: 'Narrative therapy, positive psychology, futures thinking, family development',
+    },
+  ];
+
+  const payload = {
+    question:            frage,
+    custom_perspectives: perspectives,
+    methods:             [],
+    stil:                generationenFokus === 'neuschreiben' ? 'therapeutisch' : 'tiefenpsychologisch',
+    tone:                generationenFokus === 'wuerdigen' ? 'achtsam' : 'direkt',
+    lang:                l,
+    source_app:          'FAMiLiEN-TiSCH',
+  };
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${l === 'de' ? 'Die Brücke wird gebaut...' : 'Building the bridge...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('API ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const genPerspDefs = [
+      { id: 'ahnen-forscherin',        icon: 'scroll',   color: '#9A5A3A', de: 'Familien-Ahnen-Forscherin',      en: 'Family Ancestry Researcher' },
+      { id: 'systemisch-familienther', icon: 'network',  color: '#C4622D', de: 'Systemische Familientherapeutin', en: 'Systemic Family Therapist'   },
+      { id: 'trans-gen-heilerin',      icon: 'shield',   color: '#A85A4A', de: 'Transgenerationale Heilerin',     en: 'Transgenerational Healer'    },
+      { id: 'neue-geschichte',         icon: 'seedling', color: '#6EAF95', de: 'Neue-Geschichte-Schreiberin',     en: 'New Story Writer'            },
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef  = genPerspDefs[i] || genPerspDefs[0];
+        const card  = createResultCard(pDef, rolle || (l === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    l === 'de' ? 'GENERATiONENBRÜCKE' : 'GENERATIONAL BRIDGE',
+      synthesisSubtitle: l === 'de' ? 'was bleibt · was sich wandelt' : 'what remains · what transforms',
+      synthesisColor:    '#9A5A3A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${l === 'de' ? 'Kein Urteil' : 'No judgment'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${l === 'de' ? 'Würdigend' : 'Honoring'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 18V8"/><path d="M6 12c0 0 1-5 4-8 3 3 4 8 4 8"/><path d="M4 18c1-2 4-4 6-6"/></svg> ${l === 'de' ? 'Ressourcenorientiert' : 'Resource-focused'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['ahnen-forscherin', 'systemisch-familienther', 'trans-gen-heilerin', 'neue-geschichte'],
+      lang:         l,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${l === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
   }
 
   isLoading = false;
