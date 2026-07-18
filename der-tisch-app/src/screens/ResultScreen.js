@@ -77,18 +77,18 @@ function FrictionCard({ friction }) {
     <View style={styles.frictionCard}>
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.red }]}>
-          HARTE WIDERSPRÜCHE
+          ECHTE WIDERSPRÜCHE
         </Text>
-        <BulletList items={friction.harte_widersprueche} color={colors.red} />
+        <BulletList items={friction?.echte_widersprueche || []} color={colors.red} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
 
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.redDim }]}>
-          SCHEINKONSENS
+          ÜBERSETZUNGSFEHLER
         </Text>
-        <BulletList items={friction.scheinkonsens} color={colors.redDim} />
+        <BulletList items={friction?.uebersetzungsfehler || []} color={colors.redDim} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
@@ -108,57 +108,67 @@ function FrictionCard({ friction }) {
 function IntegrationCard({ integration }) {
   const sections = [
     {
-      label: "VORLÄUFIGER KONSENS",
-      value: integration.vorlaeufiger_konsens,
+      label: "VORLÄUFIGES FAZIT",
+      value: integration?.vorlaeufiges_fazit,
       isList: false,
       color: colors.blue,
     },
     {
-      label: "FRUCHTBARE DIFFERENZEN",
-      value: integration.fruchtbare_differenzen,
+      label: "ÜBERSETZBARE BRÜCKEN",
+      value: integration?.uebersetzbare_bruecken,
       isList: true,
       color: colors.blue,
     },
     {
-      label: "ÜBERSETZBARKEIT",
-      value: integration.uebersetzbarkeit,
+      label: "KURZFASSUNG",
+      value: integration?.kurzfassung,
       isList: true,
       color: colors.blueDim,
     },
     {
       label: "ECHTE UNVEREINBARKEITEN",
-      value: integration.echte_unvereinbarkeiten,
+      value: integration?.echte_unvereinbarkeiten,
       isList: true,
       color: colors.red,
     },
     {
       label: "PRAKTISCHE OPTIONEN",
-      value: integration.praktische_optionen,
+      value: integration?.praktische_optionen,
       isList: true,
       color: colors.amber,
     },
     {
       label: "OFFENE PRÜFPFADE",
-      value: integration.offene_pruefpfade,
+      value: integration?.offene_pruefpfade,
       isList: true,
       color: colors.textSecondary,
     },
   ];
 
+  const einfachGesagt = integration?.einfach_gesagt;
+
   return (
-    <View style={styles.integrationCard}>
-      {sections.map((s, i) => (
-        <View key={i}>
-          {i > 0 && <View style={[styles.frictionDivider, { backgroundColor: colors.borderSub }]} />}
-          <View style={styles.frictionSection}>
-            <Text style={[styles.frictionLabel, { color: s.color }]}>{s.label}</Text>
-            {s.isList
-              ? <BulletList items={s.value} color={s.color} />
-              : <Text style={styles.fieldValue}>{s.value}</Text>
-            }
+    <View>
+      <View style={styles.integrationCard}>
+        {sections.map((s, i) => (
+          <View key={i}>
+            {i > 0 && <View style={[styles.frictionDivider, { backgroundColor: colors.borderSub }]} />}
+            <View style={styles.frictionSection}>
+              <Text style={[styles.frictionLabel, { color: s.color }]}>{s.label}</Text>
+              {s.isList
+                ? <BulletList items={s.value || []} color={s.color} />
+                : <Text style={styles.fieldValue}>{s.value}</Text>
+              }
+            </View>
           </View>
+        ))}
+      </View>
+      {einfachGesagt ? (
+        <View style={styles.einfachCard}>
+          <Text style={styles.einfachLabel}>EINFACH GESAGT</Text>
+          <Text style={styles.einfachText}>{einfachGesagt}</Text>
         </View>
-      ))}
+      ) : null}
     </View>
   );
 }
@@ -415,6 +425,30 @@ const styles = StyleSheet.create({
     borderColor: colors.blueDim,
     overflow: "hidden",
     marginBottom: spacing.xl,
+  },
+
+  // Einfach Gesagt card
+  einfachCard: {
+    backgroundColor: colors.amberBg,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.amberDim,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.xl,
+  },
+  einfachLabel: {
+    fontSize: typography.xs,
+    letterSpacing: 1.5,
+    fontWeight: "700",
+    color: colors.amber,
+    marginBottom: spacing.sm,
+  },
+  einfachText: {
+    fontSize: typography.small,
+    color: colors.textSecondary,
+    lineHeight: 22,
+    fontStyle: "italic",
   },
 
   // Bottom CTA
