@@ -899,7 +899,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 <div class="mode-section" id="mode-krisen">
   <div class="krisen-wrap">
 
-    <div class="krisen-intro">
+    <div class="krisen-intro" id="krisenIntro">
       <strong>KRiSEN-KOMPASS</strong> — Für Familien in schwierigen Zeiten. Nicht um die Krise wegzureden — sondern um Orientierung zu geben: Was hilft jetzt? Was brauchen alle? Was kann warten? Fünf krisen-erprobte Perspektiven begleiten euch durch das Chaos.
     </div>
 
@@ -914,11 +914,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <!-- Crisis type selector -->
-    <div class="chips-label" style="text-align:left;margin-bottom:10px">Art der Krise</div>
+    <div class="chips-label" style="text-align:left;margin-bottom:10px" id="krisenTypeLabelText">Art der Krise</div>
     <div class="krisen-type-grid">
       <button class="krisen-type-btn active" data-krisen="trennung" onclick="setKrisenType(this)">
         <div class="krisen-type-label">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="23" y2="14"/><line x1="23" y1="8" x2="17" y2="14"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="23" y2="14"/><line x1="23" y1="8" x2="17" y2="14"/></svg>
           Trennung / Scheidung
         </div>
         <div class="krisen-type-sub">Paar trennt sich, Kinder mittendrin</div>
@@ -946,7 +946,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       </button>
       <button class="krisen-type-btn" data-krisen="sucht" onclick="setKrisenType(this)">
         <div class="krisen-type-label">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
           Sucht / psych. Erkrankung
         </div>
         <div class="krisen-type-sub">Abhängigkeit, Depression, Burnout</div>
@@ -961,24 +961,24 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <!-- Phase selector -->
-    <div class="chips-label" style="text-align:left;margin-bottom:10px">Phase</div>
+    <div class="chips-label" style="text-align:left;margin-bottom:10px" id="krisenPhaseLabelText">Phase</div>
     <div class="krisen-phase-row">
-      <button class="krisen-phase-btn active" data-phase="akut" onclick="setKrisenPhase(this)">Akute Phase</button>
-      <button class="krisen-phase-btn" data-phase="stabilisierung" onclick="setKrisenPhase(this)">Stabilisierung</button>
-      <button class="krisen-phase-btn" data-phase="langfristig" onclick="setKrisenPhase(this)">Langfristig</button>
+      <button class="krisen-phase-btn active" data-phase="akut" id="phaseAkutBtn" onclick="setKrisenPhase(this)">Akute Phase</button>
+      <button class="krisen-phase-btn" data-phase="stabilisierung" id="phaseStabBtn" onclick="setKrisenPhase(this)">Stabilisierung</button>
+      <button class="krisen-phase-btn" data-phase="langfristig" id="phaseLangBtn" onclick="setKrisenPhase(this)">Langfristig</button>
     </div>
 
     <!-- Situation input -->
     <textarea class="krisen-input" id="krisenInput" placeholder="Was ist passiert? Was belastet euch am meisten? Wer ist betroffen — und wie? Beschreiben Sie die Situation so, wie sie sich gerade anfühlt." rows="4"></textarea>
 
     <!-- Example chips — updates by crisis type -->
-    <div class="chips-label" style="text-align:left;margin-bottom:10px">Beispiele</div>
+    <div class="chips-label" style="text-align:left;margin-bottom:10px" id="krisenChipsLabelText">Beispiele</div>
     <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="krisenChips"></div>
 
     <div class="krisen-send-row">
       <button class="krisen-send-btn" id="krisenSendBtn" onclick="sendKrisen()">
         <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="0.5" fill="currentColor"/></svg>
-        KRiSEN-KOMPASS starten
+        <span id="krisenSendBtnLabel">KRiSEN-KOMPASS starten</span>
       </button>
     </div>
 
@@ -1307,6 +1307,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init KRiSEN-KOMPASS chips + sofort-box
   updateKrisenChips();
   updateKrisenSofort();
+  updateKrisenLabels();
 
   // Keyboard send
   document.getElementById('questionInput').addEventListener('keydown', e => {
@@ -1347,6 +1348,7 @@ function toggleLang() {
   updateChips();
   updateKrisenChips();
   updateKrisenSofort();
+  updateKrisenLabels();
 }
 
 function toggleTone() {
@@ -3265,6 +3267,38 @@ function updateKrisenSofort() {
     || (KRISEN_SOFORT[krisenType] || KRISEN_SOFORT.sonstiges).de;
   const list = document.getElementById('sofortList');
   list.innerHTML = sofortData.map(t => `<li>${t}</li>`).join('');
+}
+
+function updateKrisenLabels() {
+  const de = currentLang === 'de';
+  const intro = document.getElementById('krisenIntro');
+  if (intro) {
+    intro.innerHTML = de
+      ? '<strong>KRiSEN-KOMPASS</strong> — Für Familien in schwierigen Zeiten. Nicht um die Krise wegzureden — sondern um Orientierung zu geben: Was hilft jetzt? Was brauchen alle? Was kann warten? Fünf krisen-erprobte Perspektiven begleiten euch durch das Chaos.'
+      : '<strong>KRiSEN-KOMPASS</strong> — For families in difficult times. Not to talk away the crisis — but to provide orientation: What helps now? What does everyone need? What can wait? Five crisis-proven perspectives accompany you through the chaos.';
+  }
+  const sofortTitle = document.getElementById('sofortTitle');
+  if (sofortTitle) sofortTitle.textContent = de ? 'SOFORTHiLFE — Was immer hilft' : 'IMMEDIATE HELP — What always helps';
+  const typeLabel = document.getElementById('krisenTypeLabelText');
+  if (typeLabel) typeLabel.textContent = de ? 'Art der Krise' : 'Type of crisis';
+  const phaseLabel = document.getElementById('krisenPhaseLabelText');
+  if (phaseLabel) phaseLabel.textContent = de ? 'Phase' : 'Phase';
+  const phaseAkut = document.getElementById('phaseAkutBtn');
+  if (phaseAkut) phaseAkut.textContent = de ? 'Akute Phase' : 'Acute phase';
+  const phaseStab = document.getElementById('phaseStabBtn');
+  if (phaseStab) phaseStab.textContent = de ? 'Stabilisierung' : 'Stabilization';
+  const phaseLang = document.getElementById('phaseLangBtn');
+  if (phaseLang) phaseLang.textContent = de ? 'Langfristig' : 'Long-term';
+  const krisenInput = document.getElementById('krisenInput');
+  if (krisenInput) {
+    krisenInput.placeholder = de
+      ? 'Was ist passiert? Was belastet euch am meisten? Wer ist betroffen — und wie? Beschreiben Sie die Situation so, wie sie sich gerade anfühlt.'
+      : 'What happened? What is weighing on you most? Who is affected — and how? Describe the situation as it feels right now.';
+  }
+  const chipsLabel = document.getElementById('krisenChipsLabelText');
+  if (chipsLabel) chipsLabel.textContent = de ? 'Beispiele' : 'Examples';
+  const sendLabel = document.getElementById('krisenSendBtnLabel');
+  if (sendLabel) sendLabel.textContent = de ? 'KRiSEN-KOMPASS starten' : 'Start CRISIS COMPASS';
 }
 
 async function sendKrisen() {
