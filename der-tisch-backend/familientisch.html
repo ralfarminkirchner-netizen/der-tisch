@@ -276,6 +276,33 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .staerken-send-btn:hover{opacity:.88}
 .staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* KRiSEN-KOMPASS MODE */
+.krisen-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.krisen-intro{background:linear-gradient(135deg,rgba(196,98,45,0.09) 0%,rgba(100,60,40,0.03) 100%);border:1px solid rgba(196,98,45,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.krisen-intro strong{color:var(--accent)}
+.sofort-box{background:rgba(196,98,45,0.05);border:1px solid rgba(196,98,45,0.18);border-radius:10px;padding:16px 20px;margin-bottom:20px;transition:border-color .3s}
+.sofort-title{font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:10px;font-weight:600}
+.sofort-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.sofort-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:20px;position:relative}
+.sofort-list li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+.krisen-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.krisen-type-btn{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 14px;cursor:pointer;transition:all .2s;text-align:left;font-family:var(--font)}
+.krisen-type-btn.active{border-color:var(--accent);background:var(--accent-dim)}
+.krisen-type-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.krisen-type-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.krisen-phase-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.krisen-phase-btn{padding:8px 16px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.krisen-phase-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.krisen-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.krisen-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.krisen-input::placeholder{color:var(--muted)}
+.krisen-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.krisen-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.krisen-send-btn:hover{opacity:.88}
+.krisen-send-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:640px){.krisen-type-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.krisen-type-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -480,6 +507,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
       STÄRKENBiLD
+    </button>
+    <button class="mode-tab" id="tab-krisen" onclick="setMode('krisen')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="0.5" fill="currentColor"/></svg>
+      KRiSEN-KOMPASS
     </button>
   </div>
 </section>
@@ -864,6 +895,98 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== KRiSEN-KOMPASS MODE ==================== -->
+<div class="mode-section" id="mode-krisen">
+  <div class="krisen-wrap">
+
+    <div class="krisen-intro">
+      <strong>KRiSEN-KOMPASS</strong> — Für Familien in schwierigen Zeiten. Nicht um die Krise wegzureden — sondern um Orientierung zu geben: Was hilft jetzt? Was brauchen alle? Was kann warten? Fünf krisen-erprobte Perspektiven begleiten euch durch das Chaos.
+    </div>
+
+    <!-- Sofort-Hilfe — updates dynamically by crisis type -->
+    <div class="sofort-box" id="krisenSofortBox">
+      <div class="sofort-title" id="sofortTitle">SOFORTHiLFE — Was immer hilft</div>
+      <ul class="sofort-list" id="sofortList">
+        <li>Sicherheit zuerst: Körper, Ort, Atem. Erst stabilisieren — dann verstehen.</li>
+        <li>Nicht alles sofort lösen: Krisen brauchen Zeit. Wer sie sofort beenden will, macht sie oft größer.</li>
+        <li>Kinder schützen: Kinder spüren alles — aber sie müssen nicht alles wissen. Ehrlichkeit in altersgerechter Dosierung.</li>
+      </ul>
+    </div>
+
+    <!-- Crisis type selector -->
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Art der Krise</div>
+    <div class="krisen-type-grid">
+      <button class="krisen-type-btn active" data-krisen="trennung" onclick="setKrisenType(this)">
+        <div class="krisen-type-label">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="23" y2="14"/><line x1="23" y1="8" x2="17" y2="14"/></svg>
+          Trennung / Scheidung
+        </div>
+        <div class="krisen-type-sub">Paar trennt sich, Kinder mittendrin</div>
+      </button>
+      <button class="krisen-type-btn" data-krisen="krankheit" onclick="setKrisenType(this)">
+        <div class="krisen-type-label">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+          Krankheit / Verlust
+        </div>
+        <div class="krisen-type-sub">Schwere Erkrankung, Tod, Trauer</div>
+      </button>
+      <button class="krisen-type-btn" data-krisen="finanzen" onclick="setKrisenType(this)">
+        <div class="krisen-type-label">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="16" height="12" rx="2"/><path d="M14 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          Finanzielle Krise
+        </div>
+        <div class="krisen-type-sub">Jobverlust, Schulden, existenzielle Not</div>
+      </button>
+      <button class="krisen-type-btn" data-krisen="abloesung" onclick="setKrisenType(this)">
+        <div class="krisen-type-label">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"/><path d="M3 19c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke-dasharray="2,2"/></svg>
+          Ablösung / Pubertät
+        </div>
+        <div class="krisen-type-sub">Teenager, Auszug, Nestleerung</div>
+      </button>
+      <button class="krisen-type-btn" data-krisen="sucht" onclick="setKrisenType(this)">
+        <div class="krisen-type-label">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 10 14 8 22 19 9 12 9"/></svg>
+          Sucht / psych. Erkrankung
+        </div>
+        <div class="krisen-type-sub">Abhängigkeit, Depression, Burnout</div>
+      </button>
+      <button class="krisen-type-btn" data-krisen="sonstiges" onclick="setKrisenType(this)">
+        <div class="krisen-type-label">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="0.5" fill="currentColor"/></svg>
+          Andere / Unsicherheit
+        </div>
+        <div class="krisen-type-sub">Konflikt, Gewalt, offene Krise</div>
+      </button>
+    </div>
+
+    <!-- Phase selector -->
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Phase</div>
+    <div class="krisen-phase-row">
+      <button class="krisen-phase-btn active" data-phase="akut" onclick="setKrisenPhase(this)">Akute Phase</button>
+      <button class="krisen-phase-btn" data-phase="stabilisierung" onclick="setKrisenPhase(this)">Stabilisierung</button>
+      <button class="krisen-phase-btn" data-phase="langfristig" onclick="setKrisenPhase(this)">Langfristig</button>
+    </div>
+
+    <!-- Situation input -->
+    <textarea class="krisen-input" id="krisenInput" placeholder="Was ist passiert? Was belastet euch am meisten? Wer ist betroffen — und wie? Beschreiben Sie die Situation so, wie sie sich gerade anfühlt." rows="4"></textarea>
+
+    <!-- Example chips — updates by crisis type -->
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Beispiele</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="krisenChips"></div>
+
+    <div class="krisen-send-row">
+      <button class="krisen-send-btn" id="krisenSendBtn" onclick="sendKrisen()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="0.5" fill="currentColor"/></svg>
+        KRiSEN-KOMPASS starten
+      </button>
+    </div>
+
+    <div id="krisenResults"></div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -1181,6 +1304,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateChips();
   initRatMembers();
 
+  // Init KRiSEN-KOMPASS chips + sofort-box
+  updateKrisenChips();
+  updateKrisenSofort();
+
   // Keyboard send
   document.getElementById('questionInput').addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendQuestion();
@@ -1218,6 +1345,8 @@ function toggleLang() {
   document.getElementById('langBtn').textContent = currentLang.toUpperCase();
   renderPerspGrid();
   updateChips();
+  updateKrisenChips();
+  updateKrisenSofort();
 }
 
 function toggleTone() {
@@ -2930,6 +3059,374 @@ async function sendStaerken() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['staerken-forscherin', 'familien-chronistin', 'ressourcen-coach', 'zukunfts-architektin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── KRiSEN-KOMPASS MODE ─────────────────────────────────────────────────────
+
+let krisenType  = 'trennung';
+let krisenPhase = 'akut';
+
+const KRISEN_CHIPS = {
+  trennung: {
+    de: [
+      'Wie erkläre ich unseren Kindern, dass wir uns trennen?',
+      'Mein Partner will sich trennen — ich bin völlig überfordert.',
+      'Die Kinder sind nach der Trennung anders — was tun?',
+      'Wie schaffe ich einen friedlichen Umgang für die Kinder?',
+    ],
+    en: [
+      'How do I explain our separation to our children?',
+      'My partner wants to separate — I\'m completely overwhelmed.',
+      'The children have changed since the separation — what to do?',
+      'How do we maintain a peaceful co-parenting relationship?',
+    ]
+  },
+  krankheit: {
+    de: [
+      'Mein Partner hat eine schwere Diagnose bekommen. Wie gehen wir als Familie damit um?',
+      'Wir haben jemanden verloren — wie finden wir zurück ins Leben?',
+      'Wie spreche ich mit meinen Kindern über den Tod eines Elternteils?',
+      'Die Pflege eines Elternteils belastet unsere ganze Familie.',
+    ],
+    en: [
+      'My partner received a serious diagnosis. How do we cope as a family?',
+      'We lost someone — how do we find our way back to life?',
+      'How do I talk to my children about the death of a parent?',
+      'Caring for a parent is putting strain on our whole family.',
+    ]
+  },
+  finanzen: {
+    de: [
+      'Ich habe meinen Job verloren — wie sage ich es der Familie?',
+      'Wir stehen kurz vor der Insolvenz. Wie schützen wir die Kinder vor dieser Angst?',
+      'Finanzielle Krise belastet unsere Beziehung massiv.',
+      'Wie spreche ich ehrlich über Geldnot, ohne Panik zu verursachen?',
+    ],
+    en: [
+      'I lost my job — how do I tell the family?',
+      'We are close to insolvency. How do we protect the children from this fear?',
+      'Financial crisis is putting massive strain on our relationship.',
+      'How do I talk honestly about financial hardship without causing panic?',
+    ]
+  },
+  abloesung: {
+    de: [
+      'Mein Teenager zieht sich komplett zurück — wie erreiche ich ihn noch?',
+      'Mein Kind zieht aus — ich weiß nicht, wie ich damit umgehen soll.',
+      'Pubertät: Mein Kind ist wie ausgewechselt. Was passiert da wirklich?',
+      'Das Nest ist leer — wer bin ich jetzt als Elternteil?',
+    ],
+    en: [
+      'My teenager has completely withdrawn — how do I still reach them?',
+      'My child is moving out — I don\'t know how to deal with this.',
+      'Puberty: My child is like a different person. What is really happening?',
+      'Empty nest — who am I now as a parent?',
+    ]
+  },
+  sucht: {
+    de: [
+      'Mein Partner trinkt zu viel — die Kinder bekommen alles mit.',
+      'Ich vermute, mein Kind nimmt Drogen. Was tue ich jetzt?',
+      'Depression in der Familie: Wie halten alle durch?',
+      'Mein Elternteil ist krank — wie schütze ich meine eigene Familie?',
+    ],
+    en: [
+      'My partner drinks too much — the children see everything.',
+      'I suspect my child is using drugs. What do I do now?',
+      'Depression in the family: how does everyone cope?',
+      'My parent is ill — how do I protect my own family?',
+    ]
+  },
+  sonstiges: {
+    de: [
+      'Es gibt Gewalt in unserer Familie. Wie schaffe ich Sicherheit?',
+      'Unsere Familie ist komplett zerstritten — kann das noch gut werden?',
+      'Ich weiß nicht mehr, wo ich anfangen soll.',
+      'Die Situation fühlt sich hoffnungslos an — aber ich will etwas ändern.',
+    ],
+    en: [
+      'There is violence in our family. How do I create safety?',
+      'Our family is completely at odds — can this still be repaired?',
+      'I no longer know where to begin.',
+      'The situation feels hopeless — but I want to change something.',
+    ]
+  }
+};
+
+const KRISEN_SOFORT = {
+  trennung: {
+    de: [
+      'Kinder raushalten aus dem Konflikt: Nie über den anderen Elternteil schlechtmachen — die Kinder lieben beide.',
+      'Kontinuität schaffen: Rituale, Schule, Freunde — was stabil bleibt, schützt Kinder in Krisen.',
+      'Eigene Unterstützung holen: Wer selbst brennt, kann nicht löschen. Erst sich stabilisieren.',
+    ],
+    en: [
+      'Keep children out of the conflict: never speak badly of the other parent — children love both.',
+      'Create continuity: routines, school, friends — what remains stable protects children in crisis.',
+      'Get support yourself: those who are burning cannot put out fires. Stabilize yourself first.',
+    ]
+  },
+  krankheit: {
+    de: [
+      'Ehrlichkeit in Maßen: Kinder brauchen altersgerechte Wahrheit — Schweigen macht mehr Angst als Worte.',
+      'Gemeinsam trauern dürfen: Trauer ist keine Schwäche. Familien, die fühlen dürfen, heilen schneller.',
+      'Praktische Hilfe annehmen: Essen, Fahrdienste, Babysitting — jetzt Hilfe annehmen ist Stärke.',
+    ],
+    en: [
+      'Honesty in doses: children need age-appropriate truth — silence creates more fear than words.',
+      'Allow grieving together: grief is not weakness. Families who are allowed to feel heal faster.',
+      'Accept practical help: food, rides, childcare — accepting help now is strength.',
+    ]
+  },
+  finanzen: {
+    de: [
+      'Nicht alleine tragen: Finanzielle Scham isoliert. Wer mit einem Menschen redet, trägt die Last leichter.',
+      'Kinder entlasten: Kinder dürfen wissen, dass es schwierig ist — aber nicht verantwortlich fühlen.',
+      'Einen Schritt, nicht alles: Welche eine Sache kann ich heute konkret tun? Handlungsfähigkeit zurückgewinnen.',
+    ],
+    en: [
+      'Don\'t carry it alone: financial shame isolates. Speaking with one person lightens the load.',
+      'Relieve children: children may know things are difficult — but should not feel responsible.',
+      'One step, not everything: what one concrete thing can I do today? Reclaim agency.',
+    ]
+  },
+  abloesung: {
+    de: [
+      'Ablösung ist Gesundheit: Wenn Teenager sich entfernen, tun sie genau das Richtige. Es fühlt sich nur falsch an.',
+      'Verbindung halten ohne zu klammern: Angebote machen statt fordern. Die Tür offenhalten.',
+      'Eigene Identität neu finden: Was bin ich, wenn nicht nur Elternteil? Jetzt ist Raum dafür.',
+    ],
+    en: [
+      'Separation is healthy: when teenagers pull away, they are doing exactly the right thing. It just feels wrong.',
+      'Stay connected without clinging: make offers rather than demands. Keep the door open.',
+      'Find your own identity anew: who am I if not only a parent? There is space for that now.',
+    ]
+  },
+  sucht: {
+    de: [
+      'Nicht mitmachen: Covering, Entschuldigen, Verheimlichen — das hält die Sucht am Leben.',
+      'Eigene Sicherheit zuerst: Kinder, die in einem Sucht-Haushalt aufwachsen, brauchen einen stabilen Erwachsenen.',
+      'Professionelle Hilfe ist kein Versagen: Suchthilfe, Beratungsstellen, Al-Anon — Unterstützung holen.',
+    ],
+    en: [
+      'Don\'t enable: covering, making excuses, hiding — these keep the addiction alive.',
+      'Your safety first: children growing up in a household with addiction need one stable adult.',
+      'Professional help is not failure: addiction services, counseling, Al-Anon — reach out.',
+    ]
+  },
+  sonstiges: {
+    de: [
+      'Sicherheit geht vor allem: Wenn körperliche oder psychische Sicherheit fehlt, ist das die erste Priorität.',
+      'Kleine Schritte zählen: Hoffnungslosigkeit lügt. Ein Gespräch, ein Anruf — das kann der erste Schritt sein.',
+      'Sie sind nicht allein: Auch wenn es so fühlt — es gibt Menschen und Stellen, die helfen können.',
+    ],
+    en: [
+      'Safety above all: when physical or psychological safety is absent, that is the first priority.',
+      'Small steps count: hopelessness lies. One conversation, one call — that can be the first step.',
+      'You are not alone: even if it feels that way — there are people and services who can help.',
+    ]
+  }
+};
+
+function setKrisenType(btn) {
+  krisenType = btn.dataset.krisen;
+  document.querySelectorAll('.krisen-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateKrisenChips();
+  updateKrisenSofort();
+}
+
+function setKrisenPhase(btn) {
+  krisenPhase = btn.dataset.phase;
+  document.querySelectorAll('.krisen-phase-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateKrisenChips() {
+  const container = document.getElementById('krisenChips');
+  const chips = (KRISEN_CHIPS[krisenType] || KRISEN_CHIPS.sonstiges)[currentLang] || (KRISEN_CHIPS[krisenType] || KRISEN_CHIPS.sonstiges).de;
+  container.innerHTML = chips.map(t =>
+    `<button class="chip" onclick="document.getElementById('krisenInput').value=this.textContent.trim();document.getElementById('krisenInput').focus()">${t}</button>`
+  ).join('');
+}
+
+function updateKrisenSofort() {
+  const sofortData = (KRISEN_SOFORT[krisenType] || KRISEN_SOFORT.sonstiges)[currentLang]
+    || (KRISEN_SOFORT[krisenType] || KRISEN_SOFORT.sonstiges).de;
+  const list = document.getElementById('sofortList');
+  list.innerHTML = sofortData.map(t => `<li>${t}</li>`).join('');
+}
+
+async function sendKrisen() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('krisenInput');
+  const resultsDiv = document.getElementById('krisenResults');
+  const sendBtn    = document.getElementById('krisenSendBtn');
+  const text       = input.value.trim();
+  if (!text) { input.focus(); return; }
+
+  const phaseLabels = {
+    akut:           currentLang === 'de' ? 'akute Phase' : 'acute phase',
+    stabilisierung: currentLang === 'de' ? 'Stabilisierungsphase' : 'stabilization phase',
+    langfristig:    currentLang === 'de' ? 'langfristige Neuorientierung' : 'long-term reorientation',
+  };
+  const phaseLabel = phaseLabels[krisenPhase] || phaseLabels.akut;
+
+  const typeContext = {
+    trennung:   currentLang === 'de' ? 'Familientrennung / Scheidung' : 'family separation / divorce',
+    krankheit:  currentLang === 'de' ? 'Krankheit oder Verlust / Trauer' : 'illness or loss / grief',
+    finanzen:   currentLang === 'de' ? 'finanzielle Krise' : 'financial crisis',
+    abloesung:  currentLang === 'de' ? 'Ablösung / Pubertät / Nestleerung' : 'separation / puberty / empty nest',
+    sucht:      currentLang === 'de' ? 'Sucht oder psychische Erkrankung' : 'addiction or mental illness',
+    sonstiges:  currentLang === 'de' ? 'familiäre Krise' : 'family crisis',
+  };
+  const typLabel = typeContext[krisenType] || typeContext.sonstiges;
+
+  const questionText = currentLang === 'de'
+    ? `Familiäre Krise (${typLabel}, ${phaseLabel}): ${text}`
+    : `Family crisis (${typLabel}, ${phaseLabel}): ${text}`;
+
+  const krisenPerspektiven = currentLang === 'de' ? [
+    {
+      name: 'Krisenintervention',
+      position: `Was ist in dieser familiären ${typLabel} in der ${phaseLabel} jetzt das Wichtigste? Priorisiere Sicherheit, Stabilisierung und klare nächste Schritte. Keine langen Analysen — konkrete Orientierung.`,
+      grundhaltung: 'In Krisen zählt zuerst Sicherheit — emotional, körperlich, praktisch. Erst stabilisieren, dann verstehen.',
+      fachgebiet: 'Krisenintervention, Notfallpsychologie, Stabilisierungstechniken (EMDR-Phase 1, Safe Place)',
+    },
+    {
+      name: 'Trauma-Erste-Hilfe',
+      position: `Welche traumatischen Reaktionen könnten in dieser ${typLabel} aktiviert sein — bei Erwachsenen und Kindern? Was braucht das Nervensystem jetzt dringend?`,
+      grundhaltung: 'Trauma ist eine Wunde, keine Schwäche. Vor dem Verstehen muss Sicherheit entstehen. Körper und Atem zuerst.',
+      fachgebiet: 'Traumapädagogik, Polyvagal-Theorie (Porges), Somatic Experiencing, EMDR-Stabilisierung',
+    },
+    {
+      name: 'Schutz der Kinder',
+      position: `Wie können Kinder in dieser ${typLabel} geschützt werden? Was erleben sie — was sagen, was verschweigen? Wie bleibt ihre Entwicklung trotz Krise gesund?`,
+      grundhaltung: 'Kinder spüren alles, aber verstehen es anders. Ehrliche, altersgerechte Kommunikation und Rituale schützen Kinder in Krisen besser als Schweigen.',
+      fachgebiet: 'Kinderpsychologie, Resilienzforschung, Bindungstheorie, Entwicklungstraumatherapie',
+    },
+    {
+      name: 'Systemische Krisenbegleiterin',
+      position: `Welche Familiendynamiken und Muster werden durch diese ${typLabel} sichtbar oder verstärkt? Was kann diese Krise — wenn gut durchstanden — langfristig verändern?`,
+      grundhaltung: 'Krisen sind Wendepunkte. Hinter jeder Krise steckt ein altes Muster, das jetzt die Chance hat, sich zu wandeln.',
+      fachgebiet: 'Systemische Familientherapie, Krisentheorie, transgenerationale Muster, Resilienzforschung',
+    },
+    {
+      name: 'Ressourcen & Nächste Schritte',
+      position: `Was an Stärken, Ressourcen und Unterstützung steht dieser Familie in der ${typLabel} (${typLabel}) zur Verfügung? Was sind die drei konkreten nächsten Schritte?`,
+      grundhaltung: 'Auch in der dunkelsten Krise gibt es Ressourcen — sie sind nur schwer zu sehen. Handlungsfähigkeit zurückgewinnen, Schritt für Schritt.',
+      fachgebiet: 'Positive Psychologie, lösungsfokussierte Beratung, Ressourcenaktivierung, Case Management',
+    }
+  ] : [
+    {
+      name: 'Crisis Intervention',
+      position: `What is most important right now in this family ${typLabel} in the ${phaseLabel}? Prioritize safety, stabilization and clear next steps. No lengthy analysis — concrete orientation.`,
+      grundhaltung: 'In crisis, safety comes first — emotionally, physically, practically. Stabilize first, understand later.',
+      fachgebiet: 'Crisis intervention, emergency psychology, stabilization techniques (EMDR phase 1, safe place)',
+    },
+    {
+      name: 'Trauma First Aid',
+      position: `What traumatic responses might be activated in this ${typLabel} — in adults and children? What does the nervous system need urgently right now?`,
+      grundhaltung: 'Trauma is a wound, not weakness. Safety must come before understanding. Body and breath first.',
+      fachgebiet: 'Trauma pedagogy, polyvagal theory (Porges), somatic experiencing, EMDR stabilization',
+    },
+    {
+      name: 'Child Protection',
+      position: `How can children be protected in this ${typLabel}? What are they experiencing — what to say, what to withhold? How can their development stay healthy despite the crisis?`,
+      grundhaltung: 'Children sense everything but understand it differently. Honest, age-appropriate communication and rituals protect children in crisis better than silence.',
+      fachgebiet: 'Child psychology, resilience research, attachment theory, developmental trauma therapy',
+    },
+    {
+      name: 'Systemic Crisis Companion',
+      position: `What family dynamics and patterns are made visible or amplified by this ${typLabel}? What can this crisis — if navigated well — change in the long run?`,
+      grundhaltung: 'Crises are turning points. Behind every crisis is an old pattern that now has a chance to transform.',
+      fachgebiet: 'Systemic family therapy, crisis theory, transgenerational patterns, resilience research',
+    },
+    {
+      name: 'Resources & Next Steps',
+      position: `What strengths, resources and support does this family have in the ${phaseLabel} (${typLabel})? What are the three concrete next steps?`,
+      grundhaltung: 'Even in the darkest crisis there are resources — they are just hard to see. Regain agency, step by step.',
+      fachgebiet: 'Positive psychology, solution-focused counseling, resource activation, case management',
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'KRiSEN-KOMPASS orientiert sich...' : 'KRiSEN-KOMPASS orienting...'}</span></div>`;
+
+  try {
+    const payload = {
+      question:            questionText,
+      custom_perspectives: krisenPerspektiven,
+      methods:             [],
+      stil:                'therapeutisch',
+      tone:                'achtsam',
+      lang:                currentLang,
+      source_app:          'FAMiLiEN-TiSCH'
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const krisenPerspDefs = [
+      { id: 'krisenintervention', icon: 'zap',     color: '#C4622D', de: 'Krisenintervention',            en: 'Crisis Intervention'   },
+      { id: 'trauma-erste-hilfe', icon: 'shield',  color: '#B85C2A', de: 'Trauma-Erste-Hilfe',            en: 'Trauma First Aid'      },
+      { id: 'kinder-schutz',      icon: 'sprout',  color: '#E0956A', de: 'Schutz der Kinder',             en: 'Child Protection'      },
+      { id: 'systemisch-krise',   icon: 'network', color: '#9A5A3A', de: 'Systemische Krisenbegleiterin', en: 'Systemic Crisis Guide'  },
+      { id: 'ressourcen-schritte',icon: 'compass', color: '#D4845A', de: 'Ressourcen & Nächste Schritte', en: 'Resources & Next Steps' }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = krisenPerspDefs[i] || krisenPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'KRiSEN-KOMPASS' : 'KRiSEN-KOMPASS',
+      synthesisSubtitle: currentLang === 'de' ? 'Orientierung für euch' : 'Orientation for you',
+      synthesisColor:    '#C4622D',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Kein Ersatz für professionelle Krisenbegleitung' : 'Not a substitute for professional crisis support'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Orientierung, keine Diagnose' : 'Orientation, not diagnosis'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Vertraulich' : 'Confidential'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: krisenPerspDefs.map(p => p.id),
       lang:         currentLang,
       time:         Date.now()
     });
