@@ -783,12 +783,12 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
       </svg>
     </div>
 
-    <p class="zk-intro">
+    <p class="zk-intro" id="zk-intro">
       Beschreibe wo du jetzt stehst und wo du hinwillst. Sechs Coaching-Perspektiven leuchten den Weg aus — Ressourcen, Hindernisse, Werte, Systemik, Lösungen und Transformation.
     </p>
 
     <div class="zk-wrap" id="zk-form">
-      <label class="zk-field-label">Aktuelle Situation <span class="zk-req">*</span></label>
+      <label class="zk-field-label" id="zk-label-situation">Aktuelle Situation <span class="zk-req">*</span></label>
       <textarea class="zk-textarea" id="zk-situation" rows="3"
         placeholder="Wie ist deine aktuelle Situation? Was beschäftigt dich, was drückt, was fehlt?"
         maxlength="800"></textarea>
@@ -801,12 +801,12 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
         <div class="zk-arrow-line"></div>
       </div>
 
-      <label class="zk-field-label">Mein Ziel / Wunsch <span class="zk-req">*</span></label>
+      <label class="zk-field-label" id="zk-label-ziel">Mein Ziel / Wunsch <span class="zk-req">*</span></label>
       <textarea class="zk-textarea" id="zk-ziel" rows="3"
         placeholder="Was möchtest du erreichen, verändern oder wie möchtest du sein?"
         maxlength="600" style="border-color:rgba(212,168,67,0.3);"></textarea>
 
-      <label class="zk-field-label" style="margin-top:4px;">
+      <label class="zk-field-label" id="zk-label-versucht" style="margin-top:4px;">
         Was hast du schon versucht?
         <span style="color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;"> (optional)</span>
       </label>
@@ -817,7 +817,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
       <div class="action-row">
         <button class="btn-primary" id="zk-submit" onclick="submitZielkompass()">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="2" fill="currentColor" stroke="none"/><line x1="10" y1="2" x2="10" y2="5"/><line x1="10" y1="15" x2="10" y2="18"/><line x1="2" y1="10" x2="5" y2="10"/><line x1="15" y1="10" x2="18" y2="10"/></svg>
-          ZiELKOMPASS starten
+          <span id="zk-submit-text">ZiELKOMPASS starten</span>
         </button>
       </div>
     </div>
@@ -1139,6 +1139,22 @@ function setLang(l) {
   document.getElementById('copy-text').textContent = l === 'de' ? 'Kopieren' : 'Copy';
   document.getElementById('synthese-label').textContent = l === 'de' ? 'SYNTHESE' : 'SYNTHESIS';
   document.getElementById('persp-label').textContent = l === 'de' ? 'Perspektiven' : 'Perspectives';
+  document.getElementById('zk-intro').textContent = l === 'de'
+    ? 'Beschreibe wo du jetzt stehst und wo du hinwillst. Sechs Coaching-Perspektiven leuchten den Weg aus — Ressourcen, Hindernisse, Werte, Systemik, Lösungen und Transformation.'
+    : 'Describe where you are now and where you want to go. Six coaching perspectives illuminate the path — resources, obstacles, values, systemics, solutions and transformation.';
+  document.getElementById('zk-label-situation').innerHTML = (l === 'de' ? 'Aktuelle Situation' : 'Current Situation') + ' <span class="zk-req">*</span>';
+  document.getElementById('zk-situation').placeholder = l === 'de'
+    ? 'Wie ist deine aktuelle Situation? Was beschäftigt dich, was drückt, was fehlt?'
+    : 'What is your current situation? What is on your mind, what is weighing on you, what is missing?';
+  document.getElementById('zk-label-ziel').innerHTML = (l === 'de' ? 'Mein Ziel / Wunsch' : 'My Goal / Wish') + ' <span class="zk-req">*</span>';
+  document.getElementById('zk-ziel').placeholder = l === 'de'
+    ? 'Was möchtest du erreichen, verändern oder wie möchtest du sein?'
+    : 'What do you want to achieve, change, or how do you want to be?';
+  document.getElementById('zk-label-versucht').innerHTML = (l === 'de' ? 'Was hast du schon versucht?' : 'What have you already tried?') + ' <span style="color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;"> (optional)</span>';
+  document.getElementById('zk-versucht').placeholder = l === 'de'
+    ? 'z.B. Bücher gelesen, Gespräche geführt, Verhaltensweisen verändert…'
+    : 'e.g. read books, had conversations, changed behaviours…';
+  document.getElementById('zk-submit-text').textContent = l === 'de' ? 'ZiELKOMPASS starten' : 'Start ZiELKOMPASS';
   renderChips();
   renderPerspektivenGrid();
 }
@@ -1320,7 +1336,6 @@ function toggleHistory() {
 
 // ─── Haupt-Modi ───────────────────────────────────────────────
 let currentMainMode = 'perspektiven';
-let _zkResultMode = 'perspektiven';
 
 function setMainMode(mode) {
   if (currentMainMode === mode) return;
@@ -1340,16 +1355,8 @@ function backToInput() {
   document.getElementById('heroSection').style.display = '';
   document.getElementById('resultsWrap').classList.remove('visible');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (_zkResultMode === 'zielkompass') {
-    currentMainMode = 'perspektiven';
-    setMainMode('zielkompass');
-    document.getElementById('zk-submit').disabled = false;
-  } else {
-    currentMainMode = 'zielkompass';
-    setMainMode('perspektiven');
-    document.getElementById('submitBtn').disabled = false;
-  }
-  _zkResultMode = 'perspektiven';
+  document.getElementById('zk-submit').disabled = false;
+  document.getElementById('submitBtn').disabled = false;
 }
 
 // ─── ZiELKOMPASS ─────────────────────────────────────────────
@@ -1369,12 +1376,11 @@ async function submitZielkompass() {
   const sit = document.getElementById('zk-situation').value.trim();
   const ziel = document.getElementById('zk-ziel').value.trim();
   if (sit.length < 10 || ziel.length < 10) {
-    alert('Bitte Situation und Ziel ausfüllen (mind. 10 Zeichen).');
+    alert(lang === 'de' ? 'Bitte Situation und Ziel ausfüllen (mind. 10 Zeichen).' : 'Please fill in situation and goal (at least 10 characters).');
     return;
   }
   _zkSituation = sit;
   _zkZiel = ziel;
-  _zkResultMode = 'zielkompass';
   const versuch = document.getElementById('zk-versucht').value.trim();
 
   document.getElementById('zk-submit').disabled = true;
@@ -1387,7 +1393,7 @@ async function submitZielkompass() {
     : `Meine Situation: ${sit}\n\nMein Ziel: ${ziel}`;
 
   const custom_perspectives = ZK_PERSPECTIVES.map(p => ({ name: p.name, position: p.position }));
-  const payload = { question, custom_perspectives, methods: [], stil: 'therapeutisch', tone: 'achtsam', lang: 'de', source_app: 'COACHiNG-TiSCH-ZIELKOMPASS' };
+  const payload = { question, custom_perspectives, methods: [], stil: 'therapeutisch', tone, lang, source_app: 'COACHiNG-TiSCH-ZIELKOMPASS' };
 
   const _ctrl = new AbortController();
   const _tid = setTimeout(() => _ctrl.abort(), 120000);
@@ -1408,30 +1414,50 @@ async function submitZielkompass() {
     document.getElementById('loadingWrap').classList.remove('visible');
     document.getElementById('heroSection').style.display = '';
     document.getElementById('zk-submit').disabled = false;
-    alert(`Fehler: ${err.message}`);
+    alert(lang === 'de' ? `Fehler: ${err.message}` : `Error: ${err.message}`);
   }
 }
 
 function renderZielkompassResults(data) {
   document.getElementById('loadingWrap').classList.remove('visible');
   document.getElementById('resultsTitle').textContent = _zkZiel.length > 80 ? _zkZiel.slice(0, 80) + '…' : _zkZiel;
-  document.getElementById('resultsMeta').textContent = '6 Coaching-Perspektiven · ZiELKOMPASS';
+  document.getElementById('resultsMeta').textContent = lang === 'de' ? '6 Coaching-Perspektiven · ZiELKOMPASS' : '6 Coaching Perspectives · ZiELKOMPASS';
 
   const cards = document.getElementById('perspectiveCards');
   cards.innerHTML = '';
 
   const route = document.createElement('div');
   route.className = 'zk-result-route';
-  route.innerHTML = `
-    <div class="zk-route-box">
-      <div class="zk-route-box-label">SITUATION</div>
-      <div class="zk-route-box-text">${_zkSituation}</div>
-    </div>
-    <div class="zk-route-arrow">→</div>
-    <div class="zk-route-box ziel">
-      <div class="zk-route-box-label">ZIEL</div>
-      <div class="zk-route-box-text">${_zkZiel}</div>
-    </div>`;
+
+  const sitBox = document.createElement('div');
+  sitBox.className = 'zk-route-box';
+  const sitLabel = document.createElement('div');
+  sitLabel.className = 'zk-route-box-label';
+  sitLabel.textContent = 'SITUATION';
+  const sitText = document.createElement('div');
+  sitText.className = 'zk-route-box-text';
+  sitText.textContent = _zkSituation;
+  sitBox.appendChild(sitLabel);
+  sitBox.appendChild(sitText);
+
+  const arrow = document.createElement('div');
+  arrow.className = 'zk-route-arrow';
+  arrow.textContent = '→';
+
+  const zielBox = document.createElement('div');
+  zielBox.className = 'zk-route-box ziel';
+  const zielLabel = document.createElement('div');
+  zielLabel.className = 'zk-route-box-label';
+  zielLabel.textContent = lang === 'de' ? 'ZIEL' : 'GOAL';
+  const zielText = document.createElement('div');
+  zielText.className = 'zk-route-box-text';
+  zielText.textContent = _zkZiel;
+  zielBox.appendChild(zielLabel);
+  zielBox.appendChild(zielText);
+
+  route.appendChild(sitBox);
+  route.appendChild(arrow);
+  route.appendChild(zielBox);
   cards.appendChild(route);
 
   (data.perspectives || []).forEach((p, i) => {
