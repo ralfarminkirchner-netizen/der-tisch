@@ -368,6 +368,78 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
   .question-input { font-size: 14px; }
   .mode-selector { gap: 6px; }
 }
+
+/* ─── Haupt-Modi-Tabs ─────────────────────────────────────── */
+.main-mode-tabs {
+  display: flex; justify-content: center;
+  max-width: 420px; margin: 0 auto 28px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 4px;
+}
+.main-mode-tab {
+  flex: 1; padding: 11px 6px; border: none; background: none;
+  color: var(--muted); font-family: var(--font); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; cursor: pointer; border-radius: 9px;
+  transition: all 0.22s; display: flex; align-items: center; justify-content: center;
+  gap: 6px; white-space: nowrap;
+}
+.main-mode-tab.active { background: var(--accent); color: #fff; }
+.main-mode-tab:not(.active):hover { color: var(--text); }
+.main-section { display: none; width: 100%; }
+.main-section.active { display: flex; flex-direction: column; align-items: center; }
+.hero.compact { min-height: auto !important; padding: 20px 0 36px !important; }
+
+/* ─── ZiELKOMPASS ─────────────────────────────────────────── */
+.zk-intro {
+  font-size: 14px; color: var(--muted); text-align: center;
+  max-width: 540px; margin-bottom: 26px; line-height: 1.65;
+}
+.zk-wrap { width: 100%; max-width: 680px; }
+.zk-field-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--faint); margin-bottom: 8px; display: block;
+}
+.zk-field-label .zk-req { color: var(--accent-2); }
+.zk-textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 16px 20px; font-family: var(--font); font-size: 15px; color: var(--text);
+  background: var(--surface); resize: vertical; outline: none; min-height: 80px;
+  line-height: 1.6; display: block; box-shadow: var(--shadow);
+  transition: border-color var(--trans), box-shadow var(--trans); margin-bottom: 14px;
+}
+.zk-textarea::placeholder { color: var(--faint); }
+.zk-textarea:focus { border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(212,168,67,0.18), var(--shadow); }
+.zk-arrow-row {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 14px;
+}
+.zk-arrow-line { flex: 1; height: 1px; background: var(--border); }
+.zk-arrow-icon { color: var(--accent-2); display: flex; align-items: center; flex-shrink: 0; }
+.zk-optional {
+  width: 100%; border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 16px; font-family: var(--font); font-size: 13px; color: var(--text);
+  background: var(--surface-2); outline: none; transition: border-color var(--trans);
+  margin-bottom: 18px; display: block;
+}
+.zk-optional::placeholder { color: var(--faint); }
+.zk-optional:focus { border-color: var(--accent); }
+.zk-result-route {
+  display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-top: 3px solid var(--accent-2); border-radius: var(--r-card);
+  padding: 18px; margin-bottom: 20px; grid-column: 1 / -1;
+}
+.zk-route-box {
+  flex: 1; min-width: 100px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+}
+.zk-route-box.ziel { border-color: rgba(212,168,67,0.3); border-top: 2px solid var(--accent-2); }
+.zk-route-box-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 6px; color: var(--faint);
+}
+.zk-route-box.ziel .zk-route-box-label { color: var(--accent-2); }
+.zk-route-box-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+.zk-route-arrow { display: flex; align-items: center; color: var(--accent-2); font-size: 22px; flex-shrink: 0; }
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -421,7 +493,22 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 </aside>
 
 <main>
-<section class="hero">
+<section class="hero" id="heroSection">
+
+  <!-- ─── Haupt-Modi-Tabs ─────────────────────────────────── -->
+  <div class="main-mode-tabs">
+    <button class="main-mode-tab active" id="main-tab-perspektiven" onclick="setMainMode('perspektiven')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+      Perspektiven
+    </button>
+    <button class="main-mode-tab" id="main-tab-zielkompass" onclick="setMainMode('zielkompass')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="2" fill="currentColor" stroke="none"/><line x1="10" y1="2" x2="10" y2="5"/><line x1="10" y1="15" x2="10" y2="18"/><line x1="2" y1="10" x2="5" y2="10"/><line x1="15" y1="10" x2="18" y2="10"/></svg>
+      ZiELKOMPASS
+    </button>
+  </div>
+
+  <!-- ─── Perspektiven-Sektion ─────────────────────────────── -->
+  <div id="main-section-perspektiven" class="main-section active">
 
   <!-- ─── Hero Logo: COACHiNG TiSCH — Doppel-T + symbolische i-Punkte ── -->
   <div style="text-align:center;margin:0 auto 18px;width:100%;">
@@ -654,6 +741,89 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
     </div>
   </div>
 
+  </div><!-- end main-section-perspektiven -->
+
+  <!-- ─── ZiELKOMPASS-Sektion ──────────────────────────────── -->
+  <div id="main-section-zielkompass" class="main-section">
+
+    <!-- ZiELKOMPASS Logo -->
+    <div style="text-align:center;margin:0 auto 18px;">
+      <svg viewBox="0 0 480 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:min(92vw,440px);height:auto;display:block;margin:0 auto;" aria-label="ZiELKOMPASS">
+        <defs>
+          <radialGradient id="zk-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#D4A843" stop-opacity="0.12"/>
+            <stop offset="100%" stop-color="#D4A843" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="480" height="120" fill="url(#zk-glow)"/>
+        <!-- Kompass rechts -->
+        <g transform="translate(400,30)" opacity="0.55">
+          <circle cx="30" cy="30" r="28" fill="none" stroke="#D4A843" stroke-width="2.5"/>
+          <circle cx="30" cy="30" r="20" fill="none" stroke="#D4A843" stroke-width="1" opacity="0.4"/>
+          <polygon points="30,6 26,30 30,32 34,30" fill="#D4A843" opacity="0.9"/>
+          <polygon points="30,54 26,30 30,28 34,30" fill="#7C5CBF" opacity="0.7"/>
+          <circle cx="30" cy="30" r="3" fill="#D4A843"/>
+          <line x1="30" y1="2" x2="30" y2="8" stroke="#D4A843" stroke-width="1.5"/>
+          <line x1="30" y1="52" x2="30" y2="58" stroke="#D4A843" stroke-width="1.5"/>
+          <line x1="4" y1="30" x2="10" y2="30" stroke="#D4A843" stroke-width="1.5"/>
+          <line x1="50" y1="30" x2="56" y2="30" stroke="#D4A843" stroke-width="1.5"/>
+        </g>
+        <!-- Tischplatte -->
+        <rect x="30" y="28" width="340" height="8" fill="#7C5CBF" rx="1"/>
+        <!-- Bein links -->
+        <rect x="80" y="36" width="8" height="48" fill="#7C5CBF"/>
+        <!-- Bein rechts -->
+        <rect x="272" y="36" width="8" height="48" fill="#7C5CBF"/>
+        <!-- ZiEL -->
+        <text x="30" y="96" font-family="'Inter','Helvetica Neue',sans-serif" font-size="42" font-weight="300" fill="currentColor" letter-spacing="-0.5">Z</text>
+        <text x="59" y="74" font-family="'Inter','Helvetica Neue',sans-serif" font-size="18" font-weight="700" fill="#D4A843">i</text>
+        <text x="71" y="96" font-family="'Inter','Helvetica Neue',sans-serif" font-size="42" font-weight="300" fill="currentColor" letter-spacing="-0.5">EL</text>
+        <!-- KOMPASS -->
+        <text x="93" y="96" font-family="'Inter','Helvetica Neue',sans-serif" font-size="42" font-weight="300" fill="currentColor" letter-spacing="-0.5">KOMPASS</text>
+      </svg>
+    </div>
+
+    <p class="zk-intro">
+      Beschreibe wo du jetzt stehst und wo du hinwillst. Sechs Coaching-Perspektiven leuchten den Weg aus — Ressourcen, Hindernisse, Werte, Systemik, Lösungen und Transformation.
+    </p>
+
+    <div class="zk-wrap" id="zk-form">
+      <label class="zk-field-label">Aktuelle Situation <span class="zk-req">*</span></label>
+      <textarea class="zk-textarea" id="zk-situation" rows="3"
+        placeholder="Wie ist deine aktuelle Situation? Was beschäftigt dich, was drückt, was fehlt?"
+        maxlength="800"></textarea>
+
+      <div class="zk-arrow-row">
+        <div class="zk-arrow-line"></div>
+        <div class="zk-arrow-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </div>
+        <div class="zk-arrow-line"></div>
+      </div>
+
+      <label class="zk-field-label">Mein Ziel / Wunsch <span class="zk-req">*</span></label>
+      <textarea class="zk-textarea" id="zk-ziel" rows="3"
+        placeholder="Was möchtest du erreichen, verändern oder wie möchtest du sein?"
+        maxlength="600" style="border-color:rgba(212,168,67,0.3);"></textarea>
+
+      <label class="zk-field-label" style="margin-top:4px;">
+        Was hast du schon versucht?
+        <span style="color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;"> (optional)</span>
+      </label>
+      <input type="text" class="zk-optional" id="zk-versucht"
+        placeholder="z.B. Bücher gelesen, Gespräche geführt, Verhaltensweisen verändert…"
+        maxlength="400">
+
+      <div class="action-row">
+        <button class="btn-primary" id="zk-submit" onclick="submitZielkompass()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="2" fill="currentColor" stroke="none"/><line x1="10" y1="2" x2="10" y2="5"/><line x1="10" y1="15" x2="10" y2="18"/><line x1="2" y1="10" x2="5" y2="10"/><line x1="15" y1="10" x2="18" y2="10"/></svg>
+          ZiELKOMPASS starten
+        </button>
+      </div>
+    </div>
+
+  </div><!-- end main-section-zielkompass -->
+
 </section>
 
 <!-- ─── Loading ──────────────────────────────────────────────── -->
@@ -670,7 +840,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
       <div class="results-meta" id="resultsMeta"></div>
     </div>
     <div class="results-actions">
-      <button class="btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <button class="btn-secondary" onclick="backToInput()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
         <span id="back-text">Neue Frage</span>
       </button>
@@ -1146,6 +1316,164 @@ function toggleHistory() {
   p.classList.toggle('open', !open);
   o.classList.toggle('open', !open);
   if (!open) loadHistory();
+}
+
+// ─── Haupt-Modi ───────────────────────────────────────────────
+let currentMainMode = 'perspektiven';
+let _zkResultMode = 'perspektiven';
+
+function setMainMode(mode) {
+  if (currentMainMode === mode) return;
+  currentMainMode = mode;
+  document.querySelectorAll('.main-mode-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('main-tab-' + mode).classList.add('active');
+  document.getElementById('main-section-' + mode).classList.add('active');
+  const hero = document.getElementById('heroSection');
+  if (mode === 'zielkompass') hero.classList.add('compact');
+  else hero.classList.remove('compact');
+  document.getElementById('resultsWrap').classList.remove('visible');
+  document.getElementById('loadingWrap').classList.remove('visible');
+}
+
+function backToInput() {
+  document.getElementById('heroSection').style.display = '';
+  document.getElementById('resultsWrap').classList.remove('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (_zkResultMode === 'zielkompass') {
+    currentMainMode = 'perspektiven';
+    setMainMode('zielkompass');
+    document.getElementById('zk-submit').disabled = false;
+  } else {
+    currentMainMode = 'zielkompass';
+    setMainMode('perspektiven');
+    document.getElementById('submitBtn').disabled = false;
+  }
+  _zkResultMode = 'perspektiven';
+}
+
+// ─── ZiELKOMPASS ─────────────────────────────────────────────
+const ZK_PERSPECTIVES = [
+  { name: 'Ressourcen-Coach', position: 'Du siehst ausschließlich die vorhandenen Stärken, Ressourcen und Kompetenzen. Was bringt die Person für diese Reise schon mit? Was wurde unterschätzt oder vergessen? Benenne konkret, was schon da ist.' },
+  { name: 'Innerer Kritiker', position: 'Du verkörperst die innere Stimme des Zweifels und der Warnung. Welche Hindernisse werden verdrängt? Was könnte scheitern? Welche unbewusste Sabotage droht? Sei ehrlich und präzise — nicht destruktiv, aber ungeschönt.' },
+  { name: 'Werte & Sinn Coach', position: 'Du prüfst, ob das Ziel wirklich mit den tiefsten Werten, dem Lebenssinn und der eigenen Identität übereinstimmt. Ist es ein echtes eigenes Ziel oder ein fremdes? Was sagt das Herz, was der Verstand?' },
+  { name: 'Systemischer Coach', position: 'Du betrachtest das System drum herum: Beziehungen, Rollen, Umfeld. Welche Menschen, Strukturen oder Dynamiken begünstigen oder verhindern das Ziel? Was muss sich im Außen verändern, damit es im Innen gelingt?' },
+  { name: 'Lösungsfokussierter Coach', position: 'Du fragst nicht nach Ursachen, sondern nach Lösungen: Was hat früher schon mal funktioniert? Wann war das Ziel schon einen Schritt näher? Was sind die drei kleinsten konkreten nächsten Schritte?' },
+  { name: 'Transformations-Coach', position: 'Du siehst das große Bild der Identitätsveränderung: Welches Selbstbild, welche Geschichte von sich selbst muss sich wandeln, damit das Ziel dauerhaft hält? Was gibt die Person auf, was gewinnt sie wirklich?' },
+];
+
+let _zkSituation = '', _zkZiel = '';
+const ZK_COLORS = ['#7C5CBF', '#E74C3C', '#A855F7', '#D4A843', '#27AE60', '#5DADE2'];
+
+async function submitZielkompass() {
+  const sit = document.getElementById('zk-situation').value.trim();
+  const ziel = document.getElementById('zk-ziel').value.trim();
+  if (sit.length < 10 || ziel.length < 10) {
+    alert('Bitte Situation und Ziel ausfüllen (mind. 10 Zeichen).');
+    return;
+  }
+  _zkSituation = sit;
+  _zkZiel = ziel;
+  _zkResultMode = 'zielkompass';
+  const versuch = document.getElementById('zk-versucht').value.trim();
+
+  document.getElementById('zk-submit').disabled = true;
+  document.getElementById('heroSection').style.display = 'none';
+  document.getElementById('loadingWrap').classList.add('visible');
+  document.getElementById('resultsWrap').classList.remove('visible');
+
+  const question = versuch
+    ? `Meine Situation: ${sit}\n\nMein Ziel: ${ziel}\n\nWas ich bereits versucht habe: ${versuch}`
+    : `Meine Situation: ${sit}\n\nMein Ziel: ${ziel}`;
+
+  const custom_perspectives = ZK_PERSPECTIVES.map(p => ({ name: p.name, position: p.position }));
+  const payload = { question, custom_perspectives, methods: [], stil: 'therapeutisch', tone: 'achtsam', lang: 'de', source_app: 'COACHiNG-TiSCH-ZIELKOMPASS' };
+
+  const _ctrl = new AbortController();
+  const _tid = setTimeout(() => _ctrl.abort(), 120000);
+
+  try {
+    const res = await fetch(API + '/api/ask-table', {
+      signal: _ctrl.signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    clearTimeout(_tid);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderZielkompassResults(data);
+  } catch (err) {
+    clearTimeout(_tid);
+    document.getElementById('loadingWrap').classList.remove('visible');
+    document.getElementById('heroSection').style.display = '';
+    document.getElementById('zk-submit').disabled = false;
+    alert(`Fehler: ${err.message}`);
+  }
+}
+
+function renderZielkompassResults(data) {
+  document.getElementById('loadingWrap').classList.remove('visible');
+  document.getElementById('resultsTitle').textContent = _zkZiel.length > 80 ? _zkZiel.slice(0, 80) + '…' : _zkZiel;
+  document.getElementById('resultsMeta').textContent = '6 Coaching-Perspektiven · ZiELKOMPASS';
+
+  const cards = document.getElementById('perspectiveCards');
+  cards.innerHTML = '';
+
+  const route = document.createElement('div');
+  route.className = 'zk-result-route';
+  route.innerHTML = `
+    <div class="zk-route-box">
+      <div class="zk-route-box-label">SITUATION</div>
+      <div class="zk-route-box-text">${_zkSituation}</div>
+    </div>
+    <div class="zk-route-arrow">→</div>
+    <div class="zk-route-box ziel">
+      <div class="zk-route-box-label">ZIEL</div>
+      <div class="zk-route-box-text">${_zkZiel}</div>
+    </div>`;
+  cards.appendChild(route);
+
+  (data.perspectives || []).forEach((p, i) => {
+    const color = ZK_COLORS[i % ZK_COLORS.length];
+    const card = document.createElement('div');
+    card.className = 'perspective-card';
+    card.style.borderTopColor = color;
+    card.style.borderTopWidth = '3px';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-icon" style="background:${color}18;border-color:${color}40;color:${color};width:48px;height:48px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="card-role" style="color:${color}">${p.role || ''}</div>
+          <div class="card-title">${(p.kernanalyse || '').slice(0, 60)}</div>
+        </div>
+      </div>
+      <div class="card-body">${p.kernanalyse || ''}</div>
+    `;
+    cards.appendChild(card);
+  });
+
+  if (data.synthese) {
+    document.getElementById('syntheseContent').textContent = data.synthese;
+    document.getElementById('syntheseCard').style.display = '';
+  }
+  document.getElementById('kintegrityWrap').classList.add('visible');
+  document.getElementById('integrityField').value = '';
+  document.getElementById('kintegrityPanels').innerHTML = '';
+
+  document.getElementById('resultsWrap').classList.add('visible');
+  document.getElementById('resultsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetZielkompass() {
+  document.getElementById('zk-situation').value = '';
+  document.getElementById('zk-ziel').value = '';
+  document.getElementById('zk-versucht').value = '';
+  document.getElementById('zk-submit').disabled = false;
+  _zkSituation = '';
+  _zkZiel = '';
 }
 </script>
 <script src="/notizbuch.js"></script>
