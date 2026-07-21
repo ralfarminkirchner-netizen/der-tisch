@@ -919,16 +919,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       </button>
     </div>
 
-    <div class="chips-label" style="text-align:left;margin-bottom:10px">Beispiele</div>
+    <div class="chips-label" style="text-align:left;margin-bottom:10px" id="ritualeExamplesLabel">Beispiele</div>
     <div class="chips" id="ritualeChips" style="justify-content:flex-start"></div>
 
     <textarea class="rituale-textarea" id="ritualeInput" rows="3"
       placeholder="Was beschäftigt euch gerade? Was möchtet ihr als Familie durch Rituale stärken?"></textarea>
 
     <div class="rituale-send-row">
-      <button class="rituale-send-btn" id="ritaleSendBtn" onclick="sendRituale()">
+      <button class="rituale-send-btn" id="ritualeSendBtn" onclick="sendRituale()">
         <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
-        RiTUAL-KOMPASS erstellen
+        <span id="ritualeSendLabel">RiTUAL-KOMPASS erstellen</span>
       </button>
     </div>
 
@@ -3021,6 +3021,11 @@ async function sendStaerken() {
 
 let ritualeKat = 'verbindung';
 
+const RITUALE_KAT_LABELS = {
+  de: { verbindung: 'Verbindung', morgen: 'Morgen & Abend', uebergaenge: 'Übergänge', feiern: 'Feiern & Feste', konflikt: 'Konflikte & Versöhnung', krise: 'Krise & Halt' },
+  en: { verbindung: 'Connection', morgen: 'Morning & Evening', uebergaenge: 'Transitions', feiern: 'Celebrations', konflikt: 'Conflict & Reconciliation', krise: 'Crisis & Stability' },
+};
+
 const RITUALE_CHIPS = {
   verbindung: {
     de: ['Wie schaffen wir mehr echte Zeit füreinander?', 'Unsere Familie lebt auseinander — was verbindet uns noch?', 'Wie bleiben wir als Paar sichtbar für die Kinder?'],
@@ -3063,6 +3068,35 @@ function updateRitualeChips() {
   container.innerHTML = list.map(c =>
     `<span class="chip" onclick="useRitualeChip(this)">${c}</span>`
   ).join('');
+
+  const isDE = currentLang === 'de';
+
+  const katLbl = document.getElementById('ritualeChipsLabel');
+  if (katLbl) katLbl.textContent = isDE ? 'Themenbereich wählen' : 'Select topic area';
+
+  const exLbl = document.getElementById('ritualeExamplesLabel');
+  if (exLbl) exLbl.textContent = isDE ? 'Beispiele' : 'Examples';
+
+  const intro = document.querySelector('.rituale-intro');
+  if (intro) intro.innerHTML = isDE
+    ? '<strong>FAMiLiEN-RiTUALE</strong> — Rituale sind der unsichtbare Klebstoff einer Familie. Sie schaffen Sicherheit, stärken Verbindung und geben dem Alltag Bedeutung. Erzählt, was bei euch gerade fehlt oder was ihr aufbauen möchtet — und entdeckt, welche Rituale zu eurer Familie passen.'
+    : '<strong>FAMILY RITUALS</strong> — Rituals are the invisible glue of a family. They create safety, strengthen connection, and give meaning to everyday life. Tell us what is currently missing or what you would like to build — and discover which rituals fit your family.';
+
+  const inp = document.getElementById('ritualeInput');
+  if (inp) inp.placeholder = isDE
+    ? 'Was beschäftigt euch gerade? Was möchtet ihr als Familie durch Rituale stärken?'
+    : 'What is on your mind? What would you like to strengthen as a family through rituals?';
+
+  const sendLbl = document.getElementById('ritualeSendLabel');
+  if (sendLbl) sendLbl.textContent = isDE ? 'RiTUAL-KOMPASS erstellen' : 'Create RITUAL COMPASS';
+
+  const katLabels = RITUALE_KAT_LABELS[currentLang] || RITUALE_KAT_LABELS.de;
+  document.querySelectorAll('.rituale-kat-btn').forEach(btn => {
+    const label = katLabels[btn.dataset.kat];
+    if (!label) return;
+    [...btn.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim())
+      .forEach(n => { n.textContent = ' ' + label + ' '; });
+  });
 }
 
 function useRitualeChip(el) {
@@ -3072,7 +3106,7 @@ function useRitualeChip(el) {
 
 async function sendRituale() {
   const inp     = document.getElementById('ritualeInput');
-  const sendBtn = document.getElementById('ritaleSendBtn');
+  const sendBtn = document.getElementById('ritualeSendBtn');
   const results = document.getElementById('ritualeResults');
   if (!inp || !sendBtn || !results) return;
 
@@ -3080,17 +3114,13 @@ async function sendRituale() {
   if (!text) { showToast(currentLang === 'de' ? 'Bitte eine Frage oder ein Thema eingeben.' : 'Please enter a question or topic.'); return; }
   if (isLoading) return;
 
-  const KAT_LABELS = {
-    de: { verbindung: 'Verbindung', morgen: 'Morgen & Abend', uebergaenge: 'Übergänge', feiern: 'Feiern & Feste', konflikt: 'Konflikte & Versöhnung', krise: 'Krise & Halt' },
-    en: { verbindung: 'Connection', morgen: 'Morning & Evening', uebergaenge: 'Transitions', feiern: 'Celebrations', konflikt: 'Conflict & Reconciliation', krise: 'Crisis & Stability' },
-  };
-  const katLabel = (KAT_LABELS[currentLang] || KAT_LABELS.de)[ritualeKat] || ritualeKat;
+  const katLabel = (RITUALE_KAT_LABELS[currentLang] || RITUALE_KAT_LABELS.de)[ritualeKat] || ritualeKat;
 
   const perspectives = [
-    { id: 'ritual-architektin',    name: currentLang === 'de' ? 'Ritual-Architektin'    : 'Ritual Architect',    role: currentLang === 'de' ? 'Positive Psychologin mit Fokus auf konkrete, alltagstaugliche Rituale und machbare erste Schritte'               : 'Positive psychologist focused on concrete, everyday rituals and achievable first steps' },
-    { id: 'bindungs-therapeutin',  name: currentLang === 'de' ? 'Bindungs-Therapeutin'  : 'Attachment Therapist', role: currentLang === 'de' ? 'Bindungsexpertin — wie Rituale emotionale Sicherheit, Verlässlichkeit und Nähe in der Familie verankern'            : 'Attachment expert — how rituals anchor emotional safety, reliability and closeness in the family' },
-    { id: 'resilienz-coach',       name: currentLang === 'de' ? 'Resilienz-Coach'        : 'Resilience Coach',     role: currentLang === 'de' ? 'Resilienzforscherin — wie Rituale als Puffer in Krisenzeiten wirken und langfristige Familienstärke aufbauen'     : 'Resilience researcher — how rituals act as buffers in crisis times and build long-term family strength' },
-    { id: 'traditions-begleiterin',name: currentLang === 'de' ? 'Traditions-Begleiterin': 'Traditions Guide',     role: currentLang === 'de' ? 'Systemische Beraterin — verbindet Familiengeschichte mit Neuem, berücksichtigt Herkunft, Kultur und persönliche Werte' : 'Systemic counsellor — connects family history with the new, considering heritage, culture and personal values' },
+    { id: 'ritual-architektin',    name: currentLang === 'de' ? 'Ritual-Architektin'    : 'Ritual Architect',     position: currentLang === 'de' ? 'Positive Psychologin mit Fokus auf konkrete, alltagstaugliche Rituale und machbare erste Schritte'               : 'Positive psychologist focused on concrete, everyday rituals and achievable first steps' },
+    { id: 'bindungs-therapeutin',  name: currentLang === 'de' ? 'Bindungs-Therapeutin'  : 'Attachment Therapist', position: currentLang === 'de' ? 'Bindungsexpertin — wie Rituale emotionale Sicherheit, Verlässlichkeit und Nähe in der Familie verankern'            : 'Attachment expert — how rituals anchor emotional safety, reliability and closeness in the family' },
+    { id: 'resilienz-coach',       name: currentLang === 'de' ? 'Resilienz-Coach'        : 'Resilience Coach',     position: currentLang === 'de' ? 'Resilienzforscherin — wie Rituale als Puffer in Krisenzeiten wirken und langfristige Familienstärke aufbauen'     : 'Resilience researcher — how rituals act as buffers in crisis times and build long-term family strength' },
+    { id: 'traditions-begleiterin',name: currentLang === 'de' ? 'Traditions-Begleiterin': 'Traditions Guide',     position: currentLang === 'de' ? 'Systemische Beraterin — verbindet Familiengeschichte mit Neuem, berücksichtigt Herkunft, Kultur und persönliche Werte' : 'Systemic counsellor — connects family history with the new, considering heritage, culture and personal values' },
   ];
 
   isLoading  = true;
