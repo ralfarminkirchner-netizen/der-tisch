@@ -276,6 +276,21 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .staerken-send-btn:hover{opacity:.88}
 .staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* RiTUALE MODE */
+.rituale-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.rituale-intro{background:linear-gradient(135deg,rgba(196,98,45,0.06) 0%,rgba(218,140,80,0.03) 100%);border:1px solid rgba(196,98,45,0.18);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.rituale-intro strong{color:#C4622D}
+.rituale-kat-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.rituale-kat-btn{padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:12px;letter-spacing:.05em;cursor:pointer;font-family:var(--font);transition:all .2s;display:flex;align-items:center;gap:6px}
+.rituale-kat-btn:hover,.rituale-kat-btn.active{border-color:#C4622D;color:#C4622D;background:rgba(196,98,45,0.08)}
+.rituale-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.rituale-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.rituale-textarea::placeholder{color:var(--muted)}
+.rituale-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.rituale-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.rituale-send-btn:hover{opacity:.88}
+.rituale-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -480,6 +495,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
       STÄRKENBiLD
+    </button>
+    <button class="mode-tab" id="tab-rituale" onclick="setMode('rituale')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+      RiTUALE
     </button>
   </div>
 </section>
@@ -864,6 +883,60 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== RiTUALE MODE ==================== -->
+<div class="mode-section" id="mode-rituale">
+  <div class="rituale-wrap">
+
+    <div class="rituale-intro">
+      <strong>FAMiLiEN-RiTUALE</strong> — Rituale sind der unsichtbare Klebstoff einer Familie. Sie schaffen Sicherheit, stärken Verbindung und geben dem Alltag Bedeutung. Erzählt, was bei euch gerade fehlt oder was ihr aufbauen möchtet — und entdeckt, welche Rituale zu eurer Familie passen.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px" id="ritualeChipsLabel">Themenbereich wählen</div>
+    <div class="rituale-kat-row" id="ritualeKatRow">
+      <button class="rituale-kat-btn active" data-kat="verbindung" onclick="setRitualeKat(this)">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+        Verbindung
+      </button>
+      <button class="rituale-kat-btn" data-kat="morgen" onclick="setRitualeKat(this)">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="4"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.9 4.9l1.4 1.4M13.7 13.7l1.4 1.4M4.9 15.1l1.4-1.4M13.7 6.3l1.4-1.4"/></svg>
+        Morgen &amp; Abend
+      </button>
+      <button class="rituale-kat-btn" data-kat="uebergaenge" onclick="setRitualeKat(this)">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 10h10M12 7l3 3-3 3"/></svg>
+        Übergänge
+      </button>
+      <button class="rituale-kat-btn" data-kat="feiern" onclick="setRitualeKat(this)">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2l2 5h5l-4 3 1.5 5L10 12l-4.5 3L7 10 3 7h5z"/></svg>
+        Feiern &amp; Feste
+      </button>
+      <button class="rituale-kat-btn" data-kat="konflikt" onclick="setRitualeKat(this)">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v6M10 14h.01"/></svg>
+        Konflikte &amp; Versöhnung
+      </button>
+      <button class="rituale-kat-btn" data-kat="krise" onclick="setRitualeKat(this)">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 6 6 9 3-3 6-5 6-9V5z"/></svg>
+        Krise &amp; Halt
+      </button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Beispiele</div>
+    <div class="chips" id="ritualeChips" style="justify-content:flex-start"></div>
+
+    <textarea class="rituale-textarea" id="ritualeInput" rows="3"
+      placeholder="Was beschäftigt euch gerade? Was möchtet ihr als Familie durch Rituale stärken?"></textarea>
+
+    <div class="rituale-send-row">
+      <button class="rituale-send-btn" id="ritaleSendBtn" onclick="sendRituale()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+        RiTUAL-KOMPASS erstellen
+      </button>
+    </div>
+
+    <div id="ritualeResults"></div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -1179,6 +1252,7 @@ document.addEventListener('DOMContentLoaded', () => {
   PERSPEKTIVEN.forEach(p => activePerspectives.add(p.id));
   renderPerspGrid();
   updateChips();
+  updateRitualeChips();
   initRatMembers();
 
   // Keyboard send
@@ -1218,6 +1292,7 @@ function toggleLang() {
   document.getElementById('langBtn').textContent = currentLang.toUpperCase();
   renderPerspGrid();
   updateChips();
+  updateRitualeChips();
 }
 
 function toggleTone() {
@@ -2936,6 +3011,139 @@ async function sendStaerken() {
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── RiTUALE MODE ────────────────────────────────────────────────────────────
+
+let ritualeKat = 'verbindung';
+
+const RITUALE_CHIPS = {
+  verbindung: {
+    de: ['Wie schaffen wir mehr echte Zeit füreinander?', 'Unsere Familie lebt auseinander — was verbindet uns noch?', 'Wie bleiben wir als Paar sichtbar für die Kinder?'],
+    en: ['How do we create more real time together?', 'Our family lives apart — what still connects us?', 'How do we stay visible as a couple for the children?'],
+  },
+  morgen: {
+    de: ['Morgens ist immer Stress — wie können wir ruhiger starten?', 'Unsere Abende sind chaotisch. Was hilft beim Loslassen?', 'Einschlafritual für die Kinder — was wäre sinnvoll?'],
+    en: ['Mornings are always hectic — how can we start calmer?', 'Our evenings are chaotic. What helps with unwinding?', 'Bedtime ritual for the kids — what would make sense?'],
+  },
+  uebergaenge: {
+    de: ['Unser Kind wechselt bald die Schule. Wie begleiten wir das?', 'Wie markieren wir den Übergang in die Teenagerjahre?', 'Wir ziehen um — wie halten wir Vertrautes am Leben?'],
+    en: ['Our child is changing schools soon. How do we accompany them?', 'How do we mark the transition to the teenage years?', 'We are moving — how do we keep familiar things alive?'],
+  },
+  feiern: {
+    de: ['Geburtstage fühlen sich immer gleich an. Wie machen wir sie bedeutsamer?', 'Welche Jahresrituale passen zu uns als Familie?', 'Wie feiern wir kleine Erfolge im Alltag?'],
+    en: ['Birthdays always feel the same. How do we make them more meaningful?', 'Which annual rituals fit us as a family?', 'How do we celebrate small everyday successes?'],
+  },
+  konflikt: {
+    de: ['Nach Streit wissen wir nicht, wie wir wieder zusammenkommen.', 'Wie schaffen wir Raum, um Fehler einzugestehen?', 'Unsere Kinder streiten viel — was könnte helfen?'],
+    en: ['After arguments we don\'t know how to come back together.', 'How do we create space to admit mistakes?', 'Our children argue a lot — what could help?'],
+  },
+  krise: {
+    de: ['Wie bleiben wir als Familie stabil, wenn alles gerade schwer ist?', 'Trauer in der Familie — welche Rituale helfen beim Abschiednehmen?', 'Krankheit verändert unseren Alltag — wie finden wir neuen Halt?'],
+    en: ['How do we stay stable as a family when everything is hard right now?', 'Grief in the family — which rituals help with saying goodbye?', 'Illness is changing our daily life — how do we find new ground?'],
+  },
+};
+
+function setRitualeKat(btn) {
+  ritualeKat = btn.dataset.kat;
+  document.querySelectorAll('.rituale-kat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateRitualeChips();
+}
+
+function updateRitualeChips() {
+  const chips = RITUALE_CHIPS[ritualeKat] || RITUALE_CHIPS.verbindung;
+  const list  = chips[currentLang] || chips.de;
+  const container = document.getElementById('ritualeChips');
+  if (!container) return;
+  container.innerHTML = list.map(c =>
+    `<span class="chip" onclick="useRitualeChip(this)">${c}</span>`
+  ).join('');
+}
+
+function useRitualeChip(el) {
+  const inp = document.getElementById('ritualeInput');
+  if (inp) { inp.value = el.textContent; inp.focus(); }
+}
+
+async function sendRituale() {
+  const inp     = document.getElementById('ritualeInput');
+  const sendBtn = document.getElementById('ritaleSendBtn');
+  const results = document.getElementById('ritualeResults');
+  if (!inp || !sendBtn || !results) return;
+
+  const text = inp.value.trim();
+  if (!text) { showToast(currentLang === 'de' ? 'Bitte eine Frage oder ein Thema eingeben.' : 'Please enter a question or topic.'); return; }
+  if (isLoading) return;
+
+  const KAT_LABELS = {
+    de: { verbindung: 'Verbindung', morgen: 'Morgen & Abend', uebergaenge: 'Übergänge', feiern: 'Feiern & Feste', konflikt: 'Konflikte & Versöhnung', krise: 'Krise & Halt' },
+    en: { verbindung: 'Connection', morgen: 'Morning & Evening', uebergaenge: 'Transitions', feiern: 'Celebrations', konflikt: 'Conflict & Reconciliation', krise: 'Crisis & Stability' },
+  };
+  const katLabel = (KAT_LABELS[currentLang] || KAT_LABELS.de)[ritualeKat] || ritualeKat;
+
+  const perspectives = [
+    { id: 'ritual-architektin',    name: currentLang === 'de' ? 'Ritual-Architektin'    : 'Ritual Architect',    role: currentLang === 'de' ? 'Positive Psychologin mit Fokus auf konkrete, alltagstaugliche Rituale und machbare erste Schritte'               : 'Positive psychologist focused on concrete, everyday rituals and achievable first steps' },
+    { id: 'bindungs-therapeutin',  name: currentLang === 'de' ? 'Bindungs-Therapeutin'  : 'Attachment Therapist', role: currentLang === 'de' ? 'Bindungsexpertin — wie Rituale emotionale Sicherheit, Verlässlichkeit und Nähe in der Familie verankern'            : 'Attachment expert — how rituals anchor emotional safety, reliability and closeness in the family' },
+    { id: 'resilienz-coach',       name: currentLang === 'de' ? 'Resilienz-Coach'        : 'Resilience Coach',     role: currentLang === 'de' ? 'Resilienzforscherin — wie Rituale als Puffer in Krisenzeiten wirken und langfristige Familienstärke aufbauen'     : 'Resilience researcher — how rituals act as buffers in crisis times and build long-term family strength' },
+    { id: 'traditions-begleiterin',name: currentLang === 'de' ? 'Traditions-Begleiterin': 'Traditions Guide',     role: currentLang === 'de' ? 'Systemische Beraterin — verbindet Familiengeschichte mit Neuem, berücksichtigt Herkunft, Kultur und persönliche Werte' : 'Systemic counsellor — connects family history with the new, considering heritage, culture and personal values' },
+  ];
+
+  isLoading  = true;
+  sendBtn.disabled = true;
+  results.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'RiTUAL-KOMPASS wird erstellt...' : 'Creating your ritual compass...'}</span></div>`;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question:             text,
+        table_name:           'FAMiLiEN-TiSCH RiTUALE',
+        custom_perspectives:  perspectives,
+        stil:                 'therapeutisch',
+        tone:                 'achtsam',
+        source_app:           'FAMiLiEN-TiSCH',
+        lang:                 currentLang,
+      }),
+    });
+
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+
+    results.innerHTML = '';
+
+    appendIntegrationCards(data.integration || {}, results, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER RiTUAL-KOMPASS' : 'YOUR RITUAL COMPASS',
+      synthesisSubtitle: katLabel,
+      synthesisColor:    '#C4622D',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity-badge';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg> ${currentLang === 'de' ? 'Ritual-orientiert' : 'Ritual-oriented'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Verbindend' : 'Connecting'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 6 6 9 3-3 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Vertraulich' : 'Confidential'}</div>
+      </div>
+    `;
+    results.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['ritual-architektin', 'bindungs-therapeutin', 'resilienz-coach', 'traditions-begleiterin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    results.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
   }
 
   isLoading = false;
