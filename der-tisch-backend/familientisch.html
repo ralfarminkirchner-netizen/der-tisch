@@ -276,6 +276,24 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .staerken-send-btn:hover{opacity:.88}
 .staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiENBRiEF MODE */
+.brief-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.brief-intro{background:linear-gradient(135deg,rgba(155,111,168,0.08) 0%,rgba(180,140,200,0.04) 100%);border:1px solid rgba(155,111,168,0.2);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.brief-intro strong{color:#C0A0D8}
+.brief-recipient-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border-color .2s;margin-bottom:16px}
+.brief-recipient-input:focus{border-color:#9B6FA8}
+.brief-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.brief-chip{padding:6px 13px;border:1px solid var(--faint);border-radius:16px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent;font-family:var(--font)}
+.brief-chip:hover{border-color:#9B6FA8;color:#C0A0D8}
+.brief-chip.active{border-color:#9B6FA8;color:#C0A0D8;background:rgba(155,111,168,0.12)}
+.brief-letter{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:180px;outline:none;transition:border-color .2s;line-height:1.8;margin-bottom:20px}
+.brief-letter:focus{border-color:#9B6FA8;box-shadow:0 0 0 2px rgba(155,111,168,0.12)}
+.brief-letter::placeholder{color:var(--muted)}
+.brief-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.brief-send-btn{background:#9B6FA8;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.brief-send-btn:hover{opacity:.88}
+.brief-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -480,6 +498,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
       STÄRKENBiLD
+    </button>
+    <button class="mode-tab" id="tab-brief" onclick="setMode('brief')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="13" rx="2"/><polyline points="2 4 10 13 18 4"/></svg>
+      FAMiLiENBRiEF
     </button>
   </div>
 </section>
@@ -860,6 +882,54 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="staerkenResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiENBRiEF MODE ==================== -->
+<div class="mode-section" id="mode-brief">
+  <div class="brief-wrap">
+
+    <div class="brief-intro">
+      <strong>FAMiLiENBRiEF</strong> — Manchmal lässt sich das Wichtigste nicht aussprechen. Schreib einen Brief, den du (noch) nicht schickst. Eine <em>Spiegel-Stimme</em> reflektiert, was du wirklich brauchst — eine <em>imaginäre Antwort</em> gibt der anderen Person eine mitfühlende Stimme. Kein Urteil. Kein Druck.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:8px">An wen richtet sich der Brief?</div>
+    <input class="brief-recipient-input" id="briefEmpfaenger" type="text" placeholder="z.B. Mama, mein Bruder, unsere Tochter, mein Partner …">
+
+    <div class="chips-label" style="text-align:left;margin-bottom:8px">Beziehung</div>
+    <div class="brief-chip-row" id="briefBeziehungChips">
+      <button class="brief-chip" onclick="setBriefBeziehung(this, 'Elternteil')">Elternteil</button>
+      <button class="brief-chip" onclick="setBriefBeziehung(this, 'Kind')">Kind</button>
+      <button class="brief-chip" onclick="setBriefBeziehung(this, 'Partner·in')">Partner·in</button>
+      <button class="brief-chip" onclick="setBriefBeziehung(this, 'Geschwister')">Geschwister</button>
+      <button class="brief-chip" onclick="setBriefBeziehung(this, 'Großelternteil')">Großelternteil</button>
+      <button class="brief-chip" onclick="setBriefBeziehung(this, 'Ich selbst')">Ich selbst</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:8px">Welche Gefühle tragen dich?</div>
+    <div class="brief-chip-row" id="briefEmotionChips">
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Sehnsucht</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Trauer</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Enttäuschung</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Dankbarkeit</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Wut</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Liebe</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Überforderung</button>
+      <button class="brief-chip" onclick="toggleBriefEmotion(this)">Stolz</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:8px">Dein Brief</div>
+    <textarea class="brief-letter" id="briefText" placeholder="Schreib einfach drauf los. Was willst du dieser Person sagen — was du nie ausgesprochen hast, was du dir wünschst, was dich bewegt? Es bleibt hier."></textarea>
+
+    <div class="brief-send-row">
+      <button class="brief-send-btn" id="briefSendBtn" onclick="sendBrief()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="13" rx="2"/><polyline points="2 4 10 13 18 4"/></svg>
+        Brief verstehen lassen
+      </button>
+    </div>
+
+    <div id="briefResults"></div>
 
   </div>
 </div>
@@ -2930,6 +3000,135 @@ async function sendStaerken() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['staerken-forscherin', 'familien-chronistin', 'ressourcen-coach', 'zukunfts-architektin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiENBRiEF MODE ─────────────────────────────────────────────────────
+
+let briefBeziehung = '';
+const briefEmotionen = new Set();
+
+function setBriefBeziehung(el, wert) {
+  briefBeziehung = wert;
+  document.querySelectorAll('#briefBeziehungChips .brief-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleBriefEmotion(el) {
+  const emo = el.textContent.trim();
+  if (briefEmotionen.has(emo)) {
+    briefEmotionen.delete(emo);
+    el.classList.remove('active');
+  } else {
+    briefEmotionen.add(emo);
+    el.classList.add('active');
+  }
+}
+
+async function sendBrief() {
+  if (isLoading) return;
+
+  const empfaengerEl = document.getElementById('briefEmpfaenger');
+  const textEl       = document.getElementById('briefText');
+  const resultsDiv   = document.getElementById('briefResults');
+  const sendBtn      = document.getElementById('briefSendBtn');
+
+  const empfaenger = empfaengerEl.value.trim() || 'die Person';
+  const briefText  = textEl.value.trim();
+  if (!briefText) { textEl.focus(); return; }
+
+  const emotionenListe = [...briefEmotionen].join(', ');
+  const beziehungsLabel = briefBeziehung ? ` (${briefBeziehung})` : '';
+
+  const frage = `Ich schreibe einen Brief an ${empfaenger}${beziehungsLabel}. ${emotionenListe ? `Mitschwingende Gefühle: ${emotionenListe}. ` : ''}Brief: "${briefText}"`;
+
+  const perspectives = [
+    {
+      name: 'Spiegel-Stimme',
+      position: 'Einfühlsame Begleiterin, die dem Schreibenden hilft, eigene Bedürfnisse und Wünsche klar zu hören',
+      grundhaltung: 'Was brauchst du wirklich? Was steckt unter den Worten?',
+      fachgebiet: 'Gewaltfreie Kommunikation, Bedürfnis-Spiegelung, Selbst-Mitgefühl, emotionale Intelligenz'
+    },
+    {
+      name: `Stimme von ${empfaenger}`,
+      position: `Eine mitfühlende, imaginäre Antwort aus der Perspektive von ${empfaenger}${beziehungsLabel} — keine Projektion, sondern wohlwollender Dialog`,
+      grundhaltung: 'Was könnte diese Person, in ihrer besten Version, antworten, wenn sie wirklich gehört hätte?',
+      fachgebiet: 'Gestalt-Therapie, leerer Stuhl, Schema-Therapie Briefarbeit, Perspektivwechsel'
+    }
+  ];
+
+  const payload = {
+    question:            frage,
+    table_name:          'FAMiLiENBRiEF',
+    custom_perspectives: perspectives,
+    stil:                'therapeutisch',
+    tone:                'achtsam',
+    source_app:          'FAMiLiEN-TiSCH',
+    lang:                currentLang
+  };
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Dein Brief wird gehört …' : 'Reading your letter …'}</span></div>`;
+
+  try {
+    const res  = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const briefPerspDefs = [
+      { id: 'spiegel-stimme',  icon: 'mirror',  color: '#9B6FA8', de: 'Spiegel-Stimme',          en: 'Mirror Voice'  },
+      { id: 'antwort-stimme',  icon: 'heart',   color: '#C0A0D8', de: `Stimme von ${empfaenger}`, en: `Voice of ${empfaenger}` }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = briefPerspDefs[i] || briefPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'WAS DEIN BRIEF TRÄGT' : 'WHAT YOUR LETTER CARRIES',
+      synthesisSubtitle: currentLang === 'de' ? `an ${empfaenger}` : `to ${empfaenger}`,
+      synthesisColor:    '#9B6FA8',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bleibt bei dir' : 'Stays with you'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Kein Urteil' : 'No judgment'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     briefText.substring(0, 80) + (briefText.length > 80 ? '...' : ''),
+      perspectives: ['spiegel-stimme', `stimme-von-${empfaenger.toLowerCase().replace(/\s+/g, '-')}`],
       lang:         currentLang,
       time:         Date.now()
     });
