@@ -276,6 +276,40 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .staerken-send-btn:hover{opacity:.88}
 .staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* TAGESTiSCH MODE */
+.tages-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.tages-intro{background:linear-gradient(135deg,rgba(196,98,45,0.08) 0%,rgba(184,92,42,0.04) 100%);border:1px solid rgba(196,98,45,0.2);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.tages-intro strong{color:var(--accent)}
+.tages-date{font-size:11px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;text-align:center;margin-bottom:16px}
+.tages-members{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.tages-member-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color .25s}
+.tages-member-card.has-mood{border-color:rgba(196,98,45,0.4)}
+.tages-member-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tages-member-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.tages-member-name{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;margin-bottom:10px;transition:border-color .2s}
+.tages-member-name:focus{border-color:var(--accent)}
+.mood-row{display:flex;gap:5px;justify-content:space-between;margin-bottom:10px}
+.mood-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border:1px solid var(--border);background:var(--bg);border-radius:8px;cursor:pointer;transition:all .2s;flex:1;font-family:var(--font)}
+.mood-btn:hover{border-color:var(--faint);background:var(--surface)}
+.mood-btn.active{border-color:var(--accent);background:var(--accent-dim)}
+.mood-emoji{font-size:18px;line-height:1}
+.mood-label{font-size:9px;letter-spacing:.03em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tages-day-note{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-family:var(--font);font-size:13px;color:var(--text);resize:none;outline:none;transition:border-color .2s;line-height:1.5;min-height:52px}
+.tages-day-note:focus{border-color:var(--accent)}
+.tages-day-note::placeholder{color:var(--muted)}
+.tages-add-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1px dashed var(--faint);background:none;color:var(--muted);border-radius:10px;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:16px}
+.tages-add-btn:hover{border-color:var(--accent);color:var(--accent)}
+.tages-add-btn:disabled{opacity:.3;cursor:not-allowed}
+.tages-kontext-label{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.tages-kontext{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-family:var(--font);font-size:14px;color:var(--text);resize:vertical;min-height:58px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.tages-kontext:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.tages-kontext::placeholder{color:var(--muted)}
+.tages-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.tages-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.tages-send-btn:hover{opacity:.88}
+.tages-send-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:640px){.tages-members{grid-template-columns:1fr}.mood-label{display:none}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -480,6 +514,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
       STÄRKENBiLD
+    </button>
+    <button class="mode-tab" id="tab-tages" onclick="setMode('tages')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="14.4" y1="14.4" x2="15.8" y2="15.8"/><line x1="4.2" y1="15.8" x2="5.6" y2="14.4"/><line x1="14.4" y1="5.6" x2="15.8" y2="4.2"/></svg>
+      TAGESTiSCH
     </button>
   </div>
 </section>
@@ -864,6 +902,38 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== TAGESTiSCH MODE ==================== -->
+<div class="mode-section" id="mode-tages">
+  <div class="tages-wrap">
+
+    <div class="tages-date" id="tagesDate"></div>
+
+    <div class="tages-intro">
+      <strong>TAGESTiSCH</strong> — Wie war der Tag für jeden in der Familie? Wählt eine Stimmung, fügt optional einen Satz hinzu — und der TiSCH gibt euch eine einfühlsame Reflexion für jeden und schaut, was die Familie heute Abend vielleicht braucht.
+    </div>
+
+    <div class="tages-members" id="tagesMembersGrid"></div>
+
+    <button class="tages-add-btn" id="tagesAddBtn" onclick="addTagesMember()">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+      Person hinzufügen
+    </button>
+
+    <div class="tages-kontext-label">Was bewegt eure Familie gerade? <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+    <textarea class="tages-kontext" id="tagesKontext" placeholder="Z.B. Stress in der Schule, ein besonderes Ereignis, eine Veränderung..." rows="2"></textarea>
+
+    <div class="tages-send-row">
+      <button class="tages-send-btn" id="tagesSendBtn" onclick="sendTages()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="2" y1="10" x2="4" y2="10"/><line x1="16" y1="10" x2="18" y2="10"/></svg>
+        TAG AUSWERTEN
+      </button>
+    </div>
+
+    <div id="tagesResults"></div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -1180,6 +1250,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPerspGrid();
   updateChips();
   initRatMembers();
+  initTages();
 
   // Keyboard send
   document.getElementById('questionInput').addEventListener('keydown', e => {
@@ -2940,6 +3011,237 @@ async function sendStaerken() {
 
   isLoading = false;
   sendBtn.disabled = false;
+}
+
+// ─── TAGESTiSCH MODE ──────────────────────────────────────────────────────────
+
+let tagesMemberCount = 0;
+let tagesMoods = {};
+
+const MOOD_DATA = [
+  { v: 1, emoji: '😔', de: 'Schwer',   en: 'Tough'  },
+  { v: 2, emoji: '😕', de: 'Gemischt', en: 'Mixed'  },
+  { v: 3, emoji: '😐', de: 'Okay',     en: 'Okay'   },
+  { v: 4, emoji: '🙂', de: 'Gut',      en: 'Good'   },
+  { v: 5, emoji: '😊', de: 'Super',    en: 'Great'  },
+];
+
+const TAGES_NAMES = {
+  de: ['Mutter / Elternteil', 'Vater / Partner', 'Kind / Jugendliche·r', 'Großeltern'],
+  en: ['Mother / Parent', 'Father / Partner', 'Child / Teen', 'Grandparent'],
+};
+const TAGES_COLORS = ['#C4622D', '#4A7FA8', '#5BA08A', '#9A6A3A'];
+const TAGES_ICONS  = ['heart', 'compass', 'sprout', 'scroll'];
+const MOOD_EMOJIS  = ['', '😔', '😕', '😐', '🙂', '😊'];
+
+function initTages() {
+  tagesMemberCount = 0;
+  tagesMoods = {};
+  document.getElementById('tagesMembersGrid').innerHTML = '';
+  const now = new Date();
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const dateEl = document.getElementById('tagesDate');
+  if (dateEl) dateEl.textContent = now.toLocaleDateString(currentLang === 'de' ? 'de-DE' : 'en-GB', opts).toUpperCase();
+  addTagesMember();
+  addTagesMember();
+}
+
+function addTagesMember() {
+  if (tagesMemberCount >= 4) return;
+  const idx = tagesMemberCount;
+  tagesMemberCount++;
+  const color = TAGES_COLORS[idx];
+  const defaultName = (currentLang === 'de' ? TAGES_NAMES.de : TAGES_NAMES.en)[idx] || `Person ${idx + 1}`;
+  const removeBtnHtml = idx >= 2 ? `
+    <button class="member-remove-btn" onclick="removeTagesMember(${idx})" title="Entfernen">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>` : '';
+  const notePh = currentLang === 'de'
+    ? 'Was war heute besonders? (optional)'
+    : 'What stood out today? (optional)';
+  const moodBtns = MOOD_DATA.map(m => `
+    <button class="mood-btn" id="mood-${idx}-${m.v}" onclick="setTagesMood(${idx},${m.v})">
+      <span class="mood-emoji">${m.emoji}</span>
+      <span class="mood-label">${currentLang === 'de' ? m.de : m.en}</span>
+    </button>
+  `).join('');
+  const card = document.createElement('div');
+  card.className = 'tages-member-card';
+  card.id = `tages-card-${idx}`;
+  card.innerHTML = `
+    <div class="tages-member-header">
+      <div class="tages-member-label">
+        <div class="persp-dot" style="background:${color}"></div>
+        ${currentLang === 'de' ? 'Person' : 'Person'} ${idx + 1}
+      </div>
+      ${removeBtnHtml}
+    </div>
+    <input class="tages-member-name" id="tages-name-${idx}" type="text" placeholder="${defaultName}">
+    <div class="mood-row">${moodBtns}</div>
+    <textarea class="tages-day-note" id="tages-note-${idx}" placeholder="${notePh}" rows="2"></textarea>
+  `;
+  document.getElementById('tagesMembersGrid').appendChild(card);
+  updateTagesAddBtn();
+}
+
+function removeTagesMember(idx) {
+  const card = document.getElementById(`tages-card-${idx}`);
+  if (card) card.remove();
+  delete tagesMoods[idx];
+  tagesMemberCount--;
+  updateTagesAddBtn();
+}
+
+function setTagesMood(memberIdx, moodVal) {
+  tagesMoods[memberIdx] = moodVal;
+  MOOD_DATA.forEach(m => {
+    const btn = document.getElementById(`mood-${memberIdx}-${m.v}`);
+    if (btn) btn.classList.toggle('active', m.v === moodVal);
+  });
+  const card = document.getElementById(`tages-card-${memberIdx}`);
+  if (card) card.classList.add('has-mood');
+}
+
+function updateTagesAddBtn() {
+  const btn = document.getElementById('tagesAddBtn');
+  if (btn) btn.disabled = tagesMemberCount >= 4;
+}
+
+async function sendTages() {
+  if (isLoading) return;
+
+  const members = [];
+  document.querySelectorAll('[id^="tages-card-"]').forEach(card => {
+    const idx = parseInt(card.id.replace('tages-card-', ''), 10);
+    const nameEl = document.getElementById(`tages-name-${idx}`);
+    const noteEl = document.getElementById(`tages-note-${idx}`);
+    const name   = nameEl?.value?.trim() || (currentLang === 'de' ? TAGES_NAMES.de : TAGES_NAMES.en)[idx] || `Person ${idx + 1}`;
+    const mood   = tagesMoods[idx];
+    const note   = noteEl?.value?.trim() || '';
+    if (mood) members.push({ idx, name, mood, note });
+  });
+
+  if (members.length < 2) {
+    showToast(currentLang === 'de'
+      ? 'Bitte für mindestens 2 Personen eine Stimmung wählen.'
+      : 'Please select a mood for at least 2 people.');
+    return;
+  }
+
+  const kontext = document.getElementById('tagesKontext')?.value?.trim() || '';
+  isLoading = true;
+  document.getElementById('tagesSendBtn').disabled = true;
+
+  const resultsDiv = document.getElementById('tagesResults');
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'TAGESTiSCH wird ausgewertet...' : 'TAGESTiSCH is processing...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const moodLabels = {
+    de: ['', 'Schwer', 'Gemischt', 'Okay', 'Gut', 'Super'],
+    en: ['', 'Tough', 'Mixed', 'Okay', 'Good', 'Great'],
+  };
+
+  const custom_perspectives = members.map(m => {
+    const moodLabel = moodLabels[currentLang][m.mood] || 'Okay';
+    const moodEmoji = MOOD_EMOJIS[m.mood] || '😐';
+    const noteText  = m.note
+      ? (currentLang === 'de' ? ` Besonders war heute: ${m.note}` : ` Noteworthy today: ${m.note}`)
+      : '';
+    return {
+      name: m.name,
+      position: currentLang === 'de'
+        ? `Ich bin ${m.name} in dieser Familie. Meine Stimmung heute: ${moodEmoji} ${moodLabel}.${noteText}`
+        : `I am ${m.name} in this family. My mood today: ${moodEmoji} ${moodLabel}.${noteText}`,
+      grundhaltung: currentLang === 'de'
+        ? 'Jeder Tag verdient Aufmerksamkeit — auch wenn er schwierig war.'
+        : 'Every day deserves attention — even difficult ones.',
+      fachgebiet: currentLang === 'de'
+        ? 'Familientherapie, emotionale Intelligenz, Alltag & Resilienz'
+        : 'Family therapy, emotional intelligence, daily life & resilience',
+    };
+  });
+
+  const membersDesc = members.map(m => {
+    const moodLabel = moodLabels[currentLang][m.mood] || 'Okay';
+    const emoji = MOOD_EMOJIS[m.mood];
+    return `${m.name}: ${emoji} ${moodLabel}${m.note ? ` ("${m.note}")` : ''}`;
+  }).join('\n');
+
+  const question = currentLang === 'de'
+    ? `Familiärer Tages-Check-in:\n\n${membersDesc}${kontext ? `\n\nFamiliärer Kontext: ${kontext}` : ''}\n\nBitte reflektiere für jede Person einfühlsam und konkret: Was könnte hinter der Stimmung stecken? Was würde dieser Person heute Abend gut tun? Formuliere dann im Integrations-Teil, was die Familie als Ganzes heute vielleicht braucht und wie der Abend gut werden kann.`
+    : `Family daily check-in:\n\n${membersDesc}${kontext ? `\n\nFamily context: ${kontext}` : ''}\n\nPlease reflect empathically and concretely for each person: what might be behind their mood? What would help them tonight? Then in the integration part, describe what the family as a whole might need tonight and how the evening can go well.`;
+
+  try {
+    const payload = {
+      question,
+      custom_perspectives,
+      methods:    [],
+      stil:       'therapeutisch',
+      tone:       'achtsam',
+      lang:       currentLang,
+      source_app: 'FAMiLiEN-TiSCH',
+    };
+
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    resultsDiv.innerHTML = '';
+
+    const memberDefs = members.map(m => ({
+      id:    `tages-${m.idx}`,
+      icon:  TAGES_ICONS[m.idx] || 'heart',
+      de:    `${MOOD_EMOJIS[m.mood]} ${m.name}`,
+      en:    `${MOOD_EMOJIS[m.mood]} ${m.name}`,
+      color: TAGES_COLORS[m.idx] || TAGES_COLORS[0],
+    }));
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef  = memberDefs[i] || memberDefs[0];
+        const card  = createResultCard(pDef, rolle || pDef.de);
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'HEUTE ABEND' : 'TONIGHT',
+      synthesisSubtitle: currentLang === 'de' ? 'familie zusammen' : 'family together',
+      synthesisColor:    '#C4622D',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Kein Urteil' : 'No judgment'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Nur für euch' : 'Just for you'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     currentLang === 'de' ? 'Tages-Check-in' : 'Daily check-in',
+      perspectives: members.map(m => m.name),
+      lang:         currentLang,
+      time:         Date.now(),
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  document.getElementById('tagesSendBtn').disabled = false;
 }
 </script>
 <script src="/notizbuch.js"></script>
