@@ -276,6 +276,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .staerken-send-btn{background:#5BA08A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .staerken-send-btn:hover{opacity:.88}
 .staerken-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMILIEN-ViSiON MODE */
+.vision-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.vision-intro{background:linear-gradient(135deg,rgba(112,101,203,0.08) 0%,rgba(144,137,216,0.04) 100%);border:1px solid rgba(112,101,203,0.2);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.vision-intro strong{color:#9089D8}
+.vision-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.vision-input:focus{border-color:#7065CB;box-shadow:0 0 0 2px rgba(112,101,203,0.12)}
+.vision-input::placeholder{color:var(--muted)}
+.vision-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.vision-send-btn{background:#7065CB;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.vision-send-btn:hover{opacity:.88}
+.vision-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -480,6 +492,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-staerken" onclick="setMode('staerken')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
       STÄRKENBiLD
+    </button>
+    <button class="mode-tab" id="tab-vision" onclick="setMode('vision')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 7 3 13 6 19 3 19 17 13 20 7 17 1 20"/><line x1="7" y1="3" x2="7" y2="17"/><line x1="13" y1="6" x2="13" y2="20"/></svg>
+      FAMiLiEN-ViSiON
     </button>
   </div>
 </section>
@@ -860,6 +876,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="staerkenResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMILIEN-ViSiON MODE ==================== -->
+<div class="mode-section" id="mode-vision">
+  <div class="vision-wrap">
+
+    <div class="vision-intro">
+      <strong>FAMiLiEN-ViSiON</strong> — Was wünscht ihr euch als Familie für eure gemeinsame Zukunft? Vier Stimmen erkunden euren gemeinsamen Weg: die <strong style="color:#9089D8">Träumerin</strong> öffnet den Horizont, die <strong style="color:#7065CB">Macherin</strong> fragt nach dem ersten Schritt, die <strong style="color:#5B5AB0">Kritikerin</strong> benennt ehrlich, was im Weg stehen könnte — und die <strong style="color:#8078D0">Brücken-Bauerin</strong> führt alles zum gemeinsamen Weg zusammen.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="visionChips">
+      <button class="chip" onclick="useVisionChip(this)">Wir wollen mehr Zeit füreinander — aber der Alltag frisst uns auf.</button>
+      <button class="chip" onclick="useVisionChip(this)">In fünf Jahren möchten wir als Familie irgendwo ganz anders leben.</button>
+      <button class="chip" onclick="useVisionChip(this)">Wir träumen davon, dass jedes Kind seine eigene Stärke entfaltet.</button>
+      <button class="chip" onclick="useVisionChip(this)">Wir wollen eine Familie sein, in der man offen über alles reden kann.</button>
+      <button class="chip" onclick="useVisionChip(this)">Weniger Stress, mehr Leichtigkeit — wie gelingt das im Alltag?</button>
+      <button class="chip" onclick="useVisionChip(this)">Wir wollen Traditionen schaffen, die unsere Kinder weitertragen.</button>
+      <button class="chip" onclick="useVisionChip(this)">Als Familie gemeinsam etwas aufbauen — aber was genau?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was ist euer Familientraum oder -wunsch?</div>
+    <textarea class="vision-input" id="visionInput" placeholder="Beschreibt, was ihr euch als Familie wünscht oder erträumt — für die nahe oder ferne Zukunft. Kein Wunsch ist zu groß oder zu klein..." rows="4"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="visionFamilienname" type="text" placeholder="Familienname (optional, z.B. Familie Müller)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-horizont="nah" onclick="setVisionHorizont(this)">1 Jahr</button>
+        <button class="ctrl-btn" data-horizont="mittel" onclick="setVisionHorizont(this)">5 Jahre</button>
+        <button class="ctrl-btn" data-horizont="weit" onclick="setVisionHorizont(this)">Langfristig</button>
+      </div>
+    </div>
+
+    <div class="vision-send-row">
+      <button class="vision-send-btn" id="visionSendBtn" onclick="sendVision()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 7 3 13 6 19 3 19 17 13 20 7 17 1 20"/><line x1="7" y1="3" x2="7" y2="17"/><line x1="13" y1="6" x2="13" y2="20"/></svg>
+        ViSiON ERKUNDEN
+      </button>
+    </div>
+
+    <div id="visionResults"></div>
 
   </div>
 </div>
@@ -2930,6 +2989,146 @@ async function sendStaerken() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['staerken-forscherin', 'familien-chronistin', 'ressourcen-coach', 'zukunfts-architektin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMILIEN-ViSiON MODE ────────────────────────────────────────────────────
+
+let visionHorizont = 'nah';
+
+function setVisionHorizont(btn) {
+  visionHorizont = btn.dataset.horizont;
+  document.querySelectorAll('#mode-vision .ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useVisionChip(el) {
+  document.getElementById('visionInput').value = el.textContent.trim();
+  document.getElementById('visionInput').focus();
+}
+
+async function sendVision() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('visionInput');
+  const resultsDiv = document.getElementById('visionResults');
+  const sendBtn    = document.getElementById('visionSendBtn');
+  const famName    = (document.getElementById('visionFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+
+  const horizontLabels = {
+    nah:    'in den nächsten 12 Monaten',
+    mittel: 'in den nächsten 5 Jahren',
+    weit:   'langfristig und generationenübergreifend'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `Was ist der gemeinsame Weg für ${familienLabel} ${horizontLabels[visionHorizont]}? Ihr Wunsch / Ihr Traum: ${text}`;
+
+  const perspectives = [
+    {
+      name: 'Träumerin',
+      position: 'Visionäre Kreative, die keine Grenzen kennt',
+      grundhaltung: 'Was wäre möglich, wenn alles möglich wäre? Was ist das Kühnste, Schönste, was diese Familie sich vorstellen kann?',
+      fachgebiet: 'Appreciative Inquiry, Zukunftsforschung, Positive Psychologie, Kreativitätsforschung'
+    },
+    {
+      name: 'Macherin',
+      position: 'Realistische Planerin mit Blick auf das Umsetzbare',
+      grundhaltung: 'Was ist konkret erreichbar? Was sind die ersten kleinen Schritte, die jetzt möglich sind — ohne alles auf einmal verändern zu müssen?',
+      fachgebiet: 'Lösungsfokussierte Beratung, Zielplanung, Familiencoaching, kleine Schritte'
+    },
+    {
+      name: 'Kritikerin',
+      position: 'Ehrliche Hüterin der Klarheit — sie fragt, was im Weg steht',
+      grundhaltung: 'Was könnten Hindernisse sein? Welche inneren oder äußeren Widerstände gilt es ehrlich zu benennen, damit der Weg wirklich gelingt?',
+      fachgebiet: 'Risikobewertung, Konfliktprävention, systemische Beratung, Selbstkenntnis'
+    },
+    {
+      name: 'Brücken-Bauerin',
+      position: 'Integrationsexpertin, die Traum, Plan und Klarheit zusammenführt',
+      grundhaltung: 'Was trägt als gemeinsamer Kern? Wie wird aus dem Traum und dem realistischen Blick ein lebendiger gemeinsamer Weg für diese Familie?',
+      fachgebiet: 'Systemische Integration, Mediation, Familiencoaching, narrative Therapie'
+    }
+  ];
+
+  const payload = {
+    question:            frage,
+    table_name:          famName || 'FAMiLiEN-TiSCH',
+    custom_perspectives: perspectives,
+    stil:                'achtsam',
+    tone:                'achtsam',
+    source_app:          'FAMiLiEN-TiSCH',
+    lang:                currentLang
+  };
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-ViSiON wird erkundet...' : 'Exploring your family vision...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const res  = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const visionPerspDefs = [
+      { id: 'traeumerin',       icon: 'star',    color: '#9089D8', de: 'Träumerin',        en: 'The Dreamer'     },
+      { id: 'macherin',         icon: 'compass', color: '#7065CB', de: 'Macherin',          en: 'The Doer'        },
+      { id: 'kritikerin',       icon: 'shield',  color: '#5B5AB0', de: 'Kritikerin',        en: 'The Critic'      },
+      { id: 'bruecken-bauerin', icon: 'heart',   color: '#8078D0', de: 'Brücken-Bauerin',  en: 'Bridge Builder'  }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = visionPerspDefs[i] || visionPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER GEMEiNSAMER WEG' : 'YOUR SHARED PATH',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#7065CB',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 7 3 13 6 19 3 19 17 13 20 7 17 1 20"/><line x1="7" y1="3" x2="7" y2="17"/><line x1="13" y1="6" x2="13" y2="20"/></svg> ${currentLang === 'de' ? 'Alle Stimmen gehört' : 'All voices heard'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Wertschätzend & zukunftsoffen' : 'Appreciative & future-open'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 6 6 9 3-3 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Vertraulich' : 'Confidential'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['traeumerin', 'macherin', 'kritikerin', 'bruecken-bauerin'],
       lang:         currentLang,
       time:         Date.now()
     });
