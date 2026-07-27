@@ -288,6 +288,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .vision-send-btn{background:#7065CB;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .vision-send-btn:hover{opacity:.88}
 .vision-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-CHRONiK MODE */
+.chronik-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.chronik-intro{background:linear-gradient(135deg,rgba(74,60,48,0.4) 0%,rgba(58,45,35,0.2) 100%);border:1px solid rgba(154,90,58,0.25);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.chronik-intro strong{color:#C4622D}
+.chronik-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.chronik-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.chronik-input::placeholder{color:var(--muted)}
+.chronik-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.chronik-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.chronik-send-btn:hover{opacity:.88}
+.chronik-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -496,6 +508,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-vision" onclick="setMode('vision')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 7 3 13 6 19 3 19 17 13 20 7 17 1 20"/><line x1="7" y1="3" x2="7" y2="17"/><line x1="13" y1="6" x2="13" y2="20"/></svg>
       FAMiLiEN-ViSiON
+    </button>
+    <button class="mode-tab" id="tab-chronik" onclick="setMode('chronik')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>
+      FAMiLiEN-CHRONiK
     </button>
   </div>
 </section>
@@ -919,6 +935,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="visionResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-CHRONiK MODE ==================== -->
+<div class="mode-section" id="mode-chronik">
+  <div class="chronik-wrap">
+
+    <div class="chronik-intro">
+      <strong>FAMiLiEN-CHRONiK</strong> — Was haben vergangene Generationen in eurem Familiensystem hinterlassen? Welche Muster, Stärken und Wunden wandern durch eure Geschichte? Vier Perspektiven beleuchten transgenerationale Dynamiken: was sich wiederholt, was trägt — und was geheilt werden möchte.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Häufige Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px">
+      <button class="chip" onclick="useChronikChip(this)">Ich reagiere wie meine Mutter — obwohl ich das nicht will.</button>
+      <button class="chip" onclick="useChronikChip(this)">In unserer Familie wird Schwäche nie gezeigt. Meine Kinder lernen das jetzt auch.</button>
+      <button class="chip" onclick="useChronikChip(this)">Mein Vater hat nie über seine Vergangenheit gesprochen. Was hat er erlebt?</button>
+      <button class="chip" onclick="useChronikChip(this)">Bestimmte Themen sind bei uns tabu — seit Generationen.</button>
+      <button class="chip" onclick="useChronikChip(this)">Ich merke, ich gebe meinen Kindern dasselbe weiter, was mir geschadet hat.</button>
+      <button class="chip" onclick="useChronikChip(this)">Trauer und Verlust wurden in meiner Familie nie besprochen.</button>
+      <button class="chip" onclick="useChronikChip(this)">Was aus meiner Familiengeschichte macht mich heute stark?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was trägst du mit dir?</div>
+    <textarea class="chronik-input" id="chronikInput" placeholder="Beschreibe, was du in deiner Familiengeschichte wahrnimmst — Muster, die sich wiederholen, Themen die nie gesagt wurden, Stärken über Generationen, oder was dich heute noch bewegt..." rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="chronikFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-chronik-fokus="muster" onclick="setChronikFokus(this)">Muster</button>
+        <button class="ctrl-btn" data-chronik-fokus="staerken" onclick="setChronikFokus(this)">Stärken</button>
+        <button class="ctrl-btn" data-chronik-fokus="heilung" onclick="setChronikFokus(this)">Heilung</button>
+      </div>
+    </div>
+
+    <div class="chronik-send-row">
+      <button class="chronik-send-btn" id="chronikSendBtn" onclick="sendChronik()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>
+        CHRONiK ERKUNDEN
+      </button>
+    </div>
+
+    <div id="chronikResults"></div>
 
   </div>
 </div>
@@ -3129,6 +3188,180 @@ async function sendVision() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['traeumerin', 'macherin', 'kritikerin', 'bruecken-bauerin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-CHRONiK MODE ────────────────────────────────────────────────────
+
+let chronikFokus = 'muster';
+
+function setChronikFokus(btn) {
+  chronikFokus = btn.dataset.chronikFokus;
+  document.querySelectorAll('[data-chronik-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useChronikChip(el) {
+  document.getElementById('chronikInput').value = el.textContent.trim();
+  document.getElementById('chronikInput').focus();
+}
+
+async function sendChronik() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('chronikInput');
+  const resultsDiv = document.getElementById('chronikResults');
+  const sendBtn    = document.getElementById('chronikSendBtn');
+  const famName    = (document.getElementById('chronikFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    muster:   currentLang === 'de'
+      ? 'Welche Muster, Rollen und Dynamiken wiederholen sich in dieser Familiengeschichte über Generationen?'
+      : 'What patterns, roles and dynamics repeat in this family history across generations?',
+    staerken: currentLang === 'de'
+      ? 'Welche Stärken, Überlebensfähigkeiten und Ressourcen wurden in dieser Familiengeschichte weitergegeben?'
+      : 'What strengths, survival abilities and resources were passed down in this family history?',
+    heilung:  currentLang === 'de'
+      ? 'Was möchte in dieser Familiengeschichte geheilt, integriert oder zum Abschluss gebracht werden?'
+      : 'What in this family history wants to be healed, integrated or brought to completion?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[chronikFokus]} Kontext: ${text}`;
+
+  const chronikPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Transgenerationale Therapeutin' : 'Transgenerational Therapist',
+      position: currentLang === 'de'
+        ? 'Analysiere diese Familiengeschichte auf transgenerationale Übertragungen: Welche unverarbeiteten Erlebnisse, Traumata oder Glaubenssätze wurden von einer Generation an die nächste weitergegeben — oft ohne Worte? Was wiederholt sich als System, nicht als individuelle Schuld?'
+        : 'Analyze this family history for transgenerational transmission: What unprocessed experiences, traumas or beliefs were passed from one generation to the next — often without words? What repeats as a system, not as individual fault?',
+      grundhaltung: currentLang === 'de'
+        ? 'Was uns in der Kindheit nicht bewusst wurde, können wir unbewusst an unsere Kinder weitergeben. Erkennen ist der erste Schritt zur Veränderung.'
+        : 'What was not made conscious in childhood, we can unconsciously pass to our children. Recognition is the first step toward change.',
+      fachgebiet: currentLang === 'de'
+        ? 'Transgenerationale Traumaforschung (Boszormenyi-Nagy, Schutzenberger), Epigenetik und Trauma, Mehrgenerationen-Familientherapie'
+        : 'Transgenerational trauma research (Boszormenyi-Nagy, Schutzenberger), epigenetics and trauma, multigenerational family therapy'
+    },
+    {
+      name: currentLang === 'de' ? 'Familiensystemikerin' : 'Family Systems Expert',
+      position: currentLang === 'de'
+        ? 'Welche Rollen, Loyalitäten und unsichtbaren Aufträge trägt dieses Familiensystem? Wer hat welchen Platz — und wer fehlt in der Geschichte? Wo gibt es Hierarchien oder Dynamiken, die das System aufrechterhalten, auch wenn sie niemandem mehr dienen?'
+        : 'What roles, loyalties and invisible mandates does this family system carry? Who has which place — and who is missing from the story? Where are hierarchies or dynamics that maintain the system, even if they no longer serve anyone?',
+      grundhaltung: currentLang === 'de'
+        ? 'Jedes Familienmitglied hat einen Platz im System. Was nicht integriert wird, sucht sich einen anderen Weg — oft durch die nächste Generation.'
+        : 'Every family member has a place in the system. What is not integrated finds another way — often through the next generation.',
+      fachgebiet: currentLang === 'de'
+        ? 'Systemische Familientherapie, Familienaufstellung (Hellinger, Sparrer), Kontextuelle Therapie (Boszormenyi-Nagy)'
+        : 'Systemic family therapy, family constellations (Hellinger, Sparrer), contextual therapy (Boszormenyi-Nagy)'
+    },
+    {
+      name: currentLang === 'de' ? 'Resilienz-Forscherin' : 'Resilience Researcher',
+      position: currentLang === 'de'
+        ? 'Was hat diese Familie durch Generationen hinweg stark gemacht? Welche Überlebensfähigkeiten, Werte und Ressourcen wurden weitergegeben — auch in schwierigen Zeiten? Was ist die verborgene Stärke in dieser Familiengeschichte, die oft übersehen wird?'
+        : 'What has made this family strong across generations? What survival abilities, values and resources were passed down — even in difficult times? What is the hidden strength in this family history that is often overlooked?',
+      grundhaltung: currentLang === 'de'
+        ? 'Resilienz ist nicht nur individuell — sie ist kollektiv und wird weitergegeben. Was eine Familie gemeinsam überlebt hat, ist auch eine Quelle von Stärke.'
+        : 'Resilience is not only individual — it is collective and inherited. What a family has survived together is also a source of strength.',
+      fachgebiet: currentLang === 'de'
+        ? 'Familienresilienz (Walsh), Posttraumatisches Wachstum, Stärkenbasierte Familienarbeit, Epigenetik'
+        : 'Family resilience (Walsh), posttraumatic growth, strengths-based family work, epigenetics'
+    },
+    {
+      name: currentLang === 'de' ? 'Narrative Therapeutin' : 'Narrative Therapist',
+      position: currentLang === 'de'
+        ? 'Welche Geschichte erzählt diese Familie über sich selbst? Welche Narrative wurden über Generationen weitergegeben — und welche davon stärken, welche begrenzen? Wie könnte die Familiengeschichte neu erzählt werden, ohne die Vergangenheit zu leugnen, aber mit mehr Handlungsmacht?'
+        : 'What story does this family tell about itself? Which narratives were passed across generations — and which strengthen, which limit? How could the family story be retold without denying the past, but with more agency in the present?',
+      grundhaltung: currentLang === 'de'
+        ? 'Geschichten über uns selbst sind nicht unveränderlich. Wir können sie neu erzählen — und damit unsere Möglichkeiten erweitern.'
+        : 'Stories about ourselves are not unchangeable. We can retell them — and thereby expand our possibilities.',
+      fachgebiet: currentLang === 'de'
+        ? 'Narrative Therapie (White & Epston), Poststrukturalismus, Familiennarrative und Identitätsbildung'
+        : 'Narrative therapy (White & Epston), poststructuralism, family narratives and identity formation'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-CHRONiK wird erkundet...' : 'Exploring your family chronicle...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: chronikPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const chronikPerspDefs = [
+      { id: 'transgenerational', icon: 'scroll',  color: '#9A5A3A', de: 'Transgenerationale Therapeutin', en: 'Transgenerational Therapist' },
+      { id: 'systemik',          icon: 'network', color: '#8A4A2A', de: 'Familiensystemikerin',            en: 'Family Systems Expert'       },
+      { id: 'resilienz',         icon: 'shield',  color: '#7A5A40', de: 'Resilienz-Forscherin',            en: 'Resilience Researcher'       },
+      { id: 'narrativ',          icon: 'book',    color: '#6A4A30', de: 'Narrative Therapeutin',           en: 'Narrative Therapist'         }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = chronikPerspDefs[i] || chronikPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'WAS DiE GESCHiCHTE TRÄGT' : 'WHAT HISTORY CARRIES',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#C4622D',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Keine Schuldzuweisung' : 'No blame'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Würde für alle Generationen' : 'Dignity for all generations'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['transgenerational', 'systemik', 'resilienz', 'narrativ'],
       lang:         currentLang,
       time:         Date.now()
     });
