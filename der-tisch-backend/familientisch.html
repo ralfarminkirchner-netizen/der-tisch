@@ -300,6 +300,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .chronik-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .chronik-send-btn:hover{opacity:.88}
 .chronik-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-RiTUAL MODE */
+.ritual-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.ritual-intro{background:linear-gradient(135deg,rgba(200,120,60,0.1) 0%,rgba(180,100,40,0.04) 100%);border:1px solid rgba(200,120,60,0.25);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.ritual-intro strong{color:#E07B3A}
+.ritual-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.ritual-input:focus{border-color:#E07B3A;box-shadow:0 0 0 2px rgba(224,123,58,0.12)}
+.ritual-input::placeholder{color:var(--muted)}
+.ritual-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.ritual-send-btn{background:#E07B3A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.ritual-send-btn:hover{opacity:.88}
+.ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -512,6 +524,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-chronik" onclick="setMode('chronik')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>
       FAMiLiEN-CHRONiK
+    </button>
+    <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/></svg>
+      FAMiLiEN-RiTUAL
     </button>
   </div>
 </section>
@@ -978,6 +994,50 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="chronikResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-RiTUAL MODE ==================== -->
+<div class="mode-section" id="mode-ritual">
+  <div class="ritual-wrap">
+
+    <div class="ritual-intro">
+      <strong>FAMiLiEN-RiTUAL</strong> — Rituale sind das unsichtbare Bindegewebe der Familie. Sie schenken Orientierung, stiften Zugehörigkeit und markieren, was wichtig ist. Vier Stimmen begleiten euch: die <strong style="color:#E07B3A">Ritual-Anthropologin</strong> versteht Rituale über Kulturen hinweg, die <strong style="color:#D06A2A">Entwicklungs-Begleiterin</strong> kennt die Bedürfnisse in jeder Lebensphase, die <strong style="color:#C05020">System-Hüterin</strong> sieht die stabilisierende Kraft — und die <strong style="color:#F09050">Kreativ-Gestalterin</strong> hilft, neue Rituale mit Seele zu entwerfen.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Häufige Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="ritualChips">
+      <button class="chip" onclick="useRitualChip(this)">Wir haben keine gemeinsamen Rituale mehr — der Alltag hat sie verschluckt.</button>
+      <button class="chip" onclick="useRitualChip(this)">Unser Abendritual funktioniert nicht mehr, seit die Kinder älter werden.</button>
+      <button class="chip" onclick="useRitualChip(this)">Wir wollen ein Ritual für schwierige Zeiten — etwas, das uns zusammenhält.</button>
+      <button class="chip" onclick="useRitualChip(this)">Ein Familienmitglied ist gestorben — wie ehren wir seine Erinnerung?</button>
+      <button class="chip" onclick="useRitualChip(this)">Unsere Patchwork-Familie braucht eigene neue Rituale.</button>
+      <button class="chip" onclick="useRitualChip(this)">Wie gestalten wir Übergänge — Schulstart, Pubertät, Auszug — bedeutsam?</button>
+      <button class="chip" onclick="useRitualChip(this)">Wir wollen Werte in unsere Familienrituale einweben.</button>
+      <button class="chip" onclick="useRitualChip(this)">Welche Rituale aus meiner Herkunftsfamilie möchte ich weitergeben — welche nicht?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was beschäftigt euch rund um eure Familienrituale?</div>
+    <textarea class="ritual-input" id="ritualInput" placeholder="Beschreibt ein bestehendes Ritual, das ihr verstehen oder verändern möchtet — oder eine Situation, für die ihr ein neues Ritual braucht. Was soll das Ritual bedeuten, feiern, heilen oder stärken?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="ritualFamilienname" type="text" placeholder="Familienname (optional, z.B. Familie Müller)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-ritual-fokus="erkunden" onclick="setRitualFokus(this)">Erkunden</button>
+        <button class="ctrl-btn" data-ritual-fokus="gestalten" onclick="setRitualFokus(this)">Neu gestalten</button>
+        <button class="ctrl-btn" data-ritual-fokus="uebergang" onclick="setRitualFokus(this)">Übergang</button>
+      </div>
+    </div>
+
+    <div class="ritual-send-row">
+      <button class="ritual-send-btn" id="ritualSendBtn" onclick="sendRitual()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/></svg>
+        RiTUAL ERKUNDEN
+      </button>
+    </div>
+
+    <div id="ritualResults"></div>
 
   </div>
 </div>
@@ -3362,6 +3422,180 @@ async function sendChronik() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['transgenerational', 'systemik', 'resilienz', 'narrativ'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-RiTUAL MODE ────────────────────────────────────────────────────
+
+let ritualFokus = 'erkunden';
+
+function setRitualFokus(btn) {
+  ritualFokus = btn.dataset.ritualFokus;
+  document.querySelectorAll('[data-ritual-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useRitualChip(el) {
+  document.getElementById('ritualInput').value = el.textContent.trim();
+  document.getElementById('ritualInput').focus();
+}
+
+async function sendRitual() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('ritualInput');
+  const resultsDiv = document.getElementById('ritualResults');
+  const sendBtn    = document.getElementById('ritualSendBtn');
+  const famName    = (document.getElementById('ritualFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    erkunden:   currentLang === 'de'
+      ? 'Welche tiefere Bedeutung, systemische Funktion und kulturelle Wurzel trägt dieses bestehende Familienritual?'
+      : 'What deeper meaning, systemic function, and cultural root does this existing family ritual carry?',
+    gestalten:  currentLang === 'de'
+      ? 'Wie kann ein neues, bedeutsames Familienritual entstehen, das zu dieser Familie passt — mit Seele, Wiederholbarkeit und echter Wirkung?'
+      : 'How can a new, meaningful family ritual be created that fits this family — with soul, repeatability, and real impact?',
+    uebergang:  currentLang === 'de'
+      ? 'Wie kann ein Übergangsritual diesen Lebensschritt würdigen, das Alte ehrenvoll abschließen und das Neue willkommen heißen?'
+      : 'How can a transition ritual honor this life step, close the old honorably, and welcome the new?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[ritualFokus]} Kontext: ${text}`;
+
+  const ritualPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Ritual-Anthropologin' : 'Ritual Anthropologist',
+      position: currentLang === 'de'
+        ? 'Analysiere dieses Familienritual oder -bedürfnis aus anthropologischer Sicht: Welche universellen menschlichen Bedürfnisse spiegelt es wider? Wie erfüllen Rituale in verschiedenen Kulturen ähnliche Funktionen — Zugehörigkeit, Übergang, Erinnerung, Bedeutung? Was trägt dieses Ritual kulturell und historisch?'
+        : 'Analyze this family ritual or need from an anthropological lens: What universal human needs does it reflect? How do rituals across cultures fulfill similar functions — belonging, transition, memory, meaning? What does this ritual carry culturally and historically?',
+      grundhaltung: currentLang === 'de'
+        ? 'Rituale sind so alt wie die Menschheit. Sie erfüllen tiefe soziale und psychologische Bedürfnisse — unabhängig von Kultur, Zeit und Ort.'
+        : 'Rituals are as old as humanity. They fulfill deep social and psychological needs — regardless of culture, time, and place.',
+      fachgebiet: currentLang === 'de'
+        ? 'Kulturanthropologie, Ritualforschung (Van Gennep, Turner), Ethnologie, vergleichende Religionswissenschaft'
+        : 'Cultural anthropology, ritual studies (Van Gennep, Turner), ethnology, comparative religion'
+    },
+    {
+      name: currentLang === 'de' ? 'Entwicklungs-Begleiterin' : 'Development Companion',
+      position: currentLang === 'de'
+        ? 'Betrachte dieses Ritual aus entwicklungspsychologischer Sicht: Welche Bedürfnisse haben Familienmitglieder in dieser Lebensphase — und wie kann das Ritual darauf eingehen? Was braucht ein Kleinkind, was ein Teenager, was Erwachsene, was ältere Menschen an Ritualen? Wie verändern sich Rituale sinnvollerweise mit dem Alter?'
+        : 'View this ritual through a developmental lens: What do family members need at this life stage — and how can the ritual respond? What do toddlers, teenagers, adults, elderly people each need from rituals? How do rituals meaningfully change with age?',
+      grundhaltung: currentLang === 'de'
+        ? 'Entwicklung verläuft in Phasen mit spezifischen Bedürfnissen. Rituale, die mit dem Alter mitwachsen, bleiben lebendig und wirksam.'
+        : 'Development proceeds in phases with specific needs. Rituals that grow with age stay alive and effective.',
+      fachgebiet: currentLang === 'de'
+        ? 'Entwicklungspsychologie (Erikson, Piaget), Bindungstheorie, Familienentwicklungsphasen, Pädagogik'
+        : 'Developmental psychology (Erikson, Piaget), attachment theory, family development stages, education'
+    },
+    {
+      name: currentLang === 'de' ? 'System-Hüterin' : 'Systems Guardian',
+      position: currentLang === 'de'
+        ? 'Analysiere die systemische Funktion dieses Rituals: Welche Rolle spielt es im Familiensystem — als Stabilisator, Grenzmarkierer, Zugehörigkeitssignal oder Spannungsventil? Welche unsichtbaren Loyalitäten oder transgenerationalen Aufträge trägt es? Und was passiert im System, wenn dieses Ritual wegfällt oder sich verändert?'
+        : 'Analyze the systemic function of this ritual: What role does it play in the family system — as stabilizer, boundary marker, belonging signal, or pressure valve? What invisible loyalties or transgenerational mandates does it carry? And what happens in the system when this ritual disappears or changes?',
+      grundhaltung: currentLang === 'de'
+        ? 'Rituale sind systemische Anker. Sie regulieren Grenzen, stärken Zugehörigkeit und halten das Gleichgewicht im Familiensystem aufrecht.'
+        : 'Rituals are systemic anchors. They regulate boundaries, strengthen belonging, and maintain equilibrium in the family system.',
+      fachgebiet: currentLang === 'de'
+        ? 'Systemische Familientherapie, Familienrituale (Imber-Black & Roberts), Strukturelle Familientherapie (Minuchin)'
+        : 'Systemic family therapy, family rituals (Imber-Black & Roberts), structural family therapy (Minuchin)'
+    },
+    {
+      name: currentLang === 'de' ? 'Kreativ-Gestalterin' : 'Creative Designer',
+      position: currentLang === 'de'
+        ? 'Helfe, ein Ritual zu gestalten — oder ein bestehendes lebendig zu halten. Was macht ein gutes Ritual aus? Welche Elemente — Objekte, Worte, Gesten, Orte, Zeiten — können bedeutsam eingebunden werden? Welche konkreten Ideen passen zu dieser Familie, ihren Werten und ihrer Geschichte? Rituale brauchen Ästhetik, Wiederholung und echte Beteiligung aller.'
+        : 'Help design a ritual — or keep an existing one alive. What makes a good ritual? What elements — objects, words, gestures, places, times — can be woven in meaningfully? What concrete ideas fit this family, their values, and their story? Rituals need aesthetics, repetition, and genuine participation from everyone.',
+      grundhaltung: currentLang === 'de'
+        ? 'Rituale sind keine Vorschriften — sie sind Erfindungen der Familie. Das Schönste ist ein Ritual, das wirklich zu euch gehört.'
+        : 'Rituals are not prescriptions — they are the family\'s own inventions. The best ritual is one that truly belongs to you.',
+      fachgebiet: currentLang === 'de'
+        ? 'Ritualdesign, Narrative Therapie, Kreativtherapie, Familiencoaching, Positive Psychologie'
+        : 'Ritual design, narrative therapy, creative therapy, family coaching, positive psychology'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-RiTUAL wird erkundet...' : 'Exploring your family ritual...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: ritualPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const ritualPerspDefs = [
+      { id: 'ritual-anthropologin',   icon: 'scroll',   color: '#E07B3A', de: 'Ritual-Anthropologin',   en: 'Ritual Anthropologist'  },
+      { id: 'entwicklungs-begleit',   icon: 'seedling', color: '#D06A2A', de: 'Entwicklungs-Begleiterin', en: 'Development Companion' },
+      { id: 'system-hueterin',        icon: 'network',  color: '#C05020', de: 'System-Hüterin',          en: 'Systems Guardian'       },
+      { id: 'kreativ-gestalterin',    icon: 'star',     color: '#F09050', de: 'Kreativ-Gestalterin',     en: 'Creative Designer'      }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = ritualPerspDefs[i] || ritualPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER RiTUAL-KOMPASS' : 'YOUR RITUAL COMPASS',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#E07B3A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2"/></svg> ${currentLang === 'de' ? 'Rituale gehören euch' : 'Your rituals belong to you'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Keine Vorschriften — Einladungen' : 'No prescriptions — invitations'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['ritual-anthropologin', 'entwicklungs-begleit', 'system-hueterin', 'kreativ-gestalterin'],
       lang:         currentLang,
       time:         Date.now()
     });
