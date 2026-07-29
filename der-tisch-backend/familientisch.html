@@ -300,6 +300,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .chronik-send-btn{background:var(--accent);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .chronik-send-btn:hover{opacity:.88}
 .chronik-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-KOMPASS MODE */
+.kompass-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.kompass-intro{background:linear-gradient(135deg,rgba(62,140,106,0.14) 0%,rgba(42,100,76,0.07) 100%);border:1px solid rgba(62,140,106,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.kompass-intro strong{color:#3E8C6A}
+.kompass-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.kompass-input:focus{border-color:#3E8C6A;box-shadow:0 0 0 2px rgba(62,140,106,0.12)}
+.kompass-input::placeholder{color:var(--muted)}
+.kompass-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.kompass-send-btn{background:#3E8C6A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.kompass-send-btn:hover{opacity:.88}
+.kompass-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -512,6 +524,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-chronik" onclick="setMode('chronik')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4v14H3a2 2 0 010-4h4"/><path d="M17 3H7v10h10a2 2 0 000-4H7"/></svg>
       FAMiLiEN-CHRONiK
+    </button>
+    <button class="mode-tab" id="tab-kompass" onclick="setMode('kompass')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/><polygon points="10 16 11.5 11 10 9.5 8.5 11" fill="currentColor" stroke="none" opacity="0.35"/></svg>
+      FAMiLiEN-KOMPASS
     </button>
   </div>
 </section>
@@ -978,6 +994,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="chronikResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-KOMPASS MODE ==================== -->
+<div class="mode-section" id="mode-kompass">
+  <div class="kompass-wrap">
+
+    <div class="kompass-intro">
+      <strong>FAMiLiEN-KOMPASS</strong> — Was orientiert eure Familie durch alle Jahreszeiten des Lebens? Dieser Modus hilft euch, eure Kern-Werte zu erkennen, zu benennen und als lebendigen Kompass für den Alltag, für Entscheidungen und für Spannungen zu nutzen. Vier Stimmen beleuchten, was eure Familie wirklich trägt — sichtbar und unsichtbar, gestern und heute.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="kompassChips">
+      <button class="chip" onclick="useKompassChip(this)">Uns ist Zusammenhalt wichtig — aber im Alltag leben wir das kaum.</button>
+      <button class="chip" onclick="useKompassChip(this)">Fairness ist uns sehr wichtig, aber wir streiten oft, was das bedeutet.</button>
+      <button class="chip" onclick="useKompassChip(this)">Wir wollen, dass unsere Kinder sicher sind und sie selbst sein können.</button>
+      <button class="chip" onclick="useKompassChip(this)">Ehrlichkeit ist unser Wert — aber manchmal schmerzt sie.</button>
+      <button class="chip" onclick="useKompassChip(this)">Leistung und Fürsorge scheinen sich bei uns zu widersprechen.</button>
+      <button class="chip" onclick="useKompassChip(this)">Wir fragen uns, welche Werte wir wirklich vorleben und welche nur in der Theorie existieren.</button>
+      <button class="chip" onclick="useKompassChip(this)">Was aus unserer Familiengeschichte wollen wir als Wert weitertragen?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was orientiert eure Familie?</div>
+    <textarea class="kompass-input" id="kompassInput" placeholder="Beschreibt, welche Werte euch als Familie wichtig sind — oder erzählt von einer Situation, in der ihr gespürt habt, was euch wirklich leitet. Was soll euren Alltag, eure Entscheidungen und eure Zukunft orientieren?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="kompassFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-kompass-fokus="werte" onclick="setKompassFokus(this)">Werte</button>
+        <button class="ctrl-btn" data-kompass-fokus="alltag" onclick="setKompassFokus(this)">Alltag</button>
+        <button class="ctrl-btn" data-kompass-fokus="entscheidung" onclick="setKompassFokus(this)">Entscheidungen</button>
+      </div>
+    </div>
+
+    <div class="kompass-send-row">
+      <button class="kompass-send-btn" id="kompassSendBtn" onclick="sendKompass()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/><polygon points="10 16 11.5 11 10 9.5 8.5 11" fill="currentColor" stroke="none" opacity="0.4"/></svg>
+        KOMPASS ERKUNDEN
+      </button>
+    </div>
+
+    <div id="kompassResults"></div>
 
   </div>
 </div>
@@ -3362,6 +3421,180 @@ async function sendChronik() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['transgenerational', 'systemik', 'resilienz', 'narrativ'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-KOMPASS MODE ────────────────────────────────────────────────────
+
+let kompassFokus = 'werte';
+
+function setKompassFokus(btn) {
+  kompassFokus = btn.dataset.kompassFokus;
+  document.querySelectorAll('[data-kompass-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useKompassChip(el) {
+  document.getElementById('kompassInput').value = el.textContent.trim();
+  document.getElementById('kompassInput').focus();
+}
+
+async function sendKompass() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('kompassInput');
+  const resultsDiv = document.getElementById('kompassResults');
+  const sendBtn    = document.getElementById('kompassSendBtn');
+  const famName    = (document.getElementById('kompassFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    werte: currentLang === 'de'
+      ? 'Welche Kern-Werte tragen diese Familie — bewusst und unbewusst? Was hat in dieser Familie immer gegolten, auch wenn es nie explizit gesagt wurde?'
+      : 'What core values carry this family — consciously and unconsciously? What has always held true in this family, even when it was never explicitly stated?',
+    alltag: currentLang === 'de'
+      ? 'Wie leben sich diese Werte im Familienalltag? Wo zeigen sie sich, wo fehlen sie — und was würde sich verändern, wenn sie bewusster gelebt würden?'
+      : 'How do these values live in the family\'s everyday life? Where do they show up, where are they missing — and what would change if they were lived more consciously?',
+    entscheidung: currentLang === 'de'
+      ? 'Wie kann dieser Familien-Kompass bei wichtigen Entscheidungen helfen? Was würde diese Familie entscheiden, wenn sie vollständig nach ihren Kern-Werten handelte?'
+      : 'How can this family compass help with important decisions? What would this family decide if it acted fully according to its core values?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[kompassFokus]} Kontext: ${text}`;
+
+  const kompassPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Werte-Hüterin' : 'Values Guardian',
+      position: currentLang === 'de'
+        ? 'Erkenne und benenne die echten Kern-Werte dieser Familie — nicht die, die man gerne hätte, sondern die, die wirklich gelebt werden. Was hat diese Familie durch schwierige Zeiten getragen? Was kommt immer wieder, auch ohne Absprache? Welcher unsichtbare Vertrag gilt zwischen den Familienmitgliedern?'
+        : 'Recognize and name the real core values of this family — not those one would like to have, but those actually lived. What has carried this family through difficult times? What keeps showing up even without agreement? What invisible contract exists between family members?',
+      grundhaltung: currentLang === 'de'
+        ? 'Werte sind nicht was wir sagen, sondern was wir tun — besonders wenn niemand zuschaut und es wirklich darauf ankommt.'
+        : 'Values are not what we say, but what we do — especially when no one is watching and it really matters.',
+      fachgebiet: currentLang === 'de'
+        ? 'Werte-Psychologie (Schwartz), Narrative Ethik, Familienidentität, implizite Überzeugungen'
+        : 'Values psychology (Schwartz), narrative ethics, family identity, implicit beliefs'
+    },
+    {
+      name: currentLang === 'de' ? 'Alltags-Weisheit' : 'Everyday Wisdom',
+      position: currentLang === 'de'
+        ? 'Wie zeigen sich diese Werte im Kleinen des Familienalltags — in Ritualen, Routinen, im Umgang miteinander? Wo werden Werte gelebt, ohne dass es jemand benennt? Und wo klaffen Wert und Wirklichkeit auseinander — nicht als Vorwurf, sondern als Einladung zur Aufmerksamkeit und zu kleinen Veränderungen?'
+        : 'How do these values show up in the small moments of family daily life — in rituals, routines, in how you treat each other? Where are values lived without anyone naming them? And where do value and reality diverge — not as accusation, but as an invitation to attention and small changes?',
+      grundhaltung: currentLang === 'de'
+        ? 'Große Werte leben in kleinen Momenten: im Zuhören, im Teilen, im Durchhalten, im Lachen. Der Kompass zeigt sich im Alltag, nicht nur in großen Entscheidungen.'
+        : 'Great values live in small moments: in listening, in sharing, in persevering, in laughing. The compass shows itself in daily life, not only in big decisions.',
+      fachgebiet: currentLang === 'de'
+        ? 'Positive Psychologie, Familienroutinen und Rituale, achtsame Elternschaft, Alltagspsychologie'
+        : 'Positive psychology, family routines and rituals, mindful parenting, everyday psychology'
+    },
+    {
+      name: currentLang === 'de' ? 'Spannungs-Navigatorin' : 'Tension Navigator',
+      position: currentLang === 'de'
+        ? 'Wo geraten Werte in dieser Familie in Konflikt miteinander — Freiheit gegen Zugehörigkeit, Leistung gegen Fürsorge, Ehrlichkeit gegen Schutz? Wie kann der Familien-Kompass helfen, wenn Werte spannen statt tragen? Was braucht es, damit alle Familienmitglieder im gleichen Werteraum wohnen können — ohne dass jemand sich verleugnen muss?'
+        : 'Where do values in this family come into conflict — freedom vs. belonging, achievement vs. care, honesty vs. protection? How can the family compass help when values create tension rather than carry? What is needed so all family members can inhabit the same value space — without anyone having to deny themselves?',
+      grundhaltung: currentLang === 'de'
+        ? 'Werte-Konflikte sind keine Fehler — sie sind Einladungen, tiefer zu verstehen, was jedes Mitglied trägt und braucht. Ein echter Kompass zeigt auch an, wo der Boden uneben ist.'
+        : 'Value conflicts are not mistakes — they are invitations to understand more deeply what each member carries and needs. A real compass also shows where the ground is uneven.',
+      fachgebiet: currentLang === 'de'
+        ? 'Werte-Konflikte, Mediation, systemische Beratung, Eltern-Kind-Dialoge, Ich-Du-Beziehungen (Buber)'
+        : 'Value conflicts, mediation, systemic counseling, parent-child dialogues, I-Thou relationships (Buber)'
+    },
+    {
+      name: currentLang === 'de' ? 'Generationen-Stimme' : 'Generational Voice',
+      position: currentLang === 'de'
+        ? 'Welche Werte wurden in dieser Familie weitergegeben — aus der Familiengeschichte, von Großeltern und Vorfahren, aus Kultur und Herkunft? Was davon trägt noch heute, was darf sich wandeln? Welche neuen Werte schreibt diese Generation bewusst in den Familien-Kompass? Was sollen die Kinder von heute als Erwachsene von morgen tragen und weitergeben?'
+        : 'What values were passed down in this family — from family history, from grandparents and ancestors, from culture and origin? What still carries today, what may transform? What new values is this generation consciously writing into the family compass? What should the children of today carry and pass on as the adults of tomorrow?',
+      grundhaltung: currentLang === 'de'
+        ? 'Ein Familien-Kompass ist nie nur für heute — er ist ein Geschenk an die nächste Generation. Was wir bewusst halten, können wir bewusst weitergeben.'
+        : 'A family compass is never only for today — it is a gift to the next generation. What we hold consciously, we can pass on consciously.',
+      fachgebiet: currentLang === 'de'
+        ? 'Intergenerationale Werte-Transmission, Kulturpsychologie, Familienidentität, Erziehungsziele, Zukunftsethik'
+        : 'Intergenerational values transmission, cultural psychology, family identity, parenting goals, future ethics'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-KOMPASS wird erkundet...' : 'Exploring your family compass...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: kompassPerspektiven,
+      stil:                'achtsam',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const kompassPerspDefs = [
+      { id: 'werte-hueterin',        icon: 'compass',  color: '#3E8C6A', de: 'Werte-Hüterin',          en: 'Values Guardian'   },
+      { id: 'alltags-weisheit',      icon: 'seedling', color: '#2E7A5A', de: 'Alltags-Weisheit',        en: 'Everyday Wisdom'   },
+      { id: 'spannungs-navigatorin', icon: 'shield',   color: '#4A9A7A', de: 'Spannungs-Navigatorin',   en: 'Tension Navigator' },
+      { id: 'generationen-stimme',   icon: 'scroll',   color: '#358060', de: 'Generationen-Stimme',     en: 'Generational Voice'}
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = kompassPerspDefs[i] || kompassPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER FAMiLiEN-KOMPASS' : 'YOUR FAMILY COMPASS',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#3E8C6A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/></svg> ${currentLang === 'de' ? 'Alle Werte willkommen' : 'All values welcome'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Keine richtigen oder falschen Werte' : 'No right or wrong values'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['werte-hueterin', 'alltags-weisheit', 'spannungs-navigatorin', 'generationen-stimme'],
       lang:         currentLang,
       time:         Date.now()
     });
