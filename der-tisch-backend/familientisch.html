@@ -322,6 +322,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L10 18M6 6l4-4 4 4"/></svg>
       <span id="toneBtnLabel">achtsam</span>
     </button>
+    <button class="nav-btn" onclick="exportSession()" id="exportBtn" title="Ergebnisse als Textdatei herunterladen">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/><polyline points="8 10 12 14 16 10"/><line x1="12" y1="14" x2="12" y2="3"/></svg>
+      Export
+    </button>
     <button class="nav-btn" onclick="openHistory()">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 13"/></svg>
       Verlauf
@@ -1715,6 +1719,7 @@ function setupOrbitControls() {
     }
   });
   aufCanvas.addEventListener('touchmove', e => {
+    if (isDraggingFigure) return;
     if (e.touches.length === 1) {
       theta -= (e.touches[0].clientX - lastTouchX) * 0.01;
       phi = Math.max(0.3, Math.min(Math.PI / 2, phi + (e.touches[0].clientY - lastTouchY) * 0.01));
@@ -1786,6 +1791,65 @@ function setupFigureDrag() {
   });
 
   window.addEventListener('mouseup', () => {
+    if (isDraggingFigure) {
+      isDraggingFigure = false;
+      dragFigure = null;
+    }
+  });
+
+  // Touch drag for figures
+  const touchTablePlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+  aufCanvas.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = figures.flatMap(f => [f.body, f.head]);
+    const hits = raycaster.intersectObjects(meshes);
+    if (hits.length > 0) {
+      const fig = figures.find(f => f.body === hits[0].object || f.head === hits[0].object);
+      if (fig) {
+        e.preventDefault();
+        autoRotate = false;
+        if (connectMode) {
+          handleConnectClick(fig);
+        } else {
+          selectFigure(fig);
+          dragFigure = fig;
+          isDraggingFigure = true;
+        }
+      }
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchmove', e => {
+    if (!isDraggingFigure || !dragFigure || e.touches.length !== 1) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = aufCanvas.getBoundingClientRect();
+    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const pt = new THREE.Vector3();
+    raycaster.ray.intersectPlane(touchTablePlane, pt);
+    if (pt) {
+      const dist = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+      if (dist > 3.6) {
+        const ang = Math.atan2(pt.z, pt.x);
+        pt.x = Math.cos(ang) * 3.6;
+        pt.z = Math.sin(ang) * 3.6;
+      }
+      dragFigure.group.position.x = pt.x;
+      dragFigure.group.position.z = pt.z;
+      updateRelationshipLines();
+      updateLabels();
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
     if (isDraggingFigure) {
       isDraggingFigure = false;
       dragFigure = null;
@@ -2186,6 +2250,50 @@ async function analyseAufstellung() {
 
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ============================================================
+// EXPORT SESSION
+// ============================================================
+function exportSession() {
+  const activeSection = document.querySelector('.mode-section.active');
+  if (!activeSection) { showToast('Keine Ergebnisse zum Exportieren.'); return; }
+
+  const cards = activeSection.querySelectorAll('.result-card');
+  if (cards.length === 0) { showToast('Noch keine Ergebnisse — bitte erst eine Frage stellen.'); return; }
+
+  const lines = ['FAMiLiEN TiSCH — Sitzungsprotokoll', '='.repeat(40), ''];
+  const now = new Date();
+  lines.push('Datum: ' + now.toLocaleDateString('de-DE') + ' ' + now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }));
+  lines.push('Modus: ' + (document.querySelector('.mode-tab.active')?.textContent?.trim() || currentMode));
+  lines.push('');
+
+  cards.forEach(card => {
+    const title = card.querySelector('.result-card-title')?.textContent?.trim();
+    const badge = card.querySelector('.result-card-badge')?.textContent?.trim();
+    const body  = card.querySelector('.streaming-text')?.textContent?.trim()
+                  || card.querySelector('.result-card-body')?.textContent?.trim();
+    const listItems = [...card.querySelectorAll('.friction-list li')].map(li => '  • ' + li.textContent.trim());
+
+    if (!title) return;
+    lines.push('── ' + title.toUpperCase() + (badge ? ' [' + badge + ']' : '') + ' ──');
+    if (body && body.length > 0) lines.push(body);
+    if (listItems.length > 0) lines.push(...listItems);
+    lines.push('');
+  });
+
+  lines.push('─'.repeat(40));
+  lines.push('Erstellt mit FAMiLiEN TiSCH · https://der-tisch-production.up.railway.app/familientisch.html');
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'familien-tisch-' + now.toISOString().slice(0,10) + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+  showToast('Sitzungsprotokoll wird heruntergeladen.');
 }
 
 // ============================================================
