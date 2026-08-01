@@ -312,6 +312,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .kompass-send-btn{background:#3E8C6A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .kompass-send-btn:hover{opacity:.88}
 .kompass-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-RiTUALE MODE */
+.ritual-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.ritual-intro{background:linear-gradient(135deg,rgba(176,122,48,0.12) 0%,rgba(196,146,42,0.06) 100%);border:1px solid rgba(176,122,48,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.ritual-intro strong{color:#B07A30}
+.ritual-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.ritual-input:focus{border-color:#B07A30;box-shadow:0 0 0 2px rgba(176,122,48,0.12)}
+.ritual-input::placeholder{color:var(--muted)}
+.ritual-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.ritual-send-btn{background:#B07A30;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.ritual-send-btn:hover{opacity:.88}
+.ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -528,6 +540,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-kompass" onclick="setMode('kompass')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polygon points="10 4 11.5 9 10 10.5 8.5 9" fill="currentColor" stroke="none"/><polygon points="10 16 11.5 11 10 9.5 8.5 11" fill="currentColor" stroke="none" opacity="0.35"/></svg>
       FAMiLiEN-KOMPASS
+    </button>
+    <button class="mode-tab" id="tab-rituale" onclick="setMode('rituale')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
+      FAMiLiEN-RiTUALE
     </button>
   </div>
 </section>
@@ -1037,6 +1053,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="kompassResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-RiTUALE MODE ==================== -->
+<div class="mode-section" id="mode-rituale">
+  <div class="ritual-wrap">
+
+    <div class="ritual-intro">
+      <strong>FAMiLiEN-RiTUALE</strong> — Was verbindet eure Familie jeden Tag, jedes Jahr, in jedem Lebensabschnitt? Rituale und Traditionen sind der Herzschlag einer Familie — sie schaffen Zugehörigkeit, Kontinuität und Sinn. Vier Stimmen helfen euch, bewusst Rituale zu gestalten: <strong style="color:#B07A30">Alltags-Architektin</strong> für tägliche Rhythmen, <strong style="color:#C4922A">Jahres-Gestalterin</strong> für Feste und Traditionen, <strong style="color:#9A6A20">Übergangs-Begleiterin</strong> für Lebensschwellen — und die <strong style="color:#D4A030">Erinnerungs-Weberin</strong>, die aus Momenten Geschichte macht.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="ritualeChips">
+      <button class="chip" onclick="useRitualChip(this)">Wir haben kaum gemeinsame Rituale — das soll sich ändern.</button>
+      <button class="chip" onclick="useRitualChip(this)">Wie kann ich Abendrituale einführen, die meinen Kindern gut tun?</button>
+      <button class="chip" onclick="useRitualChip(this)">Wir möchten Weihnachten / Geburtstage bedeutsamer gestalten.</button>
+      <button class="chip" onclick="useRitualChip(this)">Unser Kind kommt in die Schule — wie begleiten wir diesen Übergang?</button>
+      <button class="chip" onclick="useRitualChip(this)">Nach der Trennung — welche Rituale geben unseren Kindern Stabilität?</button>
+      <button class="chip" onclick="useRitualChip(this)">Wir wollen eine Familientradition schaffen, die über Generationen lebt.</button>
+      <button class="chip" onclick="useRitualChip(this)">Wie halten wir als Patchwork-Familie zusammen, was uns verbindet?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was wollt ihr als Familie gestalten?</div>
+    <textarea class="ritual-input" id="ritualInput" placeholder="Erzählt, welchen Bereich des Familienlebens ihr mit Ritualen bereichern möchtet — ob Alltag, besondere Anlässe, ein bevorstehender Übergang, oder wie ihr Erinnerungen schafft und Familiengeschichten lebendig haltet..." rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="ritualeFamilienname" type="text" placeholder="Familienname (optional, z.B. Familie Müller)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-ritual-fokus="alltag" onclick="setRitualFokus(this)">Alltag</button>
+        <button class="ctrl-btn" data-ritual-fokus="jahreskreis" onclick="setRitualFokus(this)">Jahreskreis</button>
+        <button class="ctrl-btn" data-ritual-fokus="uebergaenge" onclick="setRitualFokus(this)">Übergänge</button>
+      </div>
+    </div>
+
+    <div class="ritual-send-row">
+      <button class="ritual-send-btn" id="ritualeSendBtn" onclick="sendRituale()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg>
+        RiTUALE GESTALTEN
+      </button>
+    </div>
+
+    <div id="ritualeResults"></div>
 
   </div>
 </div>
@@ -3595,6 +3654,181 @@ async function sendKompass() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['werte-hueterin', 'alltags-weisheit', 'spannungs-navigatorin', 'generationen-stimme'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ============================================================
+// FAMiLiEN-RiTUALE
+// ============================================================
+let ritualFokus = 'alltag';
+
+function setRitualFokus(btn) {
+  ritualFokus = btn.dataset.ritualFokus;
+  document.querySelectorAll('[data-ritual-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useRitualChip(el) {
+  document.getElementById('ritualInput').value = el.textContent.trim();
+  document.getElementById('ritualInput').focus();
+}
+
+async function sendRituale() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('ritualInput');
+  const resultsDiv = document.getElementById('ritualeResults');
+  const sendBtn    = document.getElementById('ritualeSendBtn');
+  const famName    = (document.getElementById('ritualeFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    alltag: currentLang === 'de'
+      ? 'Welche kleinen, wiederkehrenden Rituale können den Familienalltag tragen und verbinden — morgens, abends, beim Essen, beim Abschied und beim Wiedersehen?'
+      : 'What small recurring rituals can carry and connect the family\'s daily life — in the morning, evening, at meals, at parting and reunion?',
+    jahreskreis: currentLang === 'de'
+      ? 'Welche Feste, Feiern, jahreszeitlichen Rituale und Markierungen im Jahreskreis können dieser Familie Sinn, Gemeinschaft und bleibende Erinnerungen schenken?'
+      : 'What festivals, celebrations, seasonal rituals and annual milestones can give this family meaning, community and lasting memories?',
+    uebergaenge: currentLang === 'de'
+      ? 'Wie können Rituale diese Familie durch Lebensübergänge begleiten — neue Lebensabschnitte, Verluste, Wachstum, Abschiede und Neuanfänge?'
+      : 'How can rituals accompany this family through life transitions — new stages, losses, growth, farewells and new beginnings?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[ritualFokus]} Kontext: ${text}`;
+
+  const ritualPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Alltags-Architektin' : 'Daily Life Architect',
+      position: currentLang === 'de'
+        ? 'Entwirf konkrete, alltagstaugliche Rituale für diese Familie — einfach, wiederholbar, sinnstiftend. Denke in kleinen Gesten: Wie beginnt der Morgen? Wie endet der Tag? Welche kurzen Momente können zu Ankern werden, die Verbindung und Sicherheit schenken? Sei konkret, praktisch und realistisch für den Familienalltag.'
+        : 'Design concrete, everyday rituals for this family — simple, repeatable, meaningful. Think in small gestures: How does the morning begin? How does the day end? What brief moments can become anchors that offer connection and safety? Be concrete, practical and realistic for family life.',
+      grundhaltung: currentLang === 'de'
+        ? 'Rituale müssen nicht groß sein — sie müssen zuverlässig sein. Ein kleines, täglich gelebtes Ritual verbindet mehr als ein großes, selten vollzogenes.'
+        : 'Rituals need not be grand — they must be reliable. A small daily ritual connects more than a grand one seldom performed.',
+      fachgebiet: currentLang === 'de'
+        ? 'Familienroutinen, Habit-Forschung (Clear), Alltags-Psychologie, achtsame Elternschaft, Tagesstruktur'
+        : 'Family routines, habit research (Clear), everyday psychology, mindful parenting, daily structure'
+    },
+    {
+      name: currentLang === 'de' ? 'Jahres-Gestalterin' : 'Year Shaper',
+      position: currentLang === 'de'
+        ? 'Schaffe bedeutsame Jahresrituale — Feste, Traditionen, saisonale Bräuche und Markierungen im Jahresverlauf, die dieser Familie Kontinuität, Identität und gemeinsame Geschichte geben. Was sollen Kinder heute erleben, damit sie es als Erwachsene weitertragen? Welche neuen Traditionen kann diese Familie jetzt beginnen?'
+        : 'Create meaningful annual rituals — celebrations, traditions, seasonal customs and milestones that give this family continuity, identity and shared history. What should children experience today so they carry it forward as adults? What new traditions can this family begin now?',
+      grundhaltung: currentLang === 'de'
+        ? 'Jahresrituale sind Ankerpunkte im Strom der Zeit. Sie geben dem Jahr Gestalt und der Familie Identität — eine Geschichte, die weitererzählt wird.'
+        : 'Annual rituals are anchor points in the flow of time. They give the year shape and the family identity — a story that is told and retold.',
+      fachgebiet: currentLang === 'de'
+        ? 'Familientraditionen, Kulturanthropologie, Familienfeste, saisonale Rhythmen, kollektives Gedächtnis'
+        : 'Family traditions, cultural anthropology, family celebrations, seasonal rhythms, collective memory'
+    },
+    {
+      name: currentLang === 'de' ? 'Übergangs-Begleiterin' : 'Transition Companion',
+      position: currentLang === 'de'
+        ? 'Begleite diese Familie durch Schwellen und Übergänge mit Ritualen: Einschulung, Pubertät, Auszug, Verlust, Trennung, Neubeginn, Pensionierung, Geburt. Welche Rituale können helfen, Veränderungen zu würdigen und bewusst zu gestalten? Wie schafft Ritual einen Raum für das, was sich nicht in Worte fassen lässt?'
+        : 'Accompany this family through thresholds and transitions with rituals: starting school, puberty, moving out, loss, separation, new beginnings, retirement, birth. What rituals can help honor changes and shape them consciously? How does ritual create space for what cannot be put into words?',
+      grundhaltung: currentLang === 'de'
+        ? 'Rituale an Übergängen geben das Gefühl: Dieses Moment ist wichtig. Wir sind zusammen. Was war, hat einen Platz. Was kommt, wird begrüßt.'
+        : 'Rituals at transitions give the feeling: This moment matters. We are together. What was has a place. What comes is welcomed.',
+      fachgebiet: currentLang === 'de'
+        ? 'Rites de passage (van Gennep), Trauer- und Verlustbegleitung, systemische Übergänge, Entwicklungspsychologie, Abschiedsrituale'
+        : 'Rites of passage (van Gennep), grief and loss support, systemic transitions, developmental psychology, farewell rituals'
+    },
+    {
+      name: currentLang === 'de' ? 'Erinnerungs-Weberin' : 'Memory Weaver',
+      position: currentLang === 'de'
+        ? 'Hilf dieser Familie, bewusst Erinnerungen zu schaffen und Familiengeschichten lebendig zu halten. Welche Rituale des Erinnerns, Erzählens und Festhaltens können das Familiengefühl über die Zeit bewahren? Wie wird aus gelebten Momenten gemeinsame Geschichte? Was sollen die Kinder von morgen von heute erzählen?'
+        : 'Help this family consciously create memories and keep family stories alive. What rituals of remembering, storytelling and preserving can sustain the family feeling over time? How do lived moments become shared history? What should the children of tomorrow tell about today?',
+      grundhaltung: currentLang === 'de'
+        ? 'Erinnerungen verbinden Generationen. Was als Familie bewusst erlebt und festgehalten wird, gibt Wurzeln — für die Kinder von heute und die Erwachsenen von morgen.'
+        : 'Memories connect generations. What is consciously experienced and recorded as a family gives roots — for the children of today and the adults of tomorrow.',
+      fachgebiet: currentLang === 'de'
+        ? 'Narrationspsychologie, Familiengeschichten, Autobiografisches Gedächtnis, Familienfotoalben, Oral History'
+        : 'Narrative psychology, family stories, autobiographical memory, family photo albums, oral history'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'RiTUALE werden gewoben...' : 'Weaving rituals...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: ritualPerspektiven,
+      stil:                'ressourcen',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const ritualPerspDefs = [
+      { id: 'alltags-architektin',   icon: 'seedling', color: '#B07A30', de: 'Alltags-Architektin',    en: 'Daily Life Architect'  },
+      { id: 'jahres-gestalterin',    icon: 'scroll',   color: '#C4922A', de: 'Jahres-Gestalterin',     en: 'Year Shaper'           },
+      { id: 'uebergangs-begleiterin',icon: 'compass',  color: '#9A6A20', de: 'Übergangs-Begleiterin',  en: 'Transition Companion'  },
+      { id: 'erinnerungs-weberin',   icon: 'heart',    color: '#D4A030', de: 'Erinnerungs-Weberin',    en: 'Memory Weaver'         }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolleStr = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef     = ritualPerspDefs[i] || ritualPerspDefs[0];
+        const card     = createResultCard(pDef, rolleStr || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER RiTUAL-SCHATZ' : 'YOUR RITUAL TREASURE',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#B07A30',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 5.26L20 8.27l-4 3.87.94 5.47L12 14.77l-4.94 2.84.94-5.47-4-3.87 5.91-.91L12 2z"/></svg> ${currentLang === 'de' ? 'Keine Pflicht — euer Tempo' : 'No obligation — your pace'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Jede Familie findet ihren eigenen Rhythmus' : 'Every family finds its own rhythm'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['alltags-architektin', 'jahres-gestalterin', 'uebergangs-begleiterin', 'erinnerungs-weberin'],
       lang:         currentLang,
       time:         Date.now()
     });
