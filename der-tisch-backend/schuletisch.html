@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCHULe TiSCH — Bildung &amp; Lernen aus 10 Perspektiven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #2458A8;
+  --accent-dim: rgba(36,88,168,0.12);
+  --accent-glow: rgba(36,88,168,0.28);
+  --bg: #060810;
+  --surface: #0D1120;
+  --text: #E8EEFF;
+  --muted: #6A78A8;
+  --faint: #141A2E;
+  --border: #141A30;
+  --font: 'Inter', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(6,8,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-svg{flex-shrink:0}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .2s;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.nav-btn svg{flex-shrink:0}
+
+/* HERO */
+.hero{text-align:center;padding:48px 24px 36px;position:relative;overflow:hidden}
+.hero-tagline{font-size:11px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
+.hero-svg-wrap{position:relative;display:flex;align-items:center;justify-content:center;max-width:780px;margin:0 auto}
+.hero-svg-wrap svg.hero-main{width:100%;max-width:760px;height:auto}
+.hero-sub{font-size:13px;color:var(--muted);margin-top:18px;letter-spacing:.06em}
+
+/* MODE TABS */
+.mode-tabs{display:flex;justify-content:center;gap:0;margin:24px auto 0;max-width:520px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.mode-tab{flex:1;padding:10px 0;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:13px;letter-spacing:.06em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
+.mode-tab.active{background:var(--accent);color:#fff;font-weight:600}
+.mode-tab:not(.active):hover{color:var(--text)}
+
+/* SECTION CONTAINERS */
+.mode-section{display:none}
+.mode-section.active{display:block}
+
+/* PERSPEKTIVEN MODE */
+.container{max-width:860px;margin:0 auto;padding:0 20px}
+.section{padding:32px 0}
+
+/* FILTER BUTTONS */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;justify-content:center}
+.filter-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;font-size:12px;letter-spacing:.05em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* EXAMPLE CHIPS */
+.chips-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
+.chip{padding:7px 14px;border:1px solid var(--faint);border-radius:16px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent}
+.chip:hover{border-color:var(--accent);color:var(--text);background:var(--accent-dim)}
+
+/* INPUT AREA */
+.input-wrap{position:relative;margin-bottom:20px}
+.input-wrap textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 52px 16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:80px;max-height:200px;outline:none;transition:border-color .2s;line-height:1.6}
+.input-wrap textarea::placeholder{color:var(--muted)}
+.input-wrap textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.input-wrap .send-btn{position:absolute;right:12px;bottom:14px;background:var(--accent);border:none;color:#fff;width:34px;height:34px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s}
+.input-wrap .send-btn:hover{opacity:.85}
+.input-wrap .send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* PERSPECTIVE GRID */
+.persp-grid-label{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+.persp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:24px}
+.persp-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.persp-card.active{border-color:var(--accent);background:var(--accent-dim);color:var(--text)}
+.persp-card:hover:not(.active){border-color:var(--faint);color:var(--text)}
+.persp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* CONTROLS ROW */
+.controls-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+.ctrl-group{display:flex;gap:4px}
+.ctrl-btn{padding:7px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;letter-spacing:.04em;cursor:pointer;font-family:var(--font);transition:all .2s}
+.ctrl-btn:hover,.ctrl-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* RESULTS */
+.results{margin-top:28px}
+.results-header{font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;transition:border-color .3s}
+.result-card:hover{border-color:var(--faint)}
+.result-card-header{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.result-card-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.result-card-title{flex:1;font-size:14px;font-weight:600;color:var(--text)}
+.result-card-badge{font-size:10px;letter-spacing:.08em;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:10px}
+.result-card-chevron{color:var(--muted);transition:transform .3s}
+.result-card.open .result-card-chevron{transform:rotate(180deg)}
+.result-card-body{padding:0 16px 0;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.result-card.open .result-card-body{max-height:2000px;padding:0 16px 16px}
+.result-card-body p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:10px}
+.result-card-body p:last-child{margin-bottom:0}
+.streaming-text{color:var(--muted);font-size:14px;line-height:1.7}
+
+/* LOADER */
+.loader{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;padding:20px 0}
+.loader-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 1.2s infinite}
+.loader-dot:nth-child(2){animation-delay:.2s}
+.loader-dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+/* KINTEGRITY */
+.friction-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.friction-list li{font-size:13px;color:var(--muted);line-height:1.6;padding-left:16px;position:relative}
+.friction-list li::before{content:'—';position:absolute;left:0;color:var(--accent)}
+.kintegrity{margin-top:32px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.kintegrity-title{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.kintegrity-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.kintegrity-items{display:flex;flex-wrap:wrap;gap:8px}
+.kintegrity-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px}
+.kintegrity-item svg{color:var(--accent);flex-shrink:0}
+
+/* HISTORY PANEL */
+.history-panel{position:fixed;top:0;right:0;width:320px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:200;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:20px}
+.history-panel.open{transform:translateX(0)}
+.history-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.history-panel-title{font-size:13px;letter-spacing:.1em;color:var(--text);text-transform:uppercase}
+.history-close{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px}
+.history-item{padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:border-color .2s}
+.history-item:hover{border-color:var(--accent)}
+.history-item-q{font-size:13px;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item-meta{font-size:11px;color:var(--muted)}
+.history-empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 0}
+
+/* LERNPROFIL MODE */
+.lernprofil-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.lernprofil-info{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.6}
+.lernprofil-info strong{color:var(--text)}
+.lernprofil-form{display:flex;flex-direction:column;gap:20px}
+.lernprofil-field{display:flex;flex-direction:column;gap:8px}
+.lernprofil-label{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.lernprofil-label-row{display:flex;align-items:center;justify-content:space-between}
+.lernprofil-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:var(--font);font-size:14px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.6}
+.lernprofil-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-dim)}
+.lernprofil-textarea::placeholder{color:var(--muted)}
+.altersgruppe-row{display:flex;gap:8px;flex-wrap:wrap}
+.altersgruppe-btn{padding:9px 18px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s}
+.altersgruppe-btn:hover,.altersgruppe-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.lernprofil-analyse-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);border:none;color:#fff;padding:14px 28px;border-radius:10px;font-size:15px;font-family:var(--font);font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:8px}
+.lernprofil-analyse-btn:hover{opacity:.88}
+.lernprofil-analyse-btn:disabled{opacity:.4;cursor:not-allowed}
+.lernprofil-results{margin-top:28px}
+.lernprofil-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.lernprofil-card-head{padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.lernprofil-card.open .result-card-chevron{transform:rotate(180deg)}
+.lernprofil-card-body{padding:0 16px 0;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.lernprofil-card.open .lernprofil-card-body{max-height:2000px;padding:0 16px 16px}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.active{opacity:1;pointer-events:all}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ERROR */
+.error-card{background:rgba(36,88,168,0.08);border:1px solid rgba(36,88,168,0.3);border-radius:10px;padding:16px;color:var(--accent);font-size:14px;margin-top:16px}
+
+/* SELECT ALL */
+.select-all-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.select-all-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.05em}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .persp-grid{grid-template-columns:repeat(2,1fr)}
+  .controls-row{flex-direction:column;align-items:flex-start}
+  .hero{padding:32px 16px 24px}
+  nav{padding:0 16px}
+  .mode-tabs{margin:16px 12px 0}
+  .altersgruppe-row{flex-direction:column}
+  .altersgruppe-btn{width:100%}
+}
+@media(max-width:400px){
+  .persp-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HISTORY OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeHistory()"></div>
+
+<!-- HISTORY PANEL -->
+<div class="history-panel" id="historyPanel">
+  <div class="history-panel-header">
+    <span class="history-panel-title">Verlauf</span>
+    <button class="history-close" onclick="closeHistory()">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>
+    </button>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <svg class="nav-logo-svg" width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="60" y="9" font-family="Inter,sans-serif" font-size="6" font-weight="500" letter-spacing="1.8" fill="#6A78A8" text-anchor="middle">SCHULe</text>
+      <rect x="10" y="13" width="100" height="5" rx="1.5" fill="#2458A8" opacity="0.85"/>
+      <rect x="28" y="18" width="5" height="14" rx="1" fill="#6A78A8"/>
+      <rect x="87" y="18" width="5" height="14" rx="1" fill="#6A78A8"/>
+      <text x="60" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#E8EEFF" text-anchor="middle">T</text>
+      <text x="67" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#2458A8" text-anchor="middle">i</text>
+      <text x="73" y="30" font-family="Inter,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#E8EEFF" text-anchor="middle">SCH</text>
+    </svg>
+  </a>
+  <div class="nav-right">
+    <button class="nav-btn active" id="langBtn" onclick="toggleLang()">DE</button>
+    <button class="nav-btn" id="toneBtn" onclick="toggleTone()">
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L10 18M6 6l4-4 4 4"/></svg>
+      <span id="toneBtnLabel">pädagogisch</span>
+    </button>
+    <button class="nav-btn" onclick="openHistory()">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 13"/></svg>
+      Verlauf
+    </button>
+    <a class="nav-btn" href="/tisch-hub" style="text-decoration:none">Hub</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tagline">BILDUNG &amp; LERNEN AM TiSCH</div>
+  <div class="hero-svg-wrap">
+
+    <!-- Left: learning symbols -->
+    <svg style="position:absolute;left:0;top:50%;transform:translateY(-50%);width:120px;height:200px;opacity:0.22" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Open book -->
+      <path d="M20 80 Q30 75 40 80 L40 130 Q30 125 20 130 Z" stroke="#2458A8" stroke-width="1.5" fill="none"/>
+      <path d="M40 80 Q50 75 60 80 L60 130 Q50 125 40 130 Z" stroke="#2458A8" stroke-width="1.5" fill="none"/>
+      <!-- Lines in book -->
+      <line x1="23" y1="90" x2="37" y2="90" stroke="#2458A8" stroke-width="1" opacity="0.7"/>
+      <line x1="23" y1="97" x2="37" y2="97" stroke="#2458A8" stroke-width="1" opacity="0.7"/>
+      <line x1="23" y1="104" x2="37" y2="104" stroke="#2458A8" stroke-width="1" opacity="0.7"/>
+      <line x1="43" y1="90" x2="57" y2="90" stroke="#2458A8" stroke-width="1" opacity="0.7"/>
+      <line x1="43" y1="97" x2="57" y2="97" stroke="#2458A8" stroke-width="1" opacity="0.7"/>
+      <!-- Lightbulb -->
+      <circle cx="75" cy="40" r="12" stroke="#2458A8" stroke-width="1.5"/>
+      <line x1="75" y1="52" x2="75" y2="58" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="71" y1="58" x2="79" y2="58" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="75" y1="20" x2="75" y2="24" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="57" y1="38" x2="61" y2="38" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="89" y1="38" x2="93" y2="38" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Growth curve (learning curve) -->
+      <polyline points="15,175 25,168 40,162 55,150 68,132 78,110" stroke="#2458A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+
+    <!-- Main Hero SVG -->
+    <svg class="hero-main" viewBox="0 0 760 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="schule-platte" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4A78C8"/>
+          <stop offset="45%" stop-color="#2458A8"/>
+          <stop offset="100%" stop-color="#12306A"/>
+        </linearGradient>
+        <linearGradient id="schule-sockel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2458A8"/>
+          <stop offset="100%" stop-color="#081838"/>
+        </linearGradient>
+        <radialGradient id="schule-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2458A8" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#2458A8" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Glow -->
+      <ellipse cx="380" cy="185" rx="120" ry="14" fill="url(#schule-glow)"/>
+
+      <!-- Table top -->
+      <rect x="130" y="52" width="500" height="15" fill="url(#schule-platte)" rx="2"/>
+      <rect x="130" y="52" width="500" height="3" fill="#4A78C8" opacity="0.35" rx="2"/>
+      <rect x="130" y="65" width="500" height="3" fill="#081838" opacity="0.4" rx="1"/>
+
+      <!-- Center leg -->
+      <rect x="373" y="67" width="14" height="100" fill="#2458A8" rx="2"/>
+      <rect x="373" y="67" width="3" height="100" fill="#4A78C8" opacity="0.25" rx="1"/>
+
+      <!-- Base -->
+      <rect x="305" y="165" width="150" height="14" fill="url(#schule-sockel)" rx="6"/>
+      <rect x="305" y="165" width="150" height="3" fill="#4A78C8" opacity="0.3" rx="5"/>
+      <ellipse cx="380" cy="181" rx="85" ry="6" fill="#020408" opacity="0.4"/>
+
+      <!-- "SCHULe" left of leg -->
+      <text text-anchor="end" x="368" y="152"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="42" font-weight="300"
+        fill="#E8EEFF" letter-spacing="-1">SCHUL<tspan fill="#2458A8">e</tspan></text>
+
+      <!-- "TiSCH" right of leg -->
+      <text x="392" y="152"
+        font-family="'Inter','Helvetica Neue',sans-serif"
+        font-size="42" font-weight="300"
+        fill="#E8EEFF" letter-spacing="-1">T<tspan fill="#2458A8">i</tspan>SCH</text>
+
+    </svg>
+
+    <!-- Right: more education symbols -->
+    <svg style="position:absolute;right:0;top:50%;transform:translateY(-50%);width:120px;height:200px;opacity:0.2" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Graduation cap -->
+      <polygon points="60,20 20,40 60,60 100,40" stroke="#2458A8" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      <line x1="60" y1="60" x2="60" y2="80" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M40 70 Q60 80 80 70" stroke="#2458A8" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- Network of people (students) -->
+      <circle cx="30" cy="120" r="7" stroke="#2458A8" stroke-width="1.5"/>
+      <circle cx="60" cy="105" r="7" stroke="#2458A8" stroke-width="1.5"/>
+      <circle cx="90" cy="120" r="7" stroke="#2458A8" stroke-width="1.5"/>
+      <circle cx="60" cy="140" r="7" stroke="#2458A8" stroke-width="1.5"/>
+      <line x1="37" y1="117" x2="53" y2="110" stroke="#2458A8" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="67" y1="110" x2="83" y2="117" stroke="#2458A8" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="30" y1="127" x2="55" y2="138" stroke="#2458A8" stroke-width="1" stroke-dasharray="2,2"/>
+      <line x1="65" y1="138" x2="88" y2="127" stroke="#2458A8" stroke-width="1" stroke-dasharray="2,2"/>
+      <!-- Pencil -->
+      <line x1="15" y1="170" x2="45" y2="140" stroke="#2458A8" stroke-width="2" stroke-linecap="round"/>
+      <polygon points="45,140 38,148 42,152 50,144" stroke="#2458A8" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+    </svg>
+
+  </div>
+  <div class="hero-sub">Multiperspektivische KI-Analyse für Bildung, Lernen &amp; Schule</div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-perspektiven" onclick="setMode('perspektiven')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+      Perspektiven
+    </button>
+    <button class="mode-tab" id="tab-lernprofil" onclick="setMode('lernprofil')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><line x1="7" y1="8" x2="13" y2="8"/><line x1="7" y1="12" x2="11" y2="12"/></svg>
+      LERNPROFiL
+    </button>
+  </div>
+</section>
+
+<!-- ==================== PERSPEKTIVEN MODE ==================== -->
+<div class="mode-section active" id="mode-perspektiven">
+  <div class="container">
+    <div class="section">
+
+      <!-- Filter row -->
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Alle Themen
+        </button>
+        <button class="filter-btn" data-filter="unterricht" onclick="setFilter(this,'unterricht')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="11" rx="1"/><line x1="8" y1="17" x2="12" y2="17"/><line x1="10" y1="14" x2="10" y2="17"/></svg>
+          Unterricht
+        </button>
+        <button class="filter-btn" data-filter="lernen" onclick="setFilter(this,'lernen')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="2"/><path d="M10 2 a8 8 0 0 1 0 16 a8 8 0 0 1 0-16"/><line x1="10" y1="7" x2="10" y2="8"/></svg>
+          Lernen
+        </button>
+        <button class="filter-btn" data-filter="konflikte" onclick="setFilter(this,'konflikte')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 14h12z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r=".5" fill="currentColor"/></svg>
+          Konflikte
+        </button>
+        <button class="filter-btn" data-filter="inklusion" onclick="setFilter(this,'inklusion')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="3"/><circle cx="4" cy="14" r="2"/><circle cx="16" cy="14" r="2"/><line x1="8" y1="8" x2="5" y2="12"/><line x1="12" y1="8" x2="15" y2="12"/></svg>
+          Inklusion
+        </button>
+        <button class="filter-btn" data-filter="digital" onclick="setFilter(this,'digital')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="11" rx="1"/><line x1="7" y1="18" x2="13" y2="18"/><line x1="10" y1="15" x2="10" y2="18"/></svg>
+          Digital
+        </button>
+        <button class="filter-btn" data-filter="uebergaenge" onclick="setFilter(this,'uebergaenge')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 7 15 12"/><line x1="10" y1="7" x2="10" y2="17"/></svg>
+          Übergänge
+        </button>
+      </div>
+
+      <!-- Example chips -->
+      <div class="chips-label" id="chipsLabel">Fragen am TiSCH</div>
+      <div class="chips" id="chipsContainer"></div>
+
+      <!-- Input -->
+      <div class="input-wrap">
+        <textarea id="questionInput" placeholder="Beschreiben Sie Ihre Frage zu Schule, Lernen oder Bildung..." rows="3"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendQuestion()">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-row">
+        <div class="ctrl-group" id="toneGroup">
+          <button class="ctrl-btn active" data-tone="paedagogisch" onclick="setTone(this)">pädagogisch</button>
+          <button class="ctrl-btn" data-tone="alltag" onclick="setTone(this)">alltagsnah</button>
+          <button class="ctrl-btn" data-tone="akademisch" onclick="setTone(this)">akademisch</button>
+        </div>
+      </div>
+
+      <!-- Perspective grid -->
+      <div class="select-all-row">
+        <div class="persp-grid-label">Perspektiven auswählen</div>
+        <button class="select-all-btn" onclick="toggleAllPerspectives()">Alle / Keine</button>
+      </div>
+      <div class="persp-grid" id="perspGrid"></div>
+
+      <!-- Results -->
+      <div class="results" id="resultsArea" style="display:none">
+        <div class="results-header" id="resultsHeader">Antworten am TiSCH</div>
+        <div id="resultsList"></div>
+        <!-- kiNTEGRiTY -->
+        <div class="kintegrity">
+          <div class="kintegrity-title">kiNTEGRiTY</div>
+          <div class="kintegrity-items">
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+              Keine Diagnose
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="7" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg>
+              Perspektiven, keine Garantien
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg>
+              Vertraulich
+            </div>
+            <div class="kintegrity-item">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/></svg>
+              Multiperspektivisch
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LERNPROFIL MODE ==================== -->
+<div class="mode-section" id="mode-lernprofil">
+  <div class="lernprofil-wrap">
+
+    <div class="lernprofil-info" style="margin-top:32px">
+      <strong>LERNPROFiL-ANALYSE</strong> — Beschreiben Sie eine lernende Person (Kind, Jugendlicher, Erwachsener) und die aktuelle Lernsituation. Die KI analysiert aus 10 Bildungsperspektiven und erstellt ein Profil mit konkreten Empfehlungen, Stärken und Förderansätzen.
+    </div>
+
+    <div class="lernprofil-form">
+
+      <!-- Altersgruppe -->
+      <div class="lernprofil-field">
+        <div class="lernprofil-label">Altersgruppe</div>
+        <div class="altersgruppe-row" id="altersGruppeRow">
+          <button class="altersgruppe-btn active" data-alter="grundschule" onclick="setAlter(this)">Grundschule (6–10)</button>
+          <button class="altersgruppe-btn" data-alter="sekundarstufe" onclick="setAlter(this)">Sek. I (11–15)</button>
+          <button class="altersgruppe-btn" data-alter="oberstufe" onclick="setAlter(this)">Oberstufe / Abitur</button>
+          <button class="altersgruppe-btn" data-alter="berufsbildung" onclick="setAlter(this)">Berufsbildung</button>
+          <button class="altersgruppe-btn" data-alter="erwachsene" onclick="setAlter(this)">Erwachsene</button>
+        </div>
+      </div>
+
+      <!-- Lernsituation -->
+      <div class="lernprofil-field">
+        <div class="lernprofil-label">Lernsituation &amp; Herausforderung</div>
+        <textarea class="lernprofil-textarea" id="lernprofilInput" rows="4" placeholder="z.B. 'Mein 9-jähriger Sohn tut sich schwer mit dem Lesen. Er ist sehr kreativ, verliert aber schnell die Konzentration. In der Schule fühlt er sich oft überfordert, zu Hause lernt er lieber mit Videos als mit Büchern.' oder 'Ich bin Lehrerin und habe einen Schüler mit ADHS in der Klasse — wie gestalte ich den Unterricht inklusiv?'"></textarea>
+      </div>
+
+      <!-- Stärken (optional) -->
+      <div class="lernprofil-field">
+        <div class="lernprofil-label">Beobachtete Stärken (optional)</div>
+        <textarea class="lernprofil-textarea" id="staerkenInput" rows="2" placeholder="z.B. 'Sehr gut in Mathematik, liebt Musik, erklärt Dinge gut anderen'"></textarea>
+      </div>
+
+      <!-- Bisherige Ansätze (optional) -->
+      <div class="lernprofil-field">
+        <div class="lernprofil-label">Bisherige Ansätze (optional)</div>
+        <textarea class="lernprofil-textarea" id="ansaetzeInput" rows="2" placeholder="z.B. 'Nachhilfe versucht, Lernplan erstellt — hat kurzfristig geholfen aber nicht dauerhaft'"></textarea>
+      </div>
+
+      <!-- Analyse button -->
+      <button class="lernprofil-analyse-btn" id="lernprofilBtn" onclick="sendLernprofil()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><line x1="7" y1="8" x2="13" y2="8"/><line x1="7" y1="12" x2="11" y2="12"/></svg>
+        LERNPROFiL erstellen
+      </button>
+
+    </div>
+
+    <!-- Lernprofil Results -->
+    <div class="lernprofil-results" id="lernprofilResults"></div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// GLOBALS & CONFIG
+// ============================================================
+let currentLang = 'de';
+let currentTone = 'paedagogisch';
+let currentFilter = 'all';
+let activePerspectives = new Set();
+let isLoading = false;
+let historyData = [];
+let currentMode = 'perspektiven';
+let currentAlter = 'grundschule';
+const API_BASE = 'https://der-tisch-production.up.railway.app';
+
+// ============================================================
+// PERSPEKTIVEN CONFIG
+// ============================================================
+const PERSPEKTIVEN = [
+  {
+    id: 'paedagogin',
+    icon: 'book',
+    de: 'Pädagogin',
+    en: 'Educator',
+    color: '#2458A8',
+    filters: ['all','unterricht','lernen'],
+    profil: {
+      de: {
+        name: 'Pädagogin',
+        grundhaltung: 'Lernen ist ein aktiver Konstruktionsprozess. Gute Lehre schafft Bedingungen, unter denen Lernende ihr Wissen selbst aufbauen.',
+        argumentationsstil: 'Didaktisch-methodisch. Fragt nach Lernzielen, Differenzierung, Unterrichtsqualität und formativer Evaluation.',
+        prioritaeten: 'Kompetenzorientierung, Lernzieldifferenzierung, Feedback-Kultur, Methodenvielfalt.',
+        blinde_flecken: 'Strukturelle Bildungsungleichheit, emotionale und familiäre Faktoren jenseits des Unterrichts.',
+        fachgebiet: 'Allgemeine Didaktik, Pädagogik'
+      },
+      en: {
+        name: 'Educator',
+        grundhaltung: 'Learning is an active construction process. Good teaching creates conditions for learners to build their own knowledge.',
+        argumentationsstil: 'Didactic-methodical. Asks about learning objectives, differentiation, teaching quality and formative evaluation.',
+        prioritaeten: 'Competency orientation, learning goal differentiation, feedback culture, variety of methods.',
+        blinde_flecken: 'Structural educational inequality, emotional and family factors beyond the classroom.',
+        fachgebiet: 'General Didactics, Pedagogy'
+      }
+    }
+  },
+  {
+    id: 'schulpsychologin',
+    icon: 'heart',
+    de: 'Schulpsychologin',
+    en: 'School Psychologist',
+    color: '#4870C8',
+    filters: ['all','lernen','inklusion'],
+    profil: {
+      de: {
+        name: 'Schulpsychologin',
+        grundhaltung: 'Psychische Gesundheit und Lernleistung sind untrennbar. Lernschwierigkeiten haben immer auch eine emotionale Dimension.',
+        argumentationsstil: 'Klinisch-diagnostisch und systemisch. Unterscheidet zwischen Lern-, Leistungs- und Verhaltensschwierigkeiten.',
+        prioritaeten: 'Diagnostik, Schutzfaktoren, Prävention psychischer Belastung, Kooperation mit Eltern.',
+        blinde_flecken: 'Strukturelle Schulsystemfragen, Unterrichtsmethodik im Detail.',
+        fachgebiet: 'Schulpsychologie, Entwicklungspsychologie'
+      },
+      en: {
+        name: 'School Psychologist',
+        grundhaltung: 'Mental health and academic performance are inseparable. Learning difficulties always have an emotional dimension.',
+        argumentationsstil: 'Clinical-diagnostic and systemic. Distinguishes between learning, performance and behavioral difficulties.',
+        prioritaeten: 'Diagnostics, protective factors, prevention of mental strain, cooperation with parents.',
+        blinde_flecken: 'Structural school system questions, detailed teaching methodology.',
+        fachgebiet: 'School Psychology, Developmental Psychology'
+      }
+    }
+  },
+  {
+    id: 'schueler',
+    icon: 'youth',
+    de: 'Schüler-Stimme',
+    en: 'Student Voice',
+    color: '#5B8FD4',
+    filters: ['all','unterricht','konflikte'],
+    profil: {
+      de: {
+        name: 'Schüler-Stimme',
+        grundhaltung: 'Schülerinnen und Schüler sind kompetente Experten ihrer eigenen Lernerfahrung. Ihre Perspektive wird systematisch unterschätzt.',
+        argumentationsstil: 'Erfahrungsbasiert und unmittelbar. Fragt: Was fühlt sich relevant an? Was macht Lust oder Angst? Was läuft unfair?',
+        prioritaeten: 'Autonomieerleben, Zugehörigkeit, Relevanz des Lernstoffs, Beziehung zu Lehrenden.',
+        blinde_flecken: 'Langfristige Bildungsziele, institutionelle Sachzwänge, die über den Unterricht hinausgehen.',
+        fachgebiet: 'Jugendforschung, Partizipationspädagogik'
+      },
+      en: {
+        name: 'Student Voice',
+        grundhaltung: 'Students are competent experts of their own learning experience. Their perspective is systematically underestimated.',
+        argumentationsstil: 'Experience-based and direct. Asks: What feels relevant? What creates desire or fear? What feels unfair?',
+        prioritaeten: 'Autonomy experience, belonging, relevance of subject matter, relationship with teachers.',
+        blinde_flecken: 'Long-term educational goals, institutional constraints beyond the classroom.',
+        fachgebiet: 'Youth Research, Participatory Pedagogy'
+      }
+    }
+  },
+  {
+    id: 'eltern',
+    icon: 'home',
+    de: 'Eltern-Perspektive',
+    en: 'Parent Perspective',
+    color: '#6A9ADA',
+    filters: ['all','unterricht','uebergaenge'],
+    profil: {
+      de: {
+        name: 'Eltern-Perspektive',
+        grundhaltung: 'Schule und Familie sind gemeinsam für Bildungserfolg verantwortlich. Elternarbeit und Kommunikation sind entscheidend.',
+        argumentationsstil: 'Alltagspraktisch und fürsorglich. Fragt nach konkreten Unterstützungsmöglichkeiten zu Hause und Transparenz der Schule.',
+        prioritaeten: 'Wohlbefinden des Kindes, Kommunikation mit Lehrkräften, Eltern-Kind-Dynamik beim Lernen.',
+        blinde_flecken: 'Professionelle didaktische und diagnostische Perspektiven, peergroup-Einflüsse.',
+        fachgebiet: 'Familienbildung, Eltern-Schule-Kooperation'
+      },
+      en: {
+        name: 'Parent Perspective',
+        grundhaltung: 'School and family share responsibility for educational success. Parental involvement and communication are crucial.',
+        argumentationsstil: 'Practically oriented and caring. Asks about concrete support options at home and school transparency.',
+        prioritaeten: "Child's wellbeing, communication with teachers, parent-child dynamics when learning.",
+        blinde_flecken: 'Professional didactic and diagnostic perspectives, peer group influences.',
+        fachgebiet: 'Family Education, Parent-School Cooperation'
+      }
+    }
+  },
+  {
+    id: 'lernforscherin',
+    icon: 'brain',
+    de: 'Lernforscherin',
+    en: 'Learning Researcher',
+    color: '#2B4EA0',
+    filters: ['all','lernen'],
+    profil: {
+      de: {
+        name: 'Lernforscherin',
+        grundhaltung: 'Was wir über Lernen zu wissen glauben, stimmt oft nicht mit dem überein, was Kognitionswissenschaft und Lernpsychologie zeigen.',
+        argumentationsstil: 'Evidenzbasiert und empirisch. Zitiert Studienlage, unterscheidet effektive von populären aber unwirksamen Lernstrategien.',
+        prioritaeten: 'Spaced repetition, Retrieval practice, Desirable difficulties, Working memory load, Metacognition.',
+        blinde_flecken: 'Sozio-emotionale Dimension des Lernens, Kontextfaktoren jenseits des Labors.',
+        fachgebiet: 'Kognitionswissenschaft, Lernpsychologie, Bildungsforschung'
+      },
+      en: {
+        name: 'Learning Researcher',
+        grundhaltung: 'What we think we know about learning often contradicts what cognitive science and learning psychology show.',
+        argumentationsstil: 'Evidence-based and empirical. Cites research, distinguishes effective from popular but ineffective learning strategies.',
+        prioritaeten: 'Spaced repetition, Retrieval practice, Desirable difficulties, Working memory load, Metacognition.',
+        blinde_flecken: 'Socio-emotional dimension of learning, contextual factors beyond the laboratory.',
+        fachgebiet: 'Cognitive Science, Learning Psychology, Education Research'
+      }
+    }
+  },
+  {
+    id: 'inklusion',
+    icon: 'globe',
+    de: 'Inklusionspädagogin',
+    en: 'Inclusion Specialist',
+    color: '#7A68B8',
+    filters: ['all','inklusion','unterricht'],
+    profil: {
+      de: {
+        name: 'Inklusionspädagogin',
+        grundhaltung: 'Vielfalt ist der Normalfall. Schule muss sich an Menschen anpassen — nicht umgekehrt. Was "besonders" braucht, brauchen oft alle.',
+        argumentationsstil: 'Systemkritisch und lösungsorientiert. Unterscheidet medizinisches vs. soziales Modell von Behinderung/Besonderheit.',
+        prioritaeten: 'Barrierefreiheit, Universal Design for Learning (UDL), Neurodiversität, Ressourcenorientierung.',
+        blinde_flecken: 'Praktische Umsetzbarkeit im Regelschulalltag, Lehrermangel und Ressourcenknappheit.',
+        fachgebiet: 'Sonderpädagogik, Inklusionspädagogik, Disability Studies'
+      },
+      en: {
+        name: 'Inclusion Specialist',
+        grundhaltung: 'Diversity is the norm. Schools must adapt to people — not the other way around. What some "need specially", most benefit from.',
+        argumentationsstil: 'Critically systemic and solution-oriented. Distinguishes medical vs. social model of disability/difference.',
+        prioritaeten: 'Accessibility, Universal Design for Learning (UDL), Neurodiversity, resource orientation.',
+        blinde_flecken: 'Practical feasibility in mainstream school daily life, teacher shortage and resource scarcity.',
+        fachgebiet: 'Special Education, Inclusive Pedagogy, Disability Studies'
+      }
+    }
+  },
+  {
+    id: 'motivation',
+    icon: 'zap',
+    de: 'Motivationspsychologie',
+    en: 'Motivation Psychology',
+    color: '#3A68C0',
+    filters: ['all','lernen','unterricht'],
+    profil: {
+      de: {
+        name: 'Motivationspsychologie',
+        grundhaltung: 'Lernen braucht intrinsische Motivation. Druck und Kontrolle zerstören langfristig die Lernfreude — Self-determination theory (Deci & Ryan).',
+        argumentationsstil: 'Motivationstheoretisch. Analysiert Kompetenzerleben, Autonomieerleben, soziale Eingebundenheit, Flow-Zustände.',
+        prioritaeten: 'Grundbedürfnisse nach Kompetenz, Autonomie, Zugehörigkeit. Zielorientierung (mastery vs. performance goals).',
+        blinde_flecken: 'Strukturelle Faktoren (Curriculum, Prüfungen), Neurodiversität und atypische Motivationsprofile.',
+        fachgebiet: 'Motivationspsychologie, Self-Determination Theory'
+      },
+      en: {
+        name: 'Motivation Psychology',
+        grundhaltung: 'Learning requires intrinsic motivation. Pressure and control destroy the joy of learning long-term — Self-determination theory (Deci & Ryan).',
+        argumentationsstil: 'Motivation-theoretical. Analyzes competence experience, autonomy experience, social relatedness, flow states.',
+        prioritaeten: 'Basic needs for competence, autonomy, belonging. Goal orientation (mastery vs. performance goals).',
+        blinde_flecken: 'Structural factors (curriculum, exams), neurodiversity and atypical motivation profiles.',
+        fachgebiet: 'Motivation Psychology, Self-Determination Theory'
+      }
+    }
+  },
+  {
+    id: 'schulentwicklung',
+    icon: 'chart',
+    de: 'Schulentwicklung',
+    en: 'School Development',
+    color: '#1E4890',
+    filters: ['all','unterricht','uebergaenge'],
+    profil: {
+      de: {
+        name: 'Schulentwicklung',
+        grundhaltung: 'Einzelprobleme sind Symptome systemischer Strukturen. Nachhaltige Veränderung braucht Schule als lernende Organisation.',
+        argumentationsstil: 'Systemisch-organisational. Fragt nach Schulkultur, Führung, Kooperation im Kollegium, Eltern-Schule-Partnerschaft.',
+        prioritaeten: 'Schulklima, professionelle Lerngemeinschaften, datengestützte Schulentwicklung, Übergänge gestalten.',
+        blinde_flecken: 'Individuelle Lern- und Entwicklungsprozesse einzelner Schülerinnen und Schüler.',
+        fachgebiet: 'Schulentwicklungsforschung, Educational Leadership'
+      },
+      en: {
+        name: 'School Development',
+        grundhaltung: 'Individual problems are symptoms of systemic structures. Lasting change requires school as a learning organization.',
+        argumentationsstil: 'Systemic-organizational. Asks about school culture, leadership, collegial cooperation, parent-school partnership.',
+        prioritaeten: 'School climate, professional learning communities, data-driven school development, shaping transitions.',
+        blinde_flecken: 'Individual learning and development processes of individual students.',
+        fachgebiet: 'School Development Research, Educational Leadership'
+      }
+    }
+  },
+  {
+    id: 'mediation',
+    icon: 'leaf',
+    de: 'Schulmediation',
+    en: 'School Mediation',
+    color: '#5080B8',
+    filters: ['all','konflikte'],
+    profil: {
+      de: {
+        name: 'Schulmediation',
+        grundhaltung: 'Konflikte sind normale, lehrreiche Teile des Schullebens. Wer Konflikte lösen kann, lernt fürs Leben — Gewaltfreie Kommunikation (Rosenberg).',
+        argumentationsstil: 'Prozessorientiert und allparteilich. Unterscheidet Positionen von Interessen, Eskalationsstufen, strukturelle vs. persönliche Konflikte.',
+        prioritaeten: 'Aktives Zuhören, Perspektivübernahme, Win-Win-Lösungen, Peer-Mediation, Wiedergutmachung.',
+        blinde_flecken: 'Machtasymmetrien (Lehrer-Schüler, Mobbing), strukturelle Ursachen von Schulkonflikten.',
+        fachgebiet: 'Schulmediation, Gewaltfreie Kommunikation, Konfliktpädagogik'
+      },
+      en: {
+        name: 'School Mediation',
+        grundhaltung: 'Conflicts are normal, instructive parts of school life. Those who can resolve conflicts learn for life — Nonviolent Communication (Rosenberg).',
+        argumentationsstil: 'Process-oriented and impartial. Distinguishes positions from interests, escalation levels, structural vs. personal conflicts.',
+        prioritaeten: 'Active listening, perspective-taking, win-win solutions, peer mediation, restorative justice.',
+        blinde_flecken: 'Power asymmetries (teacher-student, bullying), structural causes of school conflicts.',
+        fachgebiet: 'School Mediation, Nonviolent Communication, Conflict Pedagogy'
+      }
+    }
+  },
+  {
+    id: 'digital',
+    icon: 'screen',
+    de: 'Digitales Lernen',
+    en: 'Digital Learning',
+    color: '#3A58A8',
+    filters: ['all','digital','lernen'],
+    profil: {
+      de: {
+        name: 'Digitales Lernen',
+        grundhaltung: 'Technologie ist weder Heilsbringer noch Teufel — es kommt auf die pädagogische Einbettung an. KI verändert Kompetenzanforderungen fundamental.',
+        argumentationsstil: 'Technologiekritisch und pragmatisch. Unterscheidet digitale Kompetenz von digitalem Lernen, fragt nach Transfer und Nachhaltigkeit.',
+        prioritaeten: 'Media literacy, KI-Kompetenz, hybride Lernformen, Datenschutz, kognitive Entlastung vs. digitale Ablenkung.',
+        blinde_flecken: 'Analoge Lernformen, körperliche und soziale Lernaspekte, digital divide.',
+        fachgebiet: 'Educational Technology, Medienpädagogik, KI in der Bildung'
+      },
+      en: {
+        name: 'Digital Learning',
+        grundhaltung: 'Technology is neither savior nor devil — it depends on the pedagogical embedding. AI fundamentally changes competency requirements.',
+        argumentationsstil: 'Technology-critical and pragmatic. Distinguishes digital competence from digital learning, asks about transfer and sustainability.',
+        prioritaeten: 'Media literacy, AI competency, hybrid learning forms, data protection, cognitive offloading vs. digital distraction.',
+        blinde_flecken: 'Analog learning forms, physical and social learning aspects, digital divide.',
+        fachgebiet: 'Educational Technology, Media Pedagogy, AI in Education'
+      }
+    }
+  },
+];
+
+// ============================================================
+// EXAMPLE CHIPS
+// ============================================================
+const CHIPS_DATA = {
+  all: {
+    de: [
+      'Mein Kind verliert beim Lernen schnell die Konzentration — was tun?',
+      'Wie motiviere ich eine unmotivierte Klasse für einen trockenen Stoff?',
+      'Was ist der beste Weg, Mathematik für die Grundschule zu erklären?',
+      'Wie erkenne ich, ob ein Schüler möglicherweise ADHS hat?',
+      'Wie gehe ich mit Mobbing in der Schulklasse um?',
+      'Was sind evidenzbasierte Lernstrategien fürs Abitur?',
+      'Wie begleite ich den Übergang von der Grundschule aufs Gymnasium?',
+    ],
+    en: [
+      'My child quickly loses concentration while studying — what to do?',
+      'How do I motivate an unmotivated class for dry subject matter?',
+      'What is the best way to explain mathematics to primary school students?',
+      'How do I recognize whether a student might have ADHD?',
+      'How do I deal with bullying in the school class?',
+      'What are evidence-based learning strategies for the final exams?',
+      'How do I accompany the transition from primary to secondary school?',
+    ],
+  },
+  unterricht: {
+    de: [
+      'Wie differenziere ich Unterricht für unterschiedliche Leistungsniveaus?',
+      'Welche Methoden fördern aktives Lernen im Unterricht?',
+      'Wie gebe ich konstruktives Feedback an Schülerinnen und Schüler?',
+      'Wie baue ich eine produktive Klassengemeinschaft auf?',
+      'Wie erkläre ich abstrakte Konzepte anschaulich?',
+    ],
+    en: [
+      'How do I differentiate instruction for different performance levels?',
+      'What methods promote active learning in the classroom?',
+      'How do I give constructive feedback to students?',
+      'How do I build a productive classroom community?',
+      'How do I explain abstract concepts clearly?',
+    ],
+  },
+  lernen: {
+    de: [
+      'Was sind die effektivsten Lernstrategien laut Wissenschaft?',
+      'Wie überwinde ich Prokrastination beim Lernen?',
+      'Wie lerne ich für Prüfungen ohne auswendig zu lernen?',
+      'Wie verbessere ich meine Konzentration beim Lernen?',
+      'Welche Rolle spielt Schlaf für das Lernen?',
+    ],
+    en: [
+      'What are the most effective learning strategies according to science?',
+      'How do I overcome procrastination when studying?',
+      'How do I study for exams without just memorizing?',
+      'How do I improve my concentration when studying?',
+      'What role does sleep play in learning?',
+    ],
+  },
+  konflikte: {
+    de: [
+      'Ein Schüler stört ständig den Unterricht — wie reagiere ich?',
+      'Wie gehe ich mit Mobbing in der Klasse um?',
+      'Schwierige Elterngespräche führen — worauf muss ich achten?',
+      'Konflikt zwischen Schüler und Lehrkraft: Was tun?',
+      'Wie deeskaliere ich eine aufgeheizte Situation in der Klasse?',
+    ],
+    en: [
+      'A student constantly disrupts the class — how do I respond?',
+      'How do I deal with bullying in the class?',
+      'Leading difficult parent conversations — what do I need to consider?',
+      'Conflict between student and teacher: What to do?',
+      'How do I de-escalate a heated situation in the class?',
+    ],
+  },
+  inklusion: {
+    de: [
+      'Wie unterrichte ich inklusiv mit ADHS-Schüler in der Klasse?',
+      'Was ist Universal Design for Learning und wie setze ich es um?',
+      'Wie fördere ich hochbegabte Schülerinnen ohne andere zu benachteiligen?',
+      'Legasthenie: Wie kann die Schule unterstützen?',
+      'Wie integriere ich ein Kind mit Autismus-Spektrum in die Regelklasse?',
+    ],
+    en: [
+      'How do I teach inclusively with an ADHD student in the class?',
+      'What is Universal Design for Learning and how do I implement it?',
+      'How do I support gifted students without disadvantaging others?',
+      'Dyslexia: How can school support?',
+      'How do I integrate a child on the autism spectrum into the mainstream class?',
+    ],
+  },
+  digital: {
+    de: [
+      'Wie sinnvoll ist KI-gestütztes Lernen in der Schule?',
+      'Wie verhindere ich, dass Schüler ChatGPT zum Schummeln benutzen?',
+      'Welche digitalen Tools helfen wirklich beim Lernen?',
+      'Wie viel Bildschirmzeit ist für Schulkinder angemessen?',
+      'Wie bereite ich Schülerinnen auf eine KI-geprägte Arbeitswelt vor?',
+    ],
+    en: [
+      'How useful is AI-assisted learning in school?',
+      'How do I prevent students from using ChatGPT to cheat?',
+      'Which digital tools really help with learning?',
+      'How much screen time is appropriate for school children?',
+      'How do I prepare students for an AI-shaped world of work?',
+    ],
+  },
+  uebergaenge: {
+    de: [
+      'Wie begleite ich meinen Sohn beim Übergang Grundschule → Gymnasium?',
+      'Schule → Beruf: Wie unterstütze ich beim Übergang?',
+      'Was tun, wenn das Kind auf der falschen Schulform ist?',
+      'Wie meistern Kinder den Wechsel in eine neue Schulklasse?',
+      'Abitur und dann? Wie begleite ich bei der Berufswahl?',
+    ],
+    en: [
+      'How do I accompany my son in the transition from primary to grammar school?',
+      'School to career: How do I support the transition?',
+      'What to do if the child is on the wrong school track?',
+      'How do children master the move to a new school class?',
+      'Abitur and then? How do I accompany career choices?',
+    ],
+  },
+};
+
+// ============================================================
+// AGENT PROFILES for /api/ask-table
+// ============================================================
+function buildAgentProfiles(lang) {
+  return activePerspectives.size > 0
+    ? Array.from(activePerspectives).map(id => {
+        const p = PERSPEKTIVEN.find(x => x.id === id);
+        if (!p) return null;
+        const prof = p.profil[lang] || p.profil.de;
+        return {
+          id: p.id,
+          name: prof.name,
+          position: prof.grundhaltung,
+          grundhaltung: prof.grundhaltung,
+          argumentationsstil: prof.argumentationsstil,
+          prioritaeten: prof.prioritaeten,
+          blinde_flecken: prof.blinde_flecken,
+          fachgebiet: prof.fachgebiet,
+          farbe: p.color,
+        };
+      }).filter(Boolean)
+    : null;
+}
+
+// ============================================================
+// TONE CONFIG
+// ============================================================
+const TONE_MAP = {
+  paedagogisch: { de: 'paedagogisch', en: 'paedagogisch' },
+  alltag:       { de: 'alltag',       en: 'alltag'       },
+  akademisch:   { de: 'akademisch',   en: 'akademisch'   },
+};
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function renderIcon(name, size = 13) {
+  const icons = {
+    book: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 012-2h10v14H6a2 2 0 000 4h10"/></svg>`,
+    heart: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>`,
+    youth: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="6" r="3"/><path d="M4 19v-2a6 6 0 0112 0v2"/></svg>`,
+    home: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l7-7 7 7v9a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><polyline points="8 20 8 12 12 12 12 20"/></svg>`,
+    brain: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2C6 2 4 4 4 6.5c0 1-.3 2-1 2.5C2 9.5 2 10.5 2 11c0 2 1.5 3 3 3H8v1H7a1 1 0 000 2h6a1 1 0 000-2h-1v-1h3c1.5 0 3-1 3-3 0-.5 0-1.5-1-2-.7-.5-1-1.5-1-2.5C16 4 14 2 11 2"/></svg>`,
+    globe: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="2" y1="10" x2="18" y2="10"/><path d="M10 2a15.3 15.3 0 014 8 15.3 15.3 0 01-4 8 15.3 15.3 0 01-4-8 15.3 15.3 0 014-8z"/></svg>`,
+    zap: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 13 8 19 8 7 22 7 16 1 16 13 2"/></svg>`,
+    chart: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="20" y2="20"/></svg>`,
+    leaf: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 19.11M15 8a3 3 0 01-3 3"/><path d="M10 2s-2 3-2 7c0 2.8 1.5 5 1.5 5"/></svg>`,
+    screen: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="11" rx="2"/><line x1="8" y1="17" x2="12" y2="17"/><line x1="10" y1="14" x2="10" y2="17"/></svg>`,
+    shield: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>`,
+    rocket: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 002-3.95A12.88 12.88 0 0022 2c-1-.25-4.37-.44-8 2.59A22 22 0 0011 8z"/></svg>`,
+    coins: `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 0110.34 18"/><path d="M7 6h1a2 2 0 010 4H7z"/><line x1="7" y1="6" x2="7" y2="14"/></svg>`,
+  };
+  return icons[name] || icons.book;
+}
+
+function showToast(msg, duration = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ============================================================
+// FILTER & MODE
+// ============================================================
+function setFilter(btn, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activePerspectives.clear();
+  PERSPEKTIVEN.filter(p => p.filters.includes(currentFilter)).forEach(p => activePerspectives.add(p.id));
+  renderPerspGrid();
+  renderChips();
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+  document.getElementById('tab-' + mode).classList.add('active');
+}
+
+function setAlter(btn) {
+  currentAlter = btn.dataset.alter;
+  document.querySelectorAll('.altersgruppe-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ============================================================
+// PERSPECTIVE GRID
+// ============================================================
+function renderPerspGrid() {
+  const grid = document.getElementById('perspGrid');
+  const visible = PERSPEKTIVEN.filter(p => p.filters.includes(currentFilter));
+  if (visible.length === 0) {
+    activePerspectives.clear();
+    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0;grid-column:1/-1">Keine Perspektiven für diesen Filter.</div>';
+    return;
+  }
+  // Retain only still-visible active perspectives
+  activePerspectives.forEach(id => {
+    if (!visible.find(p => p.id === id)) activePerspectives.delete(id);
+  });
+  grid.innerHTML = visible.map(p => {
+    const isActive = activePerspectives.has(p.id);
+    const label = currentLang === 'de' ? p.de : p.en;
+    return `<button class="persp-card ${isActive ? 'active' : ''}" onclick="togglePerspective('${p.id}')" data-id="${p.id}">
+      <span class="persp-dot" style="background:${p.color}"></span>
+      ${renderIcon(p.icon, 12)}
+      <span>${label}</span>
+    </button>`;
+  }).join('');
+}
+
+function togglePerspective(id) {
+  if (activePerspectives.has(id)) {
+    activePerspectives.delete(id);
+  } else {
+    activePerspectives.add(id);
+  }
+  renderPerspGrid();
+}
+
+function toggleAllPerspectives() {
+  const visible = PERSPEKTIVEN.filter(p => p.filters.includes(currentFilter));
+  const allActive = visible.every(p => activePerspectives.has(p.id));
+  if (allActive) {
+    visible.forEach(p => activePerspectives.delete(p.id));
+  } else {
+    visible.forEach(p => activePerspectives.add(p.id));
+  }
+  renderPerspGrid();
+}
+
+// ============================================================
+// CHIPS
+// ============================================================
+function renderChips() {
+  const container = document.getElementById('chipsContainer');
+  const label = document.getElementById('chipsLabel');
+  const filterData = CHIPS_DATA[currentFilter] || CHIPS_DATA.all;
+  const chips = filterData[currentLang] || filterData.de;
+  label.textContent = currentLang === 'de' ? 'Fragen am TiSCH' : 'Questions at the Table';
+  container.innerHTML = chips.map(c =>
+    `<button class="chip" onclick="setQuestion(this)">${c}</button>`
+  ).join('');
+}
+
+function setQuestion(btn) {
+  document.getElementById('questionInput').value = btn.textContent;
+  document.getElementById('questionInput').focus();
+}
+
+// ============================================================
+// TONE
+// ============================================================
+function setTone(btn) {
+  currentTone = btn.dataset.tone;
+  document.querySelectorAll('#toneGroup .ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const label = document.getElementById('toneBtnLabel');
+  if (label) label.textContent = currentTone;
+}
+
+function toggleTone() {
+  const tones = ['paedagogisch', 'alltag', 'akademisch'];
+  const idx = tones.indexOf(currentTone);
+  const next = tones[(idx + 1) % tones.length];
+  const btn = document.querySelector(`[data-tone="${next}"]`);
+  if (btn) setTone(btn);
+}
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+function toggleLang() {
+  currentLang = currentLang === 'de' ? 'en' : 'de';
+  document.getElementById('langBtn').textContent = currentLang.toUpperCase();
+  renderPerspGrid();
+  renderChips();
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function openHistory() {
+  document.getElementById('historyPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+  renderHistory();
+}
+
+function closeHistory() {
+  document.getElementById('historyPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (historyData.length === 0) {
+    list.innerHTML = '<div class="history-empty">Noch keine Anfragen</div>';
+    return;
+  }
+  list.innerHTML = historyData.slice().reverse().map((item, i) =>
+    `<div class="history-item" onclick="restoreHistory(${historyData.length - 1 - i})">
+      <div class="history-item-q">${item.question}</div>
+      <div class="history-item-meta">${item.perspCount} Perspektive${item.perspCount !== 1 ? 'n' : ''} · ${item.timestamp}</div>
+    </div>`
+  ).join('');
+}
+
+function restoreHistory(idx) {
+  const item = historyData[idx];
+  if (!item) return;
+  document.getElementById('questionInput').value = item.question;
+  document.getElementById('resultsArea').style.display = 'block';
+  document.getElementById('resultsHeader').textContent = currentLang === 'de'
+    ? `Antworten am TiSCH — ${item.perspCount} Perspektiven`
+    : `Answers at the Table — ${item.perspCount} Perspectives`;
+  document.getElementById('resultsList').innerHTML = item.html;
+  closeHistory();
+}
+
+// ============================================================
+// RESULT RENDERING
+// ============================================================
+function formatText(text) {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n\n+/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+}
+
+function renderResultCard(persp, text, lang) {
+  const cleanRolle = persp.rolle ? persp.rolle.replace(/^\[.*?\]/, '').trim() : '';
+  const p = PERSPEKTIVEN.find(x => x.id === cleanRolle || x.de === cleanRolle || x.en === cleanRolle) || {};
+  const label = lang === 'de' ? (p.de || cleanRolle || '—') : (p.en || cleanRolle || '—');
+  const color = p.color || '#2458A8';
+  const icon = p.icon || 'book';
+  const fachgebiet = p.profil ? (p.profil[lang] || p.profil.de).fachgebiet : '';
+
+  let bodyHtml;
+  if (text) {
+    bodyHtml = `<p>${formatText(text)}</p>`;
+  } else {
+    bodyHtml =
+      `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Anspruchstyp' : 'Claim Type'}:</strong> ${formatText(persp.anspruchstyp || '—')}</p>` +
+      `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Kernanalyse' : 'Core Analysis'}:</strong> ${formatText(persp.kernanalyse || '—')}</p>` +
+      `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Evidenz' : 'Evidence'}:</strong> ${formatText(persp.evidenz || '—')}</p>` +
+      `<p><strong>${lang === 'de' ? 'Blinder Fleck' : 'Blind Spot'}:</strong> ${formatText(persp.blinder_fleck || '—')}</p>`;
+  }
+
+  return `<div class="result-card" onclick="this.classList.toggle('open')">
+    <div class="result-card-header">
+      <div class="result-card-icon" style="background:${color}22;border:1px solid ${color}44">
+        <span style="color:${color}">${renderIcon(icon, 13)}</span>
+      </div>
+      <div class="result-card-title">${label}</div>
+      ${fachgebiet ? `<div class="result-card-badge">${fachgebiet}</div>` : ''}
+      <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
+    </div>
+    <div class="result-card-body">${bodyHtml}</div>
+  </div>`;
+}
+
+function renderIntegrationCard(integration, lang) {
+  if (!integration) return '';
+  const title = lang === 'de' ? 'KiNTEGRiTY — Synthese' : 'KiNTEGRiTY — Synthesis';
+  return `<div class="result-card open" style="border-color:var(--accent);margin-top:20px">
+    <div class="result-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="result-card-icon" style="background:var(--accent-dim);border:1px solid var(--accent)">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+      </div>
+      <div class="result-card-title" style="color:var(--accent)">${title}</div>
+      <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
+    </div>
+    <div class="result-card-body">
+      ${integration.einfach_gesagt ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Einfach gesagt' : 'Simply put'}:</strong> ${formatText(integration.einfach_gesagt)}</p>` : ''}
+      ${integration.anspruchskarte ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Anspruchskarte' : 'Claim Map'}:</strong> ${formatText(integration.anspruchskarte)}</p>` : ''}
+      ${integration.vorlaeufiges_fazit ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Vorläufiges Fazit' : 'Provisional Conclusion'}:</strong> ${formatText(integration.vorlaeufiges_fazit)}</p>` : ''}
+      ${integration.kurzfassung ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Kurzfassung' : 'Summary'}:</strong> ${formatText(integration.kurzfassung)}</p>` : ''}
+      ${integration.herzmensch ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Herzmensch' : 'Heart-led'}:</strong> ${formatText(integration.herzmensch)}</p>` : ''}
+      ${integration.kopfmensch ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Kopfmensch' : 'Head-led'}:</strong> ${formatText(integration.kopfmensch)}</p>` : ''}
+      ${integration.maennlich ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Männlich' : 'Masculine'}:</strong> ${formatText(integration.maennlich)}</p>` : ''}
+      ${integration.weiblich ? `<p style="margin-bottom:8px"><strong>${lang === 'de' ? 'Weiblich' : 'Feminine'}:</strong> ${formatText(integration.weiblich)}</p>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderFrictionCard(friction, lang) {
+  if (!friction) return '';
+  const errors = friction.uebersetzungsfehler || friction.translation_errors || [];
+  const contradictions = friction.echte_widersprueche || friction.genuine_contradictions || [];
+  const overlooked = friction.uebersehenes || [];
+  if (!errors.length && !contradictions.length && !overlooked.length) {
+    return typeof friction === 'string' ? `<div class="result-card" onclick="this.classList.toggle('open')">
+      <div class="result-card-header">
+        <div class="result-card-title" style="color:var(--muted)">${lang === 'de' ? 'Reibungspunkte' : 'Friction Points'}</div>
+        <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
+      </div>
+      <div class="result-card-body"><p>${formatText(friction)}</p></div>
+    </div>` : '';
+  }
+  const title = lang === 'de' ? 'Reibungspunkte zwischen Perspektiven' : 'Friction Between Perspectives';
+  let body = '';
+  if (errors.length) {
+    body += `<p><strong>${lang === 'de' ? 'Übersetzungsfehler' : 'Translation Errors'}:</strong></p><ul class="friction-list">${errors.map(e => `<li>${formatText(e)}</li>`).join('')}</ul>`;
+  }
+  if (contradictions.length) {
+    body += `<p style="margin-top:12px"><strong>${lang === 'de' ? 'Echte Widersprüche' : 'Genuine Contradictions'}:</strong></p><ul class="friction-list">${contradictions.map(c => `<li>${formatText(c)}</li>`).join('')}</ul>`;
+  }
+  if (overlooked.length) {
+    body += `<p style="margin-top:12px"><strong>${lang === 'de' ? 'Übersehenes' : 'Overlooked'}:</strong></p><ul class="friction-list">${overlooked.map(o => `<li>${formatText(o)}</li>`).join('')}</ul>`;
+  }
+  return `<div class="result-card" onclick="this.classList.toggle('open')">
+    <div class="result-card-header">
+      <div class="result-card-icon" style="background:rgba(200,80,40,0.1);border:1px solid rgba(200,80,40,0.3)">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="#C85028" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 14h12z"/><line x1="10" y1="9" x2="10" y2="12"/><circle cx="10" cy="14.5" r=".5" fill="#C85028"/></svg>
+      </div>
+      <div class="result-card-title">${title}</div>
+      <svg class="result-card-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 8 10 13 15 8"/></svg>
+    </div>
+    <div class="result-card-body">${body}</div>
+  </div>`;
+}
+
+// ============================================================
+// SEND QUESTION (PERSPEKTIVEN MODE)
+// ============================================================
+async function sendQuestion() {
+  if (isLoading) return;
+  const q = document.getElementById('questionInput').value.trim();
+  if (!q) { showToast(currentLang === 'de' ? 'Bitte eine Frage eingeben' : 'Please enter a question'); return; }
+  if (activePerspectives.size === 0) { showToast(currentLang === 'de' ? 'Bitte mindestens eine Perspektive wählen' : 'Please select at least one perspective'); return; }
+
+  isLoading = true;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+
+  const resultsArea = document.getElementById('resultsArea');
+  const resultsList = document.getElementById('resultsList');
+  const resultsHeader = document.getElementById('resultsHeader');
+
+  resultsArea.style.display = 'block';
+  resultsHeader.textContent = currentLang === 'de' ? 'Analysiere...' : 'Analysing...';
+  resultsList.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Bildungsperspektiven denken...' : 'Education perspectives thinking...'}</span></div>`;
+
+  const agentProfiles = buildAgentProfiles(currentLang);
+  const toneKey = TONE_MAP[currentTone]?.[currentLang] || 'paedagogisch';
+
+  const payload = {
+    question: q,
+    table: 'schuletisch',
+    mode: 'perspektiven',
+    language: currentLang,
+    stil: toneKey,
+    methods: agentProfiles ? null : Array.from(activePerspectives),
+    custom_perspectives: agentProfiles || undefined,
+    source_app: 'schuletisch',
+  };
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    const perspectives = data.perspectives || [];
+    let html = '';
+    perspectives.forEach(persp => {
+      const text = persp.response || persp.text || '';
+      html += renderResultCard(persp, text, currentLang);
+    });
+    if (data.friction) html += renderFrictionCard(data.friction, currentLang);
+    if (data.integration) html += renderIntegrationCard(data.integration, currentLang);
+
+    resultsList.innerHTML = html || `<div class="error-card">${currentLang === 'de' ? 'Keine Antworten erhalten.' : 'No answers received.'}</div>`;
+    resultsHeader.textContent = currentLang === 'de'
+      ? `Antworten am TiSCH — ${perspectives.length} Perspektive${perspectives.length !== 1 ? 'n' : ''}`
+      : `Answers at the Table — ${perspectives.length} Perspective${perspectives.length !== 1 ? 's' : ''}`;
+
+    historyData.push({
+      question: q,
+      perspCount: perspectives.length,
+      timestamp: new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
+      html,
+    });
+
+  } catch (err) {
+    resultsList.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Fehler: ' : 'Error: '}${err.message}</div>`;
+    resultsHeader.textContent = currentLang === 'de' ? 'Fehler' : 'Error';
+  } finally {
+    isLoading = false;
+    btn.disabled = false;
+  }
+}
+
+// ============================================================
+// LERNPROFIL MODE
+// ============================================================
+async function sendLernprofil() {
+  if (isLoading) return;
+  const situation = document.getElementById('lernprofilInput').value.trim();
+  if (!situation) {
+    showToast(currentLang === 'de' ? 'Bitte die Lernsituation beschreiben' : 'Please describe the learning situation');
+    return;
+  }
+
+  isLoading = true;
+  const btn = document.getElementById('lernprofilBtn');
+  btn.disabled = true;
+
+  const staerken = document.getElementById('staerkenInput').value.trim();
+  const ansaetze = document.getElementById('ansaetzeInput').value.trim();
+
+  const alterLabels = {
+    grundschule: 'Grundschulkind (6–10 Jahre)',
+    sekundarstufe: 'Sekundarstufe I (11–15 Jahre)',
+    oberstufe: 'Oberstufe / Abitur',
+    berufsbildung: 'Berufsbildung / Ausbildung',
+    erwachsene: 'Erwachsene',
+  };
+  const alterLabel = alterLabels[currentAlter] || currentAlter;
+
+  const question = [
+    `LERNPROFiL-ANALYSE — Altersgruppe: ${alterLabel}`,
+    ``,
+    `LERNSITUATION: ${situation}`,
+    staerken ? `STÄRKEN: ${staerken}` : '',
+    ansaetze ? `BISHERIGE ANSÄTZE: ${ansaetze}` : '',
+    ``,
+    currentLang === 'de'
+      ? 'Bitte erstelle aus deiner Perspektive ein Lernprofil mit konkreten Beobachtungen, Einschätzungen und Handlungsempfehlungen.'
+      : 'Please create a learning profile from your perspective with concrete observations, assessments and recommendations for action.',
+  ].filter(Boolean).join('\n');
+
+  const resultsDiv = document.getElementById('lernprofilResults');
+  resultsDiv.innerHTML = `<div class="loader" style="padding:32px 0"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Lernprofil wird erstellt...' : 'Creating learning profile...'}</span></div>`;
+
+  const agentProfiles = PERSPEKTIVEN.map(p => {
+    const prof = p.profil[currentLang] || p.profil.de;
+    return {
+      id: p.id,
+      name: prof.name,
+      position: prof.grundhaltung,
+      grundhaltung: prof.grundhaltung,
+      argumentationsstil: prof.argumentationsstil,
+      prioritaeten: prof.prioritaeten,
+      blinde_flecken: prof.blinde_flecken,
+      fachgebiet: prof.fachgebiet,
+      farbe: p.color,
+    };
+  });
+
+  const payload = {
+    question,
+    table: 'schuletisch',
+    mode: 'lernprofil',
+    language: currentLang,
+    stil: 'paedagogisch',
+    custom_perspectives: agentProfiles,
+    source_app: 'schuletisch',
+  };
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/ask-table`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    const perspectives = data.perspectives || [];
+    let html = `<div style="font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;padding-top:20px">
+      LERNPROFiL — ${alterLabel} — ${perspectives.length} Perspektive${perspectives.length !== 1 ? 'n' : ''}
+    </div>`;
+    perspectives.forEach(persp => {
+      const text = persp.response || persp.text || '';
+      html += renderResultCard(persp, text, currentLang);
+    });
+    if (data.integration) {
+      html += renderIntegrationCard(data.integration, currentLang);
+    }
+
+    resultsDiv.innerHTML = html || `<div class="error-card">${currentLang === 'de' ? 'Keine Antworten erhalten.' : 'No answers received.'}</div>`;
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Fehler: ' : 'Error: '}${err.message}</div>`;
+  } finally {
+    isLoading = false;
+    btn.disabled = false;
+  }
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    if (currentMode === 'perspektiven') sendQuestion();
+    else if (currentMode === 'lernprofil') sendLernprofil();
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+PERSPEKTIVEN.filter(p => p.filters.includes(currentFilter)).forEach(p => activePerspectives.add(p.id));
+renderPerspGrid();
+renderChips();
+</script>
+</body>
+</html>

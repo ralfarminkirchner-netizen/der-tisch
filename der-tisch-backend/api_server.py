@@ -106,6 +106,14 @@ async def serve_wirtschaftstisch():
 async def serve_wirtschaftstisch_short():
     return FileResponse(Path(__file__).parent / "wirtschaftstisch.html", headers=NO_CACHE)
 
+@app.get("/schuletisch.html")
+async def serve_schuletisch():
+    return FileResponse(Path(__file__).parent / "schuletisch.html", headers=NO_CACHE)
+
+@app.get("/schuletisch")
+async def serve_schuletisch_short():
+    return FileResponse(Path(__file__).parent / "schuletisch.html", headers=NO_CACHE)
+
 @app.get("/literatentisch.html")
 async def serve_literatentisch():
     return FileResponse(Path(__file__).parent / "literatentisch.html")
