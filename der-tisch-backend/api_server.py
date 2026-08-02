@@ -1684,6 +1684,7 @@ class ClarifyRequest(BaseModel):
     party_a: ClarifyParty
     party_b: ClarifyParty
     methods: List[str] = []  # Wenn leer → Standard: Pädagogisch + Neurodivergent
+    source_app: Optional[str] = None
 
 @app.post("/api/ask-clarify", response_model=TableResponse)
 async def ask_clarify(req: ClarifyRequest):
@@ -1718,6 +1719,7 @@ async def ask_clarify(req: ClarifyRequest):
         tone=req.tone,
         custom_perspectives=[party_a_cp, party_b_cp],
         methods=methods,
+        source_app=req.source_app,
     )
     return await ask_the_custom_table(table_req)
 
