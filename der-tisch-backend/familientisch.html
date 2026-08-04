@@ -324,6 +324,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .ritual-send-btn{background:#B8742A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .ritual-send-btn:hover{opacity:.88}
 .ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-WANDEL MODE */
+.wandel-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.wandel-intro{background:linear-gradient(135deg,rgba(42,110,140,0.12) 0%,rgba(30,88,116,0.06) 100%);border:1px solid rgba(42,110,140,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.wandel-intro strong{color:#2A6E8C}
+.wandel-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.wandel-input:focus{border-color:#2A6E8C;box-shadow:0 0 0 2px rgba(42,110,140,0.12)}
+.wandel-input::placeholder{color:var(--muted)}
+.wandel-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.wandel-send-btn{background:#2A6E8C;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.wandel-send-btn:hover{opacity:.88}
+.wandel-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -544,6 +556,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C8 5 7 7 7 9a3 3 0 006 0c0-2-1-4-3-6z"/><rect x="8" y="12" width="4" height="5" rx="1"/><line x1="5" y1="17" x2="15" y2="17"/></svg>
       FAMiLiEN-RiTUAL
+    </button>
+    <button class="mode-tab" id="tab-wandel" onclick="setMode('wandel')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c4 0 6 3 6 5s2 5 8 5"/><path d="M14 10l3 5"/><path d="M14 10l3-3"/></svg>
+      FAMiLiEN-WANDEL
     </button>
   </div>
 </section>
@@ -1100,6 +1116,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
   </div>
 </div>
 
+<!-- ==================== FAMiLiEN-WANDEL MODE ==================== -->
+<div class="mode-section" id="mode-wandel">
+  <div class="wandel-wrap">
+
+    <div class="wandel-intro">
+      <strong>FAMiLiEN-WANDEL</strong> — Jede Familie kennt Zeiten des Umbruchs: Trennung, Verlust, Krankheit, Auszug, neue Patchwork-Strukturen. Was bleibt, wenn sich vieles verändert? Vier Stimmen begleiten euch durch Übergänge — mit Ehrlichkeit, Fürsorge und Weitblick. KiNDERHiLFE: Bei akuter Krise bitte professionelle Unterstützung suchen.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="wandelChips">
+      <button class="chip" onclick="useWandelChip(this)">Wir trennen uns — wie schützen wir die Kinder in dieser Zeit?</button>
+      <button class="chip" onclick="useWandelChip(this)">Ein Elternteil ist schwer erkrankt. Wie reden wir ehrlich mit den Kindern?</button>
+      <button class="chip" onclick="useWandelChip(this)">Unser letztes Kind zieht aus. Das Haus fühlt sich leer an.</button>
+      <button class="chip" onclick="useWandelChip(this)">Wir ziehen um — die Kinder verlieren Freunde und Schule.</button>
+      <button class="chip" onclick="useWandelChip(this)">Ein Großelternteil ist gestorben. Wie trauern wir als Familie?</button>
+      <button class="chip" onclick="useWandelChip(this)">Ich habe meinen Job verloren — wie sage ich es meiner Familie?</button>
+      <button class="chip" onclick="useWandelChip(this)">Unsere Patchwork-Familie findet keinen gemeinsamen Rhythmus.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was verändert sich gerade bei euch?</div>
+    <textarea class="wandel-input" id="wandelInput" placeholder="Erzählt von dem Wandel, den ihr gerade erlebt. Was geht zu Ende? Was soll entstehen? Was macht euch Angst — und was gibt euch Halt? Vier Stimmen begleiten euch durch diesen Übergang..." rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="wandelFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-wandel-fokus="krise" onclick="setWandelFokus(this)">Krise</button>
+        <button class="ctrl-btn" data-wandel-fokus="trennung" onclick="setWandelFokus(this)">Trennung</button>
+        <button class="ctrl-btn" data-wandel-fokus="verlust" onclick="setWandelFokus(this)">Verlust</button>
+      </div>
+    </div>
+
+    <div class="wandel-send-row">
+      <button class="wandel-send-btn" id="wandelSendBtn" onclick="sendWandel()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c4 0 6 3 6 5s2 5 8 5"/><path d="M14 10l3 5"/><path d="M14 10l3-3"/></svg>
+        WANDEL BEGLEITEN
+      </button>
+    </div>
+
+    <div id="wandelResults"></div>
+
+  </div>
+</div>
+
 <script>
 // ============================================================
 // GLOBALS & CONFIG
@@ -1602,7 +1661,7 @@ async function sendQuestion() {
     }
 
     // Save to history
-    saveHistory({ question, perspectives: selectedPersp.map(p => p.id), lang: currentLang, time: Date.now() });
+    saveHistory({ question, perspectives: selectedPersp.map(p => p.id), mode: 'perspektiven', lang: currentLang, time: Date.now() });
 
   } catch (err) {
     loader.remove();
@@ -1758,13 +1817,46 @@ function renderHistoryList() {
   `).join('');
 }
 
+function detectHistoryMode(h) {
+  if (h.mode) return h.mode;
+  const q = h.question || '';
+  if (q.startsWith('Aufstellung:')) return 'aufstellung';
+  if (q.startsWith('Klärung:')) return 'klaerung';
+  if (q.startsWith('Rat:')) return 'rat';
+  const firstPersp = (h.perspectives || [])[0] || '';
+  if (firstPersp === 'inneres-kind') return 'selbst';
+  if (firstPersp === 'staerken-forscherin') return 'staerken';
+  if (firstPersp === 'traeumerin') return 'vision';
+  if (firstPersp === 'transgenerational') return 'chronik';
+  if (firstPersp === 'werte-hueterin') return 'kompass';
+  if (firstPersp === 'ritual-hueterin') return 'ritual';
+  if (firstPersp === 'wandel-begleiterin') return 'wandel';
+  return 'perspektiven';
+}
+
+const MODE_INPUT_MAP = {
+  perspektiven: 'questionInput',
+  selbst:       'selbstReflexion',
+  staerken:     'staerkenInput',
+  vision:       'visionInput',
+  chronik:      'chronikInput',
+  kompass:      'kompassInput',
+  ritual:       'ritualInput',
+  wandel:       'wandelInput',
+};
+
 function loadHistoryItem(i) {
   const items = historyData.filter(h => h.app === 'FAMiLiEN TiSCH');
   const h = items[i];
   if (!h) return;
-  document.getElementById('questionInput').value = h.question || '';
+  const mode = detectHistoryMode(h);
   closeHistory();
-  if (currentMode !== 'perspektiven') setMode('perspektiven');
+  if (currentMode !== mode) setMode(mode);
+  const inputId = MODE_INPUT_MAP[mode];
+  if (inputId) {
+    const el = document.getElementById(inputId);
+    if (el) el.value = h.question || '';
+  }
 }
 
 // ============================================================
@@ -2413,7 +2505,7 @@ async function analyseAufstellung() {
     `;
     resultsDiv.appendChild(kiDiv);
 
-    saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], lang: currentLang, time: Date.now() });
+    saveHistory({ question: 'Aufstellung: ' + figures.map(f => f.name).join(', '), perspectives: ['systemisch','bindung','konflikt'], mode: 'aufstellung', lang: currentLang, time: Date.now() });
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.</div>`;
@@ -2686,7 +2778,7 @@ async function sendKlaerung() {
     `;
     resultsDiv.appendChild(kiDiv);
 
-    saveHistory({ question: 'Klärung: ' + topic, perspectives: ['party-a','party-b'], lang: currentLang, time: Date.now() });
+    saveHistory({ question: 'Klärung: ' + topic, perspectives: ['party-a','party-b'], mode: 'klaerung', lang: currentLang, time: Date.now() });
 
   } catch(err) {
     resultsDiv.innerHTML = `<div class="error-card">${currentLang==='de'?'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.':'The TiSCH is currently unavailable. Please try again later.'}</div>`;
@@ -2877,7 +2969,7 @@ async function sendRat() {
     `;
     resultsDiv.appendChild(kiDiv);
 
-    saveHistory({ question: 'Rat: ' + topic, perspectives: members.map(m => m.name), lang: currentLang, time: Date.now() });
+    saveHistory({ question: 'Rat: ' + topic, perspectives: members.map(m => m.name), mode: 'rat', lang: currentLang, time: Date.now() });
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">${currentLang==='de'?'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.':'The TiSCH is currently unavailable. Please try again later.'}</div>`;
@@ -3027,6 +3119,7 @@ async function sendSelbst() {
     saveHistory({
       question:     reflexion.substring(0, 80) + (reflexion.length > 80 ? '...' : ''),
       perspectives: ['inneres-kind', 'koerper', 'staerken', 'selbst-mitgefuehl'],
+      mode:         'selbst',
       lang:         currentLang,
       time:         Date.now()
     });
@@ -3166,6 +3259,7 @@ async function sendStaerken() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['staerken-forscherin', 'familien-chronistin', 'ressourcen-coach', 'zukunfts-architektin'],
+      mode:         'staerken',
       lang:         currentLang,
       time:         Date.now()
     });
@@ -3306,6 +3400,7 @@ async function sendVision() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['traeumerin', 'macherin', 'kritikerin', 'bruecken-bauerin'],
+      mode:         'vision',
       lang:         currentLang,
       time:         Date.now()
     });
@@ -3480,6 +3575,7 @@ async function sendChronik() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['transgenerational', 'systemik', 'resilienz', 'narrativ'],
+      mode:         'chronik',
       lang:         currentLang,
       time:         Date.now()
     });
@@ -3654,6 +3750,7 @@ async function sendKompass() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['werte-hueterin', 'alltags-weisheit', 'spannungs-navigatorin', 'generationen-stimme'],
+      mode:         'kompass',
       lang:         currentLang,
       time:         Date.now()
     });
@@ -3828,6 +3925,167 @@ async function sendRitual() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['ritual-hueterin', 'ritual-erfinderin', 'uebergangs-begl', 'verbindungs-web'],
+      mode:         'ritual',
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-WANDEL MODE ────────────────────────────────────────────────────
+
+let wandelFokus = 'krise';
+
+function setWandelFokus(btn) {
+  wandelFokus = btn.dataset.wandelFokus;
+  document.querySelectorAll('[data-wandel-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useWandelChip(el) {
+  document.getElementById('wandelInput').value = el.textContent.trim();
+}
+
+async function sendWandel() {
+  const text = (document.getElementById('wandelInput').value || '').trim();
+  if (!text || isLoading) return;
+
+  const sendBtn    = document.getElementById('wandelSendBtn');
+  const resultsDiv = document.getElementById('wandelResults');
+  const famName    = document.getElementById('wandelFamilienname').value.trim();
+  const familienLabel = famName || 'Familie';
+
+  const fokusKontext = {
+    krise:    currentLang === 'de' ? 'familiäre Krise und Umbruch'      : 'family crisis and upheaval',
+    trennung: currentLang === 'de' ? 'Trennung und Neuordnung'          : 'separation and reorganisation',
+    verlust:  currentLang === 'de' ? 'Verlust, Trauer und Abschiednehmen' : 'loss, grief and letting go',
+  };
+  const frage = `[${fokusKontext[wandelFokus] || 'Familienwandel'}] ${text}`;
+
+  const wandelPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Wandel-Begleiterin' : 'Change Companion',
+      position: currentLang === 'de'
+        ? 'Wandel ist nicht das Ende — er ist ein Durchgang. Ich beleuchte den Übergang: Was löst sich auf, was transformiert sich? Welche Phase des Wandels seid ihr gerade in — Chaos, Orientierungslosigkeit, erstes Tasten nach Neuem? Jede Phase hat ihre eigene Logik und braucht ihre eigene Fürsorge. Wie lässt sich dieser Wandel so gestalten, dass Würde bewahrt bleibt — für alle Beteiligten?'
+        : 'Change is not the end — it is a passage. I illuminate the transition: What is dissolving, what is transforming? Which phase of change are you in — chaos, disorientation, first reaching for the new? Each phase has its own logic and needs its own care. How can this change be shaped so dignity is preserved for everyone involved?',
+      grundhaltung: currentLang === 'de'
+        ? 'Übergänge sind keine Fehler des Lebens. Sie gehören dazu — und in ihnen steckt die Möglichkeit zur Erneuerung.'
+        : 'Transitions are not life\'s mistakes. They belong — and in them lies the possibility of renewal.',
+      fachgebiet: currentLang === 'de'
+        ? 'Transitions-Theorie (Bridges), Krisenbegleitung, systemische Familienberatung, Resilienzforschung'
+        : 'Transition theory (Bridges), crisis support, systemic family counselling, resilience research'
+    },
+    {
+      name: currentLang === 'de' ? 'Verlust-Hüterin' : 'Loss Guardian',
+      position: currentLang === 'de'
+        ? 'Bevor etwas Neues entstehen kann, braucht das Alte einen würdigen Abschied. Ich halte den Raum für das, was sich auflöst — Beziehungsformen, Gewohnheiten, Träume, Selbstbilder. Trauer ist nicht Schwäche, sondern Treue: Sie zeigt, wie viel etwas bedeutet hat. Was darf hier betrauert werden? Wer verliert was — und wird das gesehen? Manchmal wird Verlust übersehen, weil er in einem positiven Wandel verpackt ist. Ich benenne ihn trotzdem.'
+        : 'Before something new can emerge, the old needs a dignified farewell. I hold space for what is dissolving — relationship forms, habits, dreams, self-images. Grief is not weakness, but fidelity: it shows how much something mattered. What may be mourned here? Who loses what — and is that seen? Sometimes loss is overlooked because it comes in positive change. I name it anyway.',
+      grundhaltung: currentLang === 'de'
+        ? 'Man kann nicht vorwärts rennen, wenn man nicht innehalten durfte. Trauer ist kein Aufenthalt — sie ist ein Teil des Weges.'
+        : 'You cannot run forward if you were not allowed to pause. Grief is not a delay — it is part of the path.',
+      fachgebiet: currentLang === 'de'
+        ? 'Trauerforschung (Worden, Stroebe), Verlusttheorie, Bindungsforschung, kindliche Trauerverarbeitung'
+        : 'Grief research (Worden, Stroebe), loss theory, attachment research, children\'s grief processing'
+    },
+    {
+      name: currentLang === 'de' ? 'Neuland-Kundschafterin' : 'New Territory Scout',
+      position: currentLang === 'de'
+        ? 'Was könnte entstehen? Ich schaue voraus — nicht um den Schmerz zu überspringen, sondern um sichtbar zu machen, dass es jenseits des Wandels wieder festes Land gibt. Welche Möglichkeiten öffnet dieser Umbruch, die vorher nicht denkbar waren? Welche neuen Stärken treten zutage? Welche Beziehungen vertiefen sich, wenn alte Strukturen wegfallen? Ich suche die Keime des Neuen — als ehrliche Orientierung, nicht als Trost.'
+        : 'What could emerge? I look ahead — not to skip the pain, but to make visible that beyond the change there is solid ground again. What possibilities does this upheaval open that were not thinkable before? What new strengths come to the surface? Which relationships deepen when old structures fall away? I look for the seeds of the new — as honest orientation, not consolation.',
+      grundhaltung: currentLang === 'de'
+        ? 'Jede Familie hat schon Unmögliches überlebt. Was macht euch stark genug für diesen Wandel?'
+        : 'Every family has already survived something impossible. What makes you strong enough for this change?',
+      fachgebiet: currentLang === 'de'
+        ? 'Positive Psychologie, post-traumatisches Wachstum (Tedeschi & Calhoun), lösungsorientierte Familienberatung, Zukunftsforschung'
+        : 'Positive psychology, post-traumatic growth (Tedeschi & Calhoun), solution-focused family counselling, futures research'
+    },
+    {
+      name: currentLang === 'de' ? 'Stabilitäts-Anker' : 'Stability Anchor',
+      position: currentLang === 'de'
+        ? 'Was bleibt, wenn sich alles verändert? Ich suche die Konstanten: Welche Beziehungen, Werte, Rituale, Orte, Menschen sind der Fels in der Brandung? Vor allem für Kinder ist das Bekannte in Zeiten des Wandels entscheidend — was kann konstant bleiben, auch wenn große Strukturen sich auflösen? Und was brauchen die verletzlichsten Familienmitglieder gerade am dringendsten? Sicherheit entsteht nicht aus Unveränderlichkeit, sondern aus verlässlichen Beziehungen.'
+        : 'What remains when everything changes? I look for the constants: Which relationships, values, rituals, places, people are the bedrock in the storm? Especially for children, the familiar is crucial in times of change — what can remain constant even as large structures dissolve? And what do the most vulnerable family members need most urgently? Security comes not from unchangeability but from reliable relationships.',
+      grundhaltung: currentLang === 'de'
+        ? 'Sicherheit entsteht nicht aus Unveränderlichkeit, sondern aus verlässlichen Beziehungen. Was bleibt konstant in eurer Familie?'
+        : 'Security does not come from unchangeability, but from reliable relationships. What remains constant in your family?',
+      fachgebiet: currentLang === 'de'
+        ? 'Resilienzforschung (Walsh), Schutzfaktoren-Modelle, Entwicklungspsychologie, familiäre Stabilisierungskonzepte'
+        : 'Resilience research (Walsh), protective factor models, developmental psychology, family stabilisation concepts'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-WANDEL wird begleitet...' : 'Navigating your family transition...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: wandelPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const wandelPerspDefs = [
+      { id: 'wandel-begleiterin',     icon: 'compass',  color: '#2A6E8C', de: 'Wandel-Begleiterin',     en: 'Change Companion'    },
+      { id: 'verlust-hueterin',       icon: 'heart',    color: '#1E5A78', de: 'Verlust-Hüterin',         en: 'Loss Guardian'       },
+      { id: 'neuland-kundschafterin', icon: 'seedling', color: '#3A7E9C', de: 'Neuland-Kundschafterin',  en: 'New Territory Scout' },
+      { id: 'stabilitaets-anker',     icon: 'shield',   color: '#246080', de: 'Stabilitäts-Anker',       en: 'Stability Anchor'    }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = wandelPerspDefs[i] || wandelPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'WAS EuCH TRäGT' : 'WHAT CARRIES YOU',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#2A6E8C',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Krisen brauchen professionelle Begleitung' : 'Crises need professional support'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'KI ersetzt keine Krisenberatung' : 'AI does not replace crisis counselling'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Telefonseelsorge: 0800 111 0 111 (kostenlos)' : 'Crisis line: 0800 111 0 111 (free)'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['wandel-begleiterin', 'verlust-hueterin', 'neuland-kundschafterin', 'stabilitaets-anker'],
+      mode:         'wandel',
       lang:         currentLang,
       time:         Date.now()
     });
