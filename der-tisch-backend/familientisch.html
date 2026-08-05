@@ -324,6 +324,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .ritual-send-btn{background:#B8742A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .ritual-send-btn:hover{opacity:.88}
 .ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-KRiSE MODE */
+.krise-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.krise-intro{background:linear-gradient(135deg,rgba(74,111,165,0.12) 0%,rgba(58,90,140,0.06) 100%);border:1px solid rgba(74,111,165,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.krise-intro strong{color:#4A6FA5}
+.krise-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.krise-input:focus{border-color:#4A6FA5;box-shadow:0 0 0 2px rgba(74,111,165,0.12)}
+.krise-input::placeholder{color:var(--muted)}
+.krise-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.krise-send-btn{background:#4A6FA5;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.krise-send-btn:hover{opacity:.88}
+.krise-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -544,6 +556,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C8 5 7 7 7 9a3 3 0 006 0c0-2-1-4-3-6z"/><rect x="8" y="12" width="4" height="5" rx="1"/><line x1="5" y1="17" x2="15" y2="17"/></svg>
       FAMiLiEN-RiTUAL
+    </button>
+    <button class="mode-tab" id="tab-krise" onclick="setMode('krise')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a4 4 0 010-8 4 4 0 017-3 5 5 0 010 11H4z"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="7" y1="17" x2="7" y2="19"/><line x1="13" y1="17" x2="13" y2="19"/></svg>
+      FAMiLiEN-KRiSE
     </button>
   </div>
 </section>
@@ -1096,6 +1112,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="ritualResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-KRiSE MODE ==================== -->
+<div class="mode-section" id="mode-krise">
+  <div class="krise-wrap">
+
+    <div class="krise-intro">
+      <strong>FAMiLiEN-KRiSE</strong> — Jede Familie erlebt Stürme: Verlust, Trennung, Krankheit, Erschöpfung, Zerbruch. Was zählt, ist nicht ob eine Krise kommt — sondern wie eine Familie durch sie hindurchfindet. Vier Stimmen begleiten euch: Was trägt noch? Was hilft jetzt? Was hat diese Krise ausgelöst — und welcher Weg führt hindurch?
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="kriseChips">
+      <button class="chip" onclick="useKriseChip(this)">Wir haben einen Todesfall erlebt und wissen nicht, wie wir als Familie damit umgehen sollen.</button>
+      <button class="chip" onclick="useKriseChip(this)">Trennung: Wie schütze ich die Kinder und finde trotzdem meinen eigenen Weg?</button>
+      <button class="chip" onclick="useKriseChip(this)">Ein Familienmitglied ist schwer krank — alles dreht sich nur noch darum.</button>
+      <button class="chip" onclick="useKriseChip(this)">Wir streiten täglich. Die Erschöpfung macht uns alle mürbe.</button>
+      <button class="chip" onclick="useKriseChip(this)">Finanzielle Krise: Wie reden wir offen darüber — auch mit den Kindern?</button>
+      <button class="chip" onclick="useKriseChip(this)">Mein Kind steckt in einer Krise und ich weiß nicht, wie ich helfen kann.</button>
+      <button class="chip" onclick="useKriseChip(this)">Wir sind als Familie auseinandergefallen und wissen nicht, ob wir noch zusammengehören.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was ist eure aktuelle Situation?</div>
+    <textarea class="krise-input" id="kriseInput" placeholder="Beschreibt, was gerade in eurer Familie passiert. Was ist die Krise — was habt ihr schon versucht — und was braucht ihr jetzt am dringendsten?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="kriseFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-krise-fokus="akut" onclick="setKriseFokus(this)">Akutphase</button>
+        <button class="ctrl-btn" data-krise-fokus="stabilisierung" onclick="setKriseFokus(this)">Stabilisierung</button>
+        <button class="ctrl-btn" data-krise-fokus="neuorientierung" onclick="setKriseFokus(this)">Neuorientierung</button>
+      </div>
+    </div>
+
+    <div class="krise-send-row">
+      <button class="krise-send-btn" id="kriseSendBtn" onclick="sendKrise()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a4 4 0 010-8 4 4 0 017-3 5 5 0 010 11H4z"/><line x1="10" y1="16" x2="10" y2="18"/><line x1="7" y1="17" x2="7" y2="19"/><line x1="13" y1="17" x2="13" y2="19"/></svg>
+        KRiSE NAViGiEREN
+      </button>
+    </div>
+
+    <div id="kriseResults"></div>
 
   </div>
 </div>
@@ -3828,6 +3887,181 @@ async function sendRitual() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['ritual-hueterin', 'ritual-erfinderin', 'uebergangs-begl', 'verbindungs-web'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ============================================================
+// FAMiLiEN-KRiSE MODE (11. Modus)
+// ============================================================
+let kriseFokus = 'akut';
+
+function setKriseFokus(btn) {
+  kriseFokus = btn.dataset.kriseFokus;
+  document.querySelectorAll('[data-krise-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useKriseChip(el) {
+  document.getElementById('kriseInput').value = el.textContent.trim();
+  document.getElementById('kriseInput').focus();
+}
+
+async function sendKrise() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('kriseInput');
+  const resultsDiv = document.getElementById('kriseResults');
+  const sendBtn    = document.getElementById('kriseSendBtn');
+  const famName    = (document.getElementById('kriseFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    akut: currentLang === 'de'
+      ? 'Was braucht diese Familie jetzt — in dieser akuten Krisenphase — am dringendsten? Was muss sofort stabilisiert werden, was kann warten? Welche konkreten ersten Schritte helfen jetzt, und wer trägt was?'
+      : 'What does this family need most urgently right now — in this acute crisis phase? What must be stabilized immediately, what can wait? What concrete first steps help now, and who carries what?',
+    stabilisierung: currentLang === 'de'
+      ? 'Die akuteste Phase ist überstanden. Was hilft dieser Familie, sich zu stabilisieren? Welche Ressourcen, Strukturen und Anker können jetzt Halt geben — und wer oder was braucht besondere Aufmerksamkeit in dieser Phase?'
+      : 'The most acute phase has passed. What helps this family stabilize? What resources, structures and anchors can provide support now — and who or what needs particular attention in this phase?',
+    neuorientierung: currentLang === 'de'
+      ? 'Die Krise hat etwas verändert — unwiderruflich. Was kann aus ihr entstehen? Wie findet diese Familie zurück zu sich — oder neu zu sich? Was ist jetzt möglich, was vorher nicht denkbar war?'
+      : 'The crisis has changed something — irrevocably. What can emerge from it? How does this family find its way back to itself — or newly to itself? What is now possible that was unthinkable before?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[kriseFokus]} Kontext: ${text}`;
+
+  const krisePerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Sicherheits-Anker' : 'Safety Anchor',
+      position: currentLang === 'de'
+        ? 'Was trägt diese Familie noch — auch mitten in der Krise? Erkunde, was stabil geblieben ist: Beziehungen, Routinen, Werte, Ressourcen. Was kann als Anker dienen, wenn alles unsicher scheint? Sicherheit ist nicht Abwesenheit von Schmerz — sie ist das Wissen: wir halten das gemeinsam. Welche Inseln der Stabilität gibt es, und wie kann die Familie sie bewusst nutzen? Benenne konkret, was noch steht, und wie das als Fundament für das Weiterleben dienen kann.'
+        : 'What still carries this family — even in the midst of crisis? Explore what has remained stable: relationships, routines, values, resources. What can serve as anchor when everything seems uncertain? Safety is not the absence of pain — it is the knowledge: we are holding this together. What islands of stability exist, and how can the family consciously use them? Name concretely what still stands, and how that can serve as foundation for moving forward.',
+      grundhaltung: currentLang === 'de'
+        ? 'Sicherheit entsteht nicht durch das Ausblenden der Krise, sondern durch das Wissen: Wir sind nicht allein damit. Wir halten das.'
+        : 'Safety does not arise from ignoring the crisis, but from knowing: we are not alone in this. We can hold this.',
+      fachgebiet: currentLang === 'de'
+        ? 'Krisenintervention, Polyvagal-Theorie (Porges), Resilienzforschung, Bindungstheorie (Bowlby), Sicherheitsplanung'
+        : 'Crisis intervention, polyvagal theory (Porges), resilience research, attachment theory (Bowlby), safety planning'
+    },
+    {
+      name: currentLang === 'de' ? 'Ressourcen-Entdecker' : 'Resource Discoverer',
+      position: currentLang === 'de'
+        ? 'Jede Familie, die eine Krise erlebt, trägt mehr in sich, als sie im Moment sieht. Was sind die echten, gelebten Stärken dieser Familie — nicht die idealen, sondern die, die wirklich da sind? Welche Bewältigungsstrategien haben früher geholfen? Wer im sozialen Umfeld kann Unterstützung geben? Welche internen Ressourcen — Humor, Zusammenhalt, Kreativität, Glaube, Rituale, Routinen — sind in dieser Krise besonders wertvoll und abrufbar?'
+        : 'Every family experiencing a crisis carries more within itself than it can see in the moment. What are the real, lived strengths of this family — not the ideal ones, but those that are truly there? Which coping strategies have helped before? Who in the social environment can offer support? What internal resources — humour, solidarity, creativity, faith, rituals, routines — are particularly valuable and accessible in this crisis?',
+      grundhaltung: currentLang === 'de'
+        ? 'Krisen zeigen uns, was wirklich trägt. Hinter jeder Erschöpfung steckt eine Kraft, die noch nicht gefunden wurde — oder die vergessen wurde, weil sie selbstverständlich war.'
+        : 'Crises show us what truly carries. Behind every exhaustion lies a strength not yet found — or forgotten because it seemed self-evident.',
+      fachgebiet: currentLang === 'de'
+        ? 'Ressourcenorientierte Beratung (Seligman), Positive Psychologie, Familienresilienz (Walsh), Posttraumatisches Wachstum (Tedeschi/Calhoun)'
+        : 'Resource-oriented counseling (Seligman), positive psychology, family resilience (Walsh), post-traumatic growth (Tedeschi/Calhoun)'
+    },
+    {
+      name: currentLang === 'de' ? 'Muster-Entziffererin' : 'Pattern Decoder',
+      position: currentLang === 'de'
+        ? 'Krisen kommen selten aus dem Nichts. Was sind die Kommunikationsmuster, Rollenverteilungen und unausgesprochenen Erwartungen, die in diese Krise geführt haben? Was wiederholt sich vielleicht aus der Familiengeschichte — Krisen, die sich ähneln, Dynamiken, die sich tradiert haben? Und: Was will diese Krise zeigen, das bisher nicht gesehen werden konnte? Manchmal ist eine Krise ein lautes Signal für etwas, das lange im Stillen gewartet hat, gehört zu werden.'
+        : 'Crises rarely come from nowhere. What are the communication patterns, role distributions and unspoken expectations that led to this crisis? What might be repeating from family history — crises that resemble each other, dynamics that have been passed down? And: what does this crisis want to show that could not be seen before? Sometimes a crisis is a loud signal for something that has long quietly waited to be heard.',
+      grundhaltung: currentLang === 'de'
+        ? 'Eine Krise ist kein Fehler des Systems — sie ist oft das System, das nach Veränderung ruft. Das Muster zu sehen bedeutet nicht Schuld, sondern Handlungsmöglichkeit.'
+        : 'A crisis is not a failure of the system — it is often the system calling for change. Seeing the pattern means not blame, but possibility for action.',
+      fachgebiet: currentLang === 'de'
+        ? 'Systemische Familientherapie, transgenerationale Muster, Kommunikationstheorie (Watzlawick), Konfliktdynamik, Familienaufstellung'
+        : 'Systemic family therapy, transgenerational patterns, communication theory (Watzlawick), conflict dynamics, family constellation'
+    },
+    {
+      name: currentLang === 'de' ? 'Zukunfts-Brücke' : 'Future Bridge',
+      position: currentLang === 'de'
+        ? 'Diese Krise ist nicht das Ende der Geschichte dieser Familie — sie ist ein Kapitel. Was kann nach ihr entstehen? Was könnte diese Familie stärker, ehrlicher oder tiefer verbundener machen als zuvor? Welche konkreten nächsten Schritte führen von hier aus vorwärts — nicht zurück zum Alten, sondern in Richtung eines Neuen, das diese Krise erst ermöglicht hat? Was ist der erste kleine, machbare Schritt — und wer geht ihn?'
+        : 'This crisis is not the end of this family\'s story — it is a chapter. What can emerge after it? What might make this family stronger, more honest or more deeply connected than before? What concrete next steps lead forward from here — not back to the old, but toward something new that this crisis has made possible? What is the first small, manageable step — and who takes it?',
+      grundhaltung: currentLang === 'de'
+        ? 'Krisen sind Schwellen. Was auf der anderen Seite wartet, ist nicht gegeben — es wird gemacht. Jede Familie trägt die Fähigkeit zur Wandlung in sich. Die Frage ist nur: in welche Richtung?'
+        : 'Crises are thresholds. What waits on the other side is not given — it is made. Every family carries the capacity to transform. The question is only: in which direction?',
+      fachgebiet: currentLang === 'de'
+        ? 'Lösungsfokussierte Beratung (de Shazer), Narratives Reframing, Posttraumatisches Wachstum, Hoffnungsforschung (Snyder), systemische Zukunftsarbeit'
+        : 'Solution-focused counseling (de Shazer), narrative reframing, post-traumatic growth, hope research (Snyder), systemic future work'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-KRiSE wird erkundet...' : 'Exploring your family crisis...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: krisePerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const krisePerspDefs = [
+      { id: 'sicherheits-anker',    icon: 'anchor',   color: '#4A6FA5', de: 'Sicherheits-Anker',    en: 'Safety Anchor'       },
+      { id: 'ressourcen-entdecker', icon: 'seedling', color: '#3A5F95', de: 'Ressourcen-Entdecker',  en: 'Resource Discoverer' },
+      { id: 'muster-entziffererin', icon: 'network',  color: '#5A7FB5', de: 'Muster-Entziffererin',  en: 'Pattern Decoder'     },
+      { id: 'zukunfts-bruecke',     icon: 'compass',  color: '#6A8FC5', de: 'Zukunfts-Brücke',       en: 'Future Bridge'       }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = krisePerspDefs[i] || krisePerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EUER WEG DURCH DiE KRiSE' : 'YOUR PATH THROUGH THE CRISIS',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#4A6FA5',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Kein Ersatz für professionelle Krisenbegleitung' : 'Not a substitute for professional crisis support'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="7" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg> ${currentLang === 'de' ? 'Bei akuter Gefahr: Notruf 112 · Telefonseelsorge 0800 111 0 111' : 'In acute danger: emergency services or crisis hotline'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Multiperspektivische Reflexion, keine Diagnose' : 'Multi-perspective reflection, not diagnosis'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['sicherheits-anker', 'ressourcen-entdecker', 'muster-entziffererin', 'zukunfts-bruecke'],
       lang:         currentLang,
       time:         Date.now()
     });
