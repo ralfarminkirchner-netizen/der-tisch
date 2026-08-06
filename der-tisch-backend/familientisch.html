@@ -324,6 +324,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .ritual-send-btn{background:#B8742A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .ritual-send-btn:hover{opacity:.88}
 .ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-ERZiEHUNG MODE */
+.erziehung-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.erziehung-intro{background:linear-gradient(135deg,rgba(58,122,106,0.12) 0%,rgba(42,100,88,0.06) 100%);border:1px solid rgba(58,122,106,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.erziehung-intro strong{color:#3A7A6A}
+.erziehung-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.erziehung-input:focus{border-color:#3A7A6A;box-shadow:0 0 0 2px rgba(58,122,106,0.12)}
+.erziehung-input::placeholder{color:var(--muted)}
+.erziehung-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.erziehung-send-btn{background:#3A7A6A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.erziehung-send-btn:hover{opacity:.88}
+.erziehung-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -544,6 +556,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C8 5 7 7 7 9a3 3 0 006 0c0-2-1-4-3-6z"/><rect x="8" y="12" width="4" height="5" rx="1"/><line x1="5" y1="17" x2="15" y2="17"/></svg>
       FAMiLiEN-RiTUAL
+    </button>
+    <button class="mode-tab" id="tab-erziehung" onclick="setMode('erziehung')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5" r="3"/><path d="M1 19v-2a4 4 0 017-2.6"/><circle cx="15" cy="11" r="2.5"/><path d="M12 19v-1a3 3 0 016 0v1"/><line x1="9" y1="10" x2="12" y2="9" stroke-dasharray="2,1.5"/></svg>
+      ERZiEHUNG
     </button>
   </div>
 </section>
@@ -1096,6 +1112,52 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="ritualResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-ERZiEHUNG MODE ==================== -->
+<div class="mode-section" id="mode-erziehung">
+  <div class="erziehung-wrap">
+
+    <div class="erziehung-intro">
+      <strong>FAMiLiEN-ERZiEHUNG</strong> — Erziehung ist keine Technik, sondern eine Beziehung. Vier spezialisierte Stimmen beleuchten deine Situation aus entwicklungspsychologischer, bindungstheoretischer, grenzsetzender und kindlicher Perspektive — konkret und ohne Rezepte.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Häufige Erziehungssituationen</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="erziehungChips">
+      <button class="chip" onclick="useErziehungChip(this)">Mein Kind macht, was es will — wie setze ich Grenzen?</button>
+      <button class="chip" onclick="useErziehungChip(this)">Trotzphase: Wie bleibe ich ruhig?</button>
+      <button class="chip" onclick="useErziehungChip(this)">Bildschirmzeit: Wie viel ist okay?</button>
+      <button class="chip" onclick="useErziehungChip(this)">Mein Kind vergleicht sich ständig mit anderen.</button>
+      <button class="chip" onclick="useErziehungChip(this)">Hausaufgaben-Kampf jeden Nachmittag.</button>
+      <button class="chip" onclick="useErziehungChip(this)">Mein Kind hat Angst — ich weiß nicht, wie ich helfen soll.</button>
+      <button class="chip" onclick="useErziehungChip(this)">Teenager zieht sich zurück — wie bleibe ich in Kontakt?</button>
+      <button class="chip" onclick="useErziehungChip(this)">Wir haben unterschiedliche Erziehungsvorstellungen als Eltern.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was beschäftigt dich gerade?</div>
+    <textarea class="erziehung-input" id="erziehungInput" placeholder="Beschreibe die Situation oder die Frage, die dich als Elternteil bewegt. Was passiert? Was hast du schon versucht? Was erhoffst du dir?" rows="4"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="erziehungKindname" type="text" placeholder="Name des Kindes (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-altersphase="kleinkind" onclick="setAltersphase(this)">0–3 J.</button>
+        <button class="ctrl-btn" data-altersphase="kiga" onclick="setAltersphase(this)">4–6 J.</button>
+        <button class="ctrl-btn" data-altersphase="grundschule" onclick="setAltersphase(this)">7–10 J.</button>
+        <button class="ctrl-btn" data-altersphase="preteens" onclick="setAltersphase(this)">11–13 J.</button>
+        <button class="ctrl-btn" data-altersphase="pubertaet" onclick="setAltersphase(this)">Pubertät</button>
+      </div>
+    </div>
+
+    <div class="erziehung-send-row">
+      <button class="erziehung-send-btn" id="erziehungSendBtn" onclick="sendErziehung()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M2 18v-1a4 4 0 017-2.6"/><circle cx="15" cy="11" r="2.5"/><path d="M12 18v-1a3 3 0 016 0v1"/></svg>
+        ERZiEHUNG ERKUNDEN
+      </button>
+    </div>
+
+    <div id="erziehungResults"></div>
 
   </div>
 </div>
@@ -3828,6 +3890,180 @@ async function sendRitual() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['ritual-hueterin', 'ritual-erfinderin', 'uebergangs-begl', 'verbindungs-web'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-ERZiEHUNG MODE ────────────────────────────────────────────────
+
+let currentAltersphase = 'kleinkind';
+
+function setAltersphase(btn) {
+  currentAltersphase = btn.dataset.altersphase;
+  document.querySelectorAll('[data-altersphase]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useErziehungChip(el) {
+  document.getElementById('erziehungInput').value = el.textContent.trim();
+  document.getElementById('erziehungInput').focus();
+}
+
+async function sendErziehung() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('erziehungInput');
+  const resultsDiv = document.getElementById('erziehungResults');
+  const sendBtn    = document.getElementById('erziehungSendBtn');
+  const kindname   = (document.getElementById('erziehungKindname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const altersPhaseLabels = {
+    kleinkind:   currentLang === 'de' ? '0–3 Jahre (Kleinkind)' : '0–3 years (toddler)',
+    kiga:        currentLang === 'de' ? '4–6 Jahre (Kita/Kindergarten)' : '4–6 years (pre-school)',
+    grundschule: currentLang === 'de' ? '7–10 Jahre (Grundschulalter)' : '7–10 years (primary school)',
+    preteens:    currentLang === 'de' ? '11–13 Jahre (Vorpubertät)' : '11–13 years (pre-teens)',
+    pubertaet:   currentLang === 'de' ? 'Pubertät (14+ Jahre)' : 'Adolescence (14+ years)',
+  };
+
+  const alterlabel = altersPhaseLabels[currentAltersphase] || '';
+  const kindlabel  = kindname ? (currentLang === 'de' ? `Kind: ${kindname}, ` : `Child: ${kindname}, `) : '';
+  const kontext    = `${kindlabel}Altersphase: ${alterlabel}`;
+  const frage      = currentLang === 'de'
+    ? `${text}\n\n[Kontext: ${kontext}]`
+    : `${text}\n\n[Context: ${kontext}]`;
+
+  const erziehungPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Entwicklungs-Begleiterin' : 'Development Guide',
+      position: currentLang === 'de'
+        ? 'Du bist Entwicklungspsychologin mit tiefem Wissen über die normalen Entwicklungsphasen von Kindern. Erkläre, was in dieser Altersphase entwicklungspsychologisch typisch und erwartet ist — was hinter dem Verhalten des Kindes steckt, was normal ist, was gerade entsteht. Sei konkret, beruhigend wo nötig, ehrlich wo wichtig. Zeige, was Eltern in dieser Phase besonders verstehen müssen.'
+        : 'You are a developmental psychologist with deep knowledge of normal childhood development phases. Explain what is developmentally typical and expected at this stage — what lies behind the child\'s behaviour, what is normal, what is emerging. Be concrete, reassuring where needed, honest where important. Show what parents particularly need to understand at this phase.',
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder entwickeln sich nach einem inneren Plan. Ihre Verhaltensweisen sind nicht Fehler, sondern Signale ihrer Entwicklungsstufe. Wer die Phase versteht, kann das Verhalten deuten — statt nur zu reagieren.'
+        : 'Children develop according to an inner plan. Their behaviours are not failures but signals of their developmental stage. Understanding the phase allows interpretation rather than mere reaction.',
+      fachgebiet: currentLang === 'de'
+        ? 'Entwicklungspsychologie (Piaget, Erikson, Vygotsky), altersgerechte Erziehung, Temperament und Reifung'
+        : 'Developmental psychology (Piaget, Erikson, Vygotsky), age-appropriate parenting, temperament and maturation'
+    },
+    {
+      name: currentLang === 'de' ? 'Bindungs-Therapeutin' : 'Attachment Therapist',
+      position: currentLang === 'de'
+        ? 'Du bist Spezialistin für Bindungstheorie und emotionale Sicherheit in Eltern-Kind-Beziehungen. Erkläre, welche Bindungsbedürfnisse in dieser Situation aktiv sind — beim Kind und bei den Eltern. Was sucht das Kind wirklich? Was braucht es, um sich sicher zu fühlen? Wie können Eltern feinfühlig reagieren, ohne sich selbst zu verlieren? Zeige konkrete Wege zur sicheren Bindung auch in schwierigen Momenten.'
+        : 'You are a specialist in attachment theory and emotional safety in parent-child relationships. Explain which attachment needs are active — in the child and in the parents. What is the child really seeking? What does it need to feel safe? How can parents respond sensitively without losing themselves? Show concrete paths to secure attachment even in difficult moments.',
+      grundhaltung: currentLang === 'de'
+        ? 'Hinter jedem schwierigen Verhalten steckt ein unerfülltes Bindungsbedürfnis. Kinder suchen keine Kontrolle — sie suchen Verbindung. Feinfühligkeit ist kein Verwöhnen, sondern die Grundlage jeder gesunden Entwicklung.'
+        : 'Behind every difficult behaviour is an unmet attachment need. Children do not seek control — they seek connection. Sensitivity is not spoiling; it is the foundation of all healthy development.',
+      fachgebiet: currentLang === 'de'
+        ? 'Bindungstheorie (Bowlby, Ainsworth, Main), Circle of Security, emotionale Verfügbarkeit, Ko-Regulation'
+        : 'Attachment theory (Bowlby, Ainsworth, Main), Circle of Security, emotional availability, co-regulation'
+    },
+    {
+      name: currentLang === 'de' ? 'Grenz-Mutmacherin' : 'Boundaries Coach',
+      position: currentLang === 'de'
+        ? 'Du bist Expertin für autoritative Erziehung — Grenzen mit Wärme. Erkläre, wie Eltern in dieser Situation klare, konsequente Grenzen setzen können — ohne Strenge um der Strenge willen, ohne Nachgeben um des Friedens willen. Zeige, wie Struktur und emotionale Verbindung gemeinsam möglich sind. Wie bleibt man ruhig? Wie reagiert man, ohne zu schreien und ohne zu kapitulieren? Was ist wirklich wichtig — und was ist Nebensache?'
+        : 'You are an expert in authoritative parenting — limits with warmth. Explain how parents can set clear, consistent limits in this situation — without strictness for its own sake, without giving in for the sake of peace. Show how structure and emotional connection can coexist. How does one stay calm? How does one respond without shouting and without capitulating? What truly matters — and what is secondary?',
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder brauchen Grenzen nicht trotz, sondern wegen der Liebe. Konsequenz bedeutet nicht Härte — sie bedeutet Verlässlichkeit. Das Ruhigste am Elternteil wird zur inneren Stimme des Kindes.'
+        : 'Children need limits not in spite of love but because of it. Consistency means reliability, not harshness. The calmest part of the parent becomes the child\'s inner voice.',
+      fachgebiet: currentLang === 'de'
+        ? 'Autoritative Erziehung (Baumrind), Gordon-Kommunikation, Positive Disziplin (Nelsen), Gewaltfreie Kommunikation'
+        : 'Authoritative parenting (Baumrind), Gordon communication, Positive Discipline (Nelsen), Nonviolent Communication'
+    },
+    {
+      name: currentLang === 'de' ? 'Kind-Botschafterin' : 'Child Messenger',
+      position: currentLang === 'de'
+        ? 'Du gibst dem Kind eine Stimme. Erkläre aus Sicht des Kindes, was es in dieser Situation wohl erlebt, fühlt und braucht — was es vielleicht nicht in Worte fassen kann. Was versucht das Kind mit seinem Verhalten mitzuteilen? Was wünscht es sich von seinen Eltern? Sei keine Anklage gegen die Eltern — sei eine ehrliche Übersetzung des Kindes. Direkt, konkret, einfühlsam.'
+        : 'You give the child a voice. Explain from the child\'s perspective what it is likely experiencing, feeling and needing — what it perhaps cannot put into words. What is the child trying to communicate through its behaviour? What does it wish from its parents? Be not an accusation against parents — be an honest translation of the child. Direct, concrete, empathic.',
+      grundhaltung: currentLang === 'de'
+        ? 'Kein Kind verhält sich schwierig, um seine Eltern zu quälen. Jedes Verhalten ist ein Kommunikationsversuch — oft der einzige, den das Kind kennt. Wenn Eltern das übersetzen können, verändert sich alles.'
+        : 'No child behaves difficultly to torment its parents. Every behaviour is an attempt at communication — often the only one the child knows. When parents can translate this, everything changes.',
+      fachgebiet: currentLang === 'de'
+        ? 'Kinderpsychologie, Resilienzforschung, Spieltherapie, Kindheitserfahrung, emotionale Intelligenz bei Kindern'
+        : 'Child psychology, resilience research, play therapy, childhood experience, emotional intelligence in children'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'Erziehungssituation wird erkundet...' : 'Exploring your parenting situation...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          kindname ? `${kindname}s Familie` : 'FAMiLiEN-TiSCH',
+      custom_perspectives: erziehungPerspektiven,
+      stil:                currentTone === 'kindgerecht' ? 'einfach' : 'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const erziehungPerspDefs = [
+      { id: 'entwicklung-begl', icon: 'seedling', color: '#3A7A6A', de: 'Entwicklungs-Begleiterin', en: 'Development Guide'    },
+      { id: 'bindungs-therap',  icon: 'heart',    color: '#2E6A5A', de: 'Bindungs-Therapeutin',     en: 'Attachment Therapist' },
+      { id: 'grenz-mutmach',    icon: 'shield',   color: '#4A8A7A', de: 'Grenz-Mutmacherin',        en: 'Boundaries Coach'     },
+      { id: 'kind-botschaft',   icon: 'sprout',   color: '#358A6A', de: 'Kind-Botschafterin',        en: 'Child Messenger'     }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = erziehungPerspDefs[i] || erziehungPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'WAS DiESE SiTUATiON BRAUCHT' : 'WHAT THIS SITUATION NEEDS',
+      synthesisSubtitle: currentLang === 'de' ? (kindname ? `für ${kindname}` : 'erziehung') : (kindname ? `for ${kindname}` : 'parenting'),
+      synthesisColor:    '#3A7A6A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Kein Erziehungsrezept — nur Impulse' : 'No parenting recipe — only impulses'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg> ${currentLang === 'de' ? 'Du kennst dein Kind am besten' : 'You know your child best'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['entwicklung-begl', 'bindungs-therap', 'grenz-mutmach', 'kind-botschaft'],
       lang:         currentLang,
       time:         Date.now()
     });
