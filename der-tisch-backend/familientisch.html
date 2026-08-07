@@ -324,6 +324,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .ritual-send-btn{background:#B8742A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .ritual-send-btn:hover{opacity:.88}
 .ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-ERBE MODE */
+.erbe-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.erbe-intro{background:linear-gradient(135deg,rgba(138,90,160,0.12) 0%,rgba(110,68,136,0.06) 100%);border:1px solid rgba(138,90,160,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.erbe-intro strong{color:#8A5AA0}
+.erbe-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.erbe-input:focus{border-color:#8A5AA0;box-shadow:0 0 0 2px rgba(138,90,160,0.12)}
+.erbe-input::placeholder{color:var(--muted)}
+.erbe-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.erbe-send-btn{background:#8A5AA0;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.erbe-send-btn:hover{opacity:.88}
+.erbe-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -544,6 +556,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C8 5 7 7 7 9a3 3 0 006 0c0-2-1-4-3-6z"/><rect x="8" y="12" width="4" height="5" rx="1"/><line x1="5" y1="17" x2="15" y2="17"/></svg>
       FAMiLiEN-RiTUAL
+    </button>
+    <button class="mode-tab" id="tab-erbe" onclick="setMode('erbe')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"/><circle cx="10" cy="16" r="2"/></svg>
+      FAMiLiEN-ERBE
     </button>
   </div>
 </section>
@@ -1096,6 +1112,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="ritualResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-ERBE MODE ==================== -->
+<div class="mode-section" id="mode-erbe">
+  <div class="erbe-wrap">
+
+    <div class="erbe-intro">
+      <strong>FAMiLiEN-ERBE</strong> — Was gebt ihr weiter — und was darf bei euch enden? Das Erbe einer Familie ist nicht nur das, was weitergegeben wird, sondern auch das, was bewusst nicht weitergegeben wird. Vier Stimmen erkunden, was kostbar ist, was geheilt werden will — und was die nächste Generation von euch braucht.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="erbeChips">
+      <button class="chip" onclick="useErbeChip(this)">Was möchte ich meinen Kindern über meine Eltern erzählen, bevor es zu spät ist?</button>
+      <button class="chip" onclick="useErbeChip(this)">Ich will nicht, dass sich bestimmte Muster in meiner Familie wiederholen.</button>
+      <button class="chip" onclick="useErbeChip(this)">Was würde die nächste Generation über uns denken, wenn sie uns heute beobachten könnte?</button>
+      <button class="chip" onclick="useErbeChip(this)">Welche Familiengeschichten soll mein Kind kennen — und welche soll es selbst entscheiden dürfen?</button>
+      <button class="chip" onclick="useErbeChip(this)">Meine Großeltern sind gegangen, ohne ihre Geschichten zu teilen. Wie gehe ich damit um?</button>
+      <button class="chip" onclick="useErbeChip(this)">Welches Erbe hinterlassen wir als Familie, ohne es zu wissen?</button>
+      <button class="chip" onclick="useErbeChip(this)">Was aus meiner Herkunftsfamilie trägt mich — und was hat mich belastet?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was beschäftigt euch?</div>
+    <textarea class="erbe-input" id="erbeInput" placeholder="Erzählt, was ihr als Familie weitergeben wollt — oder was bei euch enden soll. Was ist kostbar? Was hat verletzt? Was soll die nächste Generation von euch mitnehmen?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="erbeFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-erbe-fokus="weitergeben" onclick="setErbeFokus(this)">Weitergeben</button>
+        <button class="ctrl-btn" data-erbe-fokus="loslassen" onclick="setErbeFokus(this)">Loslassen</button>
+        <button class="ctrl-btn" data-erbe-fokus="verbinden" onclick="setErbeFokus(this)">Verbinden</button>
+      </div>
+    </div>
+
+    <div class="erbe-send-row">
+      <button class="erbe-send-btn" id="erbeSendBtn" onclick="sendErbe()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"/><circle cx="10" cy="16" r="2"/></svg>
+        ERBE ERKUNDEN
+      </button>
+    </div>
+
+    <div id="erbeResults"></div>
 
   </div>
 </div>
@@ -3828,6 +3887,179 @@ async function sendRitual() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['ritual-hueterin', 'ritual-erfinderin', 'uebergangs-begl', 'verbindungs-web'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-ERBE MODE ───────────────────────────────────────────────────────
+let erbeFokus = 'weitergeben';
+
+function setErbeFokus(btn) {
+  erbeFokus = btn.dataset.erbeFokus;
+  document.querySelectorAll('[data-erbe-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useErbeChip(el) {
+  document.getElementById('erbeInput').value = el.textContent.trim();
+  document.getElementById('erbeInput').focus();
+}
+
+async function sendErbe() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('erbeInput');
+  const resultsDiv = document.getElementById('erbeResults');
+  const sendBtn    = document.getElementById('erbeSendBtn');
+  const famName    = (document.getElementById('erbeFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    weitergeben: currentLang === 'de'
+      ? 'Was ist das kostbarste Erbe, das diese Familie weitergeben möchte? Welche Werte, Stärken, Geschichten und Weisheiten sollen die nächste Generation tragen — und wie kann das geschehen?'
+      : 'What is the most precious legacy this family wants to pass on? Which values, strengths, stories and wisdom should the next generation carry — and how can that happen?',
+    loslassen: currentLang === 'de'
+      ? 'Welche Muster, Lasten oder Wunden aus der Familiengeschichte wünscht sich diese Familie zu heilen — damit die nächste Generation freier starten kann? Was soll bewusst nicht weitergegeben werden?'
+      : 'Which patterns, burdens or wounds from family history does this family wish to heal — so the next generation can start more freely? What should consciously not be passed on?',
+    verbinden: currentLang === 'de'
+      ? 'Wie verbindet diese Familie Vergangenheit und Zukunft? Welche Brücken zwischen Generationen wollen sie bauen — und was hält alle zusammen, was sich auch verändert?'
+      : 'How does this family connect past and future? Which bridges between generations do they want to build — and what holds everyone together even as things change?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[erbeFokus]} Kontext: ${text}`;
+
+  const erbePerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Schatz-Hüterin' : 'Treasure Keeper',
+      position: currentLang === 'de'
+        ? 'Was ist das Wertvollste, was diese Familie in sich trägt? Erkunde die Schätze: die Geschichten, die Stärken, die Weisheiten, die Werte — alles, was das Besondere dieser Familie ausmacht und das es verdient, weiterzuleben. Oft weiß eine Familie gar nicht, wie viel sie in sich trägt. Was sollte unbedingt die nächste Generation erreichen?'
+        : 'What is the most valuable thing this family carries within itself? Explore the treasures: the stories, the strengths, the wisdom, the values — everything that makes this family special and that deserves to live on. Often a family does not know how much it carries. What should definitely reach the next generation?',
+      grundhaltung: currentLang === 'de'
+        ? 'Jede Familie hat Schätze, die sie nicht sieht, weil sie so nah dran ist. Den eigenen Wert erkennen ist der erste Schritt, ihn weiterzugeben.'
+        : 'Every family has treasures it cannot see because it is so close to them. Recognizing one\'s own value is the first step to passing it on.',
+      fachgebiet: currentLang === 'de'
+        ? 'Positive Familienpsychologie (Seligman), narrative Identität (McAdams), Stärkenforschung, Familienresilienz (Walsh)'
+        : 'Positive family psychology (Seligman), narrative identity (McAdams), strengths research, family resilience (Walsh)'
+    },
+    {
+      name: currentLang === 'de' ? 'Wunden-Heilerin' : 'Wound Healer',
+      position: currentLang === 'de'
+        ? 'Was soll bei dieser Generation enden? Welche Muster — Schweigegebote, Loyalitätsfallen, emotionale Kälte, Überforderung, Scham — wurden von Generation zu Generation weitergereicht, ohne je benannt zu werden? Die mutigste Liebestat an die eigenen Kinder ist manchmal, ein Muster zu erkennen und zu sagen: Bei mir endet das. Wo liegt das für diese Familie?'
+        : 'What should end with this generation? Which patterns — silencing rules, loyalty traps, emotional coldness, overwhelm, shame — were passed from generation to generation without ever being named? Sometimes the most courageous act of love towards one\'s own children is to recognize a pattern and say: it ends with me. Where does that lie for this family?',
+      grundhaltung: currentLang === 'de'
+        ? 'Transgenerationale Heilung ist keine Kritik an den Eltern. Es ist ein Geschenk an die Kinder — und an sich selbst.'
+        : 'Transgenerational healing is not a criticism of parents. It is a gift to children — and to oneself.',
+      fachgebiet: currentLang === 'de'
+        ? 'Transgenerationale Traumaforschung (Yehuda, Pearlman), Epigenetik und emotionale Weitergabe, Familiensystemtherapie (Boszormenyi-Nagy), Bindungstheorie'
+        : 'Transgenerational trauma research (Yehuda, Pearlman), epigenetics and emotional transmission, family systems therapy (Boszormenyi-Nagy), attachment theory'
+    },
+    {
+      name: currentLang === 'de' ? 'Brücken-Bauerin' : 'Bridge Builder',
+      position: currentLang === 'de'
+        ? 'Wie fließt das Erbe — von wem zu wem, auf welchem Weg? Eine Brücke zwischen Generationen entsteht nicht automatisch: Sie braucht Gespräche, Rituale, Erzählungen, bewusste Momente der Übergabe. Was verbindet die Großeltern mit den Enkeln? Was verbindet die Eltern mit ihren Kindern von morgen? Und was trägt diese Familie über alle Veränderungen hinweg?'
+        : 'How does the legacy flow — from whom to whom, by which path? A bridge between generations does not form automatically: it needs conversations, rituals, stories, conscious moments of transmission. What connects grandparents with grandchildren? What connects parents with their children of tomorrow? And what carries this family through all its changes?',
+      grundhaltung: currentLang === 'de'
+        ? 'Wer die Brücke baut, muss auf beiden Seiten stehen können. Das Erbe weiterzugeben heißt: es zuerst selbst zu verstehen.'
+        : 'Whoever builds the bridge must be able to stand on both sides. Passing on a legacy means: first understanding it yourself.',
+      fachgebiet: currentLang === 'de'
+        ? 'Intergenerationales Lernen, Familienerzählung und Identität (Fivush), Kulturelle Transmissionsforschung, Soziologie der Familie (Bertaux)'
+        : 'Intergenerational learning, family narrative and identity (Fivush), cultural transmission research, sociology of the family (Bertaux)'
+    },
+    {
+      name: currentLang === 'de' ? 'Zukunfts-Sprecherin' : 'Future Voice',
+      position: currentLang === 'de'
+        ? 'Was braucht die nächste Generation von dieser Familie — jetzt, in zehn Jahren, in zwanzig? Sprich für diejenigen, die noch kein Wort haben. Was würden sie sich wünschen zu erben — und was würden sie darum bitten, nicht tragen zu müssen? Welche Weisheit dieser Familie werden sie einmal vermissen — und was wären sie dankbar, nie gelernt zu haben?'
+        : 'What does the next generation need from this family — now, in ten years, in twenty? Speak for those who do not yet have a voice. What would they wish to inherit — and what would they ask not to have to carry? Which wisdom of this family will they one day miss — and what would they be grateful never to have learned?',
+      grundhaltung: currentLang === 'de'
+        ? 'Die nächste Generation wird uns nicht fragen, wie viel wir hatten. Sie wird fragen, wie wir waren. Was wir uns getraut haben. Und was wir für sie losgelassen haben.'
+        : 'The next generation will not ask us how much we had. They will ask how we were. What we dared. And what we let go for them.',
+      fachgebiet: currentLang === 'de'
+        ? 'Entwicklungspsychologie (Erikson: Generativität), Zukunftsforschung in Familien, Existenzielle Psychologie, Narrative der Hoffnung'
+        : 'Developmental psychology (Erikson: generativity), future research in families, existential psychology, narratives of hope'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-ERBE wird erkundet...' : 'Exploring your family legacy...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: erbePerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const erbePerspDefs = [
+      { id: 'schatz-hueterin',    icon: 'shield',   color: '#7A4A90', de: 'Schatz-Hüterin',    en: 'Treasure Keeper'  },
+      { id: 'wunden-heilerin',    icon: 'heart',    color: '#6A3A80', de: 'Wunden-Heilerin',    en: 'Wound Healer'     },
+      { id: 'bruecken-bauerin',   icon: 'network',  color: '#9A6AB0', de: 'Brücken-Bauerin',    en: 'Bridge Builder'   },
+      { id: 'zukunfts-sprecherin',icon: 'compass',  color: '#8A5AA0', de: 'Zukunfts-Sprecherin',en: 'Future Voice'     }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = erbePerspDefs[i] || erbePerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'WAS IHR ERBE TRÄGT' : 'WHAT YOUR LEGACY CARRIES',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#8A5AA0',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"/><circle cx="10" cy="16" r="2"/></svg> ${currentLang === 'de' ? 'Kein Erbe ist nur Last oder nur Schatz' : 'No legacy is only burden or only treasure'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot, kein Urteil' : 'Invitation to reflect, not a judgement'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Kein Therapie-Ersatz' : 'Not a therapy substitute'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['schatz-hueterin', 'wunden-heilerin', 'bruecken-bauerin', 'zukunfts-sprecherin'],
       lang:         currentLang,
       time:         Date.now()
     });
