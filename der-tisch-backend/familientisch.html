@@ -324,6 +324,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .ritual-send-btn{background:#B8742A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .ritual-send-btn:hover{opacity:.88}
 .ritual-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FAMiLiEN-HEiLUNG MODE */
+.heilung-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.heilung-intro{background:linear-gradient(135deg,rgba(78,142,166,0.12) 0%,rgba(58,120,144,0.06) 100%);border:1px solid rgba(78,142,166,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.heilung-intro strong{color:#4E8EA6}
+.heilung-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.heilung-input:focus{border-color:#4E8EA6;box-shadow:0 0 0 2px rgba(78,142,166,0.12)}
+.heilung-input::placeholder{color:var(--muted)}
+.heilung-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.heilung-send-btn{background:#4E8EA6;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.heilung-send-btn:hover{opacity:.88}
+.heilung-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -544,6 +556,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-ritual" onclick="setMode('ritual')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C8 5 7 7 7 9a3 3 0 006 0c0-2-1-4-3-6z"/><rect x="8" y="12" width="4" height="5" rx="1"/><line x1="5" y1="17" x2="15" y2="17"/></svg>
       FAMiLiEN-RiTUAL
+    </button>
+    <button class="mode-tab" id="tab-heilung" onclick="setMode('heilung')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/><path d="M7 10h6M10 7v6"/></svg>
+      FAMiLiEN-HEiLUNG
     </button>
   </div>
 </section>
@@ -1096,6 +1112,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="ritualResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-HEiLUNG MODE ==================== -->
+<div class="mode-section" id="mode-heilung">
+  <div class="heilung-wrap">
+
+    <div class="heilung-intro">
+      <strong>FAMiLiEN-HEiLUNG</strong> — Was braucht eure Familie, um wieder zueinander zu finden? Manchmal reißt etwas auf — eine Krise, ein Streit, ein Verlust, eine Trennung, eine lange Stille. Vier Stimmen begleiten den Weg zurück: Was wurde verletzt, was ist noch da, wie findet ihr wieder zusammen — und was kann neu entstehen, wenn ihr bereit seid, vorwärts zu gehen.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="heilungChips">
+      <button class="chip" onclick="useHeilungChip(this)">Wir haben uns sehr gestritten und reden kaum noch miteinander.</button>
+      <button class="chip" onclick="useHeilungChip(this)">Wie finden wir nach einer Trennung als Familie wieder zusammen?</button>
+      <button class="chip" onclick="useHeilungChip(this)">Es gab einen Vertrauensbruch in unserer Familie — wie gehen wir damit um?</button>
+      <button class="chip" onclick="useHeilungChip(this)">Wir haben gemeinsam einen Menschen verloren und finden uns kaum noch.</button>
+      <button class="chip" onclick="useHeilungChip(this)">Ich möchte mich bei einem Familienmitglied entschuldigen, weiß aber nicht wie.</button>
+      <button class="chip" onclick="useHeilungChip(this)">Wie sprechen wir über etwas, das lange unausgesprochen war?</button>
+      <button class="chip" onclick="useHeilungChip(this)">Unsere Familie war lange in einer schwierigen Phase — wie fangen wir neu an?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was braucht Heilung in eurer Familie?</div>
+    <textarea class="heilung-input" id="heilungInput" placeholder="Erzählt, was passiert ist oder was sich aufgeladen hat. Was wurde verletzt, was fehlt — und was wünscht ihr euch für euren gemeinsamen Weg? Es gibt keine falschen Worte hier." rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="heilungFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-heilung-fokus="krise" onclick="setHeilungFokus(this)">Krise</button>
+        <button class="ctrl-btn" data-heilung-fokus="versoehnung" onclick="setHeilungFokus(this)">Versöhnung</button>
+        <button class="ctrl-btn" data-heilung-fokus="neuanfang" onclick="setHeilungFokus(this)">Neuanfang</button>
+      </div>
+    </div>
+
+    <div class="heilung-send-row">
+      <button class="heilung-send-btn" id="heilungSendBtn" onclick="sendHeilung()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/><path d="M7 10h6M10 7v6"/></svg>
+        HEiLUNG ERKUNDEN
+      </button>
+    </div>
+
+    <div id="heilungResults"></div>
 
   </div>
 </div>
@@ -3828,6 +3887,180 @@ async function sendRitual() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['ritual-hueterin', 'ritual-erfinderin', 'uebergangs-begl', 'verbindungs-web'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-HEiLUNG MODE ────────────────────────────────────────────────────
+
+let heilungFokus = 'krise';
+
+function setHeilungFokus(btn) {
+  heilungFokus = btn.dataset.heilungFokus;
+  document.querySelectorAll('[data-heilung-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useHeilungChip(el) {
+  document.getElementById('heilungInput').value = el.textContent.trim();
+  document.getElementById('heilungInput').focus();
+}
+
+async function sendHeilung() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('heilungInput');
+  const resultsDiv = document.getElementById('heilungResults');
+  const sendBtn    = document.getElementById('heilungSendBtn');
+  const famName    = (document.getElementById('heilungFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    krise: currentLang === 'de'
+      ? 'Was braucht diese Familie jetzt in ihrer Krise? Was ist verletzt, was ist noch tragfähig — und welche ersten Schritte könnten Sicherheit und Orientierung geben?'
+      : 'What does this family need right now in their crisis? What is wounded, what still holds — and what first steps could provide safety and orientation?',
+    versoehnung: currentLang === 'de'
+      ? 'Wie kann in dieser Familie Versöhnung entstehen? Was braucht es, damit Verletzungen gehört werden, Vertrauen langsam zurückkehren kann — und eine ehrliche Wiederannäherung möglich wird?'
+      : 'How can reconciliation emerge in this family? What is needed so that wounds are heard, trust can slowly return — and an honest rapprochement becomes possible?',
+    neuanfang: currentLang === 'de'
+      ? 'Was kann in dieser Familie nach dem Schwierigen neu entstehen? Wie können die Erfahrungen des Schmerzes in Ressourcen für einen echten Neuanfang verwandelt werden?'
+      : 'What can emerge anew in this family after the difficulty? How can the experiences of pain be transformed into resources for a genuine new beginning?'
+  };
+
+  const familienLabel = famName ? `Familie ${famName}` : 'diese Familie';
+  const frage = `${fokusQuestions[heilungFokus]} Kontext: ${text}`;
+
+  const heilungPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Wunden-Begleiterin' : 'Wound Companion',
+      position: currentLang === 'de'
+        ? 'Erkenne und benenne, was in dieser Familie verletzt wurde — ohne zu bewerten, zu erklären oder zu trösten. Was hat Schmerz hinterlassen? Was wurde übersehen, übergangen oder nicht gehört? Was trauert noch — auch wenn niemand darüber spricht? Heilung beginnt damit, dass das, was verletzt wurde, wirklich gesehen wird. Was braucht Anerkennung, bevor irgendetwas anderes möglich ist?'
+        : 'Recognize and name what has been wounded in this family — without judging, explaining, or consoling. What has left pain? What was overlooked, bypassed, or not heard? What still grieves — even when no one speaks of it? Healing begins when what was wounded is truly seen. What needs acknowledgment before anything else becomes possible?',
+      grundhaltung: currentLang === 'de'
+        ? 'Das Schwerste ist nicht der Schmerz selbst — es ist der Schmerz, der nicht gesehen wird. Erst wenn eine Wunde benannt ist, kann sie beginnen zu heilen.'
+        : 'The hardest thing is not the pain itself — it is the pain that is not seen. Only when a wound is named can it begin to heal.',
+      fachgebiet: currentLang === 'de'
+        ? 'Traumaforschung (van der Kolk, Herman), Trauerprozesse, emotionale Verletzungen, Schweigen und Sprechen in Familien'
+        : 'Trauma research (van der Kolk, Herman), grief processes, emotional wounds, silence and speech in families'
+    },
+    {
+      name: currentLang === 'de' ? 'Ressourcen-Finderin' : 'Resource Finder',
+      position: currentLang === 'de'
+        ? 'Was ist in dieser Familie trotz allem noch da? Was hat gehalten, auch wenn es schwer war — welche Stärken, Verbindungen, Momente, Menschen? Selbst in der tiefsten Krise gibt es etwas, das nicht gebrochen ist. Wo lebt noch Zuneigung, Respekt, Erinnerung, Verantwortung? Was hat diese Familie schon überlebt und durch was ist sie dabei gewachsen? Ressourcen sind keine Verniedlichung des Schwierigen — sie sind der Boden, auf dem Heilung wächst.'
+        : 'What is still there in this family despite everything? What has held even when it was hard — what strengths, connections, moments, people? Even in the deepest crisis there is something that is not broken. Where does affection, respect, memory, responsibility still live? What has this family already survived and through what did it grow? Resources are not a belittling of the difficult — they are the ground on which healing grows.',
+      grundhaltung: currentLang === 'de'
+        ? 'Heilung braucht Boden. Und dieser Boden ist das, was in der schwersten Zeit noch standgehalten hat — auch wenn man es erst suchen muss.'
+        : 'Healing needs ground. And that ground is what still held in the hardest time — even if you have to search for it first.',
+      fachgebiet: currentLang === 'de'
+        ? 'Resilienzforschung (Walsh, Cyrulnik), Positive Psychologie, Posttraumatisches Wachstum, Familienressourcen'
+        : 'Resilience research (Walsh, Cyrulnik), positive psychology, post-traumatic growth, family resources'
+    },
+    {
+      name: currentLang === 'de' ? 'Versöhnungs-Weberin' : 'Reconciliation Weaver',
+      position: currentLang === 'de'
+        ? 'Was braucht es, damit Verbindung wieder entstehen kann — nicht als Rückkehr zum Früher, sondern als etwas Neues, das aus dem Schwierigen gewachsen ist? Wie können Entschuldigungen, Geständnisse, Bitten gehört und angenommen werden? Was muss gesagt werden, damit Vertrauen wieder wachsen kann — auch wenn es langsam ist, auch wenn es nie wieder ganz dasselbe wird? Versöhnung ist kein Vergessen. Sie ist die Bereitschaft, trotzdem miteinander zu sein — auf neue Art.'
+        : 'What does it take for connection to re-emerge — not as a return to before, but as something new grown from the difficulty? How can apologies, confessions, requests be heard and received? What must be said so that trust can grow again — even if slowly, even if it never becomes quite the same? Reconciliation is not forgetting. It is the willingness to be with one another anyway — in a new way.',
+      grundhaltung: currentLang === 'de'
+        ? 'Versöhnung bedeutet nicht, so zu tun als wäre nichts gewesen. Es bedeutet, zusammen zu entscheiden: Wir gehen trotzdem — und vielleicht sogar wegen dem, was war — weiter.'
+        : 'Reconciliation does not mean pretending nothing happened. It means deciding together: we go forward anyway — and perhaps even because of what was.',
+      fachgebiet: currentLang === 'de'
+        ? 'Vergebungsforschung (Worthington, Enright), Beziehungsreparatur, Entschuldigung und Vertrauen, narrative Mediation'
+        : 'Forgiveness research (Worthington, Enright), relationship repair, apology and trust, narrative mediation'
+    },
+    {
+      name: currentLang === 'de' ? 'Zukunfts-Brückerin' : 'Future Bridge Builder',
+      position: currentLang === 'de'
+        ? 'Was kann nach dem Schwierigen in dieser Familie neu entstehen? Nicht trotz dem, was war, sondern durch es — weil Krisen manchmal das Alte auflösen, damit etwas Träglicheres entstehen kann. Was könnte diese Familie werden, wenn sie durch diesen Moment hindurchgegangen ist? Welche erste, kleine Geste in Richtung Zukunft wäre jetzt möglich — nicht als Lösung, sondern als Zeichen, dass man bereit ist, weiterzugehen?'
+        : 'What can emerge anew in this family after the difficulty? Not despite what was, but through it — because crises sometimes dissolve the old so that something more sustainable can emerge. What could this family become if it has passed through this moment? What first small gesture toward the future would be possible now — not as a solution, but as a sign of readiness to move forward?',
+      grundhaltung: currentLang === 'de'
+        ? 'Keine Familie ist die gleiche nach einer schwierigen Zeit. Die Frage ist nicht ob sie sich verändert — sondern wohin. Und das kann gemeinsam entschieden werden.'
+        : 'No family is the same after a difficult time. The question is not whether it changes — but toward what. And that can be decided together.',
+      fachgebiet: currentLang === 'de'
+        ? 'Systemische Familientherapie, posttraumatisches Wachstum, Zukunftsorientierung, Hoffnungsforschung (Snyder), narrative Therapie'
+        : 'Systemic family therapy, post-traumatic growth, future orientation, hope research (Snyder), narrative therapy'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-HEiLUNG wird erkundet...' : 'Exploring your path to healing...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-TiSCH',
+      custom_perspectives: heilungPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const heilungPerspDefs = [
+      { id: 'wunden-begleiterin',  icon: 'heart',    color: '#4E8EA6', de: 'Wunden-Begleiterin',  en: 'Wound Companion'       },
+      { id: 'ressourcen-finderin', icon: 'seedling', color: '#3E7E96', de: 'Ressourcen-Finderin',  en: 'Resource Finder'       },
+      { id: 'versoehnung-weberin', icon: 'network',  color: '#5E9EB6', de: 'Versöhnungs-Weberin',  en: 'Reconciliation Weaver' },
+      { id: 'zukunfts-brueckerin', icon: 'compass',  color: '#2E6E86', de: 'Zukunfts-Brückerin',   en: 'Future Bridge Builder' }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = heilungPerspDefs[i] || heilungPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER WEG ZuR HEiLUNG' : 'YOUR PATH TO HEALING',
+      synthesisSubtitle: currentLang === 'de' ? familienLabel : familienLabel,
+      synthesisColor:    '#4E8EA6',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Heilung braucht Zeit — kein Druck' : 'Healing takes time — no pressure'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot, kein Therapie-Ersatz' : 'Invitation to reflect, not a therapy substitute'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei tiefen Wunden: professionelle Hilfe suchen' : 'For deep wounds: seek professional support'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['wunden-begleiterin', 'ressourcen-finderin', 'versoehnung-weberin', 'zukunfts-brueckerin'],
       lang:         currentLang,
       time:         Date.now()
     });
