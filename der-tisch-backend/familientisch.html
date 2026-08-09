@@ -336,6 +336,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .heilung-send-btn{background:#4E8EA6;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .heilung-send-btn:hover{opacity:.88}
 .heilung-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ELTERN-GESPRÄCH MODE */
+.eltern-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.eltern-intro{background:linear-gradient(135deg,rgba(160,88,120,0.12) 0%,rgba(140,68,100,0.06) 100%);border:1px solid rgba(160,88,120,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.eltern-intro strong{color:#A05878}
+.eltern-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.eltern-input:focus{border-color:#A05878;box-shadow:0 0 0 2px rgba(160,88,120,0.12)}
+.eltern-input::placeholder{color:var(--muted)}
+.eltern-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.eltern-send-btn{background:#A05878;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.eltern-send-btn:hover{opacity:.88}
+.eltern-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -560,6 +572,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-heilung" onclick="setMode('heilung')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/><path d="M7 10h6M10 7v6"/></svg>
       FAMiLiEN-HEiLUNG
+    </button>
+    <button class="mode-tab" id="tab-eltern" onclick="setMode('eltern')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".55"/><path d="M13 15.5c1-.5 3.5-.5 4.5 1.5" opacity=".55"/></svg>
+      ELTERN-GESPRÄCH
     </button>
   </div>
 </section>
@@ -1155,6 +1171,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="heilungResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== ELTERN-GESPRÄCH MODE ==================== -->
+<div class="mode-section" id="mode-eltern">
+  <div class="eltern-wrap">
+
+    <div class="eltern-intro">
+      <strong>ELTERN-GESPRÄCH</strong> — Wenn Eltern an ihre Grenzen stoßen: ein Kind macht, was es will — die Gespräche eskalieren, die Strukturen fehlen, man fragt sich, ob man das richtig macht. Vier Stimmen beleuchten eure Situation: aus der Kindheitsentwicklung, aus der Bindungsforschung, aus der Frage nach Grenzen — und aus der Perspektive des Kindes selbst.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="elternChips">
+      <button class="chip" onclick="useElternChip(this)">Mein Kind macht Szenen, wenn ich Nein sage — wie setze ich Grenzen?</button>
+      <button class="chip" onclick="useElternChip(this)">Mein Teenager zieht sich total zurück und redet kaum noch mit mir.</button>
+      <button class="chip" onclick="useElternChip(this)">Wie spreche ich mit meinem Kind über etwas Schwieriges?</button>
+      <button class="chip" onclick="useElternChip(this)">Mein Kind ist aggressiv gegenüber Geschwistern — ich weiß nicht, was ich tun soll.</button>
+      <button class="chip" onclick="useElternChip(this)">Ich fühle mich oft als Elternteil überfordert und frage mich, ob ich genug bin.</button>
+      <button class="chip" onclick="useElternChip(this)">Wie bleibe ich ruhig, wenn mein Kind mich an meine Grenzen bringt?</button>
+      <button class="chip" onclick="useElternChip(this)">Wie stärke ich das Selbstbewusstsein meines Kindes?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was beschäftigt euch als Eltern?</div>
+    <textarea class="eltern-input" id="elternInput" placeholder="Beschreibt die Situation oder erzählt, womit ihr als Eltern gerade kämpft. Was zeigt euer Kind? Was versucht ihr? Was kommt dabei raus — und was wünscht ihr euch stattdessen?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="elternKindname" type="text" placeholder="Name des Kindes (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-eltern-fokus="verhalten" onclick="setElternFokus(this)">Verhalten</button>
+        <button class="ctrl-btn" data-eltern-fokus="grenzen" onclick="setElternFokus(this)">Grenzen</button>
+        <button class="ctrl-btn" data-eltern-fokus="gespraech" onclick="setElternFokus(this)">Gespräch</button>
+      </div>
+    </div>
+
+    <div class="eltern-send-row">
+      <button class="eltern-send-btn" id="elternSendBtn" onclick="sendEltern()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".5"/><path d="M13 15.5c1.5-.8 4 0 4.5 2" opacity=".5"/></svg>
+        GESPRÄCH ERKUNDEN
+      </button>
+    </div>
+
+    <div id="elternResults"></div>
 
   </div>
 </div>
@@ -4061,6 +4120,180 @@ async function sendHeilung() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['wunden-begleiterin', 'ressourcen-finderin', 'versoehnung-weberin', 'zukunfts-brueckerin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── ELTERN-GESPRÄCH MODE ─────────────────────────────────────────────────────
+
+let elternFokus = 'verhalten';
+
+function setElternFokus(btn) {
+  elternFokus = btn.dataset.elternFokus;
+  document.querySelectorAll('[data-eltern-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useElternChip(el) {
+  document.getElementById('elternInput').value = el.textContent.trim();
+  document.getElementById('elternInput').focus();
+}
+
+async function sendEltern() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('elternInput');
+  const resultsDiv = document.getElementById('elternResults');
+  const sendBtn    = document.getElementById('elternSendBtn');
+  const kindName   = (document.getElementById('elternKindname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    verhalten: currentLang === 'de'
+      ? 'Welche innere Logik steckt hinter diesem Verhalten des Kindes? Was drückt es aus — und welche Antwort der Eltern würde wirklich helfen?'
+      : 'What inner logic lies behind this child\'s behavior? What does it express — and what parental response would genuinely help?',
+    grenzen: currentLang === 'de'
+      ? 'Wie können Grenzen in dieser Familiensituation so gesetzt werden, dass sie das Kind schützen und stärken — ohne die Verbindung zu gefährden?'
+      : 'How can boundaries be set in this family situation so they protect and strengthen the child — without endangering the connection?',
+    gespraech: currentLang === 'de'
+      ? 'Wie können die Eltern dieses schwierige Thema ansprechen, damit das Kind wirklich gehört fühlt — und eine echte Verbindung entsteht?'
+      : 'How can the parents approach this difficult topic so the child truly feels heard — and a genuine connection emerges?'
+  };
+
+  const kindLabel = kindName ? kindName : (currentLang === 'de' ? 'das Kind' : 'the child');
+  const frage = `${fokusQuestions[elternFokus]} Kontext: ${text}`;
+
+  const elternPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Entwicklungs-Begleiterin' : 'Development Companion',
+      position: currentLang === 'de'
+        ? `Was ist für ein Kind in diesem Alter und dieser Situation entwicklungspsychologisch normal? Welche Fähigkeiten sind schon da, welche noch nicht — und was braucht ${kindLabel} gerade, um den nächsten Schritt zu gehen? Entwicklung ist kein linearer Prozess: Rückschritte, Schleifen und Krisen sind oft Zeichen von Wachstum. Was erwarten wir von ${kindLabel} zu Recht — und was ist noch gar nicht drin?`
+        : `What is developmentally normal for a child of this age and in this situation? What abilities are already there, which are not yet — and what does ${kindLabel} need right now to take the next step? Development is not a linear process: regressions, loops and crises are often signs of growth. What are we right to expect from ${kindLabel} — and what is simply not yet possible?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder können nur das, was ihr Gehirn und ihre Erfahrung hergeben. Entwicklung ist kein Wille — sie ist ein Weg, der Zeit braucht. Und jedes Kind geht ihn in seinem eigenen Tempo.'
+        : 'Children can only do what their brain and experience allow. Development is not a matter of will — it is a path that takes time. And every child walks it at their own pace.',
+      fachgebiet: currentLang === 'de'
+        ? 'Entwicklungspsychologie (Piaget, Vygotsky, Siegel), Neurobiologie der Kindheit, sensible Phasen, Reifungsprozesse'
+        : 'Developmental psychology (Piaget, Vygotsky, Siegel), neurobiology of childhood, sensitive phases, maturation processes'
+    },
+    {
+      name: currentLang === 'de' ? 'Bindungs-Stimme' : 'Attachment Voice',
+      position: currentLang === 'de'
+        ? `Was steckt emotional hinter dem Verhalten von ${kindLabel}? Welches Bedürfnis — nach Sicherheit, Nähe, Anerkennung, Kontrolle — treibt das, was wir sehen? Verhalten ist immer Kommunikation: Was versucht ${kindLabel} damit zu sagen, was es noch nicht in Worte fassen kann? Und was braucht die Eltern-Kind-Bindung in diesem Moment: mehr Nähe, mehr Verlässlichkeit, mehr Raum?`
+        : `What is emotionally beneath ${kindLabel}'s behavior? What need — for safety, closeness, recognition, control — is driving what we see? Behavior is always communication: what is ${kindLabel} trying to say that it cannot yet put into words? And what does the parent-child bond need right now: more closeness, more reliability, more space?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Kein Kind verhält sich schwierig, weil es schwierig sein will. Dahinter ist immer ein Bedürfnis — und hinter dem Bedürfnis ist immer die Suche nach Verbindung.'
+        : 'No child behaves difficultly because it wants to be difficult. Behind it is always a need — and behind the need is always a search for connection.',
+      fachgebiet: currentLang === 'de'
+        ? 'Bindungstheorie (Bowlby, Ainsworth), Emotionsregulation, Gordon Neufeld, Beziehungs-basiertes Erziehen, inneres Sicherheitssystem'
+        : 'Attachment theory (Bowlby, Ainsworth), emotional regulation, Gordon Neufeld, relationship-based parenting, inner security system'
+    },
+    {
+      name: currentLang === 'de' ? 'Grenzen-Werkerin' : 'Boundaries Worker',
+      position: currentLang === 'de'
+        ? `Welche klare Struktur braucht diese Situation — nicht als Strafe, sondern als Orientierung? Grenzen schützen und geben Sicherheit: Was muss hier eine echte, liebevolle Grenze sein — und wie kann sie so kommuniziert werden, dass ${kindLabel} sie wirklich annehmen kann? Wo fehlen im Alltag Struktur und Verlässlichkeit, die ${kindLabel} helfen würden, sich sicher zu fühlen? Und wo sind Eltern selbst in ihrer eigenen Haltung klar — und wo nicht?`
+        : `What clear structure does this situation need — not as punishment, but as orientation? Boundaries protect and give security: what must be a real, loving boundary here — and how can it be communicated so that ${kindLabel} can truly receive it? Where in daily life is structure and reliability missing that would help ${kindLabel} feel safe? And where are parents themselves clear in their own stance — and where are they not?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Grenzen ohne Verbindung sind Mauern. Verbindung ohne Grenzen ist Chaos. Was Kinder brauchen, ist beides: ein Ja zur Beziehung — und ein klares Nein, das diese Beziehung schützt.'
+        : 'Boundaries without connection are walls. Connection without boundaries is chaos. What children need is both: a yes to the relationship — and a clear no that protects this relationship.',
+      fachgebiet: currentLang === 'de'
+        ? 'Authoritative Erziehung (Baumrind), Positive Disziplin (Nelsen), liebevolle Grenzen, Brené Brown, Gewaltfreie Kommunikation'
+        : 'Authoritative parenting (Baumrind), positive discipline (Nelsen), loving limits, Brené Brown, nonviolent communication'
+    },
+    {
+      name: currentLang === 'de' ? 'Kind-Stimme' : 'Child\'s Voice',
+      position: currentLang === 'de'
+        ? `Wenn ${kindLabel} in diesem Moment vollständig sprechen könnte — was würde es sagen? Was erlebt es in dieser Situation, was sieht es, was fühlt es — und was wünscht es sich von seinen Eltern? Nicht was es tut, sondern was dahintersteckt: Überforderung, Angst, Einsamkeit, Langeweile, ein Bedürfnis nach Aufmerksamkeit oder Kontrolle? Was würde ${kindLabel} brauchen, um sich wirklich gesehen und verstanden zu fühlen?`
+        : `If ${kindLabel} could speak fully in this moment — what would it say? What does it experience in this situation, what does it see, what does it feel — and what does it wish from its parents? Not what it does, but what lies behind it: overwhelm, fear, loneliness, boredom, a need for attention or control? What would ${kindLabel} need to feel truly seen and understood?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder sind keine kleinen Erwachsenen. Sie erleben die Welt anders — oft intensiver, überwältigender, unvorhersehbarer. Wenn wir verstehen, was sie wirklich erleben, verändert sich, wie wir antworten.'
+        : 'Children are not small adults. They experience the world differently — often more intensely, overwhelmingly, unpredictably. When we understand what they truly experience, how we respond changes.',
+      fachgebiet: currentLang === 'de'
+        ? 'Kindzentrierte Therapie (Rogers, Axline), Kinderrechte, Perspektivübernahme, emotionale Intelligenz (Goleman), Kindheitserfahrung'
+        : 'Child-centered therapy (Rogers, Axline), children\'s rights, perspective-taking, emotional intelligence (Goleman), childhood experience'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'ELTERN-GESPRÄCH wird geöffnet...' : 'Opening your parenting conversation...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          kindName || 'ELTERN-TiSCH',
+      custom_perspectives: elternPerspektiven,
+      stil:                'paedagogisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const elternPerspDefs = [
+      { id: 'entwicklungs-begleiterin', icon: 'seedling', color: '#A05878', de: 'Entwicklungs-Begleiterin', en: 'Development Companion' },
+      { id: 'bindungs-stimme',          icon: 'heart',    color: '#904068', de: 'Bindungs-Stimme',          en: 'Attachment Voice'     },
+      { id: 'grenzen-werkerin',         icon: 'shield',   color: '#B06888', de: 'Grenzen-Werkerin',         en: 'Boundaries Worker'    },
+      { id: 'kind-stimme',              icon: 'sprout',   color: '#805058', de: 'Kind-Stimme',              en: 'Child\'s Voice'       }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = elternPerspDefs[i] || elternPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER ELTERN-GESPRÄCH' : 'YOUR PARENTING CONVERSATION',
+      synthesisSubtitle: currentLang === 'de' ? `für ${kindLabel}` : `for ${kindLabel}`,
+      synthesisColor:    '#A05878',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Kein Erziehungsratgeber — eine Denkbegleitung' : 'Not a parenting manual — a thinking companion'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg> ${currentLang === 'de' ? 'Entwicklung braucht Zeit — eure Geduld zählt' : 'Development takes time — your patience counts'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei anhaltenden Herausforderungen: Fachberatung suchen' : 'For persistent challenges: seek professional guidance'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['entwicklungs-begleiterin', 'bindungs-stimme', 'grenzen-werkerin', 'kind-stimme'],
       lang:         currentLang,
       time:         Date.now()
     });
