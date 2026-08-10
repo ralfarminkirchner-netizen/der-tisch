@@ -348,6 +348,22 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .eltern-send-btn{background:#A05878;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .eltern-send-btn:hover{opacity:.88}
 .eltern-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.protokoll-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.protokoll-intro{background:linear-gradient(135deg,rgba(80,130,100,0.12) 0%,rgba(60,110,80,0.06) 100%);border:1px solid rgba(80,130,100,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.protokoll-intro strong{color:#508264}
+.protokoll-field-label{font-size:12px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.protokoll-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.protokoll-input:focus{border-color:#508264;box-shadow:0 0 0 2px rgba(80,130,100,0.12)}
+.protokoll-input::placeholder{color:var(--muted)}
+.protokoll-input.short{min-height:48px;resize:none;rows:2}
+.protokoll-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.protokoll-send-btn{background:#508264;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.protokoll-send-btn:hover{opacity:.88}
+.protokoll-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.protokoll-meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.protokoll-meta-row input{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
+.protokoll-meta-row input:focus{border-color:#508264}
+.protokoll-meta-row input::placeholder{color:var(--muted)}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -576,6 +592,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-eltern" onclick="setMode('eltern')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".55"/><path d="M13 15.5c1-.5 3.5-.5 4.5 1.5" opacity=".55"/></svg>
       ELTERN-GESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-protokoll" onclick="setMode('protokoll')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="12" height="16" rx="2"/><line x1="8" y1="6" x2="14" y2="6"/><line x1="8" y1="10" x2="14" y2="10"/><line x1="8" y1="14" x2="11" y2="14"/><circle cx="6" cy="6" r="0.8" fill="currentColor" stroke="none"/><circle cx="6" cy="10" r="0.8" fill="currentColor" stroke="none"/><circle cx="6" cy="14" r="0.8" fill="currentColor" stroke="none"/></svg>
+      FAMiLiEN-PROTOKOLL
     </button>
   </div>
 </section>
@@ -1214,6 +1234,47 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="elternResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-PROTOKOLL MODE ==================== -->
+<div class="mode-section" id="mode-protokoll">
+  <div class="protokoll-wrap">
+
+    <div class="protokoll-intro">
+      <strong>FAMiLiEN-PROTOKOLL</strong> — Damit das Gespräch nicht verloren geht: Vier Stimmen helfen euch, aus euren Notizen ein strukturiertes Familienprotokoll zu erstellen — was wurde gehört, was wurde vereinbart, wer macht was, und wann trefft ihr euch wieder. Für Familienräte, Absprachen und wichtige Entscheidungen.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Beispiele</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="protokollChips">
+      <button class="chip" onclick="useProtokollChip(this)">Wir haben über Haushaltsaufgaben und wer was übernimmt gesprochen.</button>
+      <button class="chip" onclick="useProtokollChip(this)">Familienrat zur Urlaubsplanung — viele Ideen, aber noch keine Entscheidung.</button>
+      <button class="chip" onclick="useProtokollChip(this)">Gespräch über Schulstress und wie wir als Familie unterstützen können.</button>
+      <button class="chip" onclick="useProtokollChip(this)">Wir haben Konflikte besprochen und Vereinbarungen getroffen.</button>
+      <button class="chip" onclick="useProtokollChip(this)">Zusammenkunft wegen Großeltern — Besuchszeiten und Unterstützung klären.</button>
+    </div>
+
+    <div class="protokoll-meta-row">
+      <input type="text" id="protokollFamilienname" placeholder="Familienname (optional)">
+      <input type="text" id="protokollDatum" placeholder="Datum (z.B. 10.08.2026)">
+      <input type="text" id="protokollTeilnehmer" placeholder="Teilnehmer (z.B. Mama, Papa, Lena, Tom)">
+    </div>
+
+    <div class="protokoll-field-label">Was wurde besprochen? (Stichpunkte oder freier Text)</div>
+    <textarea class="protokoll-input" id="protokollInhalt" placeholder="Schreibt hier, was heute Thema war — Probleme, Ideen, Meinungen, Wünsche. Stichpunkte reichen. Beispiel:&#10;- Lena macht morgens das Frühstück&#10;- Streit wegen Handyzeiten gelöst&#10;- Nächster Familienrat in 2 Wochen" rows="6"></textarea>
+
+    <div class="protokoll-field-label">Vereinbarungen / Beschlüsse (falls bekannt)</div>
+    <textarea class="protokoll-input" id="protokollVereinbarungen" placeholder="Was wurde beschlossen? Wer macht was bis wann? (optional — der TiSCH hilft auch, wenn ihr das noch nicht habt)" rows="3"></textarea>
+
+    <div class="protokoll-send-row">
+      <button class="protokoll-send-btn" id="protokollSendBtn" onclick="sendProtokoll()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="12" height="16" rx="2"/><line x1="8" y1="7" x2="14" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="8" y1="15" x2="11" y2="15"/></svg>
+        PROTOKOLL ERSTELLEN
+      </button>
+    </div>
+
+    <div id="protokollResults"></div>
 
   </div>
 </div>
@@ -4294,6 +4355,178 @@ async function sendEltern() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['entwicklungs-begleiterin', 'bindungs-stimme', 'grenzen-werkerin', 'kind-stimme'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ============================================================
+// FAMiLiEN-PROTOKOLL (Mode 13)
+// ============================================================
+
+function useProtokollChip(el) {
+  document.getElementById('protokollInhalt').value = el.textContent.trim();
+  document.getElementById('protokollInhalt').focus();
+}
+
+async function sendProtokoll() {
+  if (isLoading) return;
+
+  const inhaltInput  = document.getElementById('protokollInhalt');
+  const resultsDiv   = document.getElementById('protokollResults');
+  const sendBtn      = document.getElementById('protokollSendBtn');
+  const familienname = (document.getElementById('protokollFamilienname')?.value || '').trim();
+  const datum        = (document.getElementById('protokollDatum')?.value || '').trim();
+  const teilnehmer   = (document.getElementById('protokollTeilnehmer')?.value || '').trim();
+  const vereinbarungen = (document.getElementById('protokollVereinbarungen')?.value || '').trim();
+
+  const inhalt = inhaltInput.value.trim();
+  if (!inhalt) {
+    inhaltInput.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst Gesprächsinhalt eingeben.' : 'Please enter the conversation content first.');
+    return;
+  }
+
+  const metaBlock = [
+    familienname && (currentLang === 'de' ? `Familie: ${familienname}` : `Family: ${familienname}`),
+    datum        && (currentLang === 'de' ? `Datum: ${datum}`          : `Date: ${datum}`),
+    teilnehmer   && (currentLang === 'de' ? `Anwesend: ${teilnehmer}`  : `Present: ${teilnehmer}`),
+  ].filter(Boolean).join(' | ');
+
+  const frage = currentLang === 'de'
+    ? `${metaBlock ? metaBlock + '\n\n' : ''}GESPRÄCHSINHALT:\n${inhalt}${vereinbarungen ? '\n\nBEREITS VEREINBART:\n' + vereinbarungen : ''}\n\nErstelle daraus ein strukturiertes Familienprotokoll.`
+    : `${metaBlock ? metaBlock + '\n\n' : ''}CONVERSATION CONTENT:\n${inhalt}${vereinbarungen ? '\n\nALREADY AGREED:\n' + vereinbarungen : ''}\n\nCreate a structured family meeting protocol from this.`;
+
+  const protokollPerspektiven = [
+    {
+      rolle: currentLang === 'de' ? 'Protokoll-Strukturerin' : 'Protocol Structurer',
+      perspektive: currentLang === 'de'
+        ? 'Du strukturierst das Familienprotokoll. Fasse zusammen: Was wurde besprochen? Was sind die wichtigsten Punkte? Gliedere klar in: (1) Themen des Gesprächs, (2) Getroffene Entscheidungen, (3) Offene Fragen. Schreib knapp und klar — dieses Protokoll soll für alle lesbar sein.'
+        : 'You structure the family protocol. Summarise: What was discussed? What are the key points? Organise clearly into: (1) Topics discussed, (2) Decisions made, (3) Open questions. Write concisely and clearly — this protocol should be readable for everyone.',
+      grundhaltung: currentLang === 'de'
+        ? 'Klarheit und Transparenz. Ein gutes Protokoll schafft gemeinsame Erinnerung und verhindert Missverständnisse.'
+        : 'Clarity and transparency. A good protocol creates shared memory and prevents misunderstandings.',
+      fachgebiet: currentLang === 'de'
+        ? 'Moderations- und Protokolltechnik, Mediation, strukturierte Kommunikation'
+        : 'Facilitation and documentation technique, mediation, structured communication'
+    },
+    {
+      rolle: currentLang === 'de' ? 'Vereinbarungs-Hüterin' : 'Agreement Keeper',
+      perspektive: currentLang === 'de'
+        ? 'Du fokussierst dich auf die Vereinbarungen und Zuständigkeiten. Wer hat was zugesagt? Bis wann? Formuliere konkrete Aufgaben und Verantwortlichkeiten als klare To-do-Liste. Falls keine Vereinbarungen explizit getroffen wurden, leite sinnvolle aus dem Gesprächsinhalt ab — mit Fragezeichen, wenn unsicher.'
+        : 'You focus on agreements and responsibilities. Who committed to what? By when? Formulate concrete tasks and accountabilities as a clear to-do list. If no agreements were explicitly made, derive sensible ones from the conversation content — with question marks where uncertain.',
+      grundhaltung: currentLang === 'de'
+        ? 'Verlässlichkeit entsteht durch klare Absprachen. Wer nichts verspricht, kann nichts halten — aber wer zu viel verspricht, enttäuscht.'
+        : 'Reliability comes through clear agreements. Those who promise nothing can keep nothing — but those who over-promise disappoint.',
+      fachgebiet: currentLang === 'de'
+        ? 'Aufgabenmanagement, Familienmediation, Verbindlichkeit in Gruppen'
+        : 'Task management, family mediation, commitment in groups'
+    },
+    {
+      rolle: currentLang === 'de' ? 'Beziehungs-Leserin' : 'Relationship Reader',
+      perspektive: currentLang === 'de'
+        ? 'Was zeigt dieses Gespräch über die Beziehungen in der Familie? Welche Bedürfnisse wurden sichtbar — vielleicht auch ungesagt? Welche Dynamiken spielten eine Rolle? Was hat das Gespräch für die Familienbeziehung gebracht, auch wenn es nicht explizit thematisiert wurde?'
+        : 'What does this conversation reveal about relationships in the family? Which needs became visible — perhaps even unspoken? What dynamics played a role? What did the conversation bring for the family relationship, even if not explicitly discussed?',
+      grundhaltung: currentLang === 'de'
+        ? 'Hinter jedem Thema steckt eine Beziehungsbotschaft. Wer zuhört, versteht mehr als das Gesagte.'
+        : 'Behind every topic lies a relationship message. Those who listen understand more than what was said.',
+      fachgebiet: currentLang === 'de'
+        ? 'Systemische Familientherapie, Kommunikationspsychologie, Gewaltfreie Kommunikation (Rosenberg)'
+        : 'Systemic family therapy, communication psychology, Nonviolent Communication (Rosenberg)'
+    },
+    {
+      rolle: currentLang === 'de' ? 'Nächste-Schritte-Begleiterin' : 'Next Steps Companion',
+      perspektive: currentLang === 'de'
+        ? 'Was braucht es als nächstes? Formuliere konkrete Empfehlungen für die Zeit bis zum nächsten Gespräch: Was sollte beobachtet, ausprobiert oder vorbereitet werden? Schlage auch vor, wann und wie das nächste Familienprotokoll-Gespräch stattfinden sollte, und was dort besprochen werden könnte.'
+        : 'What is needed next? Formulate concrete recommendations for the time until the next conversation: What should be observed, tried, or prepared? Also suggest when and how the next family protocol meeting should take place, and what could be discussed there.',
+      grundhaltung: currentLang === 'de'
+        ? 'Gute Gespräche haben Konsequenzen. Das Beste, was eine Familie tun kann: nach dem Gespräch etwas anders machen als davor.'
+        : 'Good conversations have consequences. The best a family can do: do something differently after the conversation than before.',
+      fachgebiet: currentLang === 'de'
+        ? 'Lösungsorientierte Beratung, Familiencoaching, Resilienzforschung'
+        : 'Solution-focused counselling, family coaching, resilience research'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'PROTOKOLL wird erstellt...' : 'Creating your protocol...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          familienname || 'FAMiLiEN-PROTOKOLL',
+      custom_perspectives: protokollPerspektiven,
+      stil:                'strukturiert',
+      tone:                currentTone,
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const protokollPerspDefs = [
+      { id: 'protokoll-strukturerin',  icon: 'list',    color: '#508264', de: 'Protokoll-Strukturerin',    en: 'Protocol Structurer'   },
+      { id: 'vereinbarungs-hueterin',  icon: 'check',   color: '#3D6B50', de: 'Vereinbarungs-Hüterin',     en: 'Agreement Keeper'      },
+      { id: 'beziehungs-leserin',      icon: 'heart',   color: '#6A9E78', de: 'Beziehungs-Leserin',        en: 'Relationship Reader'   },
+      { id: 'naechste-schritte',       icon: 'compass', color: '#447A5C', de: 'Nächste-Schritte-Begleiterin', en: 'Next Steps Companion' }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = protokollPerspDefs[i] || protokollPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    const protokollLabel = familienname
+      ? (currentLang === 'de' ? `PROTOKOLL — Familie ${familienname}` : `PROTOCOL — ${familienname} Family`)
+      : (currentLang === 'de' ? 'EUER FAMiLiEN-PROTOKOLL' : 'YOUR FAMILY PROTOCOL');
+    const protokollSub = [datum, teilnehmer].filter(Boolean).join(' · ') ||
+      (currentLang === 'de' ? 'strukturiert & dokumentiert' : 'structured & documented');
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    protokollLabel,
+      synthesisSubtitle: protokollSub,
+      synthesisColor:    '#508264',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="12" height="16" rx="2"/><line x1="8" y1="7" x2="14" y2="7"/></svg> ${currentLang === 'de' ? 'Kein rechtsgültiges Dokument — eine Gedächtnisstütze für eure Familie' : 'Not a legal document — a memory aid for your family'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg> ${currentLang === 'de' ? 'Vereinbarungen wachsen — beim nächsten Gespräch prüfen, was sich verändert hat' : 'Agreements evolve — check at the next meeting what has changed'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Bei tiefen Konflikten: professionelle Mediation suchen' : 'For deep conflicts: seek professional mediation'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     inhalt.substring(0, 80) + (inhalt.length > 80 ? '...' : ''),
+      perspectives: ['protokoll-strukturerin', 'vereinbarungs-hueterin', 'beziehungs-leserin', 'naechste-schritte'],
       lang:         currentLang,
       time:         Date.now()
     });
