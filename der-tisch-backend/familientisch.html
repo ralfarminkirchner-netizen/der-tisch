@@ -348,6 +348,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .eltern-send-btn{background:#A05878;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .eltern-send-btn:hover{opacity:.88}
 .eltern-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* PAAR-RAuM MODE */
+.paar-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.paar-intro{background:linear-gradient(135deg,rgba(154,64,96,0.12) 0%,rgba(128,48,76,0.06) 100%);border:1px solid rgba(154,64,96,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.paar-intro strong{color:#9A4060}
+.paar-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.paar-input:focus{border-color:#9A4060;box-shadow:0 0 0 2px rgba(154,64,96,0.12)}
+.paar-input::placeholder{color:var(--muted)}
+.paar-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.paar-send-btn{background:#9A4060;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.paar-send-btn:hover{opacity:.88}
+.paar-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -574,8 +586,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
       FAMiLiEN-HEiLUNG
     </button>
     <button class="mode-tab" id="tab-eltern" onclick="setMode('eltern')">
-      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".55"/><path d="M13 15.5c1-.5 3.5-.5 4.5 1.5" opacity=".55"/></svg>
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5"/><circle cx="14" cy="6" r="3"/><path d="M20 18c0-3.5-2.7-5.5-6-5.5"/><path d="M10 18c-1.5 0-3-1-3-3"/><path d="M10 18c1.5 0 3-1 3-3"/></svg>
       ELTERN-GESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-paar" onclick="setMode('paar')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-6-4-6-8a4 4 0 018 0 4 4 0 018 0c0 4-6 8-6 8z"/></svg>
+      PAAR-RAuM
     </button>
   </div>
 </section>
@@ -1214,6 +1230,50 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="elternResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== PAAR-RAuM MODE ==================== -->
+<div class="mode-section" id="mode-paar">
+  <div class="paar-wrap">
+
+    <div class="paar-intro">
+      <strong>PAAR-RAuM</strong> — Das Paar ist das Herz der Familie. Was zwischen den Partnern ungelöst, unausgesprochen oder verloren gegangen ist, spürt die ganze Familie — auch wenn niemand darüber spricht. Vier Stimmen erkunden eure Beziehung: aus der Forschung, aus der Bindungstheorie, aus dem Familiensystem — und aus dem Raum, den ihr gemeinsam gestalten könnt.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="paarChips">
+      <button class="chip" onclick="usePaarChip(this)">Wir streiten immer um dasselbe Thema — ohne echte Lösung.</button>
+      <button class="chip" onclick="usePaarChip(this)">Seit den Kindern ist die Nähe zwischen uns weniger geworden.</button>
+      <button class="chip" onclick="usePaarChip(this)">Ich fühle mich von meinem Partner nicht mehr wirklich gesehen.</button>
+      <button class="chip" onclick="usePaarChip(this)">Wie finden wir wieder zueinander nach einer schwierigen Phase?</button>
+      <button class="chip" onclick="usePaarChip(this)">Unsere Rollen als Eltern haben uns als Paar in den Hintergrund gedrängt.</button>
+      <button class="chip" onclick="usePaarChip(this)">Wir haben unterschiedliche Vorstellungen — wie geht das zusammen?</button>
+      <button class="chip" onclick="usePaarChip(this)">Wie streiten wir so, dass wir danach wieder zusammenfinden?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was beschäftigt euch als Paar?</div>
+    <textarea class="paar-input" id="paarInput" placeholder="Beschreibt, was zwischen euch gerade los ist — ein Muster, das sich wiederholt; etwas, das fehlt; eine Spannung, die ihr nicht auflösen könnt. Was wünscht ihr euch füreinander und für eure Verbindung?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="paarName1" type="text" placeholder="Name / Kürzel Partner·in 1 (optional)">
+      <input class="selbst-rolle-input" id="paarName2" type="text" placeholder="Name / Kürzel Partner·in 2 (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-paar-fokus="verbindung" onclick="setPaarFokus(this)">Verbindung</button>
+        <button class="ctrl-btn" data-paar-fokus="konflikt" onclick="setPaarFokus(this)">Konflikt</button>
+        <button class="ctrl-btn" data-paar-fokus="wachstum" onclick="setPaarFokus(this)">Wachstum</button>
+      </div>
+    </div>
+
+    <div class="paar-send-row">
+      <button class="paar-send-btn" id="paarSendBtn" onclick="sendPaar()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-6-4-6-8a4 4 0 018 0 4 4 0 018 0c0 4-6 8-6 8z"/></svg>
+        PAAR-RAuM ÖFFNEN
+      </button>
+    </div>
+
+    <div id="paarResults"></div>
 
   </div>
 </div>
@@ -4294,6 +4354,184 @@ async function sendEltern() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['entwicklungs-begleiterin', 'bindungs-stimme', 'grenzen-werkerin', 'kind-stimme'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── PAAR-RAuM MODE ──────────────────────────────────────────────────────────
+
+let paarFokus = 'verbindung';
+
+function setPaarFokus(btn) {
+  paarFokus = btn.dataset.paarFokus;
+  document.querySelectorAll('[data-paar-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function usePaarChip(el) {
+  document.getElementById('paarInput').value = el.textContent.trim();
+  document.getElementById('paarInput').focus();
+}
+
+async function sendPaar() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('paarInput');
+  const resultsDiv = document.getElementById('paarResults');
+  const sendBtn    = document.getElementById('paarSendBtn');
+  const name1      = (document.getElementById('paarName1')?.value || '').trim();
+  const name2      = (document.getElementById('paarName2')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const paarLabel = (name1 && name2)
+    ? `${name1} & ${name2}`
+    : (name1 || name2 || (currentLang === 'de' ? 'euer Paar' : 'your couple'));
+
+  const fokusQuestions = {
+    verbindung: currentLang === 'de'
+      ? 'Was hält dieses Paar zusammen — und was hat diese Verbindung in letzter Zeit geschwächt? Was braucht es jetzt, damit die Nähe zwischen den Partnern wieder wachsen kann?'
+      : 'What holds this couple together — and what has weakened this connection recently? What does it take now for closeness between partners to grow again?',
+    konflikt: currentLang === 'de'
+      ? 'Welche Muster stecken hinter dem Konflikt dieses Paares? Was ist das eigentliche Bedürfnis hinter dem Streit — und wie können sie so miteinander umgehen, dass die Verbindung nicht verloren geht?'
+      : 'What patterns lie behind this couple\'s conflict? What is the real need behind the argument — and how can they engage with each other so the connection is not lost?',
+    wachstum: currentLang === 'de'
+      ? 'Wie können diese zwei Menschen gemeinsam wachsen — nicht trotz ihrer Unterschiede, sondern durch sie? Was braucht diese Partnerschaft, um sich weiterzuentwickeln?'
+      : 'How can these two people grow together — not despite their differences, but through them? What does this partnership need to continue evolving?'
+  };
+
+  const frage = `${fokusQuestions[paarFokus]} Kontext: ${text}`;
+
+  const paarPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Gottman-Forscherin' : 'Gottman Researcher',
+      position: currentLang === 'de'
+        ? `Was zeigen die Kommunikationsmuster dieses Paares? Die Gottman-Forschung beschreibt vier Warnsignale: Kritik (Angriff auf den Charakter, nicht das Verhalten), Verachtung (Überlegenheitsgefühl, Sarkasmus), Defensivität (Gegenangriff statt Zuhören), Mauern (emotionaler Rückzug). Welche davon tauchen auf — und was steckt dahinter? Gleichzeitig: Welche Reparaturversuche gibt es bereits, auch wenn sie vielleicht nicht ankommen? Und was würde das Emotionskonto dieses Paares auffüllen — kleine Gesten, Neugier, echte Zugewandtheit? Kontext: ${text}`
+        : `What do the communication patterns of this couple reveal? Gottman's research identifies four warning signs: criticism (attacking the person, not the behaviour), contempt (superiority, sarcasm), defensiveness (counter-attack rather than listening), stonewalling (emotional withdrawal). Which appear here — and what lies beneath? At the same time: what repair attempts are already present, even if they're not landing? And what would replenish this couple's emotional bank account — small gestures, genuine curiosity, real attentiveness? Context: ${text}`,
+      grundhaltung: currentLang === 'de'
+        ? 'Glückliche Paare streiten genauso oft wie unglückliche — aber sie kennen den Weg zurück. Reparaturversuche und Zugewandtheit im Alltag sind mächtiger als die großen Gesten.'
+        : 'Happy couples fight just as often as unhappy ones — but they know the way back. Repair attempts and everyday attentiveness are more powerful than grand gestures.',
+      fachgebiet: currentLang === 'de'
+        ? 'Gottman-Methode (Vier apokalyptische Reiter, Sound Relationship House), Paarkommunikationsforschung, Reparaturversuche, emotionales Bankkonto'
+        : 'Gottman Method (Four Horsemen, Sound Relationship House), couple communication research, repair attempts, emotional bank account'
+    },
+    {
+      name: currentLang === 'de' ? 'EFT-Begleiterin' : 'EFT Companion',
+      position: currentLang === 'de'
+        ? `Was passiert in diesem Paar auf der Ebene der Bindung und der emotionalen Sicherheit? Die Emotionsfokussierte Therapie (EFT) fragt: Welche Bindungsängste stecken hinter dem Verhalten der Partner — Angst vor Verlassenwerden, vor Ablehnung, vor Kontrollverlust? Und welcher Tanz entsteht daraus: Einer zieht sich vor, der andere verfolgt; oder beide ziehen sich zurück? Was ist das tiefste Bedürfnis, das nicht ausgesprochen wird — und wie könnte es so gehört werden, dass die Sicherheit zwischen den Partnern wächst? Kontext: ${text}`
+        : `What is happening in this couple at the level of attachment and emotional safety? Emotionally Focused Therapy (EFT) asks: what attachment fears lie behind the partners' behaviour — fear of abandonment, rejection, loss of control? And what dance emerges from this: one pursues while the other withdraws; or both retreat? What is the deepest need that remains unspoken — and how could it be heard in a way that grows safety between the partners? Context: ${text}`,
+      grundhaltung: currentLang === 'de'
+        ? 'Hinter jedem Streit steckt eine Frage: "Bist du für mich da? Kann ich dir vertrauen? Bin ich dir wichtig?" Wenn diese Fragen nicht beantwortet werden, eskaliert die Form — nicht der Inhalt.'
+        : 'Behind every argument is a question: "Are you there for me? Can I trust you? Do I matter to you?" When these questions go unanswered, the form escalates — not the content.',
+      fachgebiet: currentLang === 'de'
+        ? 'Emotionsfokussierte Paartherapie (EFT, Susan Johnson), Bindungstheorie (Bowlby), Verfolgung-Rückzug-Muster, Vulnerabilitätsoffenbarung, Sicherheitsbasis'
+        : 'Emotionally Focused Therapy (EFT, Susan Johnson), attachment theory (Bowlby), pursue-withdraw patterns, vulnerability disclosure, secure base'
+    },
+    {
+      name: currentLang === 'de' ? 'Systemische Paar-Stimme' : 'Systemic Couple Voice',
+      position: currentLang === 'de'
+        ? `Wie ist dieses Paar in sein größeres System eingebettet — und was kommt von außen, was von innen? Welche unbewussten Aufträge, Familiengeschichten und Rollenbilder beider Partner begegnen sich in dieser Beziehung? Was wiederholt sich aus früheren Generationen — vielleicht ohne dass die Partner es wissen? Wie beeinflusst die Dynamik als Paar die Kinder, die Herkunftsfamilien, das soziale Umfeld — und umgekehrt? Welche systemischen Kräfte wirken auf dieses Paar, die die Partner selbst noch nicht vollständig sehen? Kontext: ${text}`
+        : `How is this couple embedded in its larger system — and what comes from outside, what from within? What unconscious mandates, family stories and role models from both partners meet in this relationship? What repeats from earlier generations — perhaps without the partners knowing it? How does the couple's dynamic affect the children, the families of origin, the social environment — and vice versa? What systemic forces act on this couple that the partners themselves don't yet fully see? Context: ${text}`,
+      grundhaltung: currentLang === 'de'
+        ? 'Ein Paar ist nie nur zwei Personen. Es sind zwei Familiensysteme, die sich begegnen — mit all ihren Mustern, Wunden und Stärken. Was zwischen ihnen geschieht, hat immer eine Geschichte.'
+        : 'A couple is never just two people. It is two family systems meeting — with all their patterns, wounds and strengths. What happens between them always has a history.',
+      fachgebiet: currentLang === 'de'
+        ? 'Systemische Paartherapie, transgenerationale Muster (Boszormenyi-Nagy), Mehrgenerationen-Familientherapie, Familiensysteme (Bowen), unsichtbare Loyalitäten'
+        : 'Systemic couple therapy, transgenerational patterns (Boszormenyi-Nagy), multigenerational family therapy, family systems (Bowen), invisible loyalties'
+    },
+    {
+      name: currentLang === 'de' ? 'Wir-Raum' : 'We-Space',
+      position: currentLang === 'de'
+        ? `Was ist das Dritte in dieser Beziehung — das "Wir", das nicht nur aus der Summe beider Personen besteht? Jedes Paar baut etwas zusammen: ein geteiltes Leben, gemeinsame Werte, eine Vision, Rituale, Erinnerungen. Was davon ist noch lebendig in dieser Beziehung — und was braucht Pflege oder Erneuerung? Welcher erste kleine Schritt würde den Wir-Raum wieder öffnen — nicht als große Geste, sondern als echtes Zeichen von: "Ich sehe dich. Ich bin hier. Wir sind mehr als unsere Schwierigkeiten." Kontext: ${text}`
+        : `What is the third element in this relationship — the "we" that is not simply the sum of both people? Every couple builds something together: a shared life, common values, a vision, rituals, memories. What of this is still alive in this relationship — and what needs tending or renewal? What first small step would open the we-space again — not as a grand gesture, but as a real sign of: "I see you. I'm here. We are more than our difficulties." Context: ${text}`,
+      grundhaltung: currentLang === 'de'
+        ? 'Liebe ist kein Zustand, sondern eine Praxis. Das "Wir" entsteht nicht einmal — es wird jeden Tag ein kleines bisschen neu erschaffen oder ein kleines bisschen vergessen.'
+        : 'Love is not a state — it is a practice. The "we" is not created once — it is re-created a little each day, or a little each day forgotten.',
+      fachgebiet: currentLang === 'de'
+        ? 'Paarbeziehung als geteiltes Projekt, Wir-Identität, Paarritual und Verbindungsroutinen, Gottman "Love Maps", Dankbarkeit und Wertschätzung, Zukunftsorientierung im Paar'
+        : 'Couple relationship as shared project, we-identity, couple ritual and connection routines, Gottman "Love Maps", gratitude and appreciation, future orientation in the couple'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'PAAR-RAuM wird geöffnet...' : 'Opening your couple space...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          paarLabel,
+      custom_perspectives: paarPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const paarPerspDefs = [
+      { id: 'gottman-forscherin',   icon: 'network',  color: '#9A4060', de: 'Gottman-Forscherin',    en: 'Gottman Researcher' },
+      { id: 'eft-begleiterin',      icon: 'heart',    color: '#8A3050', de: 'EFT-Begleiterin',        en: 'EFT Companion'      },
+      { id: 'systemische-paar',     icon: 'scroll',   color: '#AA5070', de: 'Systemische Paar-Stimme',en: 'Systemic Couple Voice' },
+      { id: 'wir-raum',             icon: 'compass',  color: '#7A2040', de: 'Wir-Raum',               en: 'We-Space'           }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = paarPerspDefs[i] || paarPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER GEMEiNSAMER WEG' : 'YOUR SHARED PATH',
+      synthesisSubtitle: currentLang === 'de' ? paarLabel : paarLabel,
+      synthesisColor:    '#9A4060',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-6-4-6-8a4 4 0 018 0 4 4 0 018 0c0 4-6 8-6 8z"/></svg> ${currentLang === 'de' ? 'Kein Paar ist falsch — Muster können sich verändern' : 'No couple is wrong — patterns can change'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot, kein Therapie-Ersatz' : 'Invitation to reflect, not a therapy substitute'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei tiefen Themen: Paarberatung empfehlen' : 'For deeper themes: couple counselling recommended'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['gottman-forscherin', 'eft-begleiterin', 'systemische-paar', 'wir-raum'],
       lang:         currentLang,
       time:         Date.now()
     });
