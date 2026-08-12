@@ -348,6 +348,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .eltern-send-btn{background:#A05878;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .eltern-send-btn:hover{opacity:.88}
 .eltern-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* KiNDER-TiSCH MODE */
+.kinder-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.kinder-intro{background:linear-gradient(135deg,rgba(58,173,190,0.12) 0%,rgba(42,153,170,0.06) 100%);border:1px solid rgba(58,173,190,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.kinder-intro strong{color:#3AADBE}
+.kinder-emoji-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.kinder-emoji-chip{font-size:22px;cursor:pointer;padding:10px 12px;border:2px solid var(--border);border-radius:10px;transition:all .2s;background:var(--surface);line-height:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px}
+.kinder-emoji-chip:hover{border-color:rgba(58,173,190,0.6);transform:scale(1.06)}
+.kinder-emoji-chip span{font-size:10px;color:var(--muted);letter-spacing:.03em;font-family:var(--font)}
+.kinder-input{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:16px 18px;font-family:var(--font);font-size:16px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.75;margin-bottom:16px}
+.kinder-input:focus{border-color:#3AADBE;box-shadow:0 0 0 3px rgba(58,173,190,0.12)}
+.kinder-input::placeholder{color:var(--muted)}
+.kinder-send-row{display:flex;justify-content:center;margin-bottom:24px}
+.kinder-send-btn{background:#3AADBE;border:none;color:#fff;padding:13px 32px;border-radius:10px;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;transition:opacity .2s}
+.kinder-send-btn:hover{opacity:.88}
+.kinder-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.kinder-result-card{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px}
+.kinder-result-role{font-size:11px;letter-spacing:.15em;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.kinder-result-text{color:var(--muted);line-height:1.8;font-size:14px}
+.kinder-synthesis{background:rgba(58,173,190,0.08);border:1px solid rgba(58,173,190,0.28);border-radius:12px;padding:18px 20px;margin-top:16px}
+.kinder-synthesis-title{font-size:11px;letter-spacing:.15em;color:#3AADBE;text-transform:uppercase;margin-bottom:10px;font-weight:700}
+.kinder-synthesis-text{color:var(--text);font-size:15px;line-height:1.8}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -576,6 +598,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-eltern" onclick="setMode('eltern')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".55"/><path d="M13 15.5c1-.5 3.5-.5 4.5 1.5" opacity=".55"/></svg>
       ELTERN-GESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-kinder" onclick="setMode('kinder')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M6 18v-1a4 4 0 018 0v1"/><path d="M4 10l2-2M16 10l-2-2"/></svg>
+      KiNDER-TiSCH
     </button>
   </div>
 </section>
@@ -1214,6 +1240,59 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="elternResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== KiNDER-TiSCH MODE ==================== -->
+<div class="mode-section" id="mode-kinder">
+  <div class="kinder-wrap">
+
+    <div class="kinder-intro">
+      <strong>KiNDER-TiSCH</strong> — Ein Platz nur für dich. Hier kannst du erzählen, was dich bewegt — ohne dass es jemand beurteilt. Drei freundliche Stimmen hören dir zu und helfen dir, besser zu verstehen, was du fühlst und was du brauchst. <em>Für Eltern: Helft eurem Kind, diesen Raum zu entdecken — dann lasst es alleine hier sein.</em>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <div class="ctrl-group">
+        <button class="ctrl-btn" data-kinder-alter="klein" onclick="setKinderAlter(this)">5–8 Jahre</button>
+        <button class="ctrl-btn active" data-kinder-alter="mittel" onclick="setKinderAlter(this)">9–12 Jahre</button>
+        <button class="ctrl-btn" data-kinder-alter="gross" onclick="setKinderAlter(this)">13+ Jahre</button>
+      </div>
+    </div>
+
+    <div class="chips-label">Wie geht es dir gerade?</div>
+    <div class="kinder-emoji-row">
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Traurig')">😢<span>Traurig</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Wütend')">😡<span>Wütend</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Ängstlich')">😟<span>Angst</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Verwirrt')">😕<span>Verwirrt</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Einsam')">😔<span>Einsam</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Es ist unfair')">😤<span>Unfair</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Ich brauche Hilfe')">🥺<span>Hilfe</span></button>
+      <button class="kinder-emoji-chip" onclick="useKinderEmoji(this,'Ich weiß nicht mehr weiter')">😶<span>Ratlos</span></button>
+    </div>
+
+    <div class="chips-label">Oder wähle ein Thema</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="kinderChips">
+      <button class="chip" onclick="useKinderChip(this)">Meine Eltern streiten oft — das macht mir Angst.</button>
+      <button class="chip" onclick="useKinderChip(this)">Ich wünsche mir mehr Zeit mit meiner Mama / meinem Papa.</button>
+      <button class="chip" onclick="useKinderChip(this)">Mein Geschwister ist gemein zu mir.</button>
+      <button class="chip" onclick="useKinderChip(this)">Ich fühle mich manchmal nicht verstanden.</button>
+      <button class="chip" onclick="useKinderChip(this)">Ich mache mir Sorgen um jemanden in meiner Familie.</button>
+      <button class="chip" onclick="useKinderChip(this)">Ich weiß nicht, wie ich etwas Wichtiges sagen soll.</button>
+      <button class="chip" onclick="useKinderChip(this)">Ich fühle mich manchmal allein, auch wenn alle da sind.</button>
+    </div>
+
+    <textarea class="kinder-input" id="kinderInput" placeholder="Schreib einfach, was dich gerade beschäftigt. Du kannst so viel oder so wenig schreiben, wie du willst. Hier hört dir jemand zu." rows="4"></textarea>
+
+    <div class="kinder-send-row">
+      <button class="kinder-send-btn" id="kinderSendBtn" onclick="sendKinder()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg>
+        Ich möchte erzählen
+      </button>
+    </div>
+
+    <div id="kinderResults"></div>
 
   </div>
 </div>
@@ -4300,6 +4379,156 @@ async function sendEltern() {
 
   } catch (err) {
     resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── KiNDER-TiSCH MODE ────────────────────────────────────────────────────────
+
+let kinderAlter = 'mittel';
+
+function setKinderAlter(btn) {
+  kinderAlter = btn.dataset.kinderAlter;
+  document.querySelectorAll('[data-kinder-alter]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useKinderChip(el) {
+  document.getElementById('kinderInput').value = el.textContent.trim();
+  document.getElementById('kinderInput').focus();
+}
+
+function useKinderEmoji(btn, feeling) {
+  const ta = document.getElementById('kinderInput');
+  const prefix = `Ich bin gerade ${feeling.toLowerCase()}: `;
+  if (!ta.value) {
+    ta.value = prefix;
+  } else if (!ta.value.toLowerCase().includes(feeling.toLowerCase())) {
+    ta.value = prefix + ta.value;
+  }
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+
+async function sendKinder() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('kinderInput');
+  const resultsDiv = document.getElementById('kinderResults');
+  const sendBtn    = document.getElementById('kinderSendBtn');
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast('Schreib einfach, was dich gerade beschäftigt.');
+    return;
+  }
+
+  const alterLabel = { klein: '5–8 Jahre', mittel: '9–12 Jahre', gross: '13+ Jahre' };
+  const stilMap    = { klein: 'kindgerecht', mittel: 'kindgerecht', gross: 'einfach' };
+  const alter      = alterLabel[kinderAlter];
+
+  const kinderPerspektiven = [
+    {
+      name: 'Verstehende Stimme',
+      position: `Ein Kind (${alter}) hat Folgendes erzählt: "${text}". Antworte direkt an das Kind — warmherzig, ruhig, auf Augenhöhe: Zeige zunächst, dass du wirklich verstehst, wie es sich fühlt. Benenne das Gefühl klar. Sage dem Kind, dass dieses Gefühl okay ist. Kein Erwachsenensprech, kein Belehren. Maximal 3–4 einfache, echte Sätze.`,
+      grundhaltung: 'Kinder brauchen zuerst das Gefühl, wirklich gehört zu werden — bevor sie bereit sind, etwas Neues zu denken.',
+      fachgebiet: 'Kindzentrierte Kommunikation, Emotionscoaching (Gottman), aktives Zuhören für Kinder',
+    },
+    {
+      name: 'Stärken-Stimme',
+      position: `Ein Kind (${alter}) hat Folgendes erzählt: "${text}". Antworte direkt an das Kind: Was ist bereits stark an ihm — was zeigt es in dieser Situation, was zeigt, dass es tapfer ist? Gib eine echte, konkrete Ermutigung. Benenne eine Stärke, die das Kind gerade schon zeigt — auch wenn es sie selbst nicht sieht. 2–3 Sätze, freundlich und konkret, kein falsches Lob.`,
+      grundhaltung: 'Jedes Kind hat Stärken — auch wenn es sie gerade nicht sieht. Die Aufgabe ist, sie sichtbar zu machen.',
+      fachgebiet: 'Positive Psychologie für Kinder, Resilienzforschung (Cyrulnik), stärkenbasierte Ansätze',
+    },
+    {
+      name: 'Hilfreiche Ideen',
+      position: `Ein Kind (${alter}) hat Folgendes erzählt: "${text}". Antworte direkt an das Kind: Gib 1–2 ganz konkrete, sofort umsetzbare Möglichkeiten — mit wem es reden könnte, was es ausprobieren könnte, was helfen könnte. Kindgerecht, mutig, machbar. Kein Druck — nur echte Möglichkeiten. Enden mit einer kleinen Einladung, nicht einer Aufgabe.`,
+      grundhaltung: 'Kinder brauchen keine perfekten Lösungen — sie brauchen das Gefühl, dass es Wege gibt, die sie gehen können.',
+      fachgebiet: 'Lösungsorientierte Beratung für Kinder, kindgerechte Problemlösung, soziale Kompetenzförderung',
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>Ich höre dir zu...</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            text,
+      custom_perspectives: kinderPerspektiven,
+      methods:             [],
+      stil:                stilMap[kinderAlter] || 'kindgerecht',
+      tone:                'achtsam',
+      lang:                currentLang,
+      source_app:          'FAMiLiEN-TiSCH-KiNDER',
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const kinderPerspDefs = [
+      { color: '#3AADBE', de: 'Verstehende Stimme' },
+      { color: '#5BA08A', de: 'Stärken-Stimme'     },
+      { color: '#7065CB', de: 'Hilfreiche Ideen'   },
+    ];
+
+    (data.perspectives || []).forEach((r, i) => {
+      const pDef  = kinderPerspDefs[i] || kinderPerspDefs[0];
+      const label = (r.rolle || '').replace(/^\[(custom|method)\]/, '') || pDef.de;
+      const card  = document.createElement('div');
+      card.className = 'kinder-result-card';
+      card.style.borderColor = pDef.color + '55';
+      card.innerHTML = `
+        <div class="kinder-result-role" style="color:${pDef.color}">${escapeHTML(label)}</div>
+        <div class="kinder-result-text">${escapeHTML(r.kernanalyse || '')}</div>
+      `;
+      resultsDiv.appendChild(card);
+    });
+
+    const intg = data.integration || {};
+    if (intg.einfach_gesagt) {
+      const synth = document.createElement('div');
+      synth.className = 'kinder-synthesis';
+      synth.innerHTML = `
+        <div class="kinder-synthesis-title">Das nehme ich mit</div>
+        <div class="kinder-synthesis-text">${escapeHTML(intg.einfach_gesagt)}</div>
+      `;
+      resultsDiv.appendChild(synth);
+    }
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> Nur für dich — vertraulich</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> Kein Urteil</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg> Bei ernsten Sorgen: einem Erwachsenen vertrauen</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['verstehende-stimme', 'staerken-stimme', 'hilfreiche-ideen'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">Gerade klappt es leider nicht. Bitte versuch es nochmal!</div>`;
   }
 
   isLoading = false;

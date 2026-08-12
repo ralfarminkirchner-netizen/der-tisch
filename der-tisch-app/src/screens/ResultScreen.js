@@ -77,18 +77,18 @@ function FrictionCard({ friction }) {
     <View style={styles.frictionCard}>
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.red }]}>
-          HARTE WIDERSPRÜCHE
+          ECHTE WIDERSPRÜCHE
         </Text>
-        <BulletList items={friction.harte_widersprueche} color={colors.red} />
+        <BulletList items={friction.echte_widersprueche || []} color={colors.red} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
 
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.redDim }]}>
-          SCHEINKONSENS
+          ÜBERSETZUNGSFEHLER
         </Text>
-        <BulletList items={friction.scheinkonsens} color={colors.redDim} />
+        <BulletList items={friction.uebersetzungsfehler || []} color={colors.redDim} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
@@ -108,38 +108,32 @@ function FrictionCard({ friction }) {
 function IntegrationCard({ integration }) {
   const sections = [
     {
-      label: "VORLÄUFIGER KONSENS",
-      value: integration.vorlaeufiger_konsens,
+      label: "KURZFASSUNG",
+      value: integration.einfach_gesagt,
       isList: false,
       color: colors.blue,
     },
     {
-      label: "FRUCHTBARE DIFFERENZEN",
-      value: integration.fruchtbare_differenzen,
+      label: "ÜBERSETZBARE BRÜCKEN",
+      value: integration.uebersetzbare_bruecken || [],
       isList: true,
       color: colors.blue,
     },
     {
-      label: "ÜBERSETZBARKEIT",
-      value: integration.uebersetzbarkeit,
-      isList: true,
-      color: colors.blueDim,
-    },
-    {
       label: "ECHTE UNVEREINBARKEITEN",
-      value: integration.echte_unvereinbarkeiten,
+      value: integration.echte_unvereinbarkeiten || [],
       isList: true,
       color: colors.red,
     },
     {
       label: "PRAKTISCHE OPTIONEN",
-      value: integration.praktische_optionen,
+      value: integration.praktische_optionen || [],
       isList: true,
       color: colors.amber,
     },
     {
       label: "OFFENE PRÜFPFADE",
-      value: integration.offene_pruefpfade,
+      value: integration.offene_pruefpfade || [],
       isList: true,
       color: colors.textSecondary,
     },
