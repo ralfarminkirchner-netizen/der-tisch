@@ -348,6 +348,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .eltern-send-btn{background:#A05878;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .eltern-send-btn:hover{opacity:.88}
 .eltern-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* PAAR-TiSCH MODE */
+.paar-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.paar-intro{background:linear-gradient(135deg,rgba(192,88,88,0.12) 0%,rgba(160,64,64,0.06) 100%);border:1px solid rgba(192,88,88,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.paar-intro strong{color:#C05858}
+.paar-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.paar-input:focus{border-color:#C05858;box-shadow:0 0 0 2px rgba(192,88,88,0.12)}
+.paar-input::placeholder{color:var(--muted)}
+.paar-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.paar-send-btn{background:#C05858;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.paar-send-btn:hover{opacity:.88}
+.paar-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -576,6 +588,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-eltern" onclick="setMode('eltern')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".55"/><path d="M13 15.5c1-.5 3.5-.5 4.5 1.5" opacity=".55"/></svg>
       ELTERN-GESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-paar" onclick="setMode('paar')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="10" r="4.5"/><circle cx="13" cy="10" r="4.5"/></svg>
+      PAAR-TiSCH
     </button>
   </div>
 </section>
@@ -1214,6 +1230,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="elternResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== PAAR-TiSCH MODE ==================== -->
+<div class="mode-section" id="mode-paar">
+  <div class="paar-wrap">
+
+    <div class="paar-intro">
+      <strong>PAAR-TiSCH</strong> — Eltern sind zuerst Partner. Die Qualität eurer Paarbeziehung ist das unsichtbare Fundament, auf dem eure ganze Familie steht. Vier Stimmen begleiten euch: durch das, was euch verbindet, durch eure Spannungen, durch euer gemeinsames Wachstum — und durch die Frage, wie eure Paar-Welt auf eure Kinder wirkt.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="paarChips">
+      <button class="chip" onclick="usePaarChip(this)">Wir haben kaum noch Zeit füreinander — der Alltag frisst uns auf.</button>
+      <button class="chip" onclick="usePaarChip(this)">Wir streiten immer über dasselbe — es löst sich nie wirklich.</button>
+      <button class="chip" onclick="usePaarChip(this)">Ich fühle mich in unserer Beziehung einsam, auch wenn wir zusammen sind.</button>
+      <button class="chip" onclick="usePaarChip(this)">Wir funktionieren als Eltern gut, aber als Paar kaum noch.</button>
+      <button class="chip" onclick="usePaarChip(this)">Ich möchte als Partner mehr gesehen werden, nicht nur als Co-Elternteil.</button>
+      <button class="chip" onclick="usePaarChip(this)">Wie sprechen wir über ein Thema, das immer wieder eskaliert?</button>
+      <button class="chip" onclick="usePaarChip(this)">Wie können wir als Paar wachsen, obwohl die Familie so viel Zeit braucht?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was bewegt euch als Paar?</div>
+    <textarea class="paar-input" id="paarInput" placeholder="Erzählt, womit ihr als Paar gerade ringt oder was euch beschäftigt. Was wiederholt sich? Was fehlt? Was wünscht ihr euch füreinander — und für eure gemeinsame Zeit als Paar, nicht nur als Eltern?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="paarName" type="text" placeholder="Euer Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-paar-fokus="verbindung" onclick="setPaarFokus(this)">Verbindung</button>
+        <button class="ctrl-btn" data-paar-fokus="konflikt" onclick="setPaarFokus(this)">Konflikt</button>
+        <button class="ctrl-btn" data-paar-fokus="wachstum" onclick="setPaarFokus(this)">Wachstum</button>
+      </div>
+    </div>
+
+    <div class="paar-send-row">
+      <button class="paar-send-btn" id="paarSendBtn" onclick="sendPaar()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="10" r="4.5"/><circle cx="13" cy="10" r="4.5"/></svg>
+        PAAR-GESPRÄCH ERKUNDEN
+      </button>
+    </div>
+
+    <div id="paarResults"></div>
 
   </div>
 </div>
@@ -4294,6 +4353,180 @@ async function sendEltern() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['entwicklungs-begleiterin', 'bindungs-stimme', 'grenzen-werkerin', 'kind-stimme'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── PAAR-TiSCH MODE ─────────────────────────────────────────────────────
+
+let paarFokus = 'verbindung';
+
+function setPaarFokus(btn) {
+  paarFokus = btn.dataset.paarFokus;
+  document.querySelectorAll('[data-paar-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function usePaarChip(el) {
+  document.getElementById('paarInput').value = el.textContent.trim();
+  document.getElementById('paarInput').focus();
+}
+
+async function sendPaar() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('paarInput');
+  const resultsDiv = document.getElementById('paarResults');
+  const sendBtn    = document.getElementById('paarSendBtn');
+  const paarName   = (document.getElementById('paarName')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    verbindung: currentLang === 'de'
+      ? 'Was verbindet dieses Paar wirklich — unter dem Alltag, den Rollen, dem Funktionieren? Welche unsichtbaren Momente der Nähe gibt es noch, welche fehlen — und was braucht die Verbindung jetzt, um zu wachsen statt still zu verblassen?'
+      : 'What truly connects this couple — beneath the everyday, the roles, the functioning? What invisible moments of closeness still exist, what is missing — and what does the bond need now, to grow rather than quietly fade?',
+    konflikt: currentLang === 'de'
+      ? 'Was steckt wirklich hinter diesem wiederkehrenden Konflikt? Was ist das Thema unter dem Thema — welches tiefere Bedürfnis, welche ungehörte Verletzung, welches Muster aus der Vergangenheit? Und was würde dem Paar helfen, den Kreislauf zu durchbrechen?'
+      : 'What is really behind this recurring conflict? What is the topic beneath the topic — what deeper need, what unheard wound, what pattern from the past? And what would help this couple break the cycle?',
+    wachstum: currentLang === 'de'
+      ? 'Wie können zwei Menschen in einer Partnerschaft als Individuen wachsen, ohne dabei auseinanderzuwachsen? Was braucht jede Person für die eigene Entwicklung — und was braucht die Beziehung, damit dieses Wachstum das Band stärkt statt schwächt?'
+      : 'How can two people in a partnership grow as individuals without growing apart? What does each person need for their own development — and what does the relationship need so that this growth strengthens the bond rather than weakens it?'
+  };
+
+  const paarLabel = paarName ? `Familie ${paarName}` : (currentLang === 'de' ? 'euer Paar' : 'your couple');
+  const frage = `${fokusQuestions[paarFokus]} Kontext: ${text}`;
+
+  const paarPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Verbindungs-Wächter' : 'Connection Guardian',
+      position: currentLang === 'de'
+        ? `Was hält dieses Paar wirklich zusammen — und was trägt die Verbindung gerade nicht mehr? Paarbeziehungen leben von kleinen, täglichen Momenten: Blicken, Berührungen, dem echten Interesse aneinander. Gottmans Forschung zeigt: es sind nicht die großen Gesten, die Beziehungen tragen — es ist die Summe der kleinen Zuwendungen. Welche "Turning Towards"-Momente gibt es noch bei ${paarLabel}? Welche gehen verloren? Und was wäre ein erster, echter Schritt zurück zur Verbindung — nicht romantisch überladen, sondern real und möglich?`
+        : `What truly holds this couple together — and what is the connection no longer carrying? Couple relationships live through small, daily moments: glances, touches, genuine interest in each other. Gottman's research shows: it's not the grand gestures that sustain relationships — it's the sum of small attentions. What "turning towards" moments still exist for ${paarLabel}? Which are being lost? And what would be a first, real step back toward connection — not romantically overloaded, but real and possible?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Liebe ist kein Zustand — sie ist ein Tun. Verbindung entsteht nicht von selbst; sie wird in Momenten gewählt, täglich, klein, leise. Und sie kann ebenso täglich wieder gewählt werden.'
+        : 'Love is not a state — it is an action. Connection does not happen by itself; it is chosen in moments, daily, small, quiet. And it can be chosen again, just as daily.',
+      fachgebiet: currentLang === 'de'
+        ? 'Gottman-Institut (Sound Relationship House, Bid & Turn Towards), Bindungstheorie in Erwachsenenbeziehungen, Positives Interdependenz-Modell, emotionale Intelligenz in Partnerschaften'
+        : 'Gottman Institute (Sound Relationship House, Bid & Turn Towards), attachment theory in adult relationships, positive interdependence model, emotional intelligence in partnerships'
+    },
+    {
+      name: currentLang === 'de' ? 'Spannungs-Navigatorin' : 'Tension Navigator',
+      position: currentLang === 'de'
+        ? `Was ist bei ${paarLabel} das eigentliche Thema unter dem Konflikt? Paarkonflikte wiederholen sich selten wegen der Oberfläche — dem Abwasch, dem Geld, der Zeit. Dahinter liegt fast immer ein tieferes Bedürfnis: nach Anerkennung, Sicherheit, Kontrolle, Gehört-Werden. Esther Perel nennt es "the complaint is never the complaint". Was versucht jede Person durch diesen Konflikt zu sagen, was sie noch nicht direkt sagen kann? Und was würde passieren, wenn beide diese tiefere Schicht öffneten — anstatt das Oberflächenthema zu lösen?`
+        : `What is the real topic beneath ${paarLabel}'s conflict? Couple conflicts rarely repeat because of the surface — the dishes, the money, the time. Beneath them almost always lies a deeper need: for recognition, security, control, being heard. Esther Perel calls it "the complaint is never the complaint." What is each person trying to say through this conflict that they cannot yet say directly? And what would happen if both opened this deeper layer — instead of solving the surface topic?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Konflikte sind nicht das Problem — sie sind die Einladung. Wer lernt, das Bedürfnis hinter dem Streit zu hören, hört plötzlich etwas ganz anderes: kein Angriff, sondern einen Ruf nach Verbindung.'
+        : 'Conflicts are not the problem — they are the invitation. Those who learn to hear the need behind the argument suddenly hear something quite different: not an attack, but a call for connection.',
+      fachgebiet: currentLang === 'de'
+        ? 'Esther Perel (Mating in Captivity, Desire vs. Security), Sue Johnson (EFT — Emotionsfokussierte Therapie), Gottman (vier apokalyptische Reiter), Gewaltfreie Kommunikation (Rosenberg)'
+        : 'Esther Perel (Mating in Captivity, Desire vs. Security), Sue Johnson (EFT — Emotionally Focused Therapy), Gottman (Four Horsemen), Nonviolent Communication (Rosenberg)'
+    },
+    {
+      name: currentLang === 'de' ? 'Wachstums-Begleiterin' : 'Growth Companion',
+      position: currentLang === 'de'
+        ? `Wie können die beiden Partner bei ${paarLabel} als Individuen wachsen — ohne dabei als Paar auseinanderzudriften? David Schnarch beschreibt, wie echtes Wachstum in Beziehungen oft durch Differentiation entsteht: die Fähigkeit, man selbst zu bleiben, während man tief mit dem anderen verbunden ist. Wo blockiert die Beziehung gerade die individuelle Entwicklung — und wo ermöglicht sie sie? Was wünscht sich jede Person für sich selbst, das bisher unausgesprochen blieb? Und was würde das Paar brauchen, um diese individuelle Entwicklung gemeinsam zu tragen?`
+        : `How can the two partners in ${paarLabel} grow as individuals — without drifting apart as a couple? David Schnarch describes how genuine growth in relationships often emerges through differentiation: the ability to remain oneself while being deeply connected to the other. Where is the relationship currently blocking individual development — and where does it enable it? What does each person wish for themselves that has remained unspoken? And what would the couple need to carry this individual development together?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Zwei ganze Menschen machen eine reifere Beziehung als zwei halbe, die sich gegenseitig vervollständigen wollen. Wachstum ist kein Risiko für die Liebe — es ist ihre Voraussetzung.'
+        : 'Two whole people make a more mature relationship than two halves trying to complete each other. Growth is not a risk to love — it is its prerequisite.',
+      fachgebiet: currentLang === 'de'
+        ? 'David Schnarch (Differentiation, Crucible Approach), Terry Real (relationales Lernen), Harville Hendrix (Imago-Therapie), Erwachsenen-Entwicklungstheorie (Kegan), Selbstmitgefühl in Paarbeziehungen'
+        : 'David Schnarch (Differentiation, Crucible Approach), Terry Real (relational learning), Harville Hendrix (Imago Therapy), adult development theory (Kegan), self-compassion in couple relationships'
+    },
+    {
+      name: currentLang === 'de' ? 'Familien-Brücken-Bauerin' : 'Family Bridge Builder',
+      position: currentLang === 'de'
+        ? `Wie wirkt die Paardynamik bei ${paarLabel} auf die Kinder und das Familiensystem — sichtbar und unsichtbar? Salvador Minuchin zeigte: die Qualität des Ehepaarsystems ist das stärkste Vorbild für die Kinder. Kinder nehmen nicht nur auf, was Eltern sagen — sie nehmen auf, wie die Eltern miteinander sind: in Spannungen, in Zärtlichkeit, in Entscheidungen, in Respekt. Was lernen die Kinder in dieser Familie gerade über Liebe, Konflikt und Verbindung? Und was würde sich in der gesamten Familienatmosphäre verändern, wenn das Paar eine bestimmte Qualität ihrer Beziehung stärken würde?`
+        : `How does the couple dynamic in ${paarLabel} affect the children and the family system — visibly and invisibly? Salvador Minuchin showed: the quality of the couple subsystem is the most powerful model for children. Children don't only absorb what parents say — they absorb how parents are with each other: in tensions, in tenderness, in decisions, in respect. What are the children in this family currently learning about love, conflict and connection? And what would shift in the entire family atmosphere if the couple strengthened a particular quality of their relationship?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Das Fundament einer Familie ist die Qualität der Paarbeziehung. Nicht weil Eltern perfekt sein müssen — sondern weil Kinder nicht von Worten lernen, sondern von dem, was sie täglich sehen: wie Liebe wirklich aussieht.'
+        : 'The foundation of a family is the quality of the couple relationship. Not because parents have to be perfect — but because children don\'t learn from words, they learn from what they see daily: what love truly looks like.',
+      fachgebiet: currentLang === 'de'
+        ? 'Salvador Minuchin (Strukturelle Familientherapie, Paar-Subsystem), Murray Bowen (Selbstdifferenzierung, transgenerationale Muster), Coparenting-Forschung, Vorbildfunktion, Familienklima'
+        : 'Salvador Minuchin (Structural Family Therapy, couple subsystem), Murray Bowen (self-differentiation, transgenerational patterns), coparenting research, role modeling, family climate'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'PAAR-TiSCH wird geöffnet...' : 'Opening the couple space...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          paarName || 'PAAR-TiSCH',
+      custom_perspectives: paarPerspektiven,
+      stil:                'paartherapeutisch',
+      tone:                currentTone,
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const paarPerspDefs = [
+      { id: 'verbindungs-waechter',      icon: 'heart',    color: '#C05858', de: 'Verbindungs-Wächter',       en: 'Connection Guardian'   },
+      { id: 'spannungs-navigatorin',     icon: 'compass',  color: '#A04040', de: 'Spannungs-Navigatorin',     en: 'Tension Navigator'     },
+      { id: 'wachstums-begleiterin',     icon: 'seedling', color: '#D07070', de: 'Wachstums-Begleiterin',     en: 'Growth Companion'      },
+      { id: 'familien-bruecken-bauerin', icon: 'network',  color: '#B06060', de: 'Familien-Brücken-Bauerin',  en: 'Family Bridge Builder' }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = paarPerspDefs[i] || paarPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER PAAR-TiSCH' : 'YOUR COUPLE SPACE',
+      synthesisSubtitle: currentLang === 'de' ? paarLabel : paarLabel,
+      synthesisColor:    '#C05858',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="10" r="4.5"/><circle cx="13" cy="10" r="4.5"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot — kein Ersatz für Paarberatung oder -therapie' : 'Invitation to reflect — not a substitute for couples counselling or therapy'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Beide Partner lesen am besten gemeinsam — und entscheiden dann, was sie tun' : 'Both partners ideally read together — then decide what they want to do'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei anhaltenden Krisen: professionelle Paarberatung suchen' : 'For ongoing crises: seek professional couples counselling'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['verbindungs-waechter', 'spannungs-navigatorin', 'wachstums-begleiterin', 'familien-bruecken-bauerin'],
       lang:         currentLang,
       time:         Date.now()
     });
