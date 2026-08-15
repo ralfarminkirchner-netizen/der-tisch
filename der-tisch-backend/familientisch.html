@@ -360,6 +360,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .paar-send-btn{background:#C05858;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
 .paar-send-btn:hover{opacity:.88}
 .paar-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* GESCHWiSTER-TiSCH MODE */
+.geschwister-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.geschwister-intro{background:linear-gradient(135deg,rgba(74,110,154,0.12) 0%,rgba(50,86,130,0.06) 100%);border:1px solid rgba(74,110,154,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.geschwister-intro strong{color:#4A6E9A}
+.geschwister-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.geschwister-input:focus{border-color:#4A6E9A;box-shadow:0 0 0 2px rgba(74,110,154,0.12)}
+.geschwister-input::placeholder{color:var(--muted)}
+.geschwister-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.geschwister-send-btn{background:#4A6E9A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.geschwister-send-btn:hover{opacity:.88}
+.geschwister-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -588,6 +600,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-eltern" onclick="setMode('eltern')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6" r="3"/><path d="M1 18c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><circle cx="15" cy="7" r="2.5" opacity=".55"/><path d="M13 15.5c1-.5 3.5-.5 4.5 1.5" opacity=".55"/></svg>
       ELTERN-GESPRÄCH
+    </button>
+    <button class="mode-tab" id="tab-geschwister" onclick="setMode('geschwister')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="14" cy="6" r="3"/><path d="M1 18c0-3.5 2.5-5.5 5-5.5"/><path d="M14 12.5c2.5 0 5 2 5 5.5"/><line x1="10" y1="12" x2="10" y2="18"/></svg>
+      GESCHWiSTER
     </button>
     <button class="mode-tab" id="tab-paar" onclick="setMode('paar')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="10" r="4.5"/><circle cx="13" cy="10" r="4.5"/></svg>
@@ -1230,6 +1246,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="elternResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== GESCHWiSTER-TiSCH MODE ==================== -->
+<div class="mode-section" id="mode-geschwister">
+  <div class="geschwister-wrap">
+
+    <div class="geschwister-intro">
+      <strong>GESCHWiSTER-TiSCH</strong> — Kein Band ist so früh und so tief wie das unter Geschwistern. Sie teilen die gleiche Familie — und doch eine völlig verschiedene Kindheit. Vier Stimmen beleuchten die Geschwisterdynamik: aus der Forschung, aus dem Familiensystem, aus dem Erleben jedes einzelnen Kindes — und mit dem Blick, wie Geschwisterbeziehungen ein Leben lang tragen können.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="geschwisterChips">
+      <button class="chip" onclick="useGeschwisterChip(this)">Meine Kinder streiten ständig — wie vermittele ich, ohne Partei zu ergreifen?</button>
+      <button class="chip" onclick="useGeschwisterChip(this)">Mein älteres Kind ist eifersüchtig auf das neue Geschwisterchen.</button>
+      <button class="chip" onclick="useGeschwisterChip(this)">Ein Geschwisterkind wird immer bevorzugt behandelt — wie gehe ich damit um?</button>
+      <button class="chip" onclick="useGeschwisterChip(this)">Meine erwachsenen Geschwister und ich haben kaum noch Kontakt.</button>
+      <button class="chip" onclick="useGeschwisterChip(this)">Wie stärke ich die Bindung zwischen meinen Kindern?</button>
+      <button class="chip" onclick="useGeschwisterChip(this)">Das jüngste Kind wird anders behandelt als die älteren — was prägt das?</button>
+      <button class="chip" onclick="useGeschwisterChip(this)">Wie spreche ich mit meinen Geschwistern, wenn ein Elternteil krank wird?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was beschäftigt euch in der Geschwisterbeziehung?</div>
+    <textarea class="geschwister-input" id="geschwisterInput" placeholder="Erzählt von der Geschwisterbeziehung — egal ob zwischen euren Kindern, oder eurer eigenen als Erwachsene. Was passiert? Was wiederholt sich? Was wünscht ihr euch füreinander?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="geschwisterFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-geschwister-fokus="rivalitaet" onclick="setGeschwisterFokus(this)">Rivalität</button>
+        <button class="ctrl-btn" data-geschwister-fokus="bindung" onclick="setGeschwisterFokus(this)">Bindung</button>
+        <button class="ctrl-btn" data-geschwister-fokus="dynamik" onclick="setGeschwisterFokus(this)">Dynamik</button>
+      </div>
+    </div>
+
+    <div class="geschwister-send-row">
+      <button class="geschwister-send-btn" id="geschwisterSendBtn" onclick="sendGeschwister()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="14" cy="6" r="3"/><path d="M1 18c0-3.5 2.5-5.5 5-5.5"/><path d="M14 12.5c2.5 0 5 2 5 5.5"/><line x1="10" y1="12" x2="10" y2="18"/></svg>
+        GESCHWiSTER ERKUNDEN
+      </button>
+    </div>
+
+    <div id="geschwisterResults"></div>
 
   </div>
 </div>
@@ -4353,6 +4412,180 @@ async function sendEltern() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['entwicklungs-begleiterin', 'bindungs-stimme', 'grenzen-werkerin', 'kind-stimme'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── GESCHWiSTER-TiSCH MODE ──────────────────────────────────────────────
+
+let geschwisterFokus = 'rivalitaet';
+
+function setGeschwisterFokus(btn) {
+  geschwisterFokus = btn.dataset.geschwisterFokus;
+  document.querySelectorAll('[data-geschwister-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useGeschwisterChip(el) {
+  document.getElementById('geschwisterInput').value = el.textContent.trim();
+  document.getElementById('geschwisterInput').focus();
+}
+
+async function sendGeschwister() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('geschwisterInput');
+  const resultsDiv = document.getElementById('geschwisterResults');
+  const sendBtn    = document.getElementById('geschwisterSendBtn');
+  const famName    = (document.getElementById('geschwisterFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    rivalitaet: currentLang === 'de'
+      ? 'Was steckt hinter dem Streit oder der Rivalität dieser Geschwister? Welches Bedürfnis nach Anerkennung, Gerechtigkeit oder Zugehörigkeit treibt den Konflikt — und was würde wirklich helfen, anstatt ihn nur zu dämpfen?'
+      : 'What lies behind the conflict or rivalry of these siblings? What need for recognition, fairness or belonging drives the conflict — and what would genuinely help, rather than merely suppressing it?',
+    bindung: currentLang === 'de'
+      ? 'Was verbindet diese Geschwister — und was stärkt ihre Bindung langfristig? Welche gemeinsamen Momente, Erfahrungen und Qualitäten tragen das Geschwisterband — jetzt und im Laufe eines Lebens?'
+      : 'What connects these siblings — and what strengthens their bond in the long run? What shared moments, experiences and qualities carry the sibling bond — now and over the course of a life?',
+    dynamik: currentLang === 'de'
+      ? 'Welche Rolle spielt jedes Geschwisterkind im Familiensystem — und wie prägen Geburtsreihenfolge, Alter und familiäre Muster die Beziehung untereinander? Was wäre für das Gleichgewicht zwischen den Geschwistern hilfreich?'
+      : 'What role does each sibling play in the family system — and how do birth order, age and family patterns shape the relationships among them? What would be helpful for the balance between the siblings?'
+  };
+
+  const famLabel = famName ? `Familie ${famName}` : (currentLang === 'de' ? 'diese Familie' : 'this family');
+  const frage = `${fokusQuestions[geschwisterFokus]} Kontext: ${text}`;
+
+  const geschwisterPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Geschwister-Forscherin' : 'Sibling Researcher',
+      position: currentLang === 'de'
+        ? `Was weiß die Geschwisterforschung über das, was hier passiert? Frank Sulloway und Judy Dunn haben gezeigt, wie stark Geburtsreihenfolge, Altersabstand und familiäre Reaktionen auf Geschwister ihre Persönlichkeiten formen. Kein Geschwisterkind wächst in derselben Familie auf — die Eltern ändern sich, die Ressourcen verschieben sich, die Erwartungen variieren. Was ist an dieser Geschwisterdynamik in ${famLabel} entwicklungspsychologisch normal — und was verdient eine andere Antwort?`
+        : `What does sibling research tell us about what is happening here? Frank Sulloway and Judy Dunn have shown how strongly birth order, age gap and family responses shape siblings' personalities. No sibling grows up in the same family — parents change, resources shift, expectations vary. What is developmentally normal in this sibling dynamic in ${famLabel} — and what deserves a different response?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Geschwister sind die erste soziale Welt außerhalb der Eltern. Wer gelernt hat, mit Geschwistern zu verhandeln, zu teilen und zu streiten — hat etwas fürs Leben gelernt. Konflikt gehört dazu.'
+        : 'Siblings are the first social world outside of parents. Those who have learned to negotiate, share and argue with siblings — have learned something for life. Conflict belongs.',
+      fachgebiet: currentLang === 'de'
+        ? 'Geschwisterforschung (Dunn, Sulloway), Geburtsreihenfolge und Persönlichkeit, Altersabstand-Effekte, differentielle Elternschaft, Nischenfindung in der Familie'
+        : 'Sibling research (Dunn, Sulloway), birth order and personality, age gap effects, differential parenting, niche differentiation in the family'
+    },
+    {
+      name: currentLang === 'de' ? 'System-Stimme' : 'Systems Voice',
+      position: currentLang === 'de'
+        ? `Wie fügen sich die Geschwister in ${famLabel} als Ganzes ein — und was verrät ihre Dynamik über das Familiensystem? Geschwisterkonflikte sind oft Ventile für Spannungen im gesamten System: für unausgesprochene Elternkonflikte, für Rollen, die Kinder unbewusst übernehmen, für ungeschriebene Regeln. Welches Geschwisterkind trägt eine besondere Last — der Sündenbock, der Held, der Vermittler? Und was sagt die Geschwisterbeziehung über das, was im größeren System noch nicht gelöst ist?`
+        : `How do the siblings fit into ${famLabel} as a whole — and what does their dynamic reveal about the family system? Sibling conflicts are often valves for tensions in the entire system: unspoken parental conflicts, roles children unconsciously take on, unwritten rules. Which sibling carries a special burden — the scapegoat, the hero, the mediator? And what does the sibling relationship reveal about what is not yet resolved in the larger system?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder streiten nicht nur miteinander — sie spielen oft die Konflikte der Familie aus. Wenn wir die Geschwister beobachten, sehen wir die Familie.'
+        : 'Children don\'t just argue with each other — they often play out the family\'s conflicts. When we observe the siblings, we see the family.',
+      fachgebiet: currentLang === 'de'
+        ? 'Strukturelle Familientherapie (Minuchin), Kommunikationstheorie (Satir), Familienrollen, Triangulierung, systemische Sichtweise auf Geschwisterdynamik'
+        : 'Structural family therapy (Minuchin), communication theory (Satir), family roles, triangulation, systemic perspective on sibling dynamics'
+    },
+    {
+      name: currentLang === 'de' ? 'Einzel-Kind-Stimme' : 'Each Sibling\'s Voice',
+      position: currentLang === 'de'
+        ? `Wenn jedes Kind in ${famLabel} vollständig sprechen könnte — was würde es sagen? Nicht nur über den Streit, sondern über sein Erleben: Fühlt es sich gesehen, geliebt, fair behandelt? Jedes Kind erlebt dieselbe Situation anders — aus seiner Geburtsposition, Persönlichkeit, seinen Bedürfnissen. Was braucht das älteste, was das mittlere, was das jüngste? Was wünscht sich jedes von seinen Geschwistern — und was wünscht es sich von den Eltern als Vermittler? Was sagt der Blick jedes einzelnen Kindes über das, was die Geschwisterbeziehung gerade wirklich braucht?`
+        : `If each child in ${famLabel} could speak fully — what would they say? Not just about the argument, but about their experience: Do they feel seen, loved, fairly treated? Each child experiences the same situation differently — from their birth position, personality and needs. What does the oldest need, what does the middle, what does the youngest? What does each one wish from siblings — and from parents as mediators? What does each child's view say about what the sibling relationship really needs right now?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder wollen keine Gleichheit — sie wollen Gerechtigkeit. Und Gerechtigkeit bedeutet für jedes Kind etwas anderes. Wenn wir das verstehen, verändert sich, wie wir antworten.'
+        : 'Children don\'t want equality — they want fairness. And fairness means something different to each child. When we understand this, how we respond changes.',
+      fachgebiet: currentLang === 'de'
+        ? 'Kindzentrierte Psychologie (Rogers), emotionale Entwicklung, Wahrnehmung von Gerechtigkeit in der Familie, Bindungsstile unter Geschwistern, Identitätsentwicklung durch Geschwisterrollen'
+        : 'Child-centered psychology (Rogers), emotional development, perception of fairness in the family, attachment styles among siblings, identity development through sibling roles'
+    },
+    {
+      name: currentLang === 'de' ? 'Langzeit-Begleiterin' : 'Long-term Companion',
+      position: currentLang === 'de'
+        ? `Wie wird die Geschwisterbeziehung in ${famLabel} aussehen — nicht in zehn Jahren, sondern in dreißig? Die Geschwisterbindung ist statistisch die längste Beziehung im Leben — länger als die Elternbeziehung, länger als viele Ehen. Was passiert, wenn die Eltern nicht mehr da sind? Welche Geschwisterbeziehung soll entstehen — und was braucht sie heute, um das zu werden? Wie können Eltern jetzt einen Boden legen, auf dem die Geschwister auch als Erwachsene füreinander da sein können — als Freunde, als Stützen, als Zeugen des Lebens?`
+        : `What will the sibling relationship in ${famLabel} look like — not in ten years, but in thirty? The sibling bond is statistically the longest relationship in a person's life — longer than the parent relationship, longer than many marriages. What happens when parents are no longer there? What sibling relationship should emerge — and what does it need today to become that? How can parents now lay a ground on which siblings can also be there for each other as adults — as friends, as supports, as witnesses of life?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Geschwister sind die einzigen Menschen, die die eigene Kindheit wirklich kennen. Sie sind Zeugen — und oft das Fundament, auf dem man als Erwachsener steht, wenn alles andere wackelt.'
+        : 'Siblings are the only people who truly know one\'s own childhood. They are witnesses — and often the foundation on which one stands as an adult when everything else is shaking.',
+      fachgebiet: currentLang === 'de'
+        ? 'Erwachsene Geschwisterbeziehungen (Cicirelli), Geschwisterbindung im Lebenslauf, Trauerforschung und Geschwisterverlust, Generativität und Familie, langfristige Geschwisterdynamik'
+        : 'Adult sibling relationships (Cicirelli), sibling bonds across the lifespan, grief research and sibling loss, generativity and family, long-term sibling dynamics'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'GESCHWiSTER-TiSCH wird erkundet...' : 'Exploring sibling dynamics...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'GESCHWiSTER-TiSCH',
+      custom_perspectives: geschwisterPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const geschwisterPerspDefs = [
+      { id: 'geschwister-forscherin', icon: 'scroll',   color: '#4A6E9A', de: 'Geschwister-Forscherin', en: 'Sibling Researcher'     },
+      { id: 'system-stimme',         icon: 'network',  color: '#3A5E8A', de: 'System-Stimme',           en: 'Systems Voice'         },
+      { id: 'einzel-kind-stimme',    icon: 'sprout',   color: '#5A7EAA', de: 'Einzel-Kind-Stimme',      en: 'Each Sibling\'s Voice' },
+      { id: 'langzeit-begleiterin',  icon: 'compass',  color: '#2A4E7A', de: 'Langzeit-Begleiterin',    en: 'Long-term Companion'   }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = geschwisterPerspDefs[i] || geschwisterPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuRE GESCHWiSTER-WELT' : 'YOUR SIBLING WORLD',
+      synthesisSubtitle: currentLang === 'de' ? famLabel : famLabel,
+      synthesisColor:    '#4A6E9A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="14" cy="6" r="3"/></svg> ${currentLang === 'de' ? 'Jede Geschwisterbeziehung ist einzigartig — kein Patentrezept' : 'Every sibling relationship is unique — no universal formula'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot — kein Ersatz für Familienberatung' : 'Invitation to reflect — not a substitute for family counselling'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei anhaltenden Konflikten: professionelle Unterstützung suchen' : 'For persistent conflicts: seek professional support'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['geschwister-forscherin', 'system-stimme', 'einzel-kind-stimme', 'langzeit-begleiterin'],
       lang:         currentLang,
       time:         Date.now()
     });
