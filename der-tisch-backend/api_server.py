@@ -1278,18 +1278,6 @@ async def fetch_integration(perspectives: List[Perspective], friction: Friction,
 # ==========================================
 # API ENDPOINTS
 # ==========================================
-class QueryRequest(BaseModel):
-    question: str
-    lang: str = "de"   # "de" or "en"
-    stil: str = "philosophisch"  # philosophisch | akademisch | alltag | oekonomisch | kindgerecht | therapeutisch
-    register: str = ""  # "" | "fachsprache" | "einfach"
-    tone: str = ""  # "" | "achtsam" | "direkt"
-    # ── TISCH-PATCH: extended fields ──────────────────────────────────
-    source_app: Optional[str] = None            # App identifier for Shared Core (e.g. "JURiSTiSCH")
-    custom_perspectives: List[CustomPerspective] = []  # Routes to /api/ask-table logic when present
-    methods: List[str] = []                     # Subset of methods to invoke
-    reibungsintensitaet: str = "standard"       # standard | eskaliert | maximal
-
 class CustomPerspective(BaseModel):
     """Basisdatentyp für eine benutzerdefinierte Perspektive.
     Wird sowohl für temporäre Tischgäste (inline) als auch für
@@ -1317,6 +1305,18 @@ class CustomPerspective(BaseModel):
     antagonist_von: Optional[str] = None  # ID einer anderen Perspektive, deren Gegenpart diese ist
     rang: Optional[int] = None            # 1=dominant, 2=influent, 3=marginal (für Fach-Arena)
     fach_arena: Optional[str] = None      # z.B. "Psychologie", "Philosophie", "Ökonomie"
+
+
+class QueryRequest(BaseModel):
+    question: str
+    lang: str = "de"
+    stil: str = "philosophisch"
+    register: str = ""
+    tone: str = ""
+    source_app: Optional[str] = None
+    custom_perspectives: List[CustomPerspective] = []
+    methods: List[str] = []
+    reibungsintensitaet: str = "standard"
 
 
 class StoredCustomPerspective(CustomPerspective):
