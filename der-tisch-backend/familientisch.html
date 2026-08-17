@@ -373,6 +373,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .geschwister-send-btn:hover{opacity:.88}
 .geschwister-send-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* FAMiLiEN-KRISE MODE */
+.krisen-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.krisen-intro{background:linear-gradient(135deg,rgba(74,122,138,0.12) 0%,rgba(54,102,118,0.06) 100%);border:1px solid rgba(74,122,138,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.krisen-intro strong{color:#4A7A8A}
+.krisen-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.krisen-input:focus{border-color:#4A7A8A;box-shadow:0 0 0 2px rgba(74,122,138,0.12)}
+.krisen-input::placeholder{color:var(--muted)}
+.krisen-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.krisen-send-btn{background:#4A7A8A;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.krisen-send-btn:hover{opacity:.88}
+.krisen-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
 /* ELTERN-GESPRÄCH age row */
 .eltern-alter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .eltern-alter-row .ctrl-btn{font-size:11px;padding:5px 10px;letter-spacing:.02em}
@@ -612,6 +624,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-geschwister" onclick="setMode('geschwister')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="14" cy="6" r="2.5"/><path d="M2 17c0-3 1.8-4.5 4-4.5s4 1.5 4 4.5"/><path d="M10 17c0-3 1.8-4.5 4-4.5s4 1.5 4 4.5"/><line x1="10" y1="10" x2="10" y2="12.5" stroke-dasharray="2,2"/></svg>
       GESCHWiSTER-TiSCH
+    </button>
+    <button class="mode-tab" id="tab-krisen" onclick="setMode('krisen')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/><line x1="10" y1="8" x2="10" y2="11"/><circle cx="10" cy="13.5" r=".8" fill="currentColor" stroke="none"/></svg>
+      FAMiLiEN-KRISE
     </button>
   </div>
 </section>
@@ -1346,6 +1362,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="geschwisterResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-KRISE MODE ==================== -->
+<div class="mode-section" id="mode-krisen">
+  <div class="krisen-wrap">
+
+    <div class="krisen-intro">
+      <strong>FAMiLiEN-KRISE</strong> — Krisen gehören zum Familienleben — und gleichzeitig können sie alles aus dem Gleichgewicht werfen. Dieser Modus begleitet euch durch akute und anhaltende Belastungen: mit vier Stimmen, die stabilisieren, Ressourcen sichtbar machen, Schutz navigieren und Zukunft denken — ohne zu bagatellisieren, was gerade schwer ist.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="krisenChips">
+      <button class="chip" onclick="useKrisenChip(this)">Unser Kind ist schwer erkrankt — die Familie bricht unter der Last zusammen.</button>
+      <button class="chip" onclick="useKrisenChip(this)">Mein Partner hat seinen Job verloren und zieht sich immer mehr zurück.</button>
+      <button class="chip" onclick="useKrisenChip(this)">Wir stehen kurz vor einer Trennung — wie schützen wir unsere Kinder?</button>
+      <button class="chip" onclick="useKrisenChip(this)">Ein plötzlicher Todesfall hat uns unvorbereitet und wie erstarrt zurückgelassen.</button>
+      <button class="chip" onclick="useKrisenChip(this)">Psychische Krise in der Familie — wir wissen nicht mehr, wie wir helfen können.</button>
+      <button class="chip" onclick="useKrisenChip(this)">Schwere finanzielle Not bedroht unser Zuhause. Wie reden wir ehrlich darüber?</button>
+      <button class="chip" onclick="useKrisenChip(this)">Ich will mit den Kindern gehen, weiß aber nicht, wie ich anfangen soll.</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was bewegt euch gerade in der Krise?</div>
+    <textarea class="krisen-input" id="krisenInput" placeholder="Beschreibt, was gerade passiert — so konkret oder allgemein wie es sich richtig anfühlt. Was ist das Schwerste? Was ist noch möglich? Was braucht ihr jetzt am meisten?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="krisenFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-krisen-fokus="akut" onclick="setKrisenFokus(this)">Jetzt</button>
+        <button class="ctrl-btn" data-krisen-fokus="stabilisierung" onclick="setKrisenFokus(this)">Halt finden</button>
+        <button class="ctrl-btn" data-krisen-fokus="weitergehen" onclick="setKrisenFokus(this)">Weiterleben</button>
+      </div>
+    </div>
+
+    <div class="krisen-send-row">
+      <button class="krisen-send-btn" id="krisenSendBtn" onclick="sendKrisen()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg>
+        FAMiLiEN-KRISE ÖFFNEN
+      </button>
+    </div>
+
+    <div id="krisenResults"></div>
 
   </div>
 </div>
@@ -4787,6 +4846,180 @@ async function sendPaar() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['verbindungs-waechter', 'spannungs-navigatorin', 'wachstums-begleiterin', 'familien-bruecken-bauerin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-KRISE MODE ─────────────────────────────────────────────────────
+
+let krisenFokus = 'akut';
+
+function setKrisenFokus(btn) {
+  krisenFokus = btn.dataset.krisenFokus;
+  document.querySelectorAll('[data-krisen-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useKrisenChip(el) {
+  document.getElementById('krisenInput').value = el.textContent.trim();
+  document.getElementById('krisenInput').focus();
+}
+
+async function sendKrisen() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('krisenInput');
+  const resultsDiv = document.getElementById('krisenResults');
+  const sendBtn    = document.getElementById('krisenSendBtn');
+  const famName    = (document.getElementById('krisenFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    akut: currentLang === 'de'
+      ? 'Was ist in dieser Krise das Dringlichste — jetzt, in diesem Moment? Wer in der Familie braucht was, und welcher nächste Schritt ist trotz allem möglich? Was darf nicht übersehen werden?'
+      : 'What is most urgent in this crisis — right now, in this moment? Who in the family needs what, and which next step is possible despite everything? What must not be overlooked?',
+    stabilisierung: currentLang === 'de'
+      ? 'Was gibt dieser Familie jetzt Halt — selbst unter großem Druck? Welche Routinen, Verbindungen, kleinen Verlässlichkeiten oder inneren Ressourcen können als Anker dienen, solange noch nicht alles klar ist?'
+      : 'What gives this family stability right now — even under great pressure? Which routines, connections, small reliabilities, or inner resources can serve as anchors while things are still unclear?',
+    weitergehen: currentLang === 'de'
+      ? 'Wie findet diese Familie nach und trotz der Krise einen neuen Weg? Was bleibt, was verändert sich — und was könnte, mit Zeit und Unterstützung, sogar neu entstehen? Was ist der erste Schritt in Richtung Weiterleben?'
+      : 'How does this family find a new path through and beyond the crisis? What remains, what changes — and what might, with time and support, even emerge anew? What is the first step toward moving forward?'
+  };
+
+  const famLabel = famName ? `Familie ${famName}` : (currentLang === 'de' ? 'eure Familie' : 'your family');
+  const frage = `${fokusQuestions[krisenFokus]} Kontext: ${text}`;
+
+  const krisenPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Krisenbegleiterin' : 'Crisis Companion',
+      position: currentLang === 'de'
+        ? `Was braucht ${famLabel} in diesem Moment zuerst? Krisen sind nicht Versagen — sie sind Momente, in denen ein System an seine Grenzen stößt. Albert Roberts zeigt: die erste Phase jeder Krisenintervention ist Verbindung herstellen, nicht Lösung finden. Was in der Krise am meisten hilft ist nicht Rat, sondern echte Präsenz — das Wissen, nicht allein zu sein. Wer in ${famLabel} kann jetzt füreinander da sein? Was wäre der kleinste mögliche Schritt, um die Isolation zu durchbrechen? Und was darf zunächst offen bleiben — ohne dass das bedeutet, versagt zu haben?`
+        : `What does ${famLabel} need first in this moment? Crises are not failures — they are moments when a system reaches its limits. Albert Roberts shows: the first phase of any crisis intervention is to establish connection, not find solutions. What helps most in a crisis is not advice but genuine presence — knowing you are not alone. Who in ${famLabel} can be there for each other right now? What would be the smallest possible step to break through the isolation? And what may remain open for now — without that meaning failure?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Eine Krise ist kein Zeichen von Schwäche. Sie ist der Beweis, dass etwas Wichtiges auf dem Spiel steht — und dass ihr es ernst nehmt. Präsenz vor Lösung.'
+        : 'A crisis is not a sign of weakness. It is proof that something important is at stake — and that you are taking it seriously. Presence before solutions.',
+      fachgebiet: currentLang === 'de'
+        ? 'Krisenintervention (Roberts 7-Stufen-Modell), trauma-informierte Fürsorge, psychische Ersthilfe, Netzwerkressourcen und Gemeinschaftsunterstützung'
+        : 'Crisis intervention (Roberts 7-stage model), trauma-informed care, mental health first aid, community and network resources'
+    },
+    {
+      name: currentLang === 'de' ? 'Ressourcen-Ankerin' : 'Resource Anchor',
+      position: currentLang === 'de'
+        ? `Welche Ressourcen hat ${famLabel} bereits — die in der Not vielleicht unsichtbar geworden sind? Steve de Shazer und die lösungsfokussierte Therapie fragen nie zuerst nach dem Problem, sondern: "Was hat bisher geholfen? Wann war es ein bisschen besser?" Jede Familie, die eine Krise erlebt, hat auch eine Geschichte davon, wie sie Schwieriges überwunden hat. Was hat ${famLabel} früher durch schwierige Zeiten getragen — sichtbar oder unsichtbar? Welche Stärken, Verbindungen oder Gewohnheiten sind gerade verschüttet, aber noch da — und wie könnten sie jetzt aktiviert werden?`
+        : `What resources does ${famLabel} already have — that may have become invisible in the crisis? Steve de Shazer and solution-focused therapy never ask about the problem first, but: "What has helped before? When was it a little better?" Every family that experiences a crisis also has a history of overcoming difficulties. What carried ${famLabel} through hard times before — visibly or invisibly? Which strengths, connections, or habits are currently buried but still present — and how might they be activated now?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Ressourcen verschwinden nicht in der Krise — sie werden oft nur von der Erschöpfung verdeckt. Was einmal geholfen hat, kann wieder helfen. Es muss nur sichtbar gemacht werden.'
+        : 'Resources do not disappear in a crisis — they are often just covered by exhaustion. What once helped can help again. It just needs to be made visible.',
+      fachgebiet: currentLang === 'de'
+        ? 'Lösungsfokussierte Therapie (de Shazer, Berg), Familienresilienz (Froma Walsh), posttraumatisches Wachstum (Tedeschi & Calhoun), stärkenbasierte Ansätze'
+        : 'Solution-focused therapy (de Shazer, Berg), family resilience (Froma Walsh), post-traumatic growth (Tedeschi & Calhoun), strengths-based approaches'
+    },
+    {
+      name: currentLang === 'de' ? 'Schutz-Navigatorin' : 'Protection Navigator',
+      position: currentLang === 'de'
+        ? `Wer in ${famLabel} ist gerade am verletzlichsten — und was braucht dieser Schutz konkret? In Familienkrisen sind Kinder häufig die stillen Trägerinnen von Erwachsenenlasten, die nicht für sie bestimmt sind. Daniel Siegel zeigt: Kinder brauchen nicht Perfektion — sie brauchen "good enough" Eltern, die bei sich selbst bleiben können, auch wenn alles wackelt. Was können die Erwachsenen tun, um Kindern in der Krise das Grundgefühl zu geben: "Wir sind zwar in Schwierigkeiten, aber ihr seid sicher und geliebt"? Welche altersgerechten Gespräche, kleinen Rituale oder verlässlichen Strukturen können jetzt Sicherheit signalisieren?`
+        : `Who in ${famLabel} is most vulnerable right now — and what does protection concretely require? In family crises, children are often silent carriers of adult burdens not meant for them. Daniel Siegel shows: children do not need perfection — they need "good enough" parents who can remain with themselves even when everything wobbles. What can the adults do to give children in the crisis the basic feeling: "We are in difficulty, but you are safe and loved"? Which age-appropriate conversations, small rituals, or reliable structures can signal safety now?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Kinder spüren, was Erwachsene nicht aussprechen. Ehrlichkeit in kindgerechten Worten schützt mehr als Schönfärberei. Sicherheit ist kein Versprechen — sie ist ein Tun.'
+        : 'Children sense what adults do not say. Honesty in child-appropriate words protects more than sugar-coating. Safety is not a promise — it is an action.',
+      fachgebiet: currentLang === 'de'
+        ? 'Kinderschutz und Kinderrechte, entwicklungspsychologisch informiertes Elternsein (Siegel: "The Whole-Brain Child"), traumasensibles Elternsein, Sicherheitsplanung in Krisensituationen'
+        : 'Child protection and children\'s rights, developmentally informed parenting (Siegel: "The Whole-Brain Child"), trauma-sensitive parenting, safety planning in crisis situations'
+    },
+    {
+      name: currentLang === 'de' ? 'Zukunfts-Brückerin' : 'Future Bridge Builder',
+      position: currentLang === 'de'
+        ? `Was könnte für ${famLabel} auf der anderen Seite dieser Krise warten — und wie bauen wir jetzt schon die erste Brücke dorthin? Viktor Frankl hat in extremster Not beobachtet: was Menschen trägt, ist nicht die Abwesenheit von Leid, sondern die Anwesenheit von Sinn. Posttraumatisches Wachstum ist real: Familien, die schwere Krisen gemeinsam durchlebt haben, berichten häufig von tieferer Verbundenheit, neuen Prioritäten und einer Stärke, die sie vorher nicht kannten. Was zeigt diese Krise, was ${famLabel} wirklich wichtig ist? Und was könnte, mit Zeit und Unterstützung, auf der anderen Seite stehen — nicht statt dem Schmerz, aber neben ihm?`
+        : `What might await ${famLabel} on the other side of this crisis — and how do we already build the first bridge there? Viktor Frankl observed in extreme hardship: what carries people is not the absence of suffering, but the presence of meaning. Post-traumatic growth is real: families that have lived through severe crises together often report deeper connection, new priorities, and a strength they did not know before. What does this crisis reveal about what truly matters to ${famLabel}? And what might stand, given time and support, on the other side — not instead of the pain, but alongside it?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Eine Krise ist kein Endpunkt. Sie ist ein Wendepunkt — eine Einladung, tiefer zu verstehen, was wirklich trägt. Dieser Glaube darf gehalten werden, selbst wenn er sich nicht wahr anfühlt.'
+        : 'A crisis is not an endpoint. It is a turning point — an invitation to understand more deeply what truly sustains. This belief may be held, even when it does not feel true.',
+      fachgebiet: currentLang === 'de'
+        ? 'Logotherapie und Sinnorientierung (Viktor Frankl), posttraumatisches Wachstum (Tedeschi & Calhoun), narrative Therapie (White & Epston), Hoffnungsforschung (Snyder), Zukunftsorientierung in der systemischen Therapie'
+        : 'Logotherapy and meaning orientation (Viktor Frankl), post-traumatic growth (Tedeschi & Calhoun), narrative therapy (White & Epston), hope theory (Snyder), future orientation in systemic therapy'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'FAMiLiEN-KRISE wird geöffnet...' : 'Opening the crisis space...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-KRISE',
+      custom_perspectives: krisenPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone !== 'kindgerecht' ? currentTone : 'achtsam',
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const krisenPerspDefs = [
+      { id: 'krisenbegleiterin',   icon: 'heart',   color: '#4A7A8A', de: 'Krisenbegleiterin',   en: 'Crisis Companion'     },
+      { id: 'ressourcen-ankerin',  icon: 'compass', color: '#3A6A7A', de: 'Ressourcen-Ankerin',   en: 'Resource Anchor'      },
+      { id: 'schutz-navigatorin',  icon: 'shield',  color: '#5A8A9A', de: 'Schutz-Navigatorin',   en: 'Protection Navigator' },
+      { id: 'zukunfts-brueckerin', icon: 'seedling',color: '#6A9AAA', de: 'Zukunfts-Brückerin',   en: 'Future Bridge Builder'}
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = krisenPerspDefs[i] || krisenPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'WAS JETZT TRÄGT' : 'WHAT CARRIES YOU NOW',
+      synthesisSubtitle: currentLang === 'de' ? famLabel : famLabel,
+      synthesisColor:    '#4A7A8A',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L4 5v5c0 4 3 8 6 9 3-1 6-5 6-9V5z"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot — kein Ersatz für professionelle Krisenbegleitung' : 'Invitation to reflect — not a substitute for professional crisis support'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Telefonseelsorge (kostenlos, 24/7): 0800 111 0 111 oder 0800 111 0 222' : 'In acute crises: contact a crisis helpline in your country'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei anhaltenden Krisen: psychosoziale Beratung oder Familientherapie suchen' : 'For ongoing crises: seek psychosocial counselling or family therapy'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['krisenbegleiterin', 'ressourcen-ankerin', 'schutz-navigatorin', 'zukunfts-brueckerin'],
       lang:         currentLang,
       time:         Date.now()
     });
