@@ -373,6 +373,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .geschwister-send-btn:hover{opacity:.88}
 .geschwister-send-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* FAMiLiEN-ÜBERGÄNGE MODE */
+.uebergang-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.uebergang-intro{background:linear-gradient(135deg,rgba(160,120,64,0.12) 0%,rgba(140,100,44,0.06) 100%);border:1px solid rgba(160,120,64,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.uebergang-intro strong{color:#A07840}
+.uebergang-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.uebergang-input:focus{border-color:#A07840;box-shadow:0 0 0 2px rgba(160,120,64,0.12)}
+.uebergang-input::placeholder{color:var(--muted)}
+.uebergang-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.uebergang-send-btn{background:#A07840;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.uebergang-send-btn:hover{opacity:.88}
+.uebergang-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
 /* ELTERN-GESPRÄCH age row */
 .eltern-alter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .eltern-alter-row .ctrl-btn{font-size:11px;padding:5px 10px;letter-spacing:.02em}
@@ -612,6 +624,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-geschwister" onclick="setMode('geschwister')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="14" cy="6" r="2.5"/><path d="M2 17c0-3 1.8-4.5 4-4.5s4 1.5 4 4.5"/><path d="M10 17c0-3 1.8-4.5 4-4.5s4 1.5 4 4.5"/><line x1="10" y1="10" x2="10" y2="12.5" stroke-dasharray="2,2"/></svg>
       GESCHWiSTER-TiSCH
+    </button>
+    <button class="mode-tab" id="tab-uebergang" onclick="setMode('uebergang')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h14M13 5l5 5-5 5"/></svg>
+      ÜBERGÄNGE
     </button>
   </div>
 </section>
@@ -1346,6 +1362,50 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="geschwisterResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== FAMiLiEN-ÜBERGÄNGE MODE ==================== -->
+<div class="mode-section" id="mode-uebergang">
+  <div class="uebergang-wrap">
+
+    <div class="uebergang-intro">
+      <strong>FAMiLiEN-ÜBERGÄNGE</strong> — Jede Familie kennt sie: Momente, in denen sich alles verändert. Trennung, Trauer, Umzug, Auszug, Patchwork, neues Geschwisterkind, ein Todesfall. Vier Stimmen begleiten den Übergang: was endet, was trauert, was entsteht — und wie Familien als System durch Veränderung wachsen können.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="uebgangChips">
+      <button class="chip" onclick="useUebergangChip(this)">Wir trennen uns — wie sagen wir es den Kindern?</button>
+      <button class="chip" onclick="useUebergangChip(this)">Jemand Wichtiges ist gestorben. Die Familie weiß nicht, wie sie trauern soll.</button>
+      <button class="chip" onclick="useUebergangChip(this)">Wir ziehen um — ein Kind will partout nicht.</button>
+      <button class="chip" onclick="useUebergangChip(this)">Mein Kind zieht bald aus. Wie begleite ich diesen Übergang?</button>
+      <button class="chip" onclick="useUebergangChip(this)">Mein Partner hat eine neue Partnerin — wie wird daraus eine Patchwork-Familie?</button>
+      <button class="chip" onclick="useUebergangChip(this)">Wir bekommen ein neues Geschwisterkind — das ältere reagiert schwierig.</button>
+      <button class="chip" onclick="useUebergangChip(this)">Meine Eltern haben sich getrennt — wie verarbeite ich das?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was verändert sich gerade in eurer Familie?</div>
+    <textarea class="uebergang-input" id="uebgangInput" placeholder="Beschreibt den Übergang, vor dem ihr steht oder durch den ihr gerade geht. Was endet? Was beginnt? Was macht Angst, was macht Hoffnung — und was braucht die Familie, um gut durch diese Veränderung zu kommen?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="uebgangFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-uebergang-fokus="trennung" onclick="setUebergangFokus(this)">Trennung</button>
+        <button class="ctrl-btn" data-uebergang-fokus="trauer" onclick="setUebergangFokus(this)">Trauer</button>
+        <button class="ctrl-btn" data-uebergang-fokus="neubeginn" onclick="setUebergangFokus(this)">Neubeginn</button>
+        <button class="ctrl-btn" data-uebergang-fokus="patchwork" onclick="setUebergangFokus(this)">Patchwork</button>
+      </div>
+    </div>
+
+    <div class="uebergang-send-row">
+      <button class="uebergang-send-btn" id="uebgangSendBtn" onclick="sendUebergang()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h14M13 5l5 5-5 5"/></svg>
+        ÜBERGANG ERKUNDEN
+      </button>
+    </div>
+
+    <div id="uebgangResults"></div>
 
   </div>
 </div>
@@ -4787,6 +4847,183 @@ async function sendPaar() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['verbindungs-waechter', 'spannungs-navigatorin', 'wachstums-begleiterin', 'familien-bruecken-bauerin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── FAMiLiEN-ÜBERGÄNGE MODE ──────────────────────────────────────────────
+
+let uebgangFokus = 'trennung';
+
+function setUebergangFokus(btn) {
+  uebgangFokus = btn.dataset.uebgangFokus;
+  document.querySelectorAll('[data-uebergang-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useUebergangChip(el) {
+  document.getElementById('uebgangInput').value = el.textContent.trim();
+  document.getElementById('uebgangInput').focus();
+}
+
+async function sendUebergang() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('uebgangInput');
+  const resultsDiv = document.getElementById('uebgangResults');
+  const sendBtn    = document.getElementById('uebgangSendBtn');
+  const famName    = (document.getElementById('uebgangFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    trennung: currentLang === 'de'
+      ? 'Was braucht diese Familie, um die Trennung so zu gestalten, dass alle — besonders die Kinder — möglichst gut durch diesen Übergang kommen? Was muss ehrlich gesagt werden, was muss geschützt bleiben — und wie können zwei Menschen, die sich als Paar trennen, als Eltern verbunden bleiben?'
+      : 'What does this family need to navigate the separation so that everyone — especially the children — gets through this transition as well as possible? What must be said honestly, what must be protected — and how can two people separating as a couple remain connected as parents?',
+    trauer: currentLang === 'de'
+      ? 'Wie trauert eine Familie — als System und als Einzelperson? Was braucht jedes Familienmitglied, um den Verlust zu verarbeiten: Zeit, Rituale, das Dürfen traurig zu sein? Und wie kann die Familie einen Raum halten, in dem Trauer da sein darf, ohne dass sie jemanden zerreißt?'
+      : 'How does a family grieve — as a system and as individuals? What does each family member need to process the loss: time, rituals, permission to be sad? And how can the family hold a space where grief is allowed to exist without tearing anyone apart?',
+    neubeginn: currentLang === 'de'
+      ? 'Was braucht ein echter Neubeginn — für jede Person und für die Familie als Ganzes? William Bridges unterscheidet: Übergänge beginnen nicht mit dem Neuen, sondern mit dem Loslassen des Alten. Was muss zuerst enden — und was kann die Familie dann aktiv gestalten, damit der Neubeginn wirklich trägt?'
+      : 'What does a genuine new beginning need — for each person and for the family as a whole? William Bridges distinguishes: transitions begin not with the new, but with letting go of the old. What must first end — and what can the family then actively shape so that the new beginning truly holds?',
+    patchwork: currentLang === 'de'
+      ? 'Was braucht eine Patchwork-Familie, um wirklich zusammenzuwachsen — ohne die Geschichte der einzelnen zu übergehen? Neue Partner, neue Geschwister, neue Rollen: wie kann Raum für alle entstehen, ohne dass sich jemand ersetzen oder verdrängen muss? Und was hilft Kindern, zwei Welten als beide ihr Zuhause zu erleben?'
+      : 'What does a blended family need to truly grow together — without overlooking each person\'s history? New partners, new siblings, new roles: how can space arise for all without anyone having to be replaced or displaced? And what helps children experience two worlds as both their home?'
+  };
+
+  const famLabel = famName ? `Familie ${famName}` : (currentLang === 'de' ? 'eure Familie' : 'your family');
+  const frage = `${fokusQuestions[uebgangFokus]} Kontext: ${text}`;
+
+  const uebgangPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Übergangs-Hüterin' : 'Transition Guardian',
+      position: currentLang === 'de'
+        ? `Wo steht ${famLabel} gerade in diesem Übergang — und was braucht diese besondere Schwellenzeit? William Bridges hat gezeigt: Ein Übergang ist kein Ereignis, sondern ein innerer Prozess. Er beginnt nicht mit dem Neuen, sondern mit dem Ende des Alten — einer Phase der Desorganisation und des Loslassens. Dann kommt die "Neutrale Zone": eine liminale Zeit zwischen dem, was war, und dem, was noch nicht ist. Erst danach beginnt wirklich Neues. Viele Familien überspringen diese Mitte — sie wollen schnell im Neuen ankommen. Was wäre es, wenn diese Familie die Übergangsphase selbst als wertvolle Zeit betrachten würde? Was möchte sie auf dem Weg mitnehmen — und was darf bleiben?`
+        : `Where does ${famLabel} stand in this transition right now — and what does this particular threshold time need? William Bridges showed: a transition is not an event but an inner process. It does not begin with the new, but with the ending of the old — a phase of disorganization and letting go. Then comes the "Neutral Zone": a liminal time between what was and what is not yet. Only after that does something genuinely new begin. Many families skip this middle — they want to arrive quickly in the new. What would it be like if this family viewed the transition phase itself as valuable time? What do they want to carry forward — and what is allowed to remain?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Übergänge sind nicht nur Gefahr — sie sind auch Einladung. Das Alte loslassen heißt nicht, es zu vergessen. Die Neutrale Zone ist kein Vakuum — sie ist der Raum, in dem das Neue entsteht.'
+        : 'Transitions are not only danger — they are also invitation. Letting go of the old does not mean forgetting it. The neutral zone is not a vacuum — it is the space in which the new is created.',
+      fachgebiet: currentLang === 'de'
+        ? 'William Bridges (Transitions, Managing Transitions), Arnold van Gennep (Übergangsriten), liminale Theorie, Viktor Frankl (Sinnfindung im Wandel), Entwicklungspsychologie der Lebensphasen'
+        : 'William Bridges (Transitions, Managing Transitions), Arnold van Gennep (Rites of Passage), liminal theory, Viktor Frankl (meaning-making in change), developmental psychology of life phases'
+    },
+    {
+      name: currentLang === 'de' ? 'Verlust-Würdigerin' : 'Loss Honorer',
+      position: currentLang === 'de'
+        ? `Was muss bei ${famLabel} gewürdigt und betrauert werden, bevor Neues wirklich beginnen kann? Jeder Übergang trägt einen Verlust in sich — auch die freudigen. Ein Auszug, ein Neuanfang, ein neuer Partner: immer endet etwas, und Verlust braucht Würdigung, nicht Überdeckung. Elisabeth Kübler-Ross zeigte: Trauerprozesse lassen sich nicht überspringen. Familien, die Verluste nicht benennen, tragen sie stumm weiter — als ungelöste Spannung, als wiederkehrendes Thema. Was hat diese Familie verloren — oder wird verlieren — in diesem Übergang? Wessen Verlust ist noch nicht wirklich gesehen? Und was wäre ein Akt der Würdigung für das, was endet?`
+        : `What needs to be honored and grieved in ${famLabel} before something new can truly begin? Every transition carries a loss within it — even the joyful ones. A child leaving home, a fresh start, a new partner: something always ends, and loss needs acknowledgment, not covering over. Elisabeth Kübler-Ross showed: grief processes cannot be skipped. Families who don't name their losses carry them silently forward — as unresolved tension, as recurring themes. What has this family lost — or will lose — in this transition? Whose loss has not yet truly been seen? And what would be an act of honoring what is ending?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Trauer ist keine Schwäche — sie ist die natürliche Antwort der Seele auf Verlust. Familien, die zusammen trauern dürfen, wachsen enger zusammen. Was benannt ist, kann gehalten werden. Was unbenannt bleibt, bestimmt still das Geschehen.'
+        : 'Grief is not weakness — it is the soul\'s natural response to loss. Families who are allowed to grieve together grow closer. What is named can be held. What remains unnamed quietly determines what happens.',
+      fachgebiet: currentLang === 'de'
+        ? 'Elisabeth Kübler-Ross & David Kessler (Trauerphasen, Finding Meaning), Ambiguous Loss Theory (Pauline Boss), familiale Trauerprozesse, Rituale des Abschieds, transgenerationales Schweigen'
+        : 'Elisabeth Kübler-Ross & David Kessler (grief stages, Finding Meaning), Ambiguous Loss Theory (Pauline Boss), family grief processes, rituals of farewell, transgenerational silence'
+    },
+    {
+      name: currentLang === 'de' ? 'Neu-Anfangs-Weberin' : 'New Beginning Weaver',
+      position: currentLang === 'de'
+        ? `Was kann ${famLabel} aktiv gestalten, damit dieser Neubeginn wirklich ein Neubeginn wird — nicht nur ein Weitermachen unter anderem Vorzeichen? Ein Neu-Anfang braucht mehr als das Ende des Alten: er braucht bewusste Akte des Beginnens. Rituale, Symbole, Geschichten — die Familie braucht eine Narrative, die ihr hilft zu sagen: "Das ist wir, neu." Was wäre ein konkreter Akt, der diesen Übergang sichtbar markiert? Was will die Familie im Neuen anders machen — und was soll bleiben? Und welche Stärken, die die Familie bereits hat, werden ihr helfen, das Neue zu tragen?`
+        : `What can ${famLabel} actively shape so that this new beginning truly becomes a new beginning — not just more of the same under different circumstances? A new beginning needs more than the ending of the old: it needs conscious acts of starting. Rituals, symbols, stories — the family needs a narrative that helps them say: "This is us, new." What would be a concrete act that visibly marks this transition? What does the family want to do differently in the new — and what should remain? And what strengths the family already has will help them carry the new?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Neue Anfänge entstehen nicht von selbst — sie werden gestaltet. Eine Familie, die ihren Neubeginn aktiv markiert, erlebt ihn auch stärker als ihren eigenen. Das Neue hat mehr Kraft, wenn es einen Namen, eine Geschichte, ein Ritual hat.'
+        : 'New beginnings do not arise by themselves — they are created. A family that actively marks its new beginning also experiences it more strongly as their own. The new has more power when it has a name, a story, a ritual.',
+      fachgebiet: currentLang === 'de'
+        ? 'Positive Psychologie (Resilienzforschung, aktive Gestaltung), narrative Familientherapie (White & Epston), Rituale des Anfangs, Posttraumatisches Wachstum (Tedeschi & Calhoun), Identitätsrekonstruktion nach Verlust'
+        : 'Positive psychology (resilience research, active shaping), narrative family therapy (White & Epston), rituals of beginning, post-traumatic growth (Tedeschi & Calhoun), identity reconstruction after loss'
+    },
+    {
+      name: currentLang === 'de' ? 'Familien-Resilienz-Begleiterin' : 'Family Resilience Companion',
+      position: currentLang === 'de'
+        ? `Was macht ${famLabel} als System stark genug, um diesen Übergang nicht nur zu überleben, sondern daran zu wachsen? Froma Walsh hat gezeigt: resiliente Familien zeichnen sich nicht dadurch aus, dass ihnen weniger passiert — sondern durch die Art, wie sie zusammenhalten, kommunizieren und Sinn machen, wenn es schwierig wird. Drei Kernressourcen: Glaube an die Überwindbarkeit (wir kommen da durch), offene Kommunikation (auch über das Schwere), und Verbindungen nach außen (Freunde, Gemeinschaft, professionelle Hilfe). Welche dieser Ressourcen hat diese Familie bereits? Welche fehlen — und wo könnte sie sie finden?`
+        : `What makes ${famLabel} as a system strong enough not only to survive this transition but to grow through it? Froma Walsh has shown: resilient families are not defined by having fewer difficulties — but by the way they hold together, communicate, and make meaning when things get hard. Three core resources: belief in overcomability (we will get through this), open communication (even about the difficult), and external connections (friends, community, professional help). Which of these resources does this family already have? What is missing — and where might they find it?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Resilienz ist keine Eigenschaft von Einzelpersonen — sie ist ein Prozess, der in Beziehungen entsteht. Familien, die gemeinsam durch Schwieriges gehen und darüber sprechen, werden nicht kleiner — sie werden tiefer.'
+        : 'Resilience is not a trait of individuals — it is a process that emerges in relationships. Families who go through difficulties together and talk about them do not become smaller — they become deeper.',
+      fachgebiet: currentLang === 'de'
+        ? 'Froma Walsh (Familien-Resilienz-Modell), Boris Cyrulnik (Resilienz), Posttraumatisches Wachstum, systemische Stärkenanalyse, familiales Coping, Gemeinschaft als Ressource'
+        : 'Froma Walsh (Family Resilience Model), Boris Cyrulnik (resilience), post-traumatic growth, systemic strengths analysis, family coping research, community as resource'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'ÜBERGÄNGE-TiSCH wird geöffnet...' : 'Opening the transition space...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'FAMiLiEN-ÜBERGÄNGE',
+      custom_perspectives: uebgangPerspektiven,
+      stil:                'therapeutisch',
+      tone:                currentTone,
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const uebgangPerspDefs = [
+      { id: 'uebergangs-hueterin',              icon: 'compass',  color: '#A07840', de: 'Übergangs-Hüterin',               en: 'Transition Guardian'         },
+      { id: 'verlust-wuerdigerin',               icon: 'heart',    color: '#8B6530', de: 'Verlust-Würdigerin',               en: 'Loss Honorer'                },
+      { id: 'neu-anfangs-weberin',               icon: 'seedling', color: '#C49040', de: 'Neu-Anfangs-Weberin',              en: 'New Beginning Weaver'        },
+      { id: 'familien-resilienz-begleiterin',    icon: 'shield',   color: '#9A7830', de: 'Familien-Resilienz-Begleiterin',   en: 'Family Resilience Companion' }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = uebgangPerspDefs[i] || uebgangPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER ÜBERGÄNGE-TiSCH' : 'YOUR TRANSITION SPACE',
+      synthesisSubtitle: currentLang === 'de' ? famLabel : famLabel,
+      synthesisColor:    '#A07840',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h14M13 5l5 5-5 5"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot — kein Ersatz für Beratung oder Therapie' : 'Invitation to reflect — not a substitute for counseling or therapy'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Übergänge brauchen Zeit — nehmt euch die, die ihr braucht' : 'Transitions need time — take what you need'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei schweren Übergängen: professionelle Begleitung suchen' : 'For difficult transitions: seek professional guidance'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['uebergangs-hueterin', 'verlust-wuerdigerin', 'neu-anfangs-weberin', 'familien-resilienz-begleiterin'],
       lang:         currentLang,
       time:         Date.now()
     });
