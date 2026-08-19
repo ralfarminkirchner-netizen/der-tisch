@@ -373,6 +373,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 .geschwister-send-btn:hover{opacity:.88}
 .geschwister-send-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* GROSSELTERNTiSCH MODE */
+.grosseltern-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.grosseltern-intro{background:linear-gradient(135deg,rgba(139,107,69,0.14) 0%,rgba(112,82,46,0.07) 100%);border:1px solid rgba(139,107,69,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.grosseltern-intro strong{color:#8B6B45}
+.grosseltern-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.grosseltern-input:focus{border-color:#8B6B45;box-shadow:0 0 0 2px rgba(139,107,69,0.12)}
+.grosseltern-input::placeholder{color:var(--muted)}
+.grosseltern-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.grosseltern-send-btn{background:#8B6B45;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.grosseltern-send-btn:hover{opacity:.88}
+.grosseltern-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
 /* ELTERN-GESPRÄCH age row */
 .eltern-alter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .eltern-alter-row .ctrl-btn{font-size:11px;padding:5px 10px;letter-spacing:.02em}
@@ -612,6 +624,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-geschwister" onclick="setMode('geschwister')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="14" cy="6" r="2.5"/><path d="M2 17c0-3 1.8-4.5 4-4.5s4 1.5 4 4.5"/><path d="M10 17c0-3 1.8-4.5 4-4.5s4 1.5 4 4.5"/><line x1="10" y1="10" x2="10" y2="12.5" stroke-dasharray="2,2"/></svg>
       GESCHWiSTER-TiSCH
+    </button>
+    <button class="mode-tab" id="tab-grosseltern" onclick="setMode('grosseltern')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2.5"/><line x1="10" y1="6.5" x2="10" y2="9"/><line x1="10" y1="9" x2="6" y2="11"/><line x1="10" y1="9" x2="14" y2="11"/><circle cx="6" cy="13" r="2"/><circle cx="14" cy="13" r="2"/><line x1="6" y1="15" x2="6" y2="17"/><line x1="14" y1="15" x2="14" y2="17"/></svg>
+      GROSSELTERNTiSCH
     </button>
   </div>
 </section>
@@ -1346,6 +1362,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="geschwisterResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== GROSSELTERNTiSCH MODE ==================== -->
+<div class="mode-section" id="mode-grosseltern">
+  <div class="grosseltern-wrap">
+
+    <div class="grosseltern-intro">
+      <strong>GROSSELTERNTiSCH</strong> — Großeltern sind das lebende Gedächtnis einer Familie. Sie tragen Geschichten, Stärken und Muster, die längst vor uns begonnen haben. Vier Stimmen beleuchten, was Großeltern geben können, wie Grenzen zwischen den Generationen respektvoll navigiert werden — und was von Generation zu Generation weitergegeben wird, bewusst und unbewusst.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="grosselternChips">
+      <button class="chip" onclick="useGrosselternChip(this)">Meine Kinder und ihre Großeltern sehen sich selten — ich wünschte mir mehr echte Verbindung.</button>
+      <button class="chip" onclick="useGrosselternChip(this)">Die Großeltern haben andere Erziehungsvorstellungen als wir — das führt zu Spannungen.</button>
+      <button class="chip" onclick="useGrosselternChip(this)">Mein Kind hat eine besondere Bindung zu seinen Großeltern, die ich nicht immer verstehe.</button>
+      <button class="chip" onclick="useGrosselternChip(this)">Wie können Großeltern präsent sein, ohne die Elternrolle zu übernehmen?</button>
+      <button class="chip" onclick="useGrosselternChip(this)">Meine Eltern sind verstorben — wie erkläre ich meinen Kindern, wen sie hätten kennen können?</button>
+      <button class="chip" onclick="useGrosselternChip(this)">Großeltern und Enkel verstehen sich manchmal besser als ich es mit meinen Eltern tue — warum?</button>
+      <button class="chip" onclick="useGrosselternChip(this)">Welche Muster aus meiner Herkunftsfamilie gebe ich gerade weiter — was möchte ich bewusst verändern?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was bewegt euch zwischen den Generationen?</div>
+    <textarea class="grosseltern-input" id="grosselternInput" placeholder="Beschreibt, was zwischen Großeltern, Eltern und Enkeln passiert. Was funktioniert? Was ist schwierig? Was möchtet ihr verstehen, würdigen oder verändern?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="grosselternFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-grosseltern-fokus="verbindung" onclick="setGrosselternFokus(this)">Verbindung</button>
+        <button class="ctrl-btn" data-grosseltern-fokus="grenzen" onclick="setGrosselternFokus(this)">Grenzen</button>
+        <button class="ctrl-btn" data-grosseltern-fokus="weitergabe" onclick="setGrosselternFokus(this)">Weitergabe</button>
+      </div>
+    </div>
+
+    <div class="grosseltern-send-row">
+      <button class="grosseltern-send-btn" id="grosselternSendBtn" onclick="sendGrosseltern()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2.5"/><line x1="10" y1="6.5" x2="10" y2="9"/><line x1="10" y1="9" x2="6" y2="11"/><line x1="10" y1="9" x2="14" y2="11"/><circle cx="6" cy="13" r="2"/><circle cx="14" cy="13" r="2"/></svg>
+        GENERATIONEN ERKUNDEN
+      </button>
+    </div>
+
+    <div id="grosselternResults"></div>
 
   </div>
 </div>
@@ -4787,6 +4846,180 @@ async function sendPaar() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['verbindungs-waechter', 'spannungs-navigatorin', 'wachstums-begleiterin', 'familien-bruecken-bauerin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── GROSSELTERNTiSCH MODE ───────────────────────────────────────────────────
+
+let grosselternFokus = 'verbindung';
+
+function setGrosselternFokus(btn) {
+  grosselternFokus = btn.dataset.grosselternFokus;
+  document.querySelectorAll('[data-grosseltern-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useGrosselternChip(el) {
+  document.getElementById('grosselternInput').value = el.textContent.trim();
+  document.getElementById('grosselternInput').focus();
+}
+
+async function sendGrosseltern() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('grosselternInput');
+  const resultsDiv = document.getElementById('grosselternResults');
+  const sendBtn    = document.getElementById('grosselternSendBtn');
+  const famName    = (document.getElementById('grosselternFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    verbindung: currentLang === 'de'
+      ? 'Was verbindet Großeltern und Enkel in dieser Familie wirklich — sichtbar und unsichtbar? Was trägt die Beziehung zwischen den Generationen, was fehlt noch — und was würde helfen, diese Verbindung tiefer und lebendiger zu machen?'
+      : 'What truly connects grandparents and grandchildren in this family — visibly and invisibly? What carries the relationship between the generations, what is still missing — and what would help make this connection deeper and more alive?',
+    grenzen: currentLang === 'de'
+      ? 'Wo entstehen Spannungen zwischen der Eltern- und Großelterngeneration in dieser Familie — und wie können diese Spannungen respektvoll navigiert werden, ohne Verbindung zu opfern? Was brauchen beide Generationen, um sich gehört und respektiert zu fühlen?'
+      : 'Where do tensions arise between the parent and grandparent generations in this family — and how can these tensions be navigated respectfully without sacrificing connection? What do both generations need to feel heard and respected?',
+    weitergabe: currentLang === 'de'
+      ? 'Was wird in dieser Familie von Generation zu Generation weitergegeben — bewusst und unbewusst? Welche Muster, Stärken, Werte oder ungelösten Themen reisen durch die Generationen? Und was möchte diese Familie aktiv gestalten: Welches Erbe soll in 30 Jahren noch lebendig sein?'
+      : 'What is being passed down in this family from generation to generation — consciously and unconsciously? What patterns, strengths, values, or unresolved themes travel through the generations? And what does this family want to actively shape: What legacy should still be alive in 30 years?'
+  };
+
+  const famLabel = famName ? `Familie ${famName}` : (currentLang === 'de' ? 'eure Familie' : 'your family');
+  const frage = `${fokusQuestions[grosselternFokus]} Kontext: ${text}`;
+
+  const grosselternPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Weisheits-Hüterin' : 'Wisdom Guardian',
+      position: currentLang === 'de'
+        ? `Was tragen die Großeltern in ${famLabel} als lebendige Quelle von Erfahrung und Weisheit — und wie kann diese Quelle aktiv geöffnet werden? Erik Eriksons Konzept der Generativität zeigt: Menschen in der späten Lebenshälfte tragen ein tiefes Bedürfnis, das Gelernte weiterzugeben. Großeltern sind nicht nur Betreuende oder Geschenkbringende — sie sind oft die einzigen Menschen im Leben eines Kindes, die Zeit haben, wirklich zuzuhören, die Geschichte der Familie verkörpern, und die ohne Erziehungsdruck einfach da sein können. Was würden die Großeltern dieser Familie gerne weitergeben — über das Gelebte, das Überstandene, das Weiche, das ihnen mit den Jahren wichtig wurde? Und wie könnten Enkel aktiv eingeladen werden, die Großeltern als Quelle zu erleben — nicht nur als "ältere Verwandte", sondern als lebende Bücher, die man noch aufschlagen kann?`
+        : `What do the grandparents in ${famLabel} carry as a living source of experience and wisdom — and how can this source be actively opened? Erik Erikson's concept of generativity shows: people in the later half of life carry a deep need to pass on what they have learned. Grandparents are not merely caregivers or gift-givers — they are often the only people in a child's life who have time to truly listen, who embody the family's history, and who can simply be present without parenting pressure. What would the grandparents of this family like to pass on — about what they have lived through, what they have survived, what softened them, what became important to them over the years? And how could grandchildren be actively invited to experience their grandparents as a source — not just as "older relatives," but as living books one can still open?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Großeltern tragen Dinge, die kein Buch je lehren kann: wie es sich anfühlt, etwas zu verlieren und es trotzdem zu schaffen. Wie Liebe mit der Zeit reift. Was wirklich zählt, wenn man zurückschaut. Das weiterzugeben ist kein Gefallen — es ist ein Geschenk, das nicht wiederkommt.'
+        : 'Grandparents carry things no book can ever teach: how it feels to lose something and still make it through. How love matures over time. What truly matters when you look back. Passing that on is not a favor — it is a gift that will not come again.',
+      fachgebiet: currentLang === 'de'
+        ? 'Erik Erikson (Generativität, Integrität vs. Verzweiflung), Großelternrolle in der Entwicklungspsychologie, Biographiearbeit, narrative Identität (McAdams), intergenerationale Weisheitsweitergabe, Reminiszenz-Therapie'
+        : 'Erik Erikson (generativity, integrity vs. despair), grandparent role in developmental psychology, biographical work, narrative identity (McAdams), intergenerational wisdom transmission, reminiscence therapy'
+    },
+    {
+      name: currentLang === 'de' ? 'Drei-Generationen-Bindung' : 'Three-Generation Attachment',
+      position: currentLang === 'de'
+        ? `Welche Qualität hat die Bindung zwischen Großeltern und Enkeln in ${famLabel} — und was braucht diese Bindung, um zu gedeihen? Forschung zeigt: Großeltern-Enkel-Beziehungen bieten Kindern weit mehr als angenehme Besuche. Sie sind eine stabile, bedingungslose Bezugsperson außerhalb des unmittelbaren Familiendrucks. Joan Kivnick, Robert Crosnoe und Glen Elder zeigten: Kinder mit starken Großelternbindungen haben bessere Bewältigungsstrategien in Krisenzeiten, mehr Widerstandsfähigkeit und ein stärkeres Gefühl der eigenen Geschichte. Wie erleben die Enkel die Großeltern: als sichere Basis, als faszinierende Persönlichkeiten, als Geschichtenerzählende? Und was würde nötig sein — in Zeit, Ritualen, Orten oder gemeinsamen Erlebnissen — damit diese Bindung tiefer wächst und ins Leben der Kinder eingebettet wird?`
+        : `What is the quality of the bond between grandparents and grandchildren in ${famLabel} — and what does this bond need to flourish? Research shows that grandparent-grandchild relationships offer children far more than pleasant visits: they provide a stable, unconditional attachment figure outside the immediate family pressure. Joan Kivnick, Robert Crosnoe and Glen Elder showed: children with strong grandparent bonds have better coping strategies in times of crisis, more resilience, and a stronger sense of their own history. How do the grandchildren experience their grandparents: as a safe base, as fascinating people, as storytellers? And what would be needed — in time, rituals, places or shared experiences — for this bond to grow deeper and become embedded in the children's lives?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Bindung zwischen Generationen braucht eigene Zeit — nicht nur Familientreffen am Rande. Das Beste, was Eltern oft tun können, ist: sich zurückzuziehen und den beiden Generationen Raum zu geben, ihre eigene Sprache zu finden.'
+        : 'Attachment between generations needs its own time — not just family gatherings on the side. The best thing parents can often do is: step back and give the two generations space to find their own language.',
+      fachgebiet: currentLang === 'de'
+        ? 'Crosnoe & Elder (Großeltern-Enkel-Bindungsforschung), Kivnick (Großelternbedeutung), Bindungstheorie (Bowlby/Ainsworth in trigenerationaler Perspektive), Großvater-Effekt, Rolle der Großeltern in der Resilienzforschung, emotionale Großeltern-Bindung'
+        : 'Crosnoe & Elder (grandparent-grandchild attachment research), Kivnick (grandparent significance), attachment theory (Bowlby/Ainsworth in tri-generational perspective), grandfather effect, role of grandparents in resilience research, emotional grandparent bonding'
+    },
+    {
+      name: currentLang === 'de' ? 'Grenzen-Navigatorin' : 'Boundary Navigator',
+      position: currentLang === 'de'
+        ? `Wo entstehen in ${famLabel} Spannungen zwischen der Eltern- und Großelterngeneration — und wie können diese navigiert werden, ohne Verbindung zu opfern? "Früher haben wir das auch so gemacht, und ihr seid doch alle groß geworden" ist einer der häufigsten Konfliktsätze zwischen Generationen. Dahinter steckt mehr als Sturheit: Es ist oft das tiefe Bedürfnis der Großeltern, die eigene Erziehung zu validieren — und die Angst, dass neue Ansätze eine implizite Kritik an dem sind, was sie selbst getan haben. Gleichzeitig haben junge Eltern berechtigte Bedürfnisse nach Autonomie und Respekt ihrer Entscheidungen. Welche konkreten Spannungen gibt es? Wo ist die Linie zwischen wertvoller Erfahrung und ungebetener Einmischung? Und wie könnte eine Familienkultur entstehen, in der Großeltern einbezogen werden — ohne die Elternautorität zu untergraben?`
+        : `Where do tensions arise in ${famLabel} between the parent and grandparent generations — and how can these be navigated without sacrificing connection? "We did it this way too, and you all turned out fine" is one of the most common conflict phrases between generations. Behind it lies more than stubbornness: it is often grandparents' deep need to validate their own parenting — and the fear that new approaches implicitly criticize what they themselves did. At the same time, young parents have legitimate needs for autonomy and respect of their decisions. What are the concrete tensions? Where is the line between valuable experience and unwanted interference? And how might a family culture emerge where grandparents are involved — without undermining parental authority?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Grenzen in Familien sind keine Mauern — sie sind Türen. Eine gut verhandelte Grenze macht echte Begegnung möglich: weil beide Seiten wissen, wo sie stehen, und sich trotzdem sicher fühlen, hineinzugehen.'
+        : 'Boundaries in families are not walls — they are doors. A well-negotiated boundary makes genuine encounter possible: because both sides know where they stand, and still feel safe stepping through.',
+      fachgebiet: currentLang === 'de'
+        ? 'Strukturelle Familientherapie (Minuchin, Subsystem-Grenzen), Murray Bowen (Differenzierung, Triangulierung über Generationen), intergenerationale Konflikte, Autorität und Autonomie in Erziehungsfragen, interkulturelle Aspekte von Großelternrollen'
+        : 'Structural family therapy (Minuchin, subsystem boundaries), Murray Bowen (differentiation, triangulation across generations), intergenerational conflicts, authority and autonomy in parenting, intercultural aspects of grandparent roles'
+    },
+    {
+      name: currentLang === 'de' ? 'Erbe-Weberin' : 'Heritage Weaver',
+      position: currentLang === 'de'
+        ? `Was wird in ${famLabel} — bewusst und unbewusst — von Generation zu Generation weitergegeben? Murray Bowen beschrieb die multigenerationale Transmission: Nicht nur Gene, sondern Beziehungsmuster, Glaubenssätze, ungelöste Schmerzen und Stärken reisen durch Generationen. "Wir haben das immer so gemacht" — aber woher kommt dieses "Immer"? Was hat diese Familie über Liebe, Arbeit, Geld, Konflikt, Körper oder Zugehörigkeit gelernt — und wer hat es als Erstes so erlebt und weitergegeben? Und parallel: Was möchte diese Familie aktiv und bewusst weitergeben — an Werten, Geschichten, Ritualen, Charakterstärken? Welches Erbe soll in 30 Jahren noch lebendig sein, wenn die Enkel von heute selbst Eltern sind?`
+        : `What is being passed down in ${famLabel} — consciously and unconsciously — from generation to generation? Murray Bowen described the multigenerational transmission process: not only genes, but relationship patterns, belief systems, unresolved pain and strengths travel through generations. "We've always done it this way" — but where does this "always" come from? What has this family learned about love, work, money, conflict, body or belonging — and who first lived it and passed it on? And alongside: what does this family want to actively and consciously pass on — in values, stories, rituals, character strengths? What legacy should still be alive in 30 years, when today's grandchildren are parents themselves?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Jede Familie ist eine Bibliothek. Was auf den Regalen steht, wurde von vielen Generationen geschrieben — mit Freude, Schmerz, Mut und manchmal Schweigen. Bewusstes Erbe heißt: auswählen, was man öffnet, was man weitergibt — und was man sanft schließt.'
+        : 'Every family is a library. What stands on the shelves was written by many generations — with joy, pain, courage and sometimes silence. Conscious heritage means: choosing what you open, what you pass on — and what you gently close.',
+      fachgebiet: currentLang === 'de'
+        ? 'Murray Bowen (multigenerationale Transmission), transgenerationale Traumatherapie (Boszormenyi-Nagy, Mark Wolynn), narrative Familientherapie (White & Epston), Familienaufstellung (Hellinger), Familiennarrative und Identität (Marshall Duke), epigenetische Perspektiven auf familiäre Muster'
+        : 'Murray Bowen (multigenerational transmission), transgenerational trauma therapy (Boszormenyi-Nagy, Mark Wolynn), narrative family therapy (White & Epston), family constellations (Hellinger), family narratives and identity (Marshall Duke), epigenetic perspectives on family patterns'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'GROSSELTERNTiSCH wird geöffnet...' : 'Opening the grandparent space...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'GROSSELTERNTiSCH',
+      custom_perspectives: grosselternPerspektiven,
+      stil:                'systemisch',
+      tone:                currentTone,
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const grosselternPerspDefs = [
+      { id: 'weisheits-hueterin',          icon: 'scroll',   color: '#8B6B45', de: 'Weisheits-Hüterin',          en: 'Wisdom Guardian'            },
+      { id: 'drei-generationen-bindung',   icon: 'heart',    color: '#7A5A34', de: 'Drei-Generationen-Bindung',  en: 'Three-Generation Attachment' },
+      { id: 'grenzen-navigatorin',         icon: 'compass',  color: '#9C7A55', de: 'Grenzen-Navigatorin',        en: 'Boundary Navigator'          },
+      { id: 'erbe-weberin',                icon: 'network',  color: '#6B4A2A', de: 'Erbe-Weberin',               en: 'Heritage Weaver'             }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = grosselternPerspDefs[i] || grosselternPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER GROSSELTERNTiSCH' : 'YOUR GRANDPARENT SPACE',
+      synthesisSubtitle: currentLang === 'de' ? famLabel : famLabel,
+      synthesisColor:    '#8B6B45',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2.5"/><line x1="10" y1="6.5" x2="10" y2="9"/><line x1="10" y1="9" x2="6" y2="11"/><line x1="10" y1="9" x2="14" y2="11"/><circle cx="6" cy="13" r="2"/><circle cx="14" cy="13" r="2"/></svg> ${currentLang === 'de' ? 'Reflexionsangebot für alle Generationen — kein Urteil über familiäre Entscheidungen' : 'Invitation to reflect for all generations — no judgment about family decisions'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Jede Großeltern-Beziehung ist einzigartig — diese Impulse sind ein Anfang, kein Rezept' : 'Every grandparent relationship is unique — these impulses are a starting point, not a recipe'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei tiefen Familienkonflikten oder transgenerationalen Themen: Familientherapie empfohlen' : 'For deep family conflicts or transgenerational themes: family therapy recommended'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['weisheits-hueterin', 'drei-generationen-bindung', 'grenzen-navigatorin', 'erbe-weberin'],
       lang:         currentLang,
       time:         Date.now()
     });
