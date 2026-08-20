@@ -388,6 +388,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
 /* ELTERN-GESPRÄCH age row */
 .eltern-alter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .eltern-alter-row .ctrl-btn{font-size:11px;padding:5px 10px;letter-spacing:.02em}
+
+/* JUGEND-TiSCH MODE */
+.jugend-wrap{max-width:860px;margin:0 auto;padding:0 20px 40px}
+.jugend-intro{background:linear-gradient(135deg,rgba(91,126,166,0.13) 0%,rgba(65,98,138,0.06) 100%);border:1px solid rgba(91,126,166,0.22);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.jugend-intro strong{color:#5B7EA6}
+.jugend-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6;margin-bottom:16px}
+.jugend-input:focus{border-color:#5B7EA6;box-shadow:0 0 0 2px rgba(91,126,166,0.12)}
+.jugend-input::placeholder{color:var(--muted)}
+.jugend-send-row{display:flex;justify-content:flex-end;margin-bottom:24px}
+.jugend-send-btn{background:#5B7EA6;border:none;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.jugend-send-btn:hover{opacity:.88}
+.jugend-send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -628,6 +640,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     <button class="mode-tab" id="tab-grosseltern" onclick="setMode('grosseltern')">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2.5"/><line x1="10" y1="6.5" x2="10" y2="9"/><line x1="10" y1="9" x2="6" y2="11"/><line x1="10" y1="9" x2="14" y2="11"/><circle cx="6" cy="13" r="2"/><circle cx="14" cy="13" r="2"/><line x1="6" y1="15" x2="6" y2="17"/><line x1="14" y1="15" x2="14" y2="17"/></svg>
       GROSSELTERNTiSCH
+    </button>
+    <button class="mode-tab" id="tab-jugend" onclick="setMode('jugend')">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="3.5"/><path d="M4 18c0-3.5 2.7-6 6-6s6 2.5 6 6"/><line x1="10" y1="10" x2="10" y2="12" stroke-dasharray="1.5,1.5"/></svg>
+      JUGEND-TiSCH
     </button>
   </div>
 </section>
@@ -1362,6 +1378,49 @@ nav{position:sticky;top:0;z-index:100;background:rgba(16,10,6,0.92);backdrop-fil
     </div>
 
     <div id="geschwisterResults"></div>
+
+  </div>
+</div>
+
+<!-- ==================== JUGEND-TiSCH MODE ==================== -->
+<div class="mode-section" id="mode-jugend">
+  <div class="jugend-wrap">
+
+    <div class="jugend-intro">
+      <strong>JUGEND-TiSCH</strong> — Teenager sind keine kleinen Erwachsenen und keine großen Kinder mehr. Sie stehen mitten in der wichtigsten Suchbewegung des Lebens: Wer bin ich? Wohin gehöre ich? Vier Stimmen begleiten Familien durch die Teenager-Jahre: durch das Ringen um Autonomie, durch das, was Verbindung jetzt wirklich bedeutet — und wie Eltern und Jugendliche einander finden, ohne sich zu verlieren.
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Ausgangspunkte</div>
+    <div class="chips" style="justify-content:flex-start;margin-bottom:20px" id="jugendChips">
+      <button class="chip" onclick="useJugendChip(this)">Mein Teenager zieht sich komplett zurück — ich komme nicht mehr ran.</button>
+      <button class="chip" onclick="useJugendChip(this)">Jede Grenze, die ich setze, wird zum Kampf. Wie finde ich Balance?</button>
+      <button class="chip" onclick="useJugendChip(this)">Mein Kind verändert sich so schnell — ich erkenne es kaum noch.</button>
+      <button class="chip" onclick="useJugendChip(this)">Schule, Zukunft, Druck — wie spreche ich mit meinem Teenager darüber?</button>
+      <button class="chip" onclick="useJugendChip(this)">Wie bleibe ich mit meinem Jugendlichen verbunden, ohne zu kontrollieren?</button>
+      <button class="chip" onclick="useJugendChip(this)">Mein Teenager zeigt Anzeichen von Stress oder Depression — wie helfe ich?</button>
+      <button class="chip" onclick="useJugendChip(this)">Wie kann ich loslassen, ohne mein Kind aus den Augen zu verlieren?</button>
+    </div>
+
+    <div class="chips-label" style="text-align:left;margin-bottom:10px">Was bewegt euch in der Teenager-Phase?</div>
+    <textarea class="jugend-input" id="jugendInput" placeholder="Erzählt, was zwischen euch und eurem Teenager gerade passiert. Was ist schwer? Was fehlt? Was wünscht ihr euch — und was glaubt ihr, was euer Jugendlicher braucht, auch wenn er es vielleicht nicht sagt?" rows="5"></textarea>
+
+    <div class="selbst-rolle-row" style="margin-bottom:20px">
+      <input class="selbst-rolle-input" id="jugendFamilienname" type="text" placeholder="Familienname (optional)">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" data-jugend-fokus="verbindung" onclick="setJugendFokus(this)">Verbindung</button>
+        <button class="ctrl-btn" data-jugend-fokus="konflikte" onclick="setJugendFokus(this)">Konflikte</button>
+        <button class="ctrl-btn" data-jugend-fokus="loslassen" onclick="setJugendFokus(this)">Loslassen</button>
+      </div>
+    </div>
+
+    <div class="jugend-send-row">
+      <button class="jugend-send-btn" id="jugendSendBtn" onclick="sendJugend()">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="3.5"/><path d="M4 18c0-3.5 2.7-6 6-6s6 2.5 6 6"/><line x1="10" y1="10" x2="10" y2="12" stroke-dasharray="1.5,1.5"/></svg>
+        JUGEND-PHASE ERKUNDEN
+      </button>
+    </div>
+
+    <div id="jugendResults"></div>
 
   </div>
 </div>
@@ -5020,6 +5079,180 @@ async function sendGrosseltern() {
     saveHistory({
       question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
       perspectives: ['weisheits-hueterin', 'drei-generationen-bindung', 'grenzen-navigatorin', 'erbe-weberin'],
+      lang:         currentLang,
+      time:         Date.now()
+    });
+
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="error-card">${currentLang === 'de' ? 'Der TiSCH ist momentan nicht erreichbar. Bitte später erneut versuchen.' : 'The TiSCH is currently unavailable. Please try again later.'}</div>`;
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+}
+
+// ─── JUGEND-TiSCH MODE ───────────────────────────────────────────────────────
+
+let jugendFokus = 'verbindung';
+
+function setJugendFokus(btn) {
+  jugendFokus = btn.dataset.jugendFokus;
+  document.querySelectorAll('[data-jugend-fokus]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function useJugendChip(el) {
+  document.getElementById('jugendInput').value = el.textContent.trim();
+  document.getElementById('jugendInput').focus();
+}
+
+async function sendJugend() {
+  if (isLoading) return;
+
+  const input      = document.getElementById('jugendInput');
+  const resultsDiv = document.getElementById('jugendResults');
+  const sendBtn    = document.getElementById('jugendSendBtn');
+  const famName    = (document.getElementById('jugendFamilienname')?.value || '').trim();
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    showToast(currentLang === 'de' ? 'Bitte erst etwas eingeben.' : 'Please enter something first.');
+    return;
+  }
+
+  const fokusQuestions = {
+    verbindung: currentLang === 'de'
+      ? 'Wie bleibt Verbindung zwischen Eltern und Teenagern lebendig — auch wenn der Jugendliche sich zurückzieht, ablehnt oder schweigt? Was bedeutet Verbindung in dieser Lebensphase wirklich — und was brauchen Teenager von ihren Eltern, das sie gleichzeitig oft nicht in Worte fassen können?'
+      : 'How does connection between parents and teenagers stay alive — even when the young person withdraws, rejects, or goes silent? What does connection really mean in this life phase — and what do teenagers need from their parents that they often cannot put into words?',
+    konflikte: currentLang === 'de'
+      ? 'Was steckt wirklich hinter den Konflikten zwischen Eltern und Teenagern? Welche tiefen Bedürfnisse — nach Autonomie, Anerkennung, Sicherheit, Vertrauen — treiben die Eskalationen an? Und wie können Eltern reagieren: nicht als Autorität, die Kontrolle sichert, sondern als Beziehungspartner, die das Ringen des Teenagers als Einladung zur Verbindung verstehen?'
+      : 'What really lies behind conflicts between parents and teenagers? What deep needs — for autonomy, recognition, security, trust — drive the escalations? And how can parents respond: not as authority figures securing control, but as relationship partners who understand the teenager\'s struggle as an invitation to connect?',
+    loslassen: currentLang === 'de'
+      ? 'Wie gelingt das Loslassen — ohne die Verbindung zu verlieren? Wie können Eltern dem Wunsch des Teenagers nach Eigenständigkeit Raum geben und gleichzeitig eine Basis bleiben, zu der er oder sie immer zurückkehren kann? Was braucht diese Bewegung hin zur Selbstständigkeit von beiden Seiten — und was sind die unsichtbaren Ängste auf beiden Seiten?'
+      : 'How does letting go work — without losing the connection? How can parents make room for the teenager\'s desire for independence while remaining a base they can always return to? What does this movement toward self-sufficiency need from both sides — and what are the invisible fears on both sides?'
+  };
+
+  const famLabel = famName ? `Familie ${famName}` : (currentLang === 'de' ? 'eurer Familie' : 'your family');
+  const frage = `${fokusQuestions[jugendFokus]} Kontext: ${text}`;
+
+  const jugendPerspektiven = [
+    {
+      name: currentLang === 'de' ? 'Identitäts-Begleiterin' : 'Identity Guide',
+      position: currentLang === 'de'
+        ? `Was sucht der Teenager in ${famLabel} in dieser Phase wirklich — und wie kann die Familie dabei Heimat und Startrampe zugleich sein? Erik Erikson beschrieb die Adoleszenz als die Phase der Identitäts- versus Rollendiffusion: Jugendliche probieren aus, verwerfen, suchen — und brauchen dabei einen sicheren Raum zum Scheitern, ohne bewertet zu werden. James Marcías Konzept der Identitätsstadien zeigt: Teenager durchlaufen Phasen des Ausprobierens (Moratorium), manchmal des Übernehmens (Foreclosure) und hoffentlich des Findens (Achievement). Das Entscheidende: Eltern können diesen Prozess nicht steuern — aber sie können einen Raum halten, in dem Identitätssuche sicher ist. Wie hält ${famLabel} diesen Raum? Was würde der Teenager brauchen, um das Suchen zu wagen, ohne die Verbindung nach Hause zu riskieren?`
+        : `What is the teenager in ${famLabel} really looking for in this phase — and how can the family be both home and launchpad at the same time? Erik Erikson described adolescence as the phase of identity versus role confusion: young people try things, discard them, search — and need a safe space to fail without being judged. James Marcia's concept of identity statuses shows: teenagers move through phases of exploration (moratorium), sometimes adoption (foreclosure), and hopefully finding (achievement). What matters: parents cannot steer this process — but they can hold a space where identity searching is safe. How does ${famLabel} hold this space? What would the teenager need to dare to search without risking the connection home?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Identitätssuche ist kein Aufruhr gegen die Familie — sie ist ein Ja zum Leben. Teenager, die sich erlauben zu suchen, finden sich früher. Und wer sich gefunden hat, kommt zurück — reicher, echter, verbundener.'
+        : 'The search for identity is not a revolt against the family — it is a yes to life. Teenagers who allow themselves to search find themselves sooner. And those who have found themselves come back — richer, more genuine, more connected.',
+      fachgebiet: currentLang === 'de'
+        ? 'Erik Erikson (Identität vs. Rollendiffusion), James Marcia (Identitätsstadien: Moratorium, Foreclosure, Achievement, Diffusion), Entwicklungspsychologie der Adoleszenz, Selbstkonzept-Forschung, Judith Rich Harris (Gruppensozialisationstheorie)'
+        : 'Erik Erikson (identity vs. role confusion), James Marcia (identity statuses: moratorium, foreclosure, achievement, diffusion), developmental psychology of adolescence, self-concept research, Judith Rich Harris (group socialization theory)'
+    },
+    {
+      name: currentLang === 'de' ? 'Autonomie-Brückerin' : 'Autonomy Bridge',
+      position: currentLang === 'de'
+        ? `Wie navigiert ${famLabel} das Paradox der Teenager-Jahre: Der Jugendliche braucht Eltern, die loslassen — und gleichzeitig nie verschwinden? Laurence Steinberg, einer der führenden Adoleszenzforscher, zeigt: Jugendliche brauchen drei Dinge gleichzeitig — emotionale Autonomie (sich nicht mehr als Kind zu fühlen), Verhaltensautonomie (eigene Entscheidungen zu treffen) und Wertautonomie (eigene Überzeugungen zu entwickeln). Der Fehler vieler Eltern ist nicht zu viel Nähe oder zu viel Distanz — es ist das Nicht-Mithalten mit der sich verändernden Form von Nähe, die ein Teenager braucht. Was würde es bedeuten, wenn ${famLabel} Autonomie nicht als Verlust versteht, sondern als neue Form der Verbindung?`
+        : `How does ${famLabel} navigate the paradox of the teenage years: the young person needs parents who let go — and who simultaneously never disappear? Laurence Steinberg, one of the leading adolescence researchers, shows: teenagers need three things simultaneously — emotional autonomy (not feeling like a child anymore), behavioral autonomy (making their own decisions), and value autonomy (developing their own convictions). The mistake many parents make is not too much closeness or too much distance — it is failing to keep up with the changing form of closeness a teenager needs. What would it mean if ${famLabel} understood autonomy not as loss but as a new form of connection?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Loslassen ist nicht das Gegenteil von Verbindung — es ist die reifste Form davon. Ein Teenager, der spürt, dass er gehen darf, muss nicht fliehen. Und einer, der weiß, dass er willkommen ist, kommt zurück.'
+        : 'Letting go is not the opposite of connection — it is the most mature form of it. A teenager who feels they are allowed to leave does not need to flee. And one who knows they are welcome comes back.',
+      fachgebiet: currentLang === 'de'
+        ? 'Laurence Steinberg (Adoleszenz-Forschung, Autonomie-Entwicklung), Separations-Individuations-Theorie (Margaret Mahler, Peter Blos), Richard Ryan & Edward Deci (Selbstbestimmungstheorie, Autonomieunterstützung), neurobiologische Basis der Adoleszenz'
+        : 'Laurence Steinberg (adolescence research, autonomy development), separation-individuation theory (Margaret Mahler, Peter Blos), Richard Ryan & Edward Deci (self-determination theory, autonomy support), neurobiological basis of adolescence'
+    },
+    {
+      name: currentLang === 'de' ? 'Eltern-Navigatorin' : 'Parent Navigator',
+      position: currentLang === 'de'
+        ? `Was macht Eltern in der Teenager-Zeit zu wirklichen Begleitenden — nicht nur zu Verwaltenden von Grenzen? Diana Baumrinds Forschung zeigt: Autoritativer Erziehungsstil (nicht autoritär, nicht permissiv) — also hohe Wärme bei gleichzeitig klaren Strukturen — ist die robusteste Basis für gelingende Teenager-Jahre. Aber die Umsetzung ist schwer: Wie setzt man Grenzen, ohne Kontrolle zu üben? Wie bleibt man zugänglich, ohne Grenzen aufzulösen? Wie reagiert man auf Ablehnung, ohne sich zurückzuziehen? Was bräuchte es in ${famLabel}, damit Eltern mehr Beziehungspartner als Regelwächter sind — und der Teenager mehr offene Türen findet als Wände?`
+        : `What makes parents genuine companions during the teenage years — not merely administrators of boundaries? Diana Baumrind's research shows: authoritative parenting style (not authoritarian, not permissive) — high warmth combined with clear structures — is the most robust foundation for successful teenage years. But the practice is hard: how do you set limits without exercising control? How do you remain accessible without dissolving limits? How do you respond to rejection without withdrawing? What would it take in ${famLabel} for parents to be more relational partners than rule enforcers — and for the teenager to find more open doors than walls?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Teenager testen Grenzen nicht, weil sie Eltern herausfordern wollen — sie testen sie, weil sie wissen müssen, ob die Verbindung stark genug ist, um Konflikte zu überstehen. Das Halten der Beziehung unter Druck ist die eigentliche Erziehungsarbeit dieser Phase.'
+        : 'Teenagers do not test limits because they want to challenge their parents — they test them because they need to know whether the connection is strong enough to survive conflict. Holding the relationship under pressure is the real parenting work of this phase.',
+      fachgebiet: currentLang === 'de'
+        ? 'Diana Baumrind (Autoritativer vs. autoritärer Erziehungsstil), John Gottman (Emotion Coaching), Ross Greene (kollabierende Grenzen, Collaborative Problem Solving), Gewaltfreie Kommunikation (Rosenberg) mit Teenagern, elterliche Mentalisierungsfähigkeit'
+        : 'Diana Baumrind (authoritative vs. authoritarian parenting), John Gottman (emotion coaching), Ross Greene (collaborative problem solving), nonviolent communication (Rosenberg) with teenagers, parental mentalization capacity'
+    },
+    {
+      name: currentLang === 'de' ? 'Zukunfts-Lotsin' : 'Future Navigator',
+      position: currentLang === 'de'
+        ? `Wie hilft ${famLabel} einem Teenager, eine eigene Zukunft zu bauen — ohne den Druck, die Erwartungen der Familie zu erfüllen oder zu enttäuschen? Der Zukunftsdruck auf Jugendliche hat in den letzten Jahren massiv zugenommen: Schulnoten, Berufsperspektiven, soziale Vergleiche über Social Media. William Damon (The Path to Purpose) zeigt: Jugendliche, die eine eigene Sinn-Richtung entwickeln — nicht von außen aufgezwungen, sondern von innen gewachsen — sind resilienter, motivierter und gesünder. Was interessiert diesen Teenager wirklich? Wo leuchtet etwas auf? Und wie könnte die Familie weniger Karriereberater und mehr Möglichkeitsräum-Öffner sein — Begleiter beim Entdecken statt Wegweiser zu vorgezeichneten Zielen?`
+        : `How does ${famLabel} help a teenager build their own future — without the pressure of fulfilling or disappointing the family's expectations? The pressure on young people regarding their future has massively increased in recent years: school grades, career prospects, social comparisons via social media. William Damon (The Path to Purpose) shows: teenagers who develop their own sense of direction — not imposed from outside but grown from within — are more resilient, more motivated, and healthier. What genuinely interests this teenager? Where does something light up? And how might the family be less career advisor and more opener of possibility spaces — companions in discovering rather than signposts toward predetermined destinations?`,
+      grundhaltung: currentLang === 'de'
+        ? 'Die wichtigste Frage an einen Teenager ist nicht "Was willst du werden?" — sie ist "Was interessiert dich gerade wirklich?" Sinn entsteht nicht aus Plänen, sondern aus Begegnungen mit dem, was einen lebendig macht.'
+        : 'The most important question to ask a teenager is not "What do you want to become?" — it is "What genuinely interests you right now?" Purpose does not arise from plans, but from encounters with what makes one feel alive.',
+      fachgebiet: currentLang === 'de'
+        ? 'William Damon (The Path to Purpose, Sinnentwicklung in der Jugend), berufsbiographische Begleitung, Carol Dweck (Growth Mindset und Versagensangst), Martin Seligman (PERMA-Modell in der Adoleszenz), Self-Compassion (Neff) bei Leistungsdruck, Digital Mental Health'
+        : 'William Damon (The Path to Purpose, meaning development in youth), vocational biography guidance, Carol Dweck (growth mindset and fear of failure), Martin Seligman (PERMA model in adolescence), self-compassion (Neff) under performance pressure, digital mental health'
+    }
+  ];
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  resultsDiv.innerHTML = `<div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div><span>${currentLang === 'de' ? 'JUGEND-TiSCH wird geöffnet...' : 'Opening the youth space...'}</span></div>`;
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const payload = {
+      question:            frage,
+      table_name:          famName || 'JUGEND-TiSCH',
+      custom_perspectives: jugendPerspektiven,
+      stil:                'systemisch',
+      tone:                currentTone,
+      source_app:          'FAMiLiEN-TiSCH',
+      lang:                currentLang
+    };
+
+    const res = await fetch(`${API_BASE}/api/ask-table`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+
+    resultsDiv.innerHTML = '';
+
+    const jugendPerspDefs = [
+      { id: 'identitaets-begleiterin', icon: 'mirror',   color: '#5B7EA6', de: 'Identitäts-Begleiterin', en: 'Identity Guide'     },
+      { id: 'autonomie-brueckerin',    icon: 'compass',  color: '#4A6E95', de: 'Autonomie-Brückerin',    en: 'Autonomy Bridge'    },
+      { id: 'eltern-navigatorin',      icon: 'network',  color: '#6A8EB5', de: 'Eltern-Navigatorin',     en: 'Parent Navigator'   },
+      { id: 'zukunfts-lotsin',         icon: 'seedling', color: '#395E84', de: 'Zukunfts-Lotsin',        en: 'Future Navigator'   }
+    ];
+
+    const apiPerspectives = data.perspectives || [];
+    if (apiPerspectives.length > 0) {
+      apiPerspectives.forEach((r, i) => {
+        const rolle2 = (r.rolle || '').replace(/^\[(custom|method)\]/, '');
+        const pDef   = jugendPerspDefs[i] || jugendPerspDefs[0];
+        const card   = createResultCard(pDef, rolle2 || (currentLang === 'de' ? pDef.de : pDef.en));
+        card.querySelector('.streaming-text').textContent = r.kernanalyse || '';
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    appendIntegrationCards(data.integration || {}, resultsDiv, {
+      synthesisTitle:    currentLang === 'de' ? 'EuER JUGEND-TiSCH' : 'YOUR YOUTH SPACE',
+      synthesisSubtitle: currentLang === 'de' ? famLabel : famLabel,
+      synthesisColor:    '#5B7EA6',
+    });
+
+    const kiDiv = document.createElement('div');
+    kiDiv.className = 'kintegrity';
+    kiDiv.style.marginTop = '16px';
+    kiDiv.innerHTML = `
+      <div class="kintegrity-title">kiNTEGRiTY</div>
+      <div class="kintegrity-items">
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="3.5"/><path d="M4 18c0-3.5 2.7-6 6-6s6 2.5 6 6"/></svg> ${currentLang === 'de' ? 'Jugendliche sind Experten für ihr eigenes Erleben — diese Impulse sind Einladungen, keine Antworten' : 'Young people are experts on their own experience — these impulses are invitations, not answers'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 17s-7-4.5-7-9a4 4 0 018 0 4 4 0 018 0c0 4.5-7 9-7 9z"/></svg> ${currentLang === 'de' ? 'Kein Rückzug ist persönliche Ablehnung — es ist Entwicklung' : 'No withdrawal is personal rejection — it is development'}</div>
+        <div class="kintegrity-item"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="14" height="8" rx="2"/><path d="M7 11V7a3 3 0 016 0v4"/></svg> ${currentLang === 'de' ? 'Bei psychischen Belastungen, Selbstverletzung oder tiefem Rückzug: professionelle Unterstützung suchen' : 'For mental distress, self-harm or deep withdrawal: seek professional support'}</div>
+      </div>
+    `;
+    resultsDiv.appendChild(kiDiv);
+
+    saveHistory({
+      question:     text.substring(0, 80) + (text.length > 80 ? '...' : ''),
+      perspectives: ['identitaets-begleiterin', 'autonomie-brueckerin', 'eltern-navigatorin', 'zukunfts-lotsin'],
       lang:         currentLang,
       time:         Date.now()
     });
