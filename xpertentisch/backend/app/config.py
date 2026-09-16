@@ -1,8 +1,13 @@
 """Konfiguration für XPERTENTiSCH.
 
-Alle Einstellungen kommen aus Umgebungsvariablen. Ein zentrales Prinzip:
-Test-Fakes (`fake`-Provider) dürfen im Produktionsmodus niemals unbemerkt
-für echte Provider einspringen. Dafür sorgt `Settings.validate()`.
+Die Grundeinstellungen kommen aus Umgebungsvariablen. Zugangsdaten und
+Modellnamen lassen sich zusätzlich zur Laufzeit über die Einstellungsseite
+setzen; solche Werte liegen in der Datenbank und haben Vorrang vor der
+Umgebung (`overrides`).
+
+Ein zentrales Prinzip bleibt: Test-Fakes (`fake`-Provider) dürfen im
+Produktionsmodus niemals unbemerkt für echte Provider einspringen. Dafür
+sorgt `Settings.validate()`.
 """
 
 from __future__ import annotations
@@ -53,15 +58,35 @@ class Settings:
     openai_base_url: str | None = None
     anthropic_api_key: str | None = None
     request_timeout_s: int = 120
+    #: Wie viele Aufträge ein Anbieter gleichzeitig bearbeitet.
+    provider_concurrency: int = 1
     max_prompt_chars: int = 20000
     cors_origins: list[str] = field(default_factory=list)
     models: list[ModelConfig] = field(default_factory=list)
+    #: Token für die Einstellungsseite. Ohne dieses Token bleibt sie gesperrt.
+    admin_token: str | None = None
+    #: Zur Laufzeit gesetzte Werte aus der Datenbank. Vorrang vor der Umgebung.
+    overrides: dict[str, str] = field(default_factory=dict)
 
     @property
     def is_production(self) -> bool:
         return self.env == "production"
 
+    # ------------------------------------------------- Aufgelöste Einstellungen
+
+    @property
+    def resolved_timeout_s(self) -> int:
+        roh = (self.overrides.get("request_timeout_s") or "").strip()
+        if roh.isdigit() and 5 <= int(roh) <= 600:
+            return int(roh)
+        return self.request_timeout_s
+
+    @property
+    def timeout_source(self) -> str:
+        return "einstellungen" if self.overrides.get("request_timeout_s") else "umgebung"
+
     def enabled_models(self) -> list[ModelConfig]:
+        """Nur noch für den Test- und Entwicklungsbetrieb mit festem Tisch."""
         return [m for m in self.models if m.enabled]
 
     def model_by_id(self, model_id: str) -> ModelConfig | None:
@@ -85,32 +110,6 @@ class Settings:
                     "aber XT_ALLOW_FAKE_PROVIDERS ist nicht gesetzt."
                 )
 
-    def missing_credentials(self) -> list[str]:
-        """Provider, die konfiguriert sind, aber keine Zugangsdaten haben."""
-        missing: list[str] = []
-        providers = {m.provider for m in self.enabled_models()}
-        if "openai" in providers and not self.openai_api_key:
-            missing.append("OPENAI_API_KEY")
-        if "anthropic" in providers and not self.anthropic_api_key:
-            missing.append("ANTHROPIC_API_KEY")
-        return missing
-
-
-DEFAULT_MODELS = [
-    ModelConfig(
-        id="openai-gpt",
-        label="OpenAI GPT",
-        provider="openai",
-        model=os.environ.get("XT_OPENAI_MODEL", "gpt-4.1"),
-    ),
-    ModelConfig(
-        id="anthropic-claude",
-        label="Anthropic Claude",
-        provider="anthropic",
-        model=os.environ.get("XT_ANTHROPIC_MODEL", "claude-sonnet-4-5"),
-    ),
-]
-
 FAKE_MODELS = [
     ModelConfig(id="fake-a", label="Fake A", provider="fake", model="fake-fast"),
     ModelConfig(id="fake-b", label="Fake B", provider="fake", model="fake-slow"),
@@ -133,7 +132,8 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
             "XT_USE_FAKE_MODELS verlangt zusätzlich XT_ALLOW_FAKE_PROVIDERS=1."
         )
 
-    models = list(FAKE_MODELS) if use_fake_models else list(DEFAULT_MODELS)
+    # Leere Liste heißt: der Tisch kommt aus der Anbietertabelle der Datenbank.
+    models = list(FAKE_MODELS) if use_fake_models else []
 
     cors_raw = os.environ.get("XT_CORS_ORIGINS", "").strip()
     cors = [o.strip() for o in cors_raw.split(",") if o.strip()]
@@ -148,9 +148,11 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         openai_base_url=os.environ.get("OPENAI_BASE_URL") or None,
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY") or None,
         request_timeout_s=_env_int("XT_REQUEST_TIMEOUT_S", 120),
+        provider_concurrency=max(1, _env_int("XT_PROVIDER_CONCURRENCY", 1)),
         max_prompt_chars=_env_int("XT_MAX_PROMPT_CHARS", 20000),
         cors_origins=cors,
         models=models,
+        admin_token=(os.environ.get("XT_ADMIN_TOKEN") or "").strip() or None,
     )
     settings.validate()
     return settings

@@ -13,7 +13,7 @@ import asyncio
 import hashlib
 from dataclasses import dataclass, field
 
-from .base import Provider, ProviderError, ProviderResponse
+from .base import OnDelta, Provider, ProviderError, ProviderResponse
 
 
 @dataclass
@@ -26,10 +26,17 @@ class FakeScenario:
     partial_text: str = ""
     #: Zählt die tatsächlichen Aufrufe – Grundlage für den Doppelaufruf-Test.
     calls: list[str] = field(default_factory=list)
+    #: In so viele Stücke zerfällt die Antwort beim Streamen.
+    chunks: int = 1
+    #: Pause zwischen den Stücken.
+    chunk_delay_s: float = 0.0
+    tokens_in: int | None = None
+    tokens_out: int | None = None
 
 
 class FakeProvider(Provider):
     name = "fake"
+    streams = True
 
     #: Szenarien je Modellname, global setzbar (Tests).
     scenarios: dict[str, FakeScenario] = {}
@@ -48,7 +55,14 @@ class FakeProvider(Provider):
         scenario = cls.scenarios.get(model)
         return len(scenario.calls) if scenario else 0
 
-    async def complete(self, *, prompt: str, model: str, timeout_s: int) -> ProviderResponse:
+    async def complete(
+        self,
+        *,
+        prompt: str,
+        model: str,
+        timeout_s: int,
+        on_delta: OnDelta | None = None,
+    ) -> ProviderResponse:
         scenario = self.scenarios.get(model) or FakeScenario()
         scenario.calls.append(prompt)
 
@@ -56,10 +70,25 @@ class FakeProvider(Provider):
             await asyncio.sleep(scenario.delay_s)
 
         if scenario.error:
+            if on_delta and scenario.partial_text:
+                on_delta(scenario.partial_text)
             raise ProviderError(scenario.error, partial_text=scenario.partial_text)
 
         text = scenario.text if scenario.text is not None else _canned_answer(prompt, model)
-        return ProviderResponse(text=text, partial=scenario.partial)
+
+        if on_delta and scenario.chunks > 1:
+            groesse = max(1, len(text) // scenario.chunks)
+            for start in range(0, len(text), groesse):
+                on_delta(text[start:start + groesse])
+                if scenario.chunk_delay_s:
+                    await asyncio.sleep(scenario.chunk_delay_s)
+        elif on_delta:
+            on_delta(text)
+
+        return ProviderResponse(
+            text=text, partial=scenario.partial,
+            tokens_in=scenario.tokens_in, tokens_out=scenario.tokens_out,
+        )
 
 
 def _canned_answer(prompt: str, model: str) -> str:

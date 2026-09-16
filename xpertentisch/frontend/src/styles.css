@@ -1,52 +1,107 @@
-/* XPERTENTiSCH — Glasoberfläche.
-   Grundregeln gegen horizontale Überbreite:
+/* XPERTENTiSCH — Werkbank.
+   Eine ruhige, warme Fläche; darauf körperhafte Karten mit einer farbigen
+   Kante oben, die den Zustand trägt. Farbe wird sparsam und immer bedeutungs-
+   tragend eingesetzt: Grün Übereinstimmung, Orange Widerspruch, Violett
+   Einzelaussage. Die Marke selbst ist tiefblau und mischt sich da nicht ein.
+
+   Regeln gegen horizontale Überbreite:
    - jedes Rasterkind bekommt min-width: 0
    - Fließtext bricht mit overflow-wrap: anywhere
    - breite Elemente (Tabelle, Diagramm) bekommen einen eigenen Scrollbereich
 */
 
 :root {
-  color-scheme: dark;
-  --bg-1: #0b1020;
-  --bg-2: #141a33;
-  --bg-3: #1d2647;
-  --glass: rgba(255, 255, 255, 0.07);
-  --glass-strong: rgba(255, 255, 255, 0.12);
-  --edge: rgba(255, 255, 255, 0.16);
-  --ink: #eef1f8;
-  --muted: #a6afc7;
-  --accent: #7fd8ff;
-  --agree: #56d9a3;
-  --contra: #ff8a78;
-  --unique: #c9a7ff;
-  --warn: #ffd37f;
-  --radius: 18px;
-  --shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
-  --pad: clamp(14px, 3vw, 26px);
+  color-scheme: light;
+
+  --flaeche: #e9e7e2;
+  --flaeche-tief: #dedbd4;
+  --karte: #ffffff;
+  --karte-matt: #f6f4f0;
+  --tinte: #1c1b19;
+  --tinte-matt: #6b6862;
+  --linie: #d5d1c8;
+  --linie-kraeftig: #bdb8ac;
+
+  --marke: #1e3a5f;
+  --marke-hell: #e7edf5;
+  --einig: #15803d;
+  --einig-hell: #e4f2e8;
+  --gegen: #c2410c;
+  --gegen-hell: #fbeadf;
+  --einzeln: #6d28d9;
+  --einzeln-hell: #eee9fb;
+  --achtung: #92600a;
+  --achtung-hell: #f8eed9;
+
+  --radius: 10px;
+  --radius-klein: 6px;
+  --kante: 4px;
+  --schatten: 0 1px 2px rgba(28, 27, 25, 0.06), 0 8px 20px rgba(28, 27, 25, 0.07);
+  --schatten-tief: 0 2px 4px rgba(28, 27, 25, 0.08), 0 16px 34px rgba(28, 27, 25, 0.12);
+  --pad: clamp(16px, 2.4vw, 24px);
+
+  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) {
-    color-scheme: light;
-    --bg-1: #eef1fa;
-    --bg-2: #e3e9f7;
-    --bg-3: #dbe3f6;
-    --glass: rgba(255, 255, 255, 0.62);
-    --glass-strong: rgba(255, 255, 255, 0.82);
-    --edge: rgba(24, 33, 64, 0.16);
-    --ink: #161c2e;
-    --muted: #515b78;
-    --accent: #1667a8;
-    --agree: #16794f;
-    --contra: #b13c2b;
-    --unique: #6641ab;
-    --warn: #8a6300;
-    --shadow: 0 16px 36px rgba(28, 40, 80, 0.16);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --flaeche: #191817;
+    --flaeche-tief: #121111;
+    --karte: #232221;
+    --karte-matt: #2b2a28;
+    --tinte: #edeae4;
+    --tinte-matt: #a39e95;
+    --linie: #3a3836;
+    --linie-kraeftig: #4e4b47;
+    --marke: #7fa9d9;
+    --marke-hell: #24313f;
+    --einig: #5fbf82;
+    --einig-hell: #1e2f25;
+    --gegen: #f08a5d;
+    --gegen-hell: #38251c;
+    --einzeln: #b49bf0;
+    --einzeln-hell: #2b2440;
+    --achtung: #e0b45f;
+    --achtung-hell: #362c19;
+    --schatten: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.32);
+    --schatten-tief: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 34px rgba(0, 0, 0, 0.44);
   }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --flaeche: #191817;
+  --flaeche-tief: #121111;
+  --karte: #232221;
+  --karte-matt: #2b2a28;
+  --tinte: #edeae4;
+  --tinte-matt: #a39e95;
+  --linie: #3a3836;
+  --linie-kraeftig: #4e4b47;
+  --marke: #7fa9d9;
+  --marke-hell: #24313f;
+  --einig: #5fbf82;
+  --einig-hell: #1e2f25;
+  --gegen: #f08a5d;
+  --gegen-hell: #38251c;
+  --einzeln: #b49bf0;
+  --einzeln-hell: #2b2440;
+  --achtung: #e0b45f;
+  --achtung-hell: #362c19;
+  --schatten: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.32);
+  --schatten-tief: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 34px rgba(0, 0, 0, 0.44);
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Muss die Anzeigearten der Bausteine schlagen: ein Element mit display:flex
+   würde das eingebaute [hidden] sonst überstimmen. */
+[hidden] {
+  display: none !important;
 }
 
 html,
@@ -58,122 +113,175 @@ body {
 
 body {
   min-height: 100svh;
-  background:
-    radial-gradient(1100px 600px at 12% -10%, var(--bg-3), transparent 60%),
-    radial-gradient(900px 520px at 100% 0%, var(--bg-2), transparent 55%),
-    var(--bg-1);
-  background-attachment: fixed;
-  color: var(--ink);
-  font: 16px/1.62 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, 'Noto Sans', sans-serif;
+  background: var(--flaeche);
+  color: var(--tinte);
+  font: 400 16px/1.6 var(--schrift);
   -webkit-font-smoothing: antialiased;
 }
 
 #app {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: clamp(16px, 4vw, 40px) clamp(12px, 3vw, 28px) 96px;
+  padding-block: clamp(20px, 3vw, 36px) 96px;
+  padding-inline: clamp(16px, 3vw, 32px);
 }
 
 .boot {
-  color: var(--muted);
+  color: var(--tinte-matt);
   text-align: center;
   padding: 80px 0;
 }
 
-/* ------------------------------------------------------------------ Glas */
+/* ------------------------------------------------------------------- Flächen */
 
-.glass {
-  background: var(--glass);
-  border: 1px solid var(--edge);
+.flaeche {
+  background: var(--karte);
+  border: 1px solid var(--linie);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: var(--schatten);
   padding: var(--pad);
   min-width: 0;
 }
 
-/* ------------------------------------------------------------------ Kopf */
+/* -------------------------------------------------------------------- Kopf */
 
 header.top {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 18px;
-  align-items: baseline;
+  gap: 14px 20px;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 18px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--linie-kraeftig);
 }
 
 header.top h1 {
-  font-size: clamp(1.4rem, 5vw, 2.05rem);
-  letter-spacing: 0.06em;
+  font-size: clamp(1.5rem, 4.4vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
   margin: 0;
-  font-weight: 650;
   min-width: 0;
   overflow-wrap: anywhere;
+  color: var(--tinte);
 }
 
 header.top h1 span {
-  color: var(--accent);
+  color: var(--marke);
 }
 
 .sub {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 2px 0 0;
+  color: var(--tinte-matt);
+  font-size: 0.86rem;
+  margin: 4px 0 0;
 }
 
 .statusline {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px 10px;
   align-items: center;
-  font-size: 0.82rem;
-  color: var(--muted);
+  font-size: 0.78rem;
+  color: var(--tinte-matt);
   min-width: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: var(--muted);
+  background: var(--tinte-matt);
   flex: none;
 }
-.dot.ok { background: var(--agree); }
-.dot.warn { background: var(--warn); }
-.dot.err { background: var(--contra); }
+.dot.ok { background: var(--einig); }
+.dot.warn { background: var(--achtung); }
+.dot.err { background: var(--gegen); }
 
-/* ---------------------------------------------------------------- Eingabe */
+/* ------------------------------------------------------------- Bedienelemente */
 
-.spark {
-  display: grid;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.spark textarea {
-  width: 100%;
-  max-width: 100%;
-  min-height: 116px;
-  resize: vertical;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid var(--edge);
-  background: var(--glass-strong);
-  color: var(--ink);
+button,
+.btn {
+  appearance: none;
+  border: 1px solid var(--linie-kraeftig);
+  background: var(--karte);
+  color: var(--tinte);
+  border-radius: var(--radius-klein);
+  padding: 9px 16px;
   font: inherit;
-  line-height: 1.55;
+  font-size: 0.88rem;
+  font-weight: 550;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
 }
 
-.spark textarea:focus-visible,
+button:hover:not(:disabled),
+.btn:hover {
+  background: var(--karte-matt);
+  border-color: var(--tinte-matt);
+}
+
+button.primary {
+  background: var(--marke);
+  border-color: var(--marke);
+  color: var(--karte);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--tinte);
+  border-color: var(--tinte);
+  color: var(--karte);
+}
+
+button.gefahr {
+  color: var(--gegen);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--accent);
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--marke);
   outline-offset: 2px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-klein);
+  border: 1px solid var(--linie-kraeftig);
+  background: var(--karte);
+  color: var(--tinte);
+  font: inherit;
+  font-size: 0.92rem;
+  min-width: 0;
+}
+
+input[type='checkbox'] {
+  width: auto;
+  accent-color: var(--marke);
+}
+
+label {
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinte-matt);
 }
 
 .row {
@@ -188,39 +296,39 @@ input:focus-visible {
   justify-content: space-between;
 }
 
-button,
-.btn {
-  appearance: none;
-  border: 1px solid var(--edge);
-  background: var(--glass-strong);
-  color: var(--ink);
-  border-radius: 999px;
-  padding: 9px 18px;
-  font: inherit;
-  font-size: 0.92rem;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: transform 0.12s ease, border-color 0.12s ease;
+.iconbutton {
+  padding: 8px 11px;
+  font-size: 0.95rem;
+  line-height: 1;
+  flex: none;
 }
 
-button:hover:not(:disabled),
-.btn:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
+.hint {
+  color: var(--tinte-matt);
+  font-size: 0.82rem;
+  margin: 0;
+  line-height: 1.55;
 }
 
-button.primary {
-  background: linear-gradient(135deg, rgba(127, 216, 255, 0.28), rgba(201, 167, 255, 0.24));
-  border-color: rgba(127, 216, 255, 0.5);
-  font-weight: 600;
+.hint.error {
+  color: var(--gegen);
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* ------------------------------------------------------------------ Eingabe */
+
+.spark {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 28px;
+  border-top: var(--kante) solid var(--marke);
+  padding-top: calc(var(--pad) - 2px);
+}
+
+.spark textarea {
+  min-height: 108px;
+  resize: vertical;
+  line-height: 1.55;
+  font-size: 1rem;
 }
 
 .modelpicker {
@@ -233,78 +341,83 @@ button:disabled {
 .modelpicker label {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.85rem;
-  padding: 6px 12px;
-  border: 1px solid var(--edge);
-  border-radius: 999px;
-  background: var(--glass);
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--tinte);
+  padding: 7px 12px;
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  background: var(--karte-matt);
   cursor: pointer;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
 
-.hint {
-  color: var(--muted);
-  font-size: 0.82rem;
-  margin: 0;
-}
-
-.hint.error {
-  color: var(--contra);
-}
-
-/* ---------------------------------------------------------------- Funken */
+/* ------------------------------------------------------------------- Funken */
 
 .spark-block {
-  margin: 26px 0;
+  margin: 32px 0;
 }
 
 .spark-block > h2 {
-  font-size: 1rem;
-  letter-spacing: 0.08em;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--tinte-matt);
   margin: 0 0 10px;
-  font-weight: 600;
 }
 
 .question {
-  margin: 0 0 14px;
-  padding: 12px 16px;
-  border-left: 3px solid var(--accent);
-  background: var(--glass);
-  border-radius: 0 12px 12px 0;
+  margin: 0 0 18px;
+  padding: 0 0 0 16px;
+  border-left: var(--kante) solid var(--linie-kraeftig);
+  font-size: 1.12rem;
+  font-weight: 550;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-/* --------------------------------------------------------- Modellkarten */
+/* -------------------------------------------------------------- Modellkarten */
 
 .cards {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
   scroll-margin-top: 16px;
+  border-top: var(--kante) solid var(--linie-kraeftig);
+  padding-top: calc(var(--pad) - 2px);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
+
+.card.zustand-done { border-top-color: var(--einig); }
+.card.zustand-error { border-top-color: var(--gegen); }
+.card.zustand-interrupted { border-top-color: var(--achtung); }
+.card.zustand-running,
+.card.zustand-queued { border-top-color: var(--marke); }
 
 .card.highlight {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(127, 216, 255, 0.35), var(--shadow);
+  box-shadow: var(--schatten-tief);
+  border-color: var(--marke);
 }
 
-.card header {
+.card > header {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   min-width: 0;
 }
@@ -312,6 +425,8 @@ button:disabled {
 .card h3 {
   margin: 0;
   font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -324,19 +439,24 @@ button:disabled {
 }
 
 .tag {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  padding: 3px 9px;
-  border-radius: 999px;
-  border: 1px solid var(--edge);
-  color: var(--muted);
+  padding: 3px 8px;
+  border-radius: var(--radius-klein);
+  background: var(--karte-matt);
+  border: 1px solid var(--linie);
+  color: var(--tinte-matt);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
-.tag.done { color: var(--agree); border-color: rgba(86, 217, 163, 0.45); }
-.tag.error { color: var(--contra); border-color: rgba(255, 138, 120, 0.5); }
-.tag.interrupted { color: var(--warn); border-color: rgba(255, 211, 127, 0.5); }
-.tag.partial { color: var(--warn); border-color: rgba(255, 211, 127, 0.5); }
+.tag.done { color: var(--einig); background: var(--einig-hell); border-color: transparent; }
+.tag.error { color: var(--gegen); background: var(--gegen-hell); border-color: transparent; }
+.tag.interrupted,
+.tag.partial { color: var(--achtung); background: var(--achtung-hell); border-color: transparent; }
+.tag.running,
+.tag.queued { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
 
 .answer {
   white-space: pre-wrap;
@@ -344,43 +464,56 @@ button:disabled {
   word-break: normal;
   margin: 0;
   font-size: 0.95rem;
+  line-height: 1.62;
   max-height: 460px;
   overflow-y: auto;
-  padding-right: 4px;
 }
 
+/* Marker liegen als Fläche über dem Text — der Text selbst bleibt unverändert. */
 .answer mark {
   background: transparent;
   color: inherit;
-  border-bottom: 2px solid currentColor;
-  padding-bottom: 1px;
+  padding: 1px 2px;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
-.answer mark.uebereinstimmung { color: var(--agree); }
-.answer mark.widerspruch { color: var(--contra); }
-.answer mark.einzigartig { color: var(--unique); }
+.answer mark.uebereinstimmung {
+  background: var(--einig-hell);
+  box-shadow: inset 0 -2px 0 var(--einig);
+}
+.answer mark.widerspruch {
+  background: var(--gegen-hell);
+  box-shadow: inset 0 -2px 0 var(--gegen);
+}
+.answer mark.einzigartig {
+  background: var(--einzeln-hell);
+  box-shadow: inset 0 -2px 0 var(--einzeln);
+}
 
 .errorbox {
   margin: 0;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 138, 120, 0.45);
-  background: rgba(255, 138, 120, 0.1);
-  color: var(--contra);
-  font-size: 0.88rem;
+  padding: 10px 12px;
+  border-radius: var(--radius-klein);
+  border-left: 3px solid var(--gegen);
+  background: var(--gegen-hell);
+  color: var(--tinte);
+  font-size: 0.86rem;
   overflow-wrap: anywhere;
 }
 
 .skeleton {
-  height: 12px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, var(--glass), var(--glass-strong), var(--glass));
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--karte-matt), var(--flaeche-tief), var(--karte-matt));
   background-size: 220% 100%;
-  animation: shimmer 1.5s linear infinite;
+  animation: schimmer 1.6s linear infinite;
 }
-.skeleton + .skeleton { margin-top: 8px; width: 82%; }
+.skeleton + .skeleton { margin-top: 9px; width: 84%; }
+.skeleton + .skeleton + .skeleton { width: 62%; }
 
-@keyframes shimmer {
+@keyframes schimmer {
   from { background-position: 180% 0; }
   to { background-position: -40% 0; }
 }
@@ -389,29 +522,34 @@ button:disabled {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-/* ---------------------------------------------------- Tabelle & Diagramm */
+/* ------------------------------------------------------ Tabelle und Diagramm */
 
 .panel-grid {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   align-items: start;
-  margin-top: 14px;
+  margin-top: 18px;
 }
 
-/* Auf breiten Schirmen bekommt die Tabelle mehr Platz als das Diagramm. */
-@media (min-width: 760px) {
+@media (min-width: 780px) {
   .panel-grid {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
   }
 }
 
+.panel {
+  border-top: var(--kante) solid var(--linie-kraeftig);
+  padding-top: calc(var(--pad) - 2px);
+}
+
 .panel h4 {
-  margin: 0 0 10px;
-  font-size: 0.82rem;
-  letter-spacing: 0.08em;
+  margin: 0 0 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--tinte-matt);
 }
 
 .tablewrap {
@@ -425,27 +563,42 @@ table {
   border-collapse: collapse;
   font-size: 0.84rem;
   min-width: 420px;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
 }
 
 th,
 td {
-  text-align: left;
-  padding: 7px 8px;
-  border-bottom: 1px solid var(--edge);
+  text-align: right;
+  padding: 8px;
+  border-bottom: 1px solid var(--linie);
   white-space: nowrap;
 }
 
+th:first-child,
+td:first-child,
+th:nth-child(2),
+td:nth-child(2) {
+  text-align: left;
+}
+
 th {
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.76rem;
+  color: var(--tinte-matt);
+  font-weight: 700;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  border-bottom-color: var(--linie-kraeftig);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
 }
 
 td.name {
   white-space: normal;
   overflow-wrap: anywhere;
+  font-weight: 600;
 }
 
 .graphwrap {
@@ -465,22 +618,31 @@ svg.graph .node {
   cursor: pointer;
 }
 
+/* Der Standard-Fokusrahmen umschließt bei SVG-Gruppen den ganzen Kasten und
+   erscheint auch nach einem Mausklick. Wir zeichnen stattdessen selbst — und
+   nur bei Bedienung über die Tastatur. */
+svg.graph .node:focus,
+svg.graph .edge:focus {
+  outline: none;
+}
+
 svg.graph .node circle {
-  fill: var(--glass-strong);
-  stroke: var(--edge);
+  fill: var(--karte-matt);
+  stroke: var(--linie-kraeftig);
   stroke-width: 1.5;
   transition: stroke 0.15s ease;
 }
 
 svg.graph .node:hover circle,
-svg.graph .node:focus circle {
-  stroke: var(--accent);
+svg.graph .node:focus-visible circle {
+  stroke: var(--marke);
   stroke-width: 2.5;
 }
 
 svg.graph .node text {
-  fill: var(--ink);
+  fill: var(--tinte);
   font-size: 11px;
+  font-weight: 600;
   text-anchor: middle;
   pointer-events: none;
 }
@@ -490,11 +652,11 @@ svg.graph .edge {
   stroke-linecap: round;
 }
 
-svg.graph .edge.agree line { stroke: var(--agree); }
-svg.graph .edge.contra line { stroke: var(--contra); }
+svg.graph .edge.agree line { stroke: var(--einig); }
+svg.graph .edge.contra line { stroke: var(--gegen); }
 svg.graph .edge line { transition: stroke-width 0.12s ease; }
 svg.graph .edge:hover line,
-svg.graph .edge:focus line { stroke-width: 7; }
+svg.graph .edge:focus-visible line { stroke-width: 7; }
 
 svg.graph .edge-hit {
   fill: transparent;
@@ -503,73 +665,75 @@ svg.graph .edge-hit {
 }
 
 svg.graph .edge:hover .edge-hit,
-svg.graph .edge:focus .edge-hit {
+svg.graph .edge:focus-visible .edge-hit {
   fill: currentColor;
-  fill-opacity: 0.18;
+  fill-opacity: 0.16;
 }
 
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 16px;
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-top: 10px;
+  gap: 8px 14px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--tinte-matt);
+  margin-top: 12px;
 }
 
 .legend span::before {
   content: '';
   display: inline-block;
-  width: 10px;
-  height: 3px;
+  width: 12px;
+  height: 8px;
   border-radius: 2px;
   margin-right: 6px;
   vertical-align: middle;
   background: currentColor;
 }
 
-.legend .l-agree { color: var(--agree); }
-.legend .l-contra { color: var(--contra); }
-.legend .l-unique { color: var(--unique); }
+.legend .l-agree { color: var(--einig); }
+.legend .l-contra { color: var(--gegen); }
+.legend .l-unique { color: var(--einzeln); }
 
-/* ------------------------------------------------------------- Abschluss */
+/* --------------------------------------------------------------- Hinweise */
+
+.banner {
+  border-top: var(--kante) solid var(--achtung);
+  padding-top: calc(var(--pad) - 2px);
+  margin-bottom: 20px;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.banner .hint {
+  color: var(--tinte);
+}
+
+/* --------------------------------------------------------------- Abschluss */
 
 .closing {
-  margin-top: 28px;
+  margin-top: 36px;
   display: grid;
-  gap: 12px;
+  gap: 14px;
+  border-top: var(--kante) solid var(--linie-kraeftig);
+  padding-top: calc(var(--pad) - 2px);
 }
 
 .closing textarea {
-  width: 100%;
-  max-width: 100%;
-  min-height: 84px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid var(--edge);
-  background: var(--glass-strong);
-  color: var(--ink);
-  font: inherit;
+  min-height: 80px;
 }
 
 .closed-banner {
-  border-color: rgba(255, 211, 127, 0.45);
-  color: var(--warn);
-}
-
-.testbanner {
-  border-color: rgba(255, 211, 127, 0.55);
-  background: rgba(255, 211, 127, 0.1);
-  color: var(--warn);
-  font-size: 0.85rem;
-  margin-bottom: 16px;
+  border-top-color: var(--achtung);
 }
 
 footer.foot {
-  margin-top: 40px;
-  color: var(--muted);
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--linie);
+  color: var(--tinte-matt);
   font-size: 0.78rem;
-  text-align: center;
   overflow-wrap: anywhere;
 }
 
@@ -585,8 +749,343 @@ footer.foot {
   border: 0;
 }
 
-@media (max-width: 480px) {
-  .row.spread { gap: 8px; }
-  button, .btn { padding: 9px 14px; font-size: 0.88rem; }
-  .answer { max-height: 340px; }
+/* ----------------------------------------------------------- Einstellungen */
+
+.settings {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 28px;
+  border-top: var(--kante) solid var(--marke);
+  padding-top: calc(var(--pad) - 2px);
 }
+
+.settings h4 {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinte-matt);
+}
+
+.settings-body {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.anbieter {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--linie-kraeftig);
+  border-radius: var(--radius-klein);
+  background: var(--karte-matt);
+  min-width: 0;
+}
+
+.anbieter.bereit { border-left-color: var(--einig); }
+.anbieter.aus { opacity: 0.72; }
+
+.anbieter-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.anbieter-name {
+  font-weight: 700;
+  font-size: 0.98rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.anbieter-felder {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+
+.feld {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.schalter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 550;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--tinte);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--tinte-matt);
+  font-size: 0.86rem;
+  line-height: 1.75;
+}
+
+.settings details {
+  border: 1px dashed var(--linie-kraeftig);
+  border-radius: var(--radius-klein);
+  padding: 12px 14px;
+}
+
+.settings details[open] {
+  background: var(--karte-matt);
+}
+
+.settings summary {
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--marke);
+}
+
+.settings details .anbieter-felder {
+  margin-top: 12px;
+}
+
+.vorschlaege {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.vorschlaege button {
+  font-size: 0.76rem;
+  padding: 5px 10px;
+}
+
+@media (max-width: 480px) {
+  .answer { max-height: 340px; }
+  button, .btn { padding: 8px 12px; font-size: 0.85rem; }
+  header.top { align-items: flex-start; }
+}
+
+/* ------------------------------------------------------ Bezüge und Kontext */
+
+.bezugsleiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-left: 3px solid var(--marke);
+  background: var(--marke-hell);
+  border-radius: var(--radius-klein);
+  min-width: 0;
+}
+
+.bezug-name {
+  font-weight: 650;
+  font-size: 0.9rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.card-foot {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  border-top: 1px solid var(--linie);
+  padding-top: 10px;
+}
+
+.card-actions button {
+  font-size: 0.78rem;
+  padding: 5px 10px;
+}
+
+details.kontext > summary,
+details.kontext-roh > summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--marke);
+}
+
+.kontext-inhalt {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.kontext-liste {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 0.82rem;
+}
+
+.kontext-liste li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.kontext-liste li.gewaehlt {
+  font-weight: 600;
+}
+
+.kontext-text {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  background: var(--karte-matt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.bezug-zeile {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--tinte-matt);
+  border-radius: var(--radius-klein);
+  margin-bottom: 8px;
+  min-width: 0;
+  font-size: 0.86rem;
+}
+
+.bezug-zeile.bestaetigt { border-left-color: var(--einig); }
+.bezug-zeile.abgelehnt { border-left-color: var(--linie-kraeftig); opacity: 0.66; }
+.bezug-zeile button { font-size: 0.78rem; padding: 5px 10px; }
+
+/* --- Zustände, die beim Bau dazugekommen sind ---------------------------- */
+
+/* „schreibt“ ist ein laufender Zustand: dieselbe ruhige Marke wie „denkt nach“.
+   Abgebrochen ist kein Fehler, sondern eine Entscheidung — darum grau, nicht rot. */
+.card.zustand-streaming { border-top-color: var(--marke); }
+.card.zustand-cancelled { border-top-color: var(--linie-kraeftig); }
+
+.tag.streaming { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
+.tag.cancelled { color: var(--tinte-matt); background: var(--flaeche-tief); border-color: transparent; }
+
+/* Solange geschrieben wird, zeigt ein kleiner Balken, dass der Text noch wächst. */
+.card.zustand-streaming .answer::after {
+  content: '';
+  display: inline-block;
+  width: 0.5ch;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--marke);
+  animation: schreibt 1s steps(2, end) infinite;
+}
+
+@keyframes schreibt { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .card.zustand-streaming .answer::after { animation: none; }
+}
+
+/* --- Entwürfe ------------------------------------------------------------ */
+
+#entwuerfe {
+  display: grid;
+  gap: 10px;
+  border-left: 3px solid var(--achtung);
+}
+
+.entwurf {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  min-width: 0;
+  font-size: 0.86rem;
+}
+
+.entwurf p { margin: 0; overflow-wrap: anywhere; }
+.entwurf .question { font-size: 0.9rem; }
+
+/* --- Wechselgespräch ----------------------------------------------------- */
+
+.pingpong { padding: var(--pad); }
+.pingpong > summary { cursor: pointer; font-weight: 600; }
+.pingpong .feld { margin-top: 10px; }
+
+.pingpong-lauf {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--linie-kraeftig);
+  border-radius: var(--radius-klein);
+  min-width: 0;
+}
+
+.pingpong-lauf.laeuft { border-left-color: var(--marke); }
+.pingpong-lauf.beendet { border-left-color: var(--einig); }
+.pingpong-lauf.gestoppt { border-left-color: var(--achtung); }
+.pingpong-lauf button { justify-self: start; font-size: 0.78rem; padding: 5px 10px; }
+
+.modelpicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.modelpicker label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+}
+
+/* --- Hinweis auf neue Beiträge ------------------------------------------ */
+
+/* Es wird nie ungefragt gescrollt. Wer liest, bleibt stehen; dieser Knopf
+   bringt einen erst auf Klick nach unten. */
+.neue-beitraege {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: var(--marke);
+  border-color: var(--marke);
+  color: #fff;
+  box-shadow: var(--schatten-tief);
+}
+
+/* --- Sitzungswahl -------------------------------------------------------- */
+
+.sitzungen {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 8px;
+}
+
+.sitzungen select { max-width: 100%; font-size: 0.86rem; }
+.sitzungen button { font-size: 0.78rem; padding: 5px 10px; }
+
+/* --- Art des Beitrags ---------------------------------------------------- */
+
+.spark-block.art-kuratierung > h2,
+.spark-block.art-pingpong > h2 { color: var(--tinte-matt); }

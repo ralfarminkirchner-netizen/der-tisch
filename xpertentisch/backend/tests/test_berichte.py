@@ -108,3 +108,50 @@ async def test_bericht_zeigt_fehler_und_unterbrechungen(client, session_id):
     html = (await client.get(f"/api/sessions/{session_id}/report.html")).text
     assert "Provider antwortet nicht (504)." in html
     assert "Fehler" in html
+
+
+@pytest.mark.asyncio
+async def test_bericht_zeigt_berliner_zeit(client, session_id):
+    scenario("fake-a-model", text="Antwort A mit ausreichendem Inhalt.")
+    scenario("fake-b-model", text="Antwort B mit ausreichendem Inhalt.")
+    await client.post(f"/api/sessions/{session_id}/sparks",
+                      json={"prompt": "Wann war das?", "client_request_id": "req-zeit"})
+    await wait_for_jobs(client, session_id)
+
+    md = (await client.get(f"/api/sessions/{session_id}/report.md")).text
+    assert "UTC" not in md
+    assert "CET" in md or "CEST" in md
+
+
+@pytest.mark.asyncio
+async def test_bericht_weist_nicht_angefragte_stimmen_aus(client, session_id):
+    scenario("fake-a-model", text="Nur A wurde gefragt und antwortet ausführlich.")
+    scenario("fake-b-model", text="B wird nie gefragt.")
+    await client.post(f"/api/sessions/{session_id}/sparks", json={
+        "prompt": "Nur einer bitte.", "client_request_id": "req-einer",
+        "model_ids": ["fake-a"],
+    })
+    await wait_for_jobs(client, session_id)
+
+    html = (await client.get(f"/api/sessions/{session_id}/report.html")).text
+    assert "nicht angefragt" in html
+    assert "Für diesen Funken nicht angefragt." in html
+    md = (await client.get(f"/api/sessions/{session_id}/report.md")).text
+    assert "nicht angefragt" in md
+
+
+@pytest.mark.asyncio
+async def test_bericht_nennt_bezuege_mit_herkunft_und_stand(client, session_id):
+    scenario("fake-a-model",
+             text="Eine tägliche Sicherung der Datenbank ist notwendig und sinnvoll.")
+    scenario("fake-b-model",
+             text="Eine tägliche Sicherung der Datenbank ist nicht notwendig und nicht sinnvoll.")
+    await client.post(f"/api/sessions/{session_id}/sparks",
+                      json={"prompt": "Täglich?", "client_request_id": "req-bez"})
+    await wait_for_jobs(client, session_id)
+
+    html = (await client.get(f"/api/sessions/{session_id}/report.html")).text
+    assert "Bezüge" in html
+    assert "maschineller Vorschlag" in html
+    assert "unbestätigt" in html
+    assert "keine von dir getroffenen" in html

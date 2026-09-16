@@ -37,12 +37,18 @@ def test_load_settings_fake_modelle_brauchen_freischaltung(monkeypatch):
         load_settings()
 
 
-def test_fehlende_zugangsdaten_werden_benannt():
-    settings = Settings(
-        env="production",
-        models=[ModelConfig(id="o", label="O", provider="openai", model="gpt-4.1")],
-    )
-    assert settings.missing_credentials() == ["OPENAI_API_KEY"]
+def test_fehlende_zugangsdaten_werden_benannt(monkeypatch):
+    from app.provider_table import ProviderRecord, ProviderTable
+
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    tabelle = ProviderTable(Settings(env="production"))
+    tabelle._records = [
+        ProviderRecord(id="openai", label="OpenAI", kind="openai", base_url=None,
+                       model="gpt-4.1", stored_key="", enabled=True, is_preset=True),
+    ]
+    assert tabelle.missing_keys() == ["OPENAI_API_KEY"]
+    assert tabelle.ready() == []
+    assert "Kein Schlüssel hinterlegt" in tabelle.all()[0].reason
 
 
 @pytest.mark.asyncio
@@ -50,7 +56,8 @@ async def test_healthcheck(client):
     body = (await client.get("/api/health")).json()
     assert body["database"] == "ok"
     assert body["status"] == "ok"
-    assert body["providers"]["fake"]["ready"] is True
+    assert body["providers"]["fake-a"]["ready"] is True
+    assert body["providers"]["fake-b"]["ready"] is True
     assert body["fake_providers_enabled"] is True
 
 

@@ -1,4 +1,19 @@
-import type { AppConfig, HealthInfo, Job, Session, SessionBundle, Spark } from './types';
+import type {
+  AdminSettings,
+  AppConfig,
+  HealthInfo,
+  Job,
+  JobContext,
+  NewProvider,
+  ProviderPatch,
+  ProviderTestResult,
+  PingPongRun,
+  Relation,
+  Session,
+  SessionBundle,
+  Spark,
+  SparkKind,
+} from './types';
 
 export class ApiError extends Error {
   readonly status: number;
@@ -42,8 +57,16 @@ export const api = {
     prompt: string,
     clientRequestId: string,
     modelIds: string[] | null,
+    refs: string[] = [],
+    kind: SparkKind = 'funke',
+    curate = false,
   ) =>
-    request<{ spark: Spark; jobs: Job[]; duplicate: boolean }>(
+    request<{
+      spark: Spark;
+      jobs: Job[];
+      duplicate: boolean;
+      curation?: { gestartet: boolean; grund?: string; label?: string; spark_id?: string };
+    }>(
       `/api/sessions/${sessionId}/sparks`,
       {
         method: 'POST',
@@ -51,9 +74,74 @@ export const api = {
           prompt,
           client_request_id: clientRequestId,
           model_ids: modelIds,
+          refs,
+          kind,
+          curate,
         }),
       },
     ),
+  jobContext: (jobId: string) => request<JobContext>(`/api/jobs/${jobId}/context`),
+  cancelJob: (jobId: string) =>
+    request<{ cancelled: string }>(`/api/jobs/${jobId}/cancel`, { method: 'POST' }),
+  startPingPong: (
+    sessionId: string,
+    body: { prompt: string; refs: string[]; participants: string[]; max_turns: number },
+  ) =>
+    request<PingPongRun>(`/api/sessions/${sessionId}/pingpong`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  listPingPong: (sessionId: string) =>
+    request<{ runs: PingPongRun[] }>(`/api/sessions/${sessionId}/pingpong`),
+  stopPingPong: (sessionId: string, runId: string) =>
+    request<PingPongRun>(`/api/sessions/${sessionId}/pingpong/${runId}/stop`, {
+      method: 'POST',
+    }),
+  listSessions: () => request<{ sessions: Session[] }>('/api/sessions'),
+  setRelation: (sessionId: string, relationId: string, status: Relation['status']) =>
+    request<{ relations: Relation[] }>(
+      `/api/sessions/${sessionId}/relations/${relationId}`,
+      { method: 'POST', body: JSON.stringify({ status }) },
+    ),
+
+  // Die Einstellungen verlangen bei jedem Aufruf das Zugangswort. Es wird nur
+  // mitgeschickt, nie gespeichert und nie zurückgelesen.
+  adminSettings: (token: string) =>
+    request<AdminSettings>('/api/admin/providers', { headers: { 'X-Admin-Token': token } }),
+  createProvider: (token: string, provider: NewProvider) =>
+    request<AdminSettings>('/api/admin/providers', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify(provider),
+    }),
+  updateProvider: (token: string, id: string, patch: ProviderPatch) =>
+    request<AdminSettings>(`/api/admin/providers/${encodeURIComponent(id)}`, {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify(patch),
+    }),
+  deleteProvider: (token: string, id: string) =>
+    request<AdminSettings>(`/api/admin/providers/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Token': token },
+    }),
+  testProvider: (token: string, id: string) =>
+    request<ProviderTestResult>(
+      `/api/admin/providers/${encodeURIComponent(id)}/test`,
+      { method: 'POST', headers: { 'X-Admin-Token': token } },
+    ),
+  saveTimeout: (token: string, seconds: number) =>
+    request<AdminSettings>('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify({ request_timeout_s: seconds }),
+    }),
+  saveCurator: (token: string, providerId: string) =>
+    request<AdminSettings>('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify({ curator: providerId }),
+    }),
 };
 
 /** Erzeugt eine stabile Kennung je Absendevorgang.
@@ -83,6 +171,12 @@ const EVENT_TYPES = [
   'auftrag.fehler',
   'auftrag.unterbrochen',
   'einschaetzung.fertig',
+  'beziehung.geaendert',
+  'auftrag.teilstueck',
+  'auftrag.abgebrochen',
+  'pingpong.gestartet',
+  'pingpong.runde',
+  'pingpong.ende',
 ];
 
 /** Verbindet den Ereignisstrom.

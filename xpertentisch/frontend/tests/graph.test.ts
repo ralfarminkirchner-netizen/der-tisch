@@ -49,6 +49,21 @@ describe('renderGraph', () => {
     expect(selections).toEqual([['j1']]);
   });
 
+  it('hält die Trefferflächen zweier Kanten zwischen denselben Knoten auseinander', () => {
+    // Liegen beide Kreise übereinander, ist eine der beiden Kanten nicht mehr
+    // antippbar — auf dem Telefon fällt das sofort auf.
+    const svg = renderGraph(summary, () => {});
+    const kreise = [...svg.querySelectorAll<SVGCircleElement>('.edge .edge-hit')];
+    expect(kreise).toHaveLength(2);
+    const [a, b] = kreise.map((k) => ({
+      x: Number(k.getAttribute('cx')),
+      y: Number(k.getAttribute('cy')),
+      r: Number(k.getAttribute('r')),
+    }));
+    const abstand = Math.hypot(a.x - b.x, a.y - b.y);
+    expect(abstand).toBeGreaterThan(Math.max(a.r, b.r));
+  });
+
   it('zeigt einen Hinweis, wenn nichts auswertbar ist', () => {
     const leer: Summary = { ...summary, models: [], pairs: [], analysed_jobs: [] };
     const svg = renderGraph(leer, () => {});

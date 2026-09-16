@@ -35,15 +35,16 @@ try {
   const fehler = [];
   page.on('pageerror', (e) => fehler.push(String(e)));
 
-  await page.goto(BASE, { waitUntil: 'networkidle' });
+  // Der Ereignisstrom bleibt offen; 'networkidle' tritt darum nie ein.
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('form.spark', { timeout: 15000 });
   pruefe('Oberfläche lädt', await page.locator('h1').first().isVisible());
 
   // Funke setzen
   await page.fill('#prompt', 'Ist eine tägliche Sicherung der Datenbank notwendig?');
   await page.click('button.primary');
-  await page.waitForSelector('.card .answer', { timeout: 20000 });
-  await page.waitForSelector('.panel-grid table', { timeout: 20000 });
+  await page.waitForSelector('.card .answer', { timeout: 60000 });
+  await page.waitForSelector('.panel-grid table', { timeout: 60000 });
 
   const karten = await page.locator('.card').count();
   pruefe('Modellkarten erscheinen', karten >= 2, `${karten} Karten`);
@@ -63,10 +64,12 @@ try {
     markiert.length === 1 && markiert[0] === jobId,
     `markiert: ${markiert.join(', ')} / erwartet: ${jobId}`);
 
-  const kante = page.locator('svg.graph .edge .edge-hit').first();
+  // Geklickt wird die Gruppe: die Trefferfläche darin gehört zu ihr,
+  // ein Klick darauf landet über das Ereignis ohnehin bei der Gruppe.
+  const kante = page.locator('svg.graph g.edge').first();
   if (await kante.count()) {
-    const a = await kante.evaluate((n) => n.parentElement.getAttribute('data-job-a'));
-    const b = await kante.evaluate((n) => n.parentElement.getAttribute('data-job-b'));
+    const a = await kante.getAttribute('data-job-a');
+    const b = await kante.getAttribute('data-job-b');
     await kante.click();
     const paar = await page.locator('.card.highlight').evaluateAll((nodes) =>
       nodes.map((n) => n.getAttribute('data-job-id')).sort(),

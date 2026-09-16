@@ -2,11 +2,21 @@ import { highlightAnswer } from './markers';
 import type { Job, JobStatus, Marker, Summary, SparkEntry } from './types';
 
 const STATUS_LABEL: Record<JobStatus, string> = {
+  not_requested: 'nicht gefragt',
   queued: 'wartet',
   running: 'denkt nach',
+  streaming: 'schreibt',
   done: 'fertig',
   error: 'Fehler',
   interrupted: 'unterbrochen',
+  cancelled: 'abgebrochen',
+};
+
+/** Warum eine Karte leer ist — die Fälle sind nicht dasselbe. */
+const LEER_GRUND: Partial<Record<JobStatus, string>> = {
+  not_requested: 'Für diesen Funken nicht angefragt.',
+  done: 'Antwort kam an, enthielt aber keinen Text.',
+  cancelled: 'Abgebrochen, bevor eine Antwort kam.',
 };
 
 export function el<K extends keyof HTMLElementTagNameMap>(
@@ -25,6 +35,12 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
+/** Kosten aus Millionstel der eingetragenen Währung. */
+function formatCost(micro: number): string {
+  const betrag = micro / 1_000_000;
+  return betrag < 0.01 ? `${(betrag * 100).toFixed(2)} ct` : betrag.toFixed(4);
+}
+
 function formatDuration(ms: number | null): string {
   if (!ms && ms !== 0) return '—';
   return ms >= 1000 ? `${(ms / 1000).toFixed(1)} s` : `${ms} ms`;
@@ -37,19 +53,25 @@ function formatDuration(ms: number | null): string {
  * sich nicht auf die Karten der anderen Modelle aus.
  */
 export function createCard(job: Job, markers: Marker[]): HTMLElement {
-  const card = el('article', { class: 'glass card', 'data-job-id': job.id });
+  const card = el('article', { class: 'flaeche card', 'data-job-id': job.id });
   card.append(
     el('header', {}, [
       el('h3', {}, [job.label]),
       el('div', { class: 'tags' }),
     ]),
     el('div', { class: 'card-body' }),
+    // Bleibt beim Aktualisieren stehen: hier hängen Aktionen und Kontextansicht.
+    el('div', { class: 'card-foot' }),
   );
   updateCard(card, job, markers);
   return card;
 }
 
 export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void {
+  // Die farbige Kante oben trägt den Zustand.
+  card.className = `flaeche card zustand-${job.status}${
+    card.classList.contains('highlight') ? ' highlight' : ''
+  }`;
   const tags = card.querySelector('.tags');
   const body = card.querySelector('.card-body');
   if (!tags || !body) return;
@@ -58,8 +80,28 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
   tags.append(el('span', { class: `tag ${job.status}` }, [STATUS_LABEL[job.status] ?? job.status]));
   if (job.partial) tags.append(el('span', { class: 'tag partial' }, ['Teilantwort']));
   tags.append(el('span', { class: 'tag' }, [`${job.provider} · ${job.model}`]));
-  if (job.latency_ms !== null && job.status !== 'running') {
+  if (job.latency_ms !== null && job.status !== 'running' && job.status !== 'streaming') {
     tags.append(el('span', { class: 'tag' }, [formatDuration(job.latency_ms)]));
+  }
+  if (job.tokens_in !== null || job.tokens_out !== null) {
+    tags.append(
+      el('span', { class: 'tag', title: 'verbrauchte Token (ein/aus)' }, [
+        `${job.tokens_in ?? '?'}/${job.tokens_out ?? '?'} Token`,
+      ]),
+    );
+  }
+  if (job.cost_source === 'berechnet' && job.cost_micro !== null) {
+    tags.append(
+      el('span', { class: 'tag', title: 'mit den von dir eingetragenen Preisen berechnet' }, [
+        formatCost(job.cost_micro),
+      ]),
+    );
+  } else if ((job.tokens_in ?? job.tokens_out) !== null) {
+    tags.append(
+      el('span', { class: 'tag', title: 'ohne hinterlegte Preise wird nichts geschätzt' }, [
+        'Kosten unbekannt',
+      ]),
+    );
   }
 
   body.replaceChildren();
@@ -82,13 +124,13 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
     // Der Originaltext bleibt unverändert; Marker sind nur eine Auflage darüber.
     answer.innerHTML = highlightAnswer(text, markers.filter((m) => m.job_id === job.id));
     body.append(answer);
-  } else if (job.status === 'done') {
-    body.append(el('p', { class: 'hint' }, ['Leere Antwort.']));
+  } else if (LEER_GRUND[job.status]) {
+    body.append(el('p', { class: 'hint' }, [LEER_GRUND[job.status]!]));
   }
 }
 
 export function renderTable(summary: Summary): HTMLElement {
-  const panel = el('section', { class: 'glass panel' }, [el('h4', {}, ['Vergleich'])]);
+  const panel = el('section', { class: 'flaeche panel' }, [el('h4', {}, ['Vergleich'])]);
   const wrap = el('div', { class: 'tablewrap' });
   const table = el('table');
   const head = el('tr');

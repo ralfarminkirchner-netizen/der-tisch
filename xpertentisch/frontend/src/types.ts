@@ -1,4 +1,87 @@
-export type JobStatus = 'queued' | 'running' | 'done' | 'error' | 'interrupted';
+export type JobStatus =
+  | 'not_requested'
+  | 'queued'
+  | 'running'
+  | 'streaming'
+  | 'done'
+  | 'error'
+  | 'interrupted'
+  | 'cancelled';
+
+/** Was für eine Art Eingabe — bestimmt die gesetzte Beziehung. */
+export type SparkKind =
+  | 'funke'
+  | 'antwort'
+  | 'weitergabe'
+  | 'gegenposition'
+  | 'vertiefung'
+  | 'pingpong'
+  | 'kuratierung';
+
+export interface PingPongRun {
+  id: string;
+  session_id: string;
+  status: 'laeuft' | 'gestoppt' | 'beendet';
+  turn: number;
+  max_turns: number;
+  participants: string[];
+  labels: string[];
+  prompt: string;
+  refs: string[];
+  stopped_reason: string;
+}
+
+/** Ein Gedanke, der noch nicht beim Server angekommen ist. */
+export interface Entwurf {
+  clientRequestId: string;
+  prompt: string;
+  refs: string[];
+  kind: SparkKind;
+  modelIds: string[] | null;
+  curate: boolean;
+  createdAt: number;
+  lastError: string;
+}
+
+export interface Relation {
+  id: string;
+  session_id: string;
+  from_id: string;
+  to_id: string;
+  type: string;
+  origin: 'mensch' | 'maschine';
+  status: 'vorschlag' | 'bestaetigt' | 'abgelehnt';
+  note: string;
+  created_at: number;
+}
+
+export interface ContextEntry {
+  id: string;
+  label: string;
+  role: 'mensch' | 'modell';
+  reason: string;
+  shortened: boolean;
+  chars: number;
+}
+
+export interface JobContext {
+  job: { id: string; label: string; provider: string; model: string; status: JobStatus };
+  entries: ContextEntry[];
+  rendered: string;
+  rule: string;
+  truncated: boolean;
+  created_at: number;
+}
+
+/** Ein gewählter Bezug in der Eingabe. */
+export interface Bezug {
+  id: string;
+  label: string;
+  kind: SparkKind;
+  /** Nur dieses Modell ansprechen; leer heißt: alle am Tisch. */
+  modelId?: string;
+  hint: string;
+}
 export type MarkerKind = 'uebereinstimmung' | 'widerspruch' | 'einzigartig';
 
 export interface ModelInfo {
@@ -13,6 +96,77 @@ export interface AppConfig {
   max_prompt_chars: number;
   fake_providers_enabled: boolean;
   env: string;
+  /** Sagt nur, ob ein Zugangswort eingerichtet ist — nie welches. */
+  settings_available: boolean;
+  /** Wer die Kuratierung übernimmt — null heißt: niemand. */
+  curator: { id: string; label: string; model: string } | null;
+}
+
+export interface ProviderRow {
+  id: string;
+  label: string;
+  /** Art der Schnittstelle: openai | anthropic | google | fake. */
+  kind: string;
+  base_url: string | null;
+  model: string;
+  enabled: boolean;
+  is_preset: boolean;
+  needs_key: boolean;
+  key_source: 'einstellungen' | 'umgebung' | 'fehlt';
+  /** Nur die letzten vier Zeichen, nie der Schlüssel selbst. */
+  key_hint: string;
+  key_env: string;
+  ready: boolean;
+  reason: string;
+  key_url: string;
+  models_url: string;
+  /** Preis je Million Token. Null heißt unbekannt — es wird nichts geraten. */
+  price_in: number | null;
+  price_out: number | null;
+}
+
+export interface CustomHint {
+  label: string;
+  base_url: string;
+  model: string;
+}
+
+export interface AdminSettings {
+  providers: ProviderRow[];
+  kinds: { id: string; label: string }[];
+  custom_hints: CustomHint[];
+  request_timeout_s: number;
+  timeout_source: string;
+  /** Anbieterkennung des Kurators, leer wenn keiner eingestellt ist. */
+  curator: string;
+  env: string;
+  fake_providers_enabled: boolean;
+  /** Im Test- und Entwicklungsbetrieb steht der Tisch fest im Quelltext. */
+  editable: boolean;
+}
+
+export interface ProviderTestResult {
+  ok: boolean;
+  detail: string;
+  latency_ms: number | null;
+}
+
+export interface NewProvider {
+  label: string;
+  kind: string;
+  base_url: string;
+  model: string;
+  api_key: string;
+}
+
+export interface ProviderPatch {
+  label?: string;
+  base_url?: string;
+  model?: string;
+  api_key?: string;
+  enabled?: boolean;
+  price_in?: number;
+  price_out?: number;
 }
 
 export interface Session {
@@ -31,6 +185,8 @@ export interface Spark {
   prompt: string;
   client_request_id: string;
   created_at: number;
+  kind: SparkKind;
+  refs: string[];
 }
 
 export interface Job {
@@ -46,6 +202,11 @@ export interface Job {
   error: string | null;
   partial: boolean;
   latency_ms: number | null;
+  tokens_in: number | null;
+  tokens_out: number | null;
+  /** Kosten in Millionstel der eingetragenen Währung. Null heißt unbekannt. */
+  cost_micro: number | null;
+  cost_source: 'berechnet' | 'unbekannt';
 }
 
 export interface Marker {
@@ -109,6 +270,9 @@ export interface SparkEntry {
 export interface SessionBundle {
   session: Session;
   sparks: SparkEntry[];
+  relations: Relation[];
+  /** Läuft noch etwas? Ein Bericht wäre dann vorläufig. */
+  pending: boolean;
   last_event_id: number;
   exported_at: number;
 }
@@ -117,7 +281,7 @@ export interface HealthInfo {
   status: string;
   env: string;
   database: string;
-  providers: Record<string, { ready: boolean; reason: string }>;
+  providers: Record<string, { ready: boolean; reason: string; label?: string }>;
   fake_providers_enabled: boolean;
   missing_credentials: string[];
 }

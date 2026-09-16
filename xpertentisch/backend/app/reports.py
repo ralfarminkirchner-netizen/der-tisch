@@ -12,6 +12,7 @@ from __future__ import annotations
 import html
 from datetime import datetime, timezone
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from .analysis import KIND_AGREEMENT, KIND_CONTRADICTION, KIND_UNIQUE
 
@@ -26,10 +27,15 @@ def esc(value: Any) -> str:
     return html.escape("" if value is None else str(value), quote=True)
 
 
+#: Gespeichert wird in UTC, gezeigt wird die Zeit, in der gearbeitet wurde.
+ANZEIGEZONE = ZoneInfo("Europe/Berlin")
+
+
 def fmt_time(ts: float | None) -> str:
     if not ts:
         return "—"
-    return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%d.%m.%Y %H:%M:%S UTC")
+    lokal = datetime.fromtimestamp(ts, tz=timezone.utc).astimezone(ANZEIGEZONE)
+    return lokal.strftime("%d.%m.%Y %H:%M:%S %Z")
 
 
 def _status_label(job: dict[str, Any]) -> str:
@@ -39,7 +45,49 @@ def _status_label(job: dict[str, Any]) -> str:
         "interrupted": "unterbrochen",
         "queued": "wartet",
         "running": "läuft",
+        "not_requested": "nicht angefragt",
+        "cancelled": "abgebrochen",
     }.get(job["status"], job["status"])
+
+
+BEZIEHUNG_TEXT = {
+    "antwortet_auf": "antwortet auf",
+    "abgeleitet_aus": "abgeleitet aus",
+    "widerspricht": "widerspricht",
+    "uebereinstimmung": "stimmt überein mit",
+    "vertieft": "vertieft",
+}
+
+HERKUNFT_TEXT = {
+    "mensch": "von dir gesetzt",
+    "maschine": "maschineller Vorschlag",
+}
+
+STAND_TEXT = {
+    "vorschlag": "unbestätigt",
+    "bestaetigt": "von dir bestätigt",
+    "abgelehnt": "von dir verworfen",
+}
+
+
+def _leer_grund(job: dict[str, Any]) -> str:
+    """Warum hier kein Text steht — die Fälle sind nicht dasselbe."""
+    return {
+        "not_requested": "Für diesen Funken nicht angefragt.",
+        "cancelled": "Abgebrochen, bevor eine Antwort kam.",
+        "done": "Antwort kam an, enthielt aber keinen Text.",
+        "queued": "Wartet noch.",
+        "running": "Läuft noch.",
+    }.get(job["status"], "Keine Antwort erfasst.")
+
+
+def _beitragsnamen(bundle: dict[str, Any]) -> dict[str, str]:
+    namen: dict[str, str] = {}
+    for entry in bundle["sparks"]:
+        namen[entry["spark"]["id"]] = f"Funke {entry['spark']['seq']} (deine Eingabe)"
+        for job in entry["jobs"]:
+            namen[job["id"]] = f"{job['label']} zu Funke {entry['spark']['seq']}"
+    return namen
 
 
 REPORT_CSS = """
@@ -120,6 +168,11 @@ def render_html(bundle: dict[str, Any]) -> str:
             ),
         )
     )
+    if bundle.get("pending"):
+        a('<div class="card"><h3>Vorläufiger Stand</h3><p class="note">'
+          "Zum Zeitpunkt dieses Berichts liefen noch Aufträge. Er bildet also "
+          "einen Zwischenstand ab, keine vollständige Runde. Ein später erzeugter "
+          "Bericht kann mehr enthalten.</p></div>")
     if session.get("closing_note"):
         a(f'<div class="card"><h3>Abschlussnotiz</h3><div class="answer">{esc(session["closing_note"])}</div></div>')
 
@@ -162,7 +215,7 @@ def render_html(bundle: dict[str, Any]) -> str:
             if text.strip():
                 a(f'<div class="answer">{esc(text)}</div>')
             elif not job.get("error"):
-                a('<p class="note">Keine Antwort erfasst.</p>')
+                a(f'<p class="note">{esc(_leer_grund(job))}</p>')
 
             job_markers = [m for m in entry["markers"] if m["job_id"] == job["id"]]
             if job_markers:
@@ -174,6 +227,23 @@ def render_html(bundle: dict[str, Any]) -> str:
                       f'<div class="note">{esc(m["note"])}</div></blockquote>')
                 a("</details>")
             a("</div>")
+
+    beziehungen = bundle.get("relations") or []
+    if beziehungen:
+        namen = _beitragsnamen(bundle)
+        a("<h2>Bezüge</h2>")
+        a('<div class="tablewrap"><table><thead><tr><th>Von</th><th>Art</th><th>Zu</th>'
+          "<th>Herkunft</th><th>Stand</th></tr></thead><tbody>")
+        for bez in beziehungen:
+            a("<tr>"
+              f"<td>{esc(namen.get(bez['from_id'], bez['from_id']))}</td>"
+              f"<td>{esc(BEZIEHUNG_TEXT.get(bez['type'], bez['type']))}</td>"
+              f"<td>{esc(namen.get(bez['to_id'], bez['to_id']))}</td>"
+              f"<td>{esc(HERKUNFT_TEXT.get(bez['origin'], bez['origin']))}</td>"
+              f"<td>{esc(STAND_TEXT.get(bez['status'], bez['status']))}</td></tr>")
+        a("</tbody></table></div>")
+        a('<p class="note">Maschinelle Vorschläge sind keine von dir getroffenen '
+          "Feststellungen. Was du nicht bestätigt hast, steht als unbestätigt da.</p>")
 
     a("<h2>Hinweise</h2>")
     a('<div class="card"><p class="note">Die Antworten sind unverändert wiedergegeben. '
@@ -200,6 +270,8 @@ def render_markdown(bundle: dict[str, Any]) -> str:
     if session.get("closed_at"):
         a(f"- Abgeschlossen: {fmt_time(session['closed_at'])}")
     a(f"- Bericht erzeugt: {fmt_time(bundle['exported_at'])}")
+    if bundle.get("pending"):
+        a("- **Vorläufig:** zum Zeitpunkt dieses Berichts liefen noch Aufträge.")
     a("")
     if session.get("closing_note"):
         a("## Abschlussnotiz")
@@ -243,6 +315,9 @@ def render_markdown(bundle: dict[str, Any]) -> str:
             if text:
                 a(text)
                 a("")
+            elif not job.get("error"):
+                a(f"_{_leer_grund(job)}_")
+                a("")
             job_markers = [m for m in entry["markers"] if m["job_id"] == job["id"]]
             if job_markers:
                 a("**Marker**")
@@ -250,6 +325,23 @@ def render_markdown(bundle: dict[str, Any]) -> str:
                 for m in job_markers:
                     a(f"- _{KIND_LABELS.get(m['kind'], m['kind'])}_: „{m['quote']}“ — {m['note']}")
                 a("")
+
+    beziehungen = bundle.get("relations") or []
+    if beziehungen:
+        namen = _beitragsnamen(bundle)
+        a("## Bezüge")
+        a("")
+        a("| Von | Art | Zu | Herkunft | Stand |")
+        a("| --- | --- | --- | --- | --- |")
+        for bez in beziehungen:
+            a(f"| {namen.get(bez['from_id'], bez['from_id'])} "
+              f"| {BEZIEHUNG_TEXT.get(bez['type'], bez['type'])} "
+              f"| {namen.get(bez['to_id'], bez['to_id'])} "
+              f"| {HERKUNFT_TEXT.get(bez['origin'], bez['origin'])} "
+              f"| {STAND_TEXT.get(bez['status'], bez['status'])} |")
+        a("")
+        a("Maschinelle Vorschläge sind keine von dir getroffenen Feststellungen.")
+        a("")
 
     a("## Hinweise")
     a("")

@@ -46,6 +46,7 @@ const job: Job = {
   provider: 'fake', model: 'm', status: 'done',
   text: 'Ein sehr langes Wort: ' + 'a'.repeat(300),
   error: null, partial: false, latency_ms: 12,
+  tokens_in: null, tokens_out: null, cost_micro: null, cost_source: 'unbekannt',
 };
 
 describe('Modellkarte', () => {
@@ -80,5 +81,95 @@ describe('Vergleichstabelle', () => {
     const panel = renderTable(summary);
     expect(panel.querySelector('.tablewrap table')).not.toBeNull();
     expect(panel.textContent).toContain('keine Rangfolge');
+  });
+});
+
+describe('Verstecken von Bausteinen', () => {
+  it('überstimmt die Anzeigeart, damit [hidden] wirklich versteckt', () => {
+    // Ohne diese Regel bleibt ein .row mit display:flex trotz hidden sichtbar.
+    expect(css).toMatch(/\[hidden\]\s*\{[^}]*display:\s*none\s*!important/);
+  });
+});
+
+describe('Werkbank-Gestaltung', () => {
+  it('bringt Farbe nur mit Bedeutung ins Spiel', () => {
+    for (const marke of ['--einig', '--gegen', '--einzeln', '--marke']) {
+      expect(css).toContain(`${marke}:`);
+    }
+  });
+
+  it('beschreibt alle drei Theme-Zustände', () => {
+    expect(css).toMatch(/^:root \{/m);
+    expect(css).toMatch(/@media \(prefers-color-scheme: dark\)/);
+    expect(css).toMatch(/:root:not\(\[data-theme='light'\]\)/);
+    expect(css).toMatch(/:root\[data-theme='dark'\]/);
+  });
+
+  it('malt den Untergrund selbst, statt ihn vom Wirt zu erben', () => {
+    expect(css).toMatch(/body \{[^}]*background: var\(--flaeche\)/);
+  });
+
+  it('trägt den Zustand einer Karte an der oberen Kante', () => {
+    expect(css).toMatch(/\.card\.zustand-error \{ border-top-color: var\(--gegen\)/);
+  });
+});
+
+describe('Laufende und abgebrochene Karten', () => {
+  it('zeigt „schreibt“, solange der Text noch wächst', () => {
+    const card = createCard({ ...job, status: 'streaming', text: 'Anfang …' }, []);
+    expect(card.className).toContain('zustand-streaming');
+    expect(card.textContent).toContain('schreibt');
+    // Der bisher eingetroffene Text steht schon da, nicht erst am Ende.
+    expect(card.querySelector('.answer')?.textContent).toContain('Anfang');
+  });
+
+  it('nennt einen Abbruch beim Namen, ohne ihn zum Fehler zu erklären', () => {
+    const card = createCard(
+      { ...job, status: 'cancelled', text: '', error: 'Von dir abgebrochen.' },
+      [],
+    );
+    expect(card.textContent).toContain('abgebrochen');
+    expect(card.textContent).toContain('Abgebrochen, bevor eine Antwort kam.');
+  });
+
+  it('verschweigt bei laufenden Karten die Dauer, weil sie noch nicht feststeht', () => {
+    const card = createCard({ ...job, status: 'streaming', latency_ms: 900 }, []);
+    expect(card.querySelector('.tags')?.textContent).not.toContain('0,9');
+  });
+
+  it('gibt den neuen Zuständen eine eigene Kante und ein eigenes Schild', () => {
+    expect(css).toMatch(/\.card\.zustand-streaming \{ border-top-color: var\(--marke\)/);
+    expect(css).toMatch(/\.card\.zustand-cancelled \{ border-top-color/);
+    expect(css).toMatch(/\.tag\.streaming/);
+    expect(css).toMatch(/\.tag\.cancelled/);
+  });
+
+  it('hält die Schreibanimation für Menschen zurück, die keine Bewegung wollen', () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
+  });
+});
+
+describe('Kosten auf der Karte', () => {
+  it('schätzt nichts, wenn keine Preise hinterlegt sind', () => {
+    const card = createCard(
+      { ...job, tokens_in: 100, tokens_out: 200, cost_micro: null, cost_source: 'unbekannt' },
+      [],
+    );
+    expect(card.textContent).toContain('100/200 Token');
+    expect(card.textContent).toContain('Kosten unbekannt');
+  });
+
+  it('zeigt einen Betrag nur, wenn er wirklich gerechnet wurde', () => {
+    const card = createCard(
+      { ...job, tokens_in: 100, tokens_out: 200, cost_micro: 4200, cost_source: 'berechnet' },
+      [],
+    );
+    expect(card.textContent).not.toContain('Kosten unbekannt');
+  });
+});
+
+describe('Hinweis auf neue Beiträge', () => {
+  it('liegt über dem Text und drängt sich nicht in den Lesefluss', () => {
+    expect(css).toMatch(/\.neue-beitraege \{[^}]*position:\s*fixed/);
   });
 });

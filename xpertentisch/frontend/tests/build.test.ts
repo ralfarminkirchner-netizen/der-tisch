@@ -14,10 +14,12 @@ describe('Produktionsbuild', () => {
     const dir = mkdtempSync(join(tmpdir(), 'xt-build-'));
     writeFileSync(join(dir, 'app.js'), 'const TEST_SECRET = "abc123456789";');
     writeFileSync(join(dir, 'other.js'), 'const k = "sk-ant-0123456789abcdefghij";');
+    writeFileSync(join(dir, 'zuweisung.js'), 'const c = { OPENAI_API_KEY: "sk-eingebacken-123" };');
     const funde = pruefeBuild(dir) as string[];
     // Beide Dateien müssen beanstandet werden (ein Fund kann mehrere Regeln treffen).
     expect(funde.some((f) => f.includes('app.js'))).toBe(true);
     expect(funde.some((f) => f.includes('other.js'))).toBe(true);
+    expect(funde.some((f) => f.includes('zuweisung.js'))).toBe(true);
   });
 
   it('enthält keine Zugangsdaten', () => {
@@ -26,6 +28,15 @@ describe('Produktionsbuild', () => {
       'dist/ fehlt — bitte zuerst "npm run build" ausführen',
     ).toBe(true);
     expect(pruefeBuild(DIST)).toEqual([]);
+  });
+
+  it('lässt die bloße Nennung einer Variablen im Hilfetext durch', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'xt-build-ok-'));
+    writeFileSync(
+      join(dir, 'hilfe.js'),
+      'const t = "Alternativ OPENAI_API_KEY als Umgebungsvariable setzen.";',
+    );
+    expect(pruefeBuild(dir)).toEqual([]);
   });
 
   it('bringt den Test-Provider nicht in den Auslieferungsstand', () => {
