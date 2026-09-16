@@ -402,7 +402,7 @@ button:disabled {
 /* Auf breiten Schirmen bekommt die Tabelle mehr Platz als das Diagramm. */
 @media (min-width: 760px) {
   .panel-grid {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
   }
 }
 
@@ -465,6 +465,23 @@ svg.graph .node {
   cursor: pointer;
 }
 
+/* Der Standard-Fokusrahmen umschließt bei SVG-Gruppen den ganzen Kasten und
+   erscheint auch nach einem Mausklick. Wir zeichnen stattdessen selbst — und
+   nur bei Bedienung über die Tastatur. */
+svg.graph .node:focus,
+svg.graph .edge:focus {
+  outline: none;
+}
+
+svg.graph .node:focus-visible circle {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+svg.graph .edge:focus-visible line {
+  stroke-width: 7;
+}
+
 svg.graph .node circle {
   fill: var(--glass-strong);
   stroke: var(--edge);
@@ -473,7 +490,7 @@ svg.graph .node circle {
 }
 
 svg.graph .node:hover circle,
-svg.graph .node:focus circle {
+svg.graph .node:focus-visible circle {
   stroke: var(--accent);
   stroke-width: 2.5;
 }
@@ -493,8 +510,7 @@ svg.graph .edge {
 svg.graph .edge.agree line { stroke: var(--agree); }
 svg.graph .edge.contra line { stroke: var(--contra); }
 svg.graph .edge line { transition: stroke-width 0.12s ease; }
-svg.graph .edge:hover line,
-svg.graph .edge:focus line { stroke-width: 7; }
+svg.graph .edge:hover line { stroke-width: 7; }
 
 svg.graph .edge-hit {
   fill: transparent;
@@ -503,7 +519,7 @@ svg.graph .edge-hit {
 }
 
 svg.graph .edge:hover .edge-hit,
-svg.graph .edge:focus .edge-hit {
+svg.graph .edge:focus-visible .edge-hit {
   fill: currentColor;
   fill-opacity: 0.18;
 }
