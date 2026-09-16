@@ -1,7 +1,13 @@
-"""Provider-Registry."""
+"""Provider-Registry.
+
+Gebaut wird nach der *Art* der Schnittstelle, nicht nach dem Namen des
+Anbieters: eine OpenAI-kompatible Adresse ist eine OpenAI-kompatible Adresse,
+gleich ob dahinter DeepSeek, Mistral, Groq oder ein lokaler Server steht.
+"""
 
 from __future__ import annotations
 
+from ..catalog import KIND_ANTHROPIC, KIND_GOOGLE, KIND_OPENAI
 from ..config import Settings
 from .base import Provider, ProviderError, ProviderResponse
 from .fake import FakeProvider, FakeScenario
@@ -17,75 +23,78 @@ __all__ = [
 
 
 class ProviderRegistry:
-    """Erzeugt Provider-Instanzen träge und genau einmal."""
+    """Erzeugt Adapter träge und genau einmal je Anbieter."""
 
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, table) -> None:
         self._settings = settings
+        self._table = table
         self._instances: dict[str, Provider] = {}
         self._errors: dict[str, str] = {}
 
-    def get(self, name: str) -> Provider:
-        if name in self._instances:
-            return self._instances[name]
-        if name in self._errors:
-            raise ProviderError(self._errors[name])
+    def get(self, provider_id: str) -> Provider:
+        if provider_id in self._instances:
+            return self._instances[provider_id]
+        if provider_id in self._errors:
+            raise ProviderError(self._errors[provider_id])
 
         try:
-            provider = self._build(name)
+            provider = self._build(provider_id)
         except ProviderError as exc:
-            self._errors[name] = str(exc)
+            self._errors[provider_id] = str(exc)
             raise
-        self._instances[name] = provider
+        self._instances[provider_id] = provider
         return provider
 
-    def _build(self, name: str) -> Provider:
-        s = self._settings
-        if name == "fake":
-            if not s.allow_fake_providers:
+    def _build(self, provider_id: str) -> Provider:
+        record = self._table.by_id(provider_id)
+        if record is None:
+            raise ProviderError(f"Unbekannter Anbieter: {provider_id}")
+
+        if record.kind == "fake":
+            if not self._settings.allow_fake_providers:
                 raise ProviderError(
                     "Test-Provider 'fake' ist nicht freigeschaltet "
                     "(XT_ALLOW_FAKE_PROVIDERS fehlt)."
                 )
             return FakeProvider()
-        if name == "openai":
-            if not s.resolved_openai_key:
-                raise ProviderError(
-                    "Kein OpenAI-Schlüssel hinterlegt — in den Einstellungen eintragen "
-                    "oder OPENAI_API_KEY setzen."
-                )
+
+        if not record.api_key:
+            raise ProviderError(record.reason or "Kein Schlüssel hinterlegt.")
+
+        if record.kind == KIND_OPENAI:
             from .openai_provider import OpenAIProvider
 
-            return OpenAIProvider(s.resolved_openai_key, s.openai_base_url)
-        if name == "anthropic":
-            if not s.resolved_anthropic_key:
-                raise ProviderError(
-                    "Kein Anthropic-Schlüssel hinterlegt — in den Einstellungen eintragen "
-                    "oder ANTHROPIC_API_KEY setzen."
-                )
+            return OpenAIProvider(record.api_key, record.base_url)
+        if record.kind == KIND_ANTHROPIC:
             from .anthropic_provider import AnthropicProvider
 
-            return AnthropicProvider(s.resolved_anthropic_key)
-        raise ProviderError(f"Unbekannter Provider: {name}")
+            return AnthropicProvider(record.api_key, base_url=record.base_url)
+        if record.kind == KIND_GOOGLE:
+            from .google_provider import GoogleProvider
+
+            return GoogleProvider(record.api_key, record.base_url)
+        raise ProviderError(f"Unbekannte Schnittstellenart: {record.kind}")
 
     def availability(self) -> dict[str, dict[str, object]]:
-        """Bereitschaft je konfiguriertem Provider, ohne Netzwerkaufruf."""
-        result: dict[str, dict[str, object]] = {}
-        for model in self._settings.enabled_models():
-            if model.provider in result:
+        """Bereitschaft je eingeschaltetem Anbieter, ohne Netzwerkaufruf."""
+        ergebnis: dict[str, dict[str, object]] = {}
+        for record in self._table.all():
+            if not record.enabled:
+                continue
+            if not record.ready:
+                ergebnis[record.id] = {"ready": False, "reason": record.reason,
+                                       "label": record.label}
                 continue
             try:
-                self.get(model.provider)
-                result[model.provider] = {"ready": True, "reason": ""}
+                self.get(record.id)
+                ergebnis[record.id] = {"ready": True, "reason": "", "label": record.label}
             except ProviderError as exc:
-                result[model.provider] = {"ready": False, "reason": str(exc)}
-        return result
+                ergebnis[record.id] = {"ready": False, "reason": str(exc),
+                                       "label": record.label}
+        return ergebnis
 
     def invalidate(self) -> None:
-        """Verwirft zwischengespeicherte Provider.
-
-        Nach einer Änderung auf der Einstellungsseite muss der nächste Auftrag
-        mit den neuen Zugangsdaten gebaut werden.
-        """
+        """Verwirft zwischengespeicherte Adapter nach einer Änderung."""
         self._instances.clear()
         self._errors.clear()
 

@@ -11,12 +11,17 @@ from .openai_provider import SYSTEM_PROMPT
 class AnthropicProvider(Provider):
     name = "anthropic"
 
-    def __init__(self, api_key: str, max_tokens: int = 4096) -> None:
+    def __init__(
+        self, api_key: str, base_url: str | None = None, max_tokens: int = 4096
+    ) -> None:
         try:
             from anthropic import AsyncAnthropic
         except ImportError as exc:  # pragma: no cover - Abhängigkeit fehlt
             raise ProviderError(f"anthropic-Paket nicht installiert: {exc}") from exc
-        self._client = AsyncAnthropic(api_key=api_key)
+        kwargs: dict[str, str] = {"api_key": api_key}
+        if base_url:
+            kwargs["base_url"] = base_url
+        self._client = AsyncAnthropic(**kwargs)
         self._max_tokens = max_tokens
 
     async def complete(self, *, prompt: str, model: str, timeout_s: int) -> ProviderResponse:

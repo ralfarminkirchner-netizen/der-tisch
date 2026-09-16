@@ -17,33 +17,64 @@ export interface AppConfig {
   settings_available: boolean;
 }
 
-export interface AdminProviderRow {
-  provider: string;
+export interface ProviderRow {
+  id: string;
   label: string;
+  /** Art der Schnittstelle: openai | anthropic | google | fake. */
+  kind: string;
+  base_url: string | null;
   model: string;
-  model_field: string;
-  /** Leer, wenn dieser Provider gar keinen Schlüssel braucht (Test-Provider). */
-  key_field: string;
+  enabled: boolean;
+  is_preset: boolean;
   needs_key: boolean;
   key_source: 'einstellungen' | 'umgebung' | 'fehlt';
   /** Nur die letzten vier Zeichen, nie der Schlüssel selbst. */
   key_hint: string;
+  key_env: string;
   ready: boolean;
   reason: string;
+  key_url: string;
+  models_url: string;
+}
+
+export interface CustomHint {
+  label: string;
+  base_url: string;
+  model: string;
 }
 
 export interface AdminSettings {
-  providers: AdminProviderRow[];
+  providers: ProviderRow[];
+  kinds: { id: string; label: string }[];
+  custom_hints: CustomHint[];
   request_timeout_s: number;
   timeout_source: string;
   env: string;
   fake_providers_enabled: boolean;
+  /** Im Test- und Entwicklungsbetrieb steht der Tisch fest im Quelltext. */
+  editable: boolean;
 }
 
 export interface ProviderTestResult {
   ok: boolean;
   detail: string;
   latency_ms: number | null;
+}
+
+export interface NewProvider {
+  label: string;
+  kind: string;
+  base_url: string;
+  model: string;
+  api_key: string;
+}
+
+export interface ProviderPatch {
+  label?: string;
+  base_url?: string;
+  model?: string;
+  api_key?: string;
+  enabled?: boolean;
 }
 
 export interface Session {
@@ -148,7 +179,7 @@ export interface HealthInfo {
   status: string;
   env: string;
   database: string;
-  providers: Record<string, { ready: boolean; reason: string }>;
+  providers: Record<string, { ready: boolean; reason: string; label?: string }>;
   fake_providers_enabled: boolean;
   missing_credentials: string[];
 }

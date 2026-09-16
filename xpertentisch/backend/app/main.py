@@ -5,7 +5,9 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 import secrets
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -16,9 +18,11 @@ from fastapi.responses import HTMLResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from .catalog import CUSTOM_HINTS, KIND_LABELS, KIND_OPENAI, KINDS
 from .config import Settings, load_settings
 from .db import SESSION_CLOSED, Store, now
 from .events import EventBus
+from .provider_table import ProviderTable
 from .providers import ProviderError, ProviderRegistry
 from .reports import render_html, render_markdown
 from .runner import Runner
@@ -43,37 +47,42 @@ class SessionClose(BaseModel):
 
 
 class SettingsUpdate(BaseModel):
-    """Änderungen an den Einstellungen.
+    """Allgemeine Einstellungen. `None` heißt unverändert."""
 
-    `None` heißt unverändert, ein leerer Text löscht den Wert und gibt damit
-    wieder der Umgebungsvariablen den Vorrang.
-    """
-
-    openai_api_key: str | None = Field(default=None, max_length=400)
-    anthropic_api_key: str | None = Field(default=None, max_length=400)
-    openai_model: str | None = Field(default=None, max_length=120)
-    anthropic_model: str | None = Field(default=None, max_length=120)
     request_timeout_s: int | None = Field(default=None, ge=5, le=600)
 
 
-class ProviderTest(BaseModel):
-    provider: str = Field(min_length=2, max_length=40)
+class ProviderCreate(BaseModel):
+    """Ein selbst eingetragener Anbieter."""
+
+    label: str = Field(min_length=1, max_length=60)
+    kind: str = Field(default=KIND_OPENAI)
+    base_url: str | None = Field(default=None, max_length=300)
+    model: str = Field(min_length=1, max_length=160)
+    api_key: str = Field(default="", max_length=400)
+    enabled: bool = True
 
 
-SECRET_FIELDS = ("openai_api_key", "anthropic_api_key")
-SETTING_FIELDS = SECRET_FIELDS + ("openai_model", "anthropic_model", "request_timeout_s")
+class ProviderUpdate(BaseModel):
+    """Änderung an einem Anbieter. `None` heißt unverändert.
 
+    Ein leerer `api_key` löscht den hinterlegten Schlüssel; danach greift
+    wieder die Umgebungsvariable, falls es eine gibt.
+    """
 
-def _hint(value: str) -> str:
-    """Erkennungshilfe für einen hinterlegten Schlüssel — nie der Schlüssel selbst."""
-    return f"…{value[-4:]}" if len(value) >= 8 else "gesetzt"
+    label: str | None = Field(default=None, min_length=1, max_length=60)
+    base_url: str | None = Field(default=None, max_length=300)
+    model: str | None = Field(default=None, min_length=1, max_length=160)
+    api_key: str | None = Field(default=None, max_length=400)
+    enabled: bool | None = None
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or load_settings()
     store = Store(settings.db_path)
     bus = EventBus(store)
-    registry = ProviderRegistry(settings)
+    table = ProviderTable(settings)
+    registry = ProviderRegistry(settings, table)
     runner = Runner(store, bus, registry, settings)
 
     @asynccontextmanager
@@ -81,6 +90,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         await store.connect()
         # Auf der Einstellungsseite hinterlegte Werte haben Vorrang vor der Umgebung.
         settings.overrides = await store.all_settings()
+        await table.reload(store)
         # Ein Neustart darf keine Aufträge im Schwebezustand hinterlassen.
         interrupted = await store.mark_open_jobs_interrupted()
         for job in interrupted:
@@ -116,6 +126,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.bus = bus
     app.state.registry = registry
     app.state.runner = runner
+    app.state.table = table
 
     if settings.cors_origins:
         app.add_middleware(
@@ -138,7 +149,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "database": "ok" if db_ok else "fehler",
             "providers": providers,
             "fake_providers_enabled": settings.allow_fake_providers,
-            "missing_credentials": settings.missing_credentials(),
+            "missing_credentials": table.missing_keys(),
             "time": now(),
         }
 
@@ -148,7 +159,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {
             "models": [
                 {"id": m.id, "label": m.label, "provider": m.provider, "model": m.model}
-                for m in settings.enabled_models()
+                for m in table.as_models()
             ],
             "max_prompt_chars": settings.max_prompt_chars,
             "fake_providers_enabled": settings.allow_fake_providers,
@@ -233,12 +244,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 detail=f"Der Funke ist länger als {settings.max_prompt_chars} Zeichen.",
             )
 
-        models = settings.enabled_models()
+        models = table.as_models()
         if body.model_ids:
             wanted = set(body.model_ids)
             models = [m for m in models if m.id in wanted]
         if not models:
-            raise HTTPException(status_code=422, detail="Kein Modell ausgewählt.")
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "Kein einsatzbereiter Anbieter. In den Einstellungen mindestens "
+                    "einen Anbieter einschalten und mit einem Schlüssel versehen."
+                ),
+            )
 
         spark, created = await store.insert_spark(session_id, prompt, body.client_request_id)
         if not created:
@@ -322,7 +339,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # ------------------------------------------------------------ Einstellungen
 
     def _require_admin(token: str | None) -> None:
-        """Lässt nur mit dem eingerichteten Einstellungs-Token durch."""
+        """Lässt nur mit dem eingerichteten Einstellungs-Zugangswort durch."""
         if not settings.admin_token:
             raise HTTPException(
                 status_code=503,
@@ -335,99 +352,146 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if not token or not secrets.compare_digest(token, settings.admin_token):
             raise HTTPException(status_code=401, detail="Zugangswort stimmt nicht.")
 
-    def _settings_view() -> dict[str, Any]:
-        verfuegbar = registry.availability()
-        provider_zeilen = []
-        gesehen: set[str] = set()
-        for modell in settings.enabled_models():
-            if modell.provider in gesehen:
-                continue
-            gesehen.add(modell.provider)
-            braucht_schluessel = modell.provider in ("openai", "anthropic")
-            feld = f"{modell.provider}_api_key" if braucht_schluessel else ""
-            wert = settings.overrides.get(feld) or {
-                "openai": settings.openai_api_key,
-                "anthropic": settings.anthropic_api_key,
-            }.get(modell.provider)
-            zustand = verfuegbar.get(modell.provider, {"ready": False, "reason": ""})
-            provider_zeilen.append(
-                {
-                    "provider": modell.provider,
-                    "label": modell.label,
-                    "model": modell.model,
-                    "model_field": f"{modell.provider}_model",
-                    "key_field": feld,
-                    "needs_key": braucht_schluessel,
-                    "key_source": settings.source_of(feld) if feld in SECRET_FIELDS else "fehlt",
-                    "key_hint": _hint(wert) if wert else "",
-                    "ready": bool(zustand["ready"]),
-                    "reason": str(zustand["reason"]),
-                }
-            )
+    def _admin_view() -> dict[str, Any]:
         return {
-            "providers": provider_zeilen,
+            "providers": [r.public() for r in table.all()],
+            "kinds": [{"id": k, "label": KIND_LABELS[k]} for k in KINDS],
+            "custom_hints": list(CUSTOM_HINTS),
             "request_timeout_s": settings.resolved_timeout_s,
-            "timeout_source": (
-                "einstellungen" if settings.overrides.get("request_timeout_s") else "umgebung"
-            ),
+            "timeout_source": settings.timeout_source,
             "env": settings.env,
             "fake_providers_enabled": settings.allow_fake_providers,
+            "editable": not settings.models,
         }
 
-    @app.get("/api/admin/settings")
-    async def read_settings(
-        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
-    ) -> dict[str, Any]:
-        _require_admin(x_admin_token)
-        return _settings_view()
-
-    @app.post("/api/admin/settings")
-    async def write_settings(
-        body: SettingsUpdate,
-        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
-    ) -> dict[str, Any]:
-        _require_admin(x_admin_token)
-
-        geaendert: list[str] = []
-        for feld in SETTING_FIELDS:
-            wert = getattr(body, feld)
-            if wert is None:
-                continue
-            text = str(wert).strip()
-            if text:
-                await store.set_setting(feld, text)
-            else:
-                await store.delete_setting(feld)
-            geaendert.append(feld)
-
-        settings.overrides = await store.all_settings()
-        # Die nächsten Aufträge sollen die neuen Zugangsdaten verwenden.
+    async def _after_change() -> dict[str, Any]:
+        await table.reload(store)
+        # Der nächste Auftrag soll die geänderten Zugangsdaten verwenden.
         registry.invalidate()
-        if geaendert:
-            log.info("Einstellungen geändert: %s", ", ".join(geaendert))
-        return {"changed": geaendert, **_settings_view()}
+        return _admin_view()
 
-    @app.post("/api/admin/test")
-    async def test_provider(
-        body: ProviderTest,
+    def _neue_id(label: str, vergeben: set[str]) -> str:
+        roh = "".join(c if c.isalnum() else "-" for c in label.lower()).strip("-")
+        basis = re.sub(r"-+", "-", roh)[:30] or "anbieter"
+        if basis not in vergeben:
+            return basis
+        for n in range(2, 100):
+            if f"{basis}-{n}" not in vergeben:
+                return f"{basis}-{n}"
+        return f"{basis}-{secrets.token_hex(3)}"
+
+    @app.get("/api/admin/providers")
+    async def read_providers(
         x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
     ) -> dict[str, Any]:
-        """Prüft einen Provider mit einem einzigen, sehr kurzen echten Aufruf."""
         _require_admin(x_admin_token)
-        modell = next(
-            (m for m in settings.enabled_models() if m.provider == body.provider), None
+        return _admin_view()
+
+    @app.post("/api/admin/providers", status_code=201)
+    async def create_provider(
+        body: ProviderCreate,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+        if settings.models:
+            raise HTTPException(
+                status_code=409,
+                detail="Im Test- und Entwicklungsbetrieb steht der Tisch fest.",
+            )
+        if body.kind not in KINDS:
+            raise HTTPException(status_code=422, detail=f"Unbekannte Art: {body.kind}")
+        if body.kind == KIND_OPENAI and not (body.base_url or "").strip():
+            raise HTTPException(
+                status_code=422,
+                detail="Ein OpenAI-kompatibler Anbieter braucht eine Basis-Adresse.",
+            )
+
+        vergeben = {r.id for r in table.all()}
+        neue_id = _neue_id(body.label, vergeben)
+        await store.insert_provider(
+            {
+                "id": neue_id,
+                "label": body.label.strip(),
+                "kind": body.kind,
+                "base_url": (body.base_url or "").strip() or None,
+                "model": body.model.strip(),
+                "api_key": body.api_key.strip(),
+                "enabled": 1 if body.enabled else 0,
+                "is_preset": 0,
+                "position": 100 + len(vergeben),
+            }
         )
-        if modell is None:
-            raise HTTPException(status_code=404, detail="Unbekannter Provider.")
+        log.info("Anbieter angelegt: %s (%s)", neue_id, body.kind)
+        return {"created": neue_id, **(await _after_change())}
 
-        import time as _time
+    @app.post("/api/admin/providers/{provider_id}")
+    async def update_provider(
+        provider_id: str,
+        body: ProviderUpdate,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+        record = table.by_id(provider_id)
+        if record is None or settings.models:
+            raise HTTPException(status_code=404, detail="Anbieter nicht gefunden.")
 
-        start = _time.monotonic()
+        felder: dict[str, Any] = {}
+        if body.label is not None:
+            felder["label"] = body.label.strip()
+        if body.model is not None:
+            felder["model"] = body.model.strip()
+        if body.base_url is not None:
+            felder["base_url"] = body.base_url.strip() or None
+        if body.enabled is not None:
+            felder["enabled"] = 1 if body.enabled else 0
+        if body.api_key is not None:
+            # Leerer Text löscht den Schlüssel; danach greift wieder die Umgebung.
+            felder["api_key"] = body.api_key.strip()
+        if not felder:
+            raise HTTPException(status_code=422, detail="Nichts zu ändern.")
+
+        await store.update_provider(provider_id, felder)
+        log.info("Anbieter geändert: %s (%s)", provider_id, ", ".join(sorted(felder)))
+        return {"changed": sorted(felder), **(await _after_change())}
+
+    @app.delete("/api/admin/providers/{provider_id}")
+    async def delete_provider(
+        provider_id: str,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+        record = table.by_id(provider_id)
+        if record is None or settings.models:
+            raise HTTPException(status_code=404, detail="Anbieter nicht gefunden.")
+        if record.is_preset:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "Mitgelieferte Anbieter lassen sich abschalten, aber nicht löschen — "
+                    "sonst wären sie beim nächsten Start wieder da."
+                ),
+            )
+        await store.delete_provider(provider_id)
+        log.info("Anbieter gelöscht: %s", provider_id)
+        return {"deleted": provider_id, **(await _after_change())}
+
+    @app.post("/api/admin/providers/{provider_id}/test")
+    async def test_provider(
+        provider_id: str,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        """Prüft einen Anbieter mit einem einzigen, sehr kurzen echten Aufruf."""
+        _require_admin(x_admin_token)
+        record = table.by_id(provider_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail="Anbieter nicht gefunden.")
+
+        start_zeit = time.monotonic()
         try:
-            provider = registry.get(modell.provider)
+            provider = registry.get(record.id)
             antwort = await provider.complete(
                 prompt="Antworte mit genau einem Wort: bereit.",
-                model=modell.model,
+                model=record.model,
                 timeout_s=min(settings.resolved_timeout_s, 30),
             )
         except ProviderError as exc:
@@ -437,8 +501,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {
             "ok": True,
             "detail": antwort.text.strip()[:120],
-            "latency_ms": int((_time.monotonic() - start) * 1000),
+            "latency_ms": int((time.monotonic() - start_zeit) * 1000),
         }
+
+    @app.get("/api/admin/settings")
+    async def read_settings(
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+        return _admin_view()
+
+    @app.post("/api/admin/settings")
+    async def write_settings(
+        body: SettingsUpdate,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+        if body.request_timeout_s is None:
+            raise HTTPException(status_code=422, detail="Nichts zu ändern.")
+        await store.set_setting("request_timeout_s", str(body.request_timeout_s))
+        settings.overrides = await store.all_settings()
+        return {"changed": ["request_timeout_s"], **(await _after_change())}
 
     # ---------------------------------------------------------------- Oberfläche
 

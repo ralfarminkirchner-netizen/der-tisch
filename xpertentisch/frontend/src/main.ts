@@ -54,7 +54,7 @@ async function boot(): Promise<void> {
     state.selectedModels = new Set(config.models.map((m) => m.id));
   } catch (error) {
     root.replaceChildren(
-      el('div', { class: 'glass' }, [
+      el('div', { class: 'flaeche' }, [
         el('h1', {}, ['XPERTENTiSCH']),
         el('p', { class: 'hint error' }, [
           `Der Dienst ist nicht erreichbar: ${(error as Error).message}`,
@@ -129,7 +129,7 @@ function renderShell(): void {
 
   if (state.config?.fake_providers_enabled) {
     root.append(
-      el('div', { class: 'glass testbanner' }, [
+      el('div', { class: 'flaeche banner' }, [
         'Achtung: Test-Provider sind aktiv. Die Antworten stammen nicht von echten Modellen.',
       ]),
     );
@@ -219,7 +219,7 @@ function providerWarnings(): HTMLElement {
   if (!health) return container;
   const broken = Object.entries(health.providers).filter(([, info]) => !info.ready);
   if (broken.length === 0) return container;
-  const banner = el('div', { class: 'glass testbanner' }, [
+  const banner = el('div', { class: 'flaeche banner' }, [
     el('p', { class: 'hint' }, [
       `Nicht einsatzbereit: ${broken
         .map(([name, info]) => `${name} (${info.reason})`)
@@ -267,11 +267,29 @@ function sparkForm(): HTMLElement {
   const send = el('button', { class: 'primary', type: 'submit' }, ['Funke setzen']);
   const message = el('p', { class: 'hint', id: 'spark-message' }, []);
 
-  const form = el('form', { class: 'glass spark' }, [
+  const form = el('form', { class: 'flaeche spark' }, [
     textarea,
     el('div', { class: 'row spread' }, [picker, send]),
     message,
   ]);
+
+  if (config.models.length === 0) {
+    // Erster Start: noch kein Anbieter eingerichtet. Den Weg zeigen, statt
+    // ein Formular anzubieten, das nur in eine Fehlermeldung laufen kann.
+    (textarea as HTMLTextAreaElement).disabled = true;
+    (send as HTMLButtonElement).disabled = true;
+    message.textContent =
+      'Noch sitzt niemand am Tisch. In den Einstellungen mindestens einen Anbieter ' +
+      'einschalten und mit einem Schlüssel versehen.';
+    const hin = el('button', { type: 'button', class: 'primary' }, ['Anbieter einrichten']);
+    hin.addEventListener('click', () => {
+      state.settingsOpen = true;
+      renderShell();
+      document.getElementById('einstellungen')?.scrollIntoView({ block: 'nearest' });
+    });
+    picker.append(hin);
+    return form;
+  }
 
   if (closed) {
     (textarea as HTMLTextAreaElement).disabled = true;
@@ -352,7 +370,7 @@ function renderPanels(block: HTMLElement, summary: Summary): void {
   panels.replaceChildren();
   panels.append(renderTable(summary));
 
-  const graphPanel = el('section', { class: 'glass panel' }, [el('h4', {}, ['Beziehungsnetz'])]);
+  const graphPanel = el('section', { class: 'flaeche panel' }, [el('h4', {}, ['Beziehungsnetz'])]);
   const wrap = el('div', { class: 'graphwrap' });
   wrap.append(renderGraph(summary, (selection) => openAnswers(block, selection)));
   graphPanel.append(wrap, legend());
@@ -512,7 +530,7 @@ function closingSection(): HTMLElement {
   ]);
 
   if (closed) {
-    const section = el('section', { class: 'glass closing closed-banner' }, [
+    const section = el('section', { class: 'flaeche closing closed-banner' }, [
       el('h4', {}, ['Sitzung abgeschlossen']),
     ]);
     if (bundle.session.closing_note) {
@@ -548,7 +566,7 @@ function closingSection(): HTMLElement {
     }
   });
 
-  return el('section', { class: 'glass closing' }, [
+  return el('section', { class: 'flaeche closing' }, [
     el('h4', {}, ['Abschluss und Bericht']),
     note,
     el('div', { class: 'row spread' }, [button, exports]),

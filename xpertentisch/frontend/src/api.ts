@@ -3,6 +3,8 @@ import type {
   AppConfig,
   HealthInfo,
   Job,
+  NewProvider,
+  ProviderPatch,
   ProviderTestResult,
   Session,
   SessionBundle,
@@ -67,18 +69,34 @@ export const api = {
   // Die Einstellungen verlangen bei jedem Aufruf das Zugangswort. Es wird nur
   // mitgeschickt, nie gespeichert und nie zurückgelesen.
   adminSettings: (token: string) =>
-    request<AdminSettings>('/api/admin/settings', { headers: { 'X-Admin-Token': token } }),
-  saveAdminSettings: (token: string, changes: Record<string, string | number>) =>
+    request<AdminSettings>('/api/admin/providers', { headers: { 'X-Admin-Token': token } }),
+  createProvider: (token: string, provider: NewProvider) =>
+    request<AdminSettings>('/api/admin/providers', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify(provider),
+    }),
+  updateProvider: (token: string, id: string, patch: ProviderPatch) =>
+    request<AdminSettings>(`/api/admin/providers/${encodeURIComponent(id)}`, {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify(patch),
+    }),
+  deleteProvider: (token: string, id: string) =>
+    request<AdminSettings>(`/api/admin/providers/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Token': token },
+    }),
+  testProvider: (token: string, id: string) =>
+    request<ProviderTestResult>(
+      `/api/admin/providers/${encodeURIComponent(id)}/test`,
+      { method: 'POST', headers: { 'X-Admin-Token': token } },
+    ),
+  saveTimeout: (token: string, seconds: number) =>
     request<AdminSettings>('/api/admin/settings', {
       method: 'POST',
       headers: { 'X-Admin-Token': token },
-      body: JSON.stringify(changes),
-    }),
-  testProvider: (token: string, provider: string) =>
-    request<ProviderTestResult>('/api/admin/test', {
-      method: 'POST',
-      headers: { 'X-Admin-Token': token },
-      body: JSON.stringify({ provider }),
+      body: JSON.stringify({ request_timeout_s: seconds }),
     }),
 };
 

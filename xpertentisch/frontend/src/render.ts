@@ -37,7 +37,7 @@ function formatDuration(ms: number | null): string {
  * sich nicht auf die Karten der anderen Modelle aus.
  */
 export function createCard(job: Job, markers: Marker[]): HTMLElement {
-  const card = el('article', { class: 'glass card', 'data-job-id': job.id });
+  const card = el('article', { class: 'flaeche card', 'data-job-id': job.id });
   card.append(
     el('header', {}, [
       el('h3', {}, [job.label]),
@@ -50,6 +50,10 @@ export function createCard(job: Job, markers: Marker[]): HTMLElement {
 }
 
 export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void {
+  // Die farbige Kante oben trägt den Zustand.
+  card.className = `flaeche card zustand-${job.status}${
+    card.classList.contains('highlight') ? ' highlight' : ''
+  }`;
   const tags = card.querySelector('.tags');
   const body = card.querySelector('.card-body');
   if (!tags || !body) return;
@@ -88,7 +92,7 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
 }
 
 export function renderTable(summary: Summary): HTMLElement {
-  const panel = el('section', { class: 'glass panel' }, [el('h4', {}, ['Vergleich'])]);
+  const panel = el('section', { class: 'flaeche panel' }, [el('h4', {}, ['Vergleich'])]);
   const wrap = el('div', { class: 'tablewrap' });
   const table = el('table');
   const head = el('tr');

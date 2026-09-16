@@ -72,18 +72,6 @@ class Settings:
 
     # ------------------------------------------------- Aufgelöste Einstellungen
 
-    def _resolved(self, name: str, fallback: str | None) -> str | None:
-        wert = (self.overrides.get(name) or "").strip()
-        return wert or fallback
-
-    @property
-    def resolved_openai_key(self) -> str | None:
-        return self._resolved("openai_api_key", self.openai_api_key)
-
-    @property
-    def resolved_anthropic_key(self) -> str | None:
-        return self._resolved("anthropic_api_key", self.anthropic_api_key)
-
     @property
     def resolved_timeout_s(self) -> int:
         roh = (self.overrides.get("request_timeout_s") or "").strip()
@@ -91,29 +79,13 @@ class Settings:
             return int(roh)
         return self.request_timeout_s
 
-    def source_of(self, name: str) -> str:
-        """Woher ein Wert stammt: Einstellungsseite, Umgebung oder nirgendwo."""
-        if (self.overrides.get(name) or "").strip():
-            return "einstellungen"
-        env_wert = {
-            "openai_api_key": self.openai_api_key,
-            "anthropic_api_key": self.anthropic_api_key,
-        }.get(name)
-        return "umgebung" if env_wert else "fehlt"
+    @property
+    def timeout_source(self) -> str:
+        return "einstellungen" if self.overrides.get("request_timeout_s") else "umgebung"
 
     def enabled_models(self) -> list[ModelConfig]:
-        """Aktive Modelle, mit den auf der Einstellungsseite gesetzten Namen."""
-        namen = {
-            "openai": (self.overrides.get("openai_model") or "").strip(),
-            "anthropic": (self.overrides.get("anthropic_model") or "").strip(),
-        }
-        aktiv = []
-        for m in self.models:
-            if not m.enabled:
-                continue
-            name = namen.get(m.provider)
-            aktiv.append(ModelConfig(m.id, m.label, m.provider, name, True) if name else m)
-        return aktiv
+        """Nur noch für den Test- und Entwicklungsbetrieb mit festem Tisch."""
+        return [m for m in self.models if m.enabled]
 
     def model_by_id(self, model_id: str) -> ModelConfig | None:
         for m in self.models:
@@ -135,32 +107,6 @@ class Settings:
                     f"Modell '{m.id}' nutzt den Test-Provider 'fake', "
                     "aber XT_ALLOW_FAKE_PROVIDERS ist nicht gesetzt."
                 )
-
-    def missing_credentials(self) -> list[str]:
-        """Provider, die konfiguriert sind, aber keine Zugangsdaten haben."""
-        missing: list[str] = []
-        providers = {m.provider for m in self.enabled_models()}
-        if "openai" in providers and not self.resolved_openai_key:
-            missing.append("OPENAI_API_KEY")
-        if "anthropic" in providers and not self.resolved_anthropic_key:
-            missing.append("ANTHROPIC_API_KEY")
-        return missing
-
-
-DEFAULT_MODELS = [
-    ModelConfig(
-        id="openai-gpt",
-        label="OpenAI GPT",
-        provider="openai",
-        model=os.environ.get("XT_OPENAI_MODEL", "gpt-4.1"),
-    ),
-    ModelConfig(
-        id="anthropic-claude",
-        label="Anthropic Claude",
-        provider="anthropic",
-        model=os.environ.get("XT_ANTHROPIC_MODEL", "claude-sonnet-4-5"),
-    ),
-]
 
 FAKE_MODELS = [
     ModelConfig(id="fake-a", label="Fake A", provider="fake", model="fake-fast"),
@@ -184,7 +130,8 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
             "XT_USE_FAKE_MODELS verlangt zusätzlich XT_ALLOW_FAKE_PROVIDERS=1."
         )
 
-    models = list(FAKE_MODELS) if use_fake_models else list(DEFAULT_MODELS)
+    # Leere Liste heißt: der Tisch kommt aus der Anbietertabelle der Datenbank.
+    models = list(FAKE_MODELS) if use_fake_models else []
 
     cors_raw = os.environ.get("XT_CORS_ORIGINS", "").strip()
     cors = [o.strip() for o in cors_raw.split(",") if o.strip()]

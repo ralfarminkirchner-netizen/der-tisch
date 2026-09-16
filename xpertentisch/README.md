@@ -50,27 +50,49 @@ xpertentisch/
   wörtliches Textbelegzitat mit.
 - **Vergleichstabelle** und **Beziehungsnetz**; ein Klick auf Knoten oder Kante
   öffnet genau die zugehörigen Antworten.
-- **Einstellungen in der Oberfläche**: Zugangsdaten, Modellnamen und Zeitgrenze
-  lassen sich über das Zahnrad eintragen, ohne Umgebungsvariablen anzufassen.
+- **Anbieter sind Daten, nicht Quelltext.** Mitgeliefert sind OpenAI, Anthropic,
+  Google Gemini, DeepSeek, Mistral und xAI Grok; jeder davon lässt sich ändern
+  oder abschalten. Über „Eigenen Anbieter eintragen“ kommt alles dazu, was die
+  OpenAI-Schnittstelle spricht — OpenRouter, Together, Fireworks, Groq oder ein
+  Server im eigenen Netz.
+- **Einstellungen in der Oberfläche**: Zugangsdaten, Modellnamen, Basis-Adressen
+  und Zeitgrenze lassen sich über das Zahnrad eintragen, ohne Umgebungsvariablen
+  anzufassen.
 - **Sitzungsabschluss** mit freiwilliger Abschlussnotiz.
 - **Zwei Berichtsexporte**: eigenständiges HTML (offline, druckbar, ohne
   Skripte, alle Inhalte maskiert) und Markdown.
 
-### Zugangsdaten eintragen
+### Anbieter und Zugangsdaten
 
-Es gibt zwei Wege, und sie lassen sich mischen:
+Ein Anbieter kommt an den Tisch, wenn er **eingeschaltet** ist und einen
+**Schlüssel** hat. Beides steht auf der Einstellungsseite (Zahnrad oben rechts).
 
-1. **Umgebungsvariablen** `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` — gut für den
-   Betrieb über Railway oder Docker.
-2. **Einstellungsseite** in der Oberfläche (Zahnrad oben rechts) — gut, wenn ein
-   Schlüssel ohne Neustart getauscht werden soll. Dort lassen sich außerdem der
-   Modellname je Anbieter und die Zeitgrenze setzen, und ein Knopf prüft mit
-   einem einzigen echten Aufruf, ob der Schlüssel funktioniert.
+Drei Arten von Schnittstellen decken das Feld ab:
 
-Was auf der Einstellungsseite gesetzt wird, liegt in der Datenbank und hat
-**Vorrang** vor der Umgebung. Ein geleertes Feld löscht den Wert wieder, und die
-Umgebungsvariable greift erneut. Die Seite zeigt zu jedem Anbieter, woher sein
-Schlüssel stammt.
+| Art | Wer spricht sie |
+| --- | --- |
+| `openai` | OpenAI selbst und alle kompatiblen: DeepSeek, Mistral, xAI, Groq, OpenRouter, Together, Fireworks, vLLM, Ollama … |
+| `anthropic` | Anthropic |
+| `google` | Google Gemini |
+
+Bei einem OpenAI-kompatiblen Anbieter ist die **Basis-Adresse** der einzige
+Unterschied. Deshalb braucht es für einen neuen Anbieter keinen Quelltext:
+Anzeigename, Art, Basis-Adresse, Modellname und Schlüssel genügen.
+
+Schlüssel lassen sich auf zwei Wegen hinterlegen, und beide dürfen sich mischen:
+
+1. **Umgebungsvariablen** — `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
+   `GOOGLE_API_KEY`, `DEEPSEEK_API_KEY`, `MISTRAL_API_KEY`, `XAI_API_KEY`. Ein
+   mitgelieferter Anbieter, dessen Variable beim ersten Start gesetzt ist,
+   startet gleich eingeschaltet.
+2. **Einstellungsseite** — ohne Neustart, auch für selbst eingetragene Anbieter.
+
+Was auf der Einstellungsseite gesetzt wird, hat **Vorrang** vor der Umgebung.
+Ein geleertes Feld löscht den Wert wieder, und die Umgebungsvariable greift
+erneut. Zu jedem Anbieter steht, woher sein Schlüssel stammt.
+
+Mitgelieferte Anbieter lassen sich abschalten, aber nicht löschen — sie wären
+beim nächsten Start ohnehin wieder da. Selbst eingetragene lassen sich löschen.
 
 **Die Einstellungsseite ist gesperrt, solange `XT_ADMIN_TOKEN` nicht gesetzt
 ist.** Das ist Absicht: ohne Login könnte sonst jede Person mit dem Link die
@@ -78,6 +100,12 @@ Zugangsdaten ändern. Setze die Variable auf ein langes, selbst gewähltes Wort 
 starte den Dienst neu; die Oberfläche fragt dieses Wort dann ab. Schlüssel werden
 nie an die Oberfläche zurückgegeben — sichtbar sind nur Herkunft und die letzten
 vier Zeichen.
+
+**Zu den Modellnamen:** die mitgelieferten Namen sind Vorschläge zum Zeitpunkt
+der Entwicklung, keine geprüfte Wahrheit. Modellbezeichnungen ändern sich
+schnell. Jede Anbieterzeile verlinkt deshalb die Modellliste des Anbieters, und
+der Name ist frei änderbar. Der Knopf „Prüfen“ macht einen einzigen kurzen
+echten Aufruf und sagt, ob Schlüssel und Modellname zusammenpassen.
 
 ### Widerspruch vs. Unterschiedlichkeit
 
@@ -150,8 +178,10 @@ cd xpertentisch/frontend && npm i -D playwright && PW_CHROMIUM=<pfad/zu/chromium
 | `XT_ENV` | `production`, `development` oder `test` | `production` |
 | `OPENAI_API_KEY` | Zugangsdaten OpenAI | — |
 | `ANTHROPIC_API_KEY` | Zugangsdaten Anthropic | — |
-| `XT_OPENAI_MODEL` | Modellname OpenAI | `gpt-4.1` |
-| `XT_ANTHROPIC_MODEL` | Modellname Anthropic | `claude-sonnet-4-5` |
+| `GOOGLE_API_KEY` | Zugangsdaten Google Gemini | — |
+| `DEEPSEEK_API_KEY` | Zugangsdaten DeepSeek | — |
+| `MISTRAL_API_KEY` | Zugangsdaten Mistral | — |
+| `XAI_API_KEY` | Zugangsdaten xAI Grok | — |
 | `XT_DB_PATH` | Pfad der SQLite-Datei | `xpertentisch.sqlite3` |
 | `XT_REQUEST_TIMEOUT_S` | Zeitgrenze je Modellaufruf | `120` |
 | `XT_MAX_PROMPT_CHARS` | Längengrenze eines Funkens | `20000` |
@@ -174,7 +204,8 @@ meldet `fake_providers_enabled: true`.
 - **Healthcheck-Pfad**: `/api/health`
 - **Variablen**: `XT_ENV=production`, `XT_DB_PATH=/data/xpertentisch.sqlite3` und
   `XT_ADMIN_TOKEN` (ein langes, selbst gewähltes Wort). Die API-Schlüssel kannst
-  du hier als `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` setzen **oder** nach dem
+  du hier als `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`,
+  `DEEPSEEK_API_KEY`, `MISTRAL_API_KEY`, `XAI_API_KEY` setzen **oder** nach dem
   ersten Start über das Zahnrad in der Oberfläche eintragen.
 - **Volume**: unter `/data` einhängen — ohne Volume sind die Sitzungsdaten nach
   jedem Neustart weg.
@@ -196,9 +227,12 @@ ist, und nennt die fehlenden Zugangsdaten.
 | POST | `/api/sessions/{id}/close` | Sitzung abschließen |
 | GET | `/api/sessions/{id}/report.html` | Bericht als eigenständiges HTML |
 | GET | `/api/sessions/{id}/report.md` | Bericht als Markdown |
-| GET | `/api/admin/settings` | Zustand der Anbieter (Kopfzeile `X-Admin-Token`) |
-| POST | `/api/admin/settings` | Schlüssel, Modellnamen, Zeitgrenze setzen oder löschen |
-| POST | `/api/admin/test` | einen Anbieter mit einem echten Kurzaufruf prüfen |
+| GET | `/api/admin/providers` | alle Anbieter samt Zustand (Kopfzeile `X-Admin-Token`) |
+| POST | `/api/admin/providers` | eigenen Anbieter anlegen |
+| POST | `/api/admin/providers/{id}` | Schlüssel, Modell, Adresse, Ein/Aus ändern |
+| DELETE | `/api/admin/providers/{id}` | selbst eingetragenen Anbieter löschen |
+| POST | `/api/admin/providers/{id}/test` | einen Anbieter mit einem echten Kurzaufruf prüfen |
+| GET/POST | `/api/admin/settings` | Zeitgrenze lesen und setzen |
 
 Ein wiederholter POST auf `/sparks` mit derselben `client_request_id` liefert
 `200` und `duplicate: true` — es entstehen keine neuen Modellaufrufe.
@@ -211,6 +245,16 @@ Obsidian-/Vault-Zugriff, Live-Sync oder Pflichtintegration mit anderen
 Systemen, Nutzerkonten oder Login, automatische Veröffentlichung von
 Nutzerinhalten, verbindliche Lehren aus Modellkonsens, Rankings der Modelle.
 
+## Gestaltung
+
+Die Oberfläche folgt der Idee einer **Werkbank**: eine ruhige, warme Fläche,
+darauf körperhafte Karten mit einer farbigen Kante, die den Zustand trägt. Farbe
+ist reserviert für Bedeutung — Grün für Übereinstimmung, Orange für Widerspruch,
+Violett für Einzelaussagen; das Tiefblau der Marke mischt sich da nicht ein.
+Beide Themen (hell und dunkel) sind ausgearbeitet und folgen der Einstellung des
+Geräts. Gesetzt wird in der Systemschrift: das spart den Ladeweg zu einem
+fremden Schriftdienst und damit auch die Datenspur dorthin.
+
 ## Bekannte Einschränkungen
 
 - **Kein Zugriffsschutz für Sitzungen.** Wer die Sitzungskennung kennt, sieht die
@@ -218,6 +262,9 @@ Nutzerinhalten, verbindliche Lehren aus Modellkonsens, Rankings der Modelle.
   ungeschützt ins offene Netz, wenn die Inhalte vertraulich sind. Geschützt ist
   nur die Einstellungsseite, und zwar durch ein einziges gemeinsames Zugangswort,
   nicht durch Benutzerkonten.
+- **Die mitgelieferten Modellnamen können veraltet sein.** Sie waren zum
+  Zeitpunkt der Entwicklung plausibel, mehr nicht. Bei einem Fehler „Modell nicht
+  gefunden“ hilft die verlinkte Modellliste des Anbieters.
 - **Über die Einstellungsseite hinterlegte Schlüssel liegen unverschlüsselt in
   der SQLite-Datei.** Eine Verschlüsselung mit einem Schlüssel, der daneben
   liegt, wäre Augenwischerei; stattdessen gilt: Das Volume ist so schützenswert

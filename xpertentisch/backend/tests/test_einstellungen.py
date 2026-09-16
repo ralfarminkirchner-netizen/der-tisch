@@ -1,4 +1,4 @@
-"""Einstellungsseite: Zugangsschutz, Speicherung, Wirksamkeit, Verschwiegenheit."""
+"""Anbieterverwaltung: Zugangsschutz, Speicherung, Wirksamkeit, Verschwiegenheit."""
 
 from __future__ import annotations
 
@@ -8,26 +8,25 @@ import httpx
 import pytest
 import pytest_asyncio
 
-from app.config import ModelConfig, Settings
+from app.config import Settings
 from app.main import create_app
 
 TOKEN = "ein-langes-zugangswort-zum-testen"
-ECHTE_MODELLE = [
-    ModelConfig(id="openai-gpt", label="OpenAI GPT", provider="openai", model="gpt-4.1"),
-    ModelConfig(id="anthropic-claude", label="Anthropic Claude",
-                provider="anthropic", model="claude-sonnet-4-5"),
-]
 
 
-def echte_settings(tmp_path: Path, **over) -> Settings:
-    s = Settings(env="test", db_path=tmp_path / "e.sqlite3", models=list(ECHTE_MODELLE), **over)
+def leere_settings(tmp_path: Path, **over) -> Settings:
+    """Ein Tisch, der aus der Datenbank kommt (kein fester Testtisch)."""
+    s = Settings(env="test", db_path=tmp_path / "e.sqlite3", models=[], **over)
     s.validate()
     return s
 
 
 @pytest_asyncio.fixture
-async def admin_client(tmp_path: Path):
-    app = create_app(echte_settings(tmp_path, admin_token=TOKEN))
+async def admin_client(tmp_path: Path, monkeypatch):
+    for name in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY",
+                 "DEEPSEEK_API_KEY", "MISTRAL_API_KEY", "XAI_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    app = create_app(leere_settings(tmp_path, admin_token=TOKEN))
     async with app.router.lifespan_context(app):
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app), base_url="http://t", timeout=20
@@ -36,154 +35,263 @@ async def admin_client(tmp_path: Path):
             yield c
 
 
+async def anbieter(client) -> dict[str, dict]:
+    body = (await client.get("/api/admin/providers")).json()
+    return {p["id"]: p for p in body["providers"]}
+
+
+# ------------------------------------------------------------------- Zugang
+
 @pytest.mark.asyncio
-async def test_ohne_zugangswort_bleibt_die_seite_gesperrt(tmp_path):
-    app = create_app(echte_settings(tmp_path))  # kein admin_token
+async def test_ohne_zugangswort_bleibt_alles_gesperrt(tmp_path):
+    app = create_app(leere_settings(tmp_path))
     async with app.router.lifespan_context(app):
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app), base_url="http://t"
         ) as c:
-            antwort = await c.get("/api/admin/settings")
+            lesen = await c.get("/api/admin/providers")
+            schreiben = await c.post("/api/admin/providers/openai", json={"enabled": True})
             konfig = (await c.get("/api/config")).json()
-    assert antwort.status_code == 503
-    assert "XT_ADMIN_TOKEN" in antwort.json()["detail"]
+    assert lesen.status_code == 503 and "XT_ADMIN_TOKEN" in lesen.json()["detail"]
+    assert schreiben.status_code == 503
     assert konfig["settings_available"] is False
 
 
 @pytest.mark.asyncio
 async def test_falsches_zugangswort_wird_abgewiesen(admin_client):
-    antwort = await admin_client.get(
-        "/api/admin/settings", headers={"X-Admin-Token": "falsch"}
-    )
-    assert antwort.status_code == 401
-    ohne = await admin_client.get("/api/admin/settings", headers={"X-Admin-Token": ""})
-    assert ohne.status_code == 401
+    for anfrage in (
+        admin_client.get("/api/admin/providers", headers={"X-Admin-Token": "falsch"}),
+        admin_client.post("/api/admin/providers/openai", json={"enabled": True},
+                          headers={"X-Admin-Token": "falsch"}),
+        admin_client.delete("/api/admin/providers/openai",
+                            headers={"X-Admin-Token": "falsch"}),
+    ):
+        assert (await anfrage).status_code == 401
+
+
+# --------------------------------------------------------- Mitgelieferte Liste
+
+@pytest.mark.asyncio
+async def test_alle_mitgelieferten_anbieter_stehen_bereit_zur_auswahl(admin_client):
+    liste = await anbieter(admin_client)
+    assert {"openai", "anthropic", "google", "deepseek", "mistral", "xai"} <= set(liste)
+    # Ohne Schlüssel startet niemand eingeschaltet — der Tisch beginnt nicht mit Fehlern.
+    assert all(not p["enabled"] for p in liste.values())
+    assert (await admin_client.get("/api/config")).json()["models"] == []
+    assert liste["deepseek"]["kind"] == "openai"
+    assert liste["deepseek"]["base_url"] == "https://api.deepseek.com/v1"
+    assert liste["google"]["kind"] == "google"
+    assert liste["openai"]["key_url"].startswith("https://")
 
 
 @pytest.mark.asyncio
-async def test_uebersicht_zeigt_zustand_ohne_schluessel(admin_client):
-    body = (await admin_client.get("/api/admin/settings")).json()
-    anbieter = {p["provider"]: p for p in body["providers"]}
-    assert set(anbieter) == {"openai", "anthropic"}
-    assert anbieter["openai"]["key_source"] == "fehlt"
-    assert anbieter["openai"]["ready"] is False
-    assert anbieter["openai"]["key_hint"] == ""
-    assert (await admin_client.get("/api/config")).json()["settings_available"] is True
-
-
-@pytest.mark.asyncio
-async def test_schluessel_eintragen_macht_den_provider_bereit(admin_client):
-    vorher = (await admin_client.get("/api/health")).json()
-    assert "OPENAI_API_KEY" in vorher["missing_credentials"]
-
-    antwort = await admin_client.post(
-        "/api/admin/settings", json={"openai_api_key": "sk-test-0123456789abcdef"}
-    )
-    assert antwort.status_code == 200
-    assert antwort.json()["changed"] == ["openai_api_key"]
-
-    anbieter = {p["provider"]: p for p in antwort.json()["providers"]}
-    assert anbieter["openai"]["key_source"] == "einstellungen"
-    assert anbieter["openai"]["key_hint"] == "…cdef"
-    assert anbieter["openai"]["ready"] is True
-
-    nachher = (await admin_client.get("/api/health")).json()
-    assert "OPENAI_API_KEY" not in nachher["missing_credentials"]
-    assert nachher["providers"]["openai"]["ready"] is True
-
-
-@pytest.mark.asyncio
-async def test_schluessel_taucht_in_keiner_antwort_auf(admin_client):
-    schluessel = "sk-geheim-9876543210zyxwvu"
-    await admin_client.post("/api/admin/settings", json={"openai_api_key": schluessel})
-    for pfad in ("/api/config", "/api/health", "/api/admin/settings"):
-        text = (await admin_client.get(pfad)).text
-        assert schluessel not in text
-        assert "geheim" not in text
-
-
-@pytest.mark.asyncio
-async def test_leerer_wert_loescht_und_gibt_der_umgebung_wieder_vorrang(tmp_path):
-    settings = echte_settings(tmp_path, admin_token=TOKEN, openai_api_key="aus-der-umgebung-1234")
-    app = create_app(settings)
+async def test_umgebungsschluessel_schaltet_einen_anbieter_von_allein_ein(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-aus-der-umgebung-1234")
+    app = create_app(leere_settings(tmp_path, admin_token=TOKEN))
     async with app.router.lifespan_context(app):
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app), base_url="http://t"
         ) as c:
             c.headers["X-Admin-Token"] = TOKEN
-            body = (await c.get("/api/admin/settings")).json()
-            assert body["providers"][0]["key_source"] == "umgebung"
+            liste = await anbieter(c)
+            konfig = (await c.get("/api/config")).json()
+    assert liste["deepseek"]["enabled"] is True
+    assert liste["deepseek"]["ready"] is True
+    assert liste["deepseek"]["key_source"] == "umgebung"
+    assert [m["id"] for m in konfig["models"]] == ["deepseek"]
 
-            body = (await c.post("/api/admin/settings",
-                                 json={"openai_api_key": "sk-neu-abcdefgh"})).json()
-            assert body["providers"][0]["key_source"] == "einstellungen"
 
-            body = (await c.post("/api/admin/settings", json={"openai_api_key": ""})).json()
-            assert body["providers"][0]["key_source"] == "umgebung"
-            assert body["providers"][0]["key_hint"] == "…1234"
+# ------------------------------------------------------------------ Ändern
+
+@pytest.mark.asyncio
+async def test_schluessel_eintragen_macht_einen_anbieter_bereit(admin_client):
+    antwort = await admin_client.post(
+        "/api/admin/providers/google",
+        json={"api_key": "AIza-test-0123456789abcdef", "enabled": True},
+    )
+    assert antwort.status_code == 200
+    assert set(antwort.json()["changed"]) == {"api_key", "enabled"}
+
+    liste = {p["id"]: p for p in antwort.json()["providers"]}
+    assert liste["google"]["ready"] is True
+    assert liste["google"]["key_source"] == "einstellungen"
+    assert liste["google"]["key_hint"] == "…cdef"
+
+    gesundheit = (await admin_client.get("/api/health")).json()
+    assert gesundheit["providers"]["google"]["ready"] is True
+    assert "GOOGLE_API_KEY" not in gesundheit["missing_credentials"]
+    assert [m["id"] for m in (await admin_client.get("/api/config")).json()["models"]] == ["google"]
 
 
 @pytest.mark.asyncio
-async def test_modellname_und_zeitgrenze_wirken_sofort(admin_client):
-    await admin_client.post("/api/admin/settings",
-                            json={"openai_model": "gpt-4.1-mini", "request_timeout_s": 42})
-    konfig = (await admin_client.get("/api/config")).json()
-    modelle = {m["provider"]: m["model"] for m in konfig["models"]}
+async def test_abschalten_nimmt_einen_anbieter_vom_tisch(admin_client):
+    await admin_client.post("/api/admin/providers/mistral",
+                            json={"api_key": "sk-mistral-abcdefgh", "enabled": True})
+    assert [m["id"] for m in (await admin_client.get("/api/config")).json()["models"]] == ["mistral"]
+
+    await admin_client.post("/api/admin/providers/mistral", json={"enabled": False})
+    assert (await admin_client.get("/api/config")).json()["models"] == []
+
+
+@pytest.mark.asyncio
+async def test_leerer_schluessel_gibt_der_umgebung_wieder_vorrang(tmp_path, monkeypatch):
+    monkeypatch.setenv("XAI_API_KEY", "sk-umgebung-9999")
+    app = create_app(leere_settings(tmp_path, admin_token=TOKEN))
+    async with app.router.lifespan_context(app):
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://t"
+        ) as c:
+            c.headers["X-Admin-Token"] = TOKEN
+            assert (await anbieter(c))["xai"]["key_source"] == "umgebung"
+
+            await c.post("/api/admin/providers/xai", json={"api_key": "sk-eigener-1111"})
+            assert (await anbieter(c))["xai"]["key_source"] == "einstellungen"
+
+            await c.post("/api/admin/providers/xai", json={"api_key": ""})
+            zeile = (await anbieter(c))["xai"]
+    assert zeile["key_source"] == "umgebung"
+    assert zeile["key_hint"] == "…9999"
+
+
+@pytest.mark.asyncio
+async def test_modellname_laesst_sich_aendern(admin_client):
+    await admin_client.post("/api/admin/providers/openai",
+                            json={"model": "gpt-4.1-mini", "api_key": "sk-x-abcdefgh",
+                                  "enabled": True})
+    modelle = {m["id"]: m["model"] for m in (await admin_client.get("/api/config")).json()["models"]}
     assert modelle["openai"] == "gpt-4.1-mini"
 
-    body = (await admin_client.get("/api/admin/settings")).json()
-    assert body["request_timeout_s"] == 42
-    assert body["timeout_source"] == "einstellungen"
+
+@pytest.mark.asyncio
+async def test_aenderung_ohne_inhalt_wird_abgewiesen(admin_client):
+    assert (await admin_client.post("/api/admin/providers/openai", json={})).status_code == 422
+    assert (await admin_client.post("/api/admin/providers/gibtsnicht",
+                                    json={"enabled": True})).status_code == 404
+
+
+# ------------------------------------------------------------ Eigene Anbieter
+
+@pytest.mark.asyncio
+async def test_eigenen_anbieter_anlegen_und_wieder_loeschen(admin_client):
+    antwort = await admin_client.post("/api/admin/providers", json={
+        "label": "Groq", "kind": "openai",
+        "base_url": "https://api.groq.com/openai/v1",
+        "model": "llama-3.3-70b-versatile",
+        "api_key": "gsk-test-0123456789",
+    })
+    assert antwort.status_code == 201
+    neue_id = antwort.json()["created"]
+    assert neue_id == "groq"
+
+    liste = {p["id"]: p for p in antwort.json()["providers"]}
+    assert liste["groq"]["is_preset"] is False
+    assert liste["groq"]["ready"] is True
+    assert [m["id"] for m in (await admin_client.get("/api/config")).json()["models"]] == ["groq"]
+
+    weg = await admin_client.delete(f"/api/admin/providers/{neue_id}")
+    assert weg.status_code == 200
+    assert "groq" not in {p["id"] for p in weg.json()["providers"]}
 
 
 @pytest.mark.asyncio
-async def test_unsinnige_zeitgrenze_wird_abgewiesen(admin_client):
-    assert (await admin_client.post("/api/admin/settings",
-                                    json={"request_timeout_s": 99999})).status_code == 422
-    assert (await admin_client.post("/api/admin/settings",
-                                    json={"request_timeout_s": 1})).status_code == 422
+async def test_gleicher_name_bekommt_eine_eigene_kennung(admin_client):
+    rumpf = {"label": "Mein Server", "kind": "openai",
+             "base_url": "http://127.0.0.1:8000/v1", "model": "lokal"}
+    erste = (await admin_client.post("/api/admin/providers", json=rumpf)).json()["created"]
+    zweite = (await admin_client.post("/api/admin/providers", json=rumpf)).json()["created"]
+    assert erste == "mein-server"
+    assert zweite == "mein-server-2"
 
 
 @pytest.mark.asyncio
-async def test_einstellungen_ueberleben_den_neustart(tmp_path):
+async def test_openai_kompatibler_anbieter_braucht_eine_adresse(admin_client):
+    antwort = await admin_client.post("/api/admin/providers", json={
+        "label": "Ohne Adresse", "kind": "openai", "model": "irgendwas",
+    })
+    assert antwort.status_code == 422
+    assert "Basis-Adresse" in antwort.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_unbekannte_art_wird_abgewiesen(admin_client):
+    antwort = await admin_client.post("/api/admin/providers", json={
+        "label": "Fantasie", "kind": "telepathie", "model": "x", "base_url": "http://x",
+    })
+    assert antwort.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_mitgelieferte_anbieter_lassen_sich_nicht_loeschen(admin_client):
+    antwort = await admin_client.delete("/api/admin/providers/openai")
+    assert antwort.status_code == 409
+    assert "abschalten" in antwort.json()["detail"]
+    assert "openai" in await anbieter(admin_client)
+
+
+# -------------------------------------------------------------- Verschwiegen
+
+@pytest.mark.asyncio
+async def test_schluessel_taucht_in_keiner_antwort_auf(admin_client):
+    schluessel = "sk-streng-geheim-9876543210"
+    await admin_client.post("/api/admin/providers/deepseek",
+                            json={"api_key": schluessel, "enabled": True})
+    for pfad in ("/api/config", "/api/health", "/api/admin/providers", "/api/admin/settings"):
+        text = (await admin_client.get(pfad)).text
+        assert schluessel not in text
+        assert "geheim" not in text
+
+
+# ----------------------------------------------------------------- Dauerhaft
+
+@pytest.mark.asyncio
+async def test_anbieter_ueberleben_den_neustart(tmp_path, monkeypatch):
+    for name in ("OPENAI_API_KEY", "GOOGLE_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
     for durchgang in (1, 2):
-        app = create_app(echte_settings(tmp_path, admin_token=TOKEN))
+        app = create_app(leere_settings(tmp_path, admin_token=TOKEN))
         async with app.router.lifespan_context(app):
             async with httpx.AsyncClient(
                 transport=httpx.ASGITransport(app=app), base_url="http://t"
             ) as c:
                 c.headers["X-Admin-Token"] = TOKEN
                 if durchgang == 1:
-                    await c.post("/api/admin/settings",
-                                 json={"anthropic_api_key": "sk-ant-bleibt-erhalten-42"})
-                body = (await c.get("/api/admin/settings")).json()
-    anbieter = {p["provider"]: p for p in body["providers"]}
-    assert anbieter["anthropic"]["key_source"] == "einstellungen"
-    assert anbieter["anthropic"]["key_hint"] == "…n-42"
-    assert anbieter["anthropic"]["ready"] is True
+                    await c.post("/api/admin/providers", json={
+                        "label": "Eigener", "kind": "openai",
+                        "base_url": "https://eigen.example/v1", "model": "m-1",
+                        "api_key": "sk-bleibt-erhalten-42",
+                    })
+                    await c.post("/api/admin/providers/google",
+                                 json={"model": "gemini-2.5-pro", "enabled": True})
+                liste = await anbieter(c)
+    assert liste["eigener"]["ready"] is True
+    assert liste["eigener"]["key_hint"] == "…n-42"
+    assert liste["google"]["model"] == "gemini-2.5-pro"
+    assert liste["google"]["enabled"] is True
 
+
+# --------------------------------------------------------------------- Prüfen
 
 @pytest.mark.asyncio
 async def test_pruefknopf_meldet_fehlenden_schluessel_statt_zu_werfen(admin_client):
-    antwort = await admin_client.post("/api/admin/test", json={"provider": "anthropic"})
+    antwort = await admin_client.post("/api/admin/providers/anthropic/test")
     assert antwort.status_code == 200
     assert antwort.json()["ok"] is False
     assert "Schlüssel" in antwort.json()["detail"]
 
 
 @pytest.mark.asyncio
-async def test_pruefknopf_kennt_nur_eingerichtete_provider(admin_client):
-    assert (await admin_client.post("/api/admin/test",
-                                    json={"provider": "erfunden"})).status_code == 404
+async def test_pruefknopf_kennt_nur_vorhandene_anbieter(admin_client):
+    assert (await admin_client.post("/api/admin/providers/erfunden/test")).status_code == 404
 
+
+# ----------------------------------------------------------------- Zeitgrenze
 
 @pytest.mark.asyncio
-async def test_einstellungen_brauchen_das_zugangswort_auch_beim_schreiben(admin_client):
-    antwort = await admin_client.post(
-        "/api/admin/settings",
-        json={"openai_api_key": "sk-darf-nicht-durch"},
-        headers={"X-Admin-Token": "falsch"},
-    )
-    assert antwort.status_code == 401
-    body = (await admin_client.get("/api/admin/settings")).json()
-    assert body["providers"][0]["key_source"] == "fehlt"
+async def test_zeitgrenze_wirkt_und_wird_geprueft(admin_client):
+    body = (await admin_client.post("/api/admin/settings",
+                                    json={"request_timeout_s": 42})).json()
+    assert body["request_timeout_s"] == 42
+    assert body["timeout_source"] == "einstellungen"
+    for unsinn in (99999, 1):
+        assert (await admin_client.post("/api/admin/settings",
+                                        json={"request_timeout_s": unsinn})).status_code == 422

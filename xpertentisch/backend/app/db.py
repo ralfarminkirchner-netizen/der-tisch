@@ -101,6 +101,19 @@ CREATE TABLE IF NOT EXISTS settings (
     value      TEXT NOT NULL,
     updated_at REAL NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS providers (
+    id         TEXT PRIMARY KEY,
+    label      TEXT NOT NULL,
+    kind       TEXT NOT NULL,
+    base_url   TEXT,
+    model      TEXT NOT NULL,
+    api_key    TEXT NOT NULL DEFAULT '',
+    enabled    INTEGER NOT NULL DEFAULT 0,
+    is_preset  INTEGER NOT NULL DEFAULT 0,
+    position   INTEGER NOT NULL DEFAULT 0,
+    updated_at REAL NOT NULL
+);
 """
 
 JOB_QUEUED = "queued"
@@ -404,6 +417,74 @@ class Store:
     async def settings_updated_at(self) -> dict[str, float]:
         async with self.conn.execute("SELECT name, updated_at FROM settings") as cur:
             return {r["name"]: r["updated_at"] for r in await cur.fetchall()}
+
+    # ----------------------------------------------------------------- Anbieter
+
+    async def list_providers(self) -> list[dict[str, Any]]:
+        async with self.conn.execute(
+            "SELECT * FROM providers ORDER BY position, label"
+        ) as cur:
+            return [dict(r) for r in await cur.fetchall()]
+
+    async def get_provider(self, provider_id: str) -> dict[str, Any] | None:
+        async with self.conn.execute(
+            "SELECT * FROM providers WHERE id=?", (provider_id,)
+        ) as cur:
+            row = await cur.fetchone()
+        return dict(row) if row else None
+
+    async def insert_provider(self, record: dict[str, Any]) -> None:
+        await self.conn.execute(
+            "INSERT INTO providers (id, label, kind, base_url, model, api_key, enabled,"
+            " is_preset, position, updated_at) VALUES (:id, :label, :kind, :base_url,"
+            " :model, :api_key, :enabled, :is_preset, :position, :updated_at)",
+            {**record, "updated_at": now()},
+        )
+        await self.conn.commit()
+
+    async def update_provider(self, provider_id: str, felder: dict[str, Any]) -> None:
+        """Ändert genau die übergebenen Spalten."""
+        erlaubt = {"label", "kind", "base_url", "model", "api_key", "enabled", "position"}
+        gesetzt = {k: v for k, v in felder.items() if k in erlaubt}
+        if not gesetzt:
+            return
+        zuweisung = ", ".join(f"{k}=:{k}" for k in gesetzt)
+        await self.conn.execute(
+            f"UPDATE providers SET {zuweisung}, updated_at=:updated_at WHERE id=:id",
+            {**gesetzt, "id": provider_id, "updated_at": now()},
+        )
+        await self.conn.commit()
+
+    async def delete_provider(self, provider_id: str) -> None:
+        await self.conn.execute("DELETE FROM providers WHERE id=?", (provider_id,))
+        await self.conn.commit()
+
+    async def ensure_presets(
+        self, presets: Iterable[Any], env_keys: dict[str, str | None]
+    ) -> list[str]:
+        """Legt fehlende mitgelieferte Anbieter an. Bestehende bleiben unangetastet."""
+        vorhanden = {p["id"] for p in await self.list_providers()}
+        neu: list[str] = []
+        for index, preset in enumerate(presets):
+            if preset.id in vorhanden:
+                continue
+            await self.insert_provider(
+                {
+                    "id": preset.id,
+                    "label": preset.label,
+                    "kind": preset.kind,
+                    "base_url": preset.base_url,
+                    "model": preset.default_model,
+                    "api_key": "",
+                    # Ohne Schlüssel in der Umgebung startet ein Anbieter abgeschaltet,
+                    # damit der Tisch nicht mit Fehlermeldungen beginnt.
+                    "enabled": 1 if env_keys.get(preset.key_env) else 0,
+                    "is_preset": 1,
+                    "position": index,
+                }
+            )
+            neu.append(preset.id)
+        return neu
 
     # ---------------------------------------------------------------- Events
 

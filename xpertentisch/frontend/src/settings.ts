@@ -1,6 +1,6 @@
 import { api } from './api';
 import { el } from './render';
-import type { AdminSettings, AdminProviderRow } from './types';
+import type { AdminSettings, CustomHint, ProviderRow } from './types';
 
 const TOKEN_KEY = 'xpertentisch.admin';
 
@@ -28,16 +28,20 @@ const QUELLE_TEXT: Record<string, string> = {
   fehlt: 'nicht hinterlegt',
 };
 
+type Melder = (text: string, fehler?: boolean) => void;
+
 /**
  * Die Einstellungsseite.
  *
- * Schlüssel werden nur gesendet, nie zurückgelesen: der Server gibt
- * ausschließlich Herkunft und die letzten vier Zeichen heraus.
+ * Anbieter sind hier Daten: die mitgelieferten lassen sich ändern und
+ * abschalten, beliebige weitere kommen über „Eigenen Anbieter eintragen“ dazu.
+ * Schlüssel werden nur gesendet, nie zurückgelesen — der Server gibt allein
+ * Herkunft und die letzten vier Zeichen heraus.
  */
 export function renderSettings(settingsAvailable: boolean, onClose: () => void): HTMLElement {
-  const panel = el('section', { class: 'glass settings', id: 'einstellungen' }, [
+  const panel = el('section', { class: 'flaeche settings', id: 'einstellungen' }, [
     el('div', { class: 'row spread' }, [
-      el('h4', {}, ['Einstellungen']),
+      el('h4', {}, ['Einstellungen — Anbieter am Tisch']),
       (() => {
         const zu = el('button', { type: 'button' }, ['Schließen']);
         zu.addEventListener('click', onClose);
@@ -59,8 +63,8 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
       ]),
       el('p', { class: 'hint' }, [
         'Ohne diesen Schutz könnte jede Person mit dem Link die Zugangsdaten ändern. ' +
-          'Alternativ lassen sich OPENAI_API_KEY und ANTHROPIC_API_KEY weiterhin direkt ' +
-          'als Umgebungsvariablen setzen.',
+          'Alternativ lassen sich die Schlüssel weiterhin direkt als Umgebungsvariablen ' +
+          'setzen — die Namen stehen in der README.',
       ]),
     );
     return panel;
@@ -83,10 +87,10 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
 
   panel.append(tokenZeile, meldung, inhalt);
 
-  function melde(text: string, fehler = false): void {
+  const melde: Melder = (text, fehler = false) => {
     meldung.className = fehler ? 'hint error' : 'hint';
     meldung.textContent = text;
-  }
+  };
 
   async function laden(): Promise<void> {
     const token = tokenFeld.value.trim();
@@ -110,36 +114,35 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
   }
 
   function zeichne(daten: AdminSettings, token: string): void {
+    const neu = (d: AdminSettings) => zeichne(d, token);
     inhalt.replaceChildren();
-    for (const zeile of daten.providers) {
-      inhalt.append(providerZeile(zeile, token, melde, (neu) => zeichne(neu, token)));
+
+    if (!daten.editable) {
+      inhalt.append(
+        el('p', { class: 'hint' }, [
+          'Im Test- und Entwicklungsbetrieb steht der Tisch fest im Quelltext; ' +
+            'Anbieter lassen sich hier nicht ändern.',
+        ]),
+      );
     }
 
-    const zeitFeld = el('input', {
-      type: 'number', min: '5', max: '600', id: 'timeout',
-      'aria-label': 'Zeitgrenze je Modellaufruf in Sekunden',
-    }) as HTMLInputElement;
-    zeitFeld.value = String(daten.request_timeout_s);
-
-    const zeitKnopf = el('button', { type: 'button' }, ['Zeitgrenze speichern']);
-    zeitKnopf.addEventListener('click', async () => {
-      try {
-        const neu = await api.saveAdminSettings(token, {
-          request_timeout_s: Number(zeitFeld.value),
-        });
-        melde('Zeitgrenze gespeichert.');
-        zeichne(neu, token);
-      } catch (fehler) {
-        melde((fehler as Error).message, true);
-      }
-    });
-
+    const bereit = daten.providers.filter((p) => p.ready).length;
     inhalt.append(
-      el('div', { class: 'settings-zeile' }, [
-        el('label', { for: 'timeout' }, ['Zeitgrenze je Modellaufruf (Sekunden)']),
-        el('div', { class: 'row' }, [zeitFeld, zeitKnopf]),
-        el('p', { class: 'hint' }, [`Derzeit ${QUELLE_TEXT[daten.timeout_source] ?? daten.timeout_source}.`]),
+      el('p', { class: 'hint' }, [
+        `${bereit} von ${daten.providers.length} Anbietern einsatzbereit. ` +
+          'Ein Anbieter kommt an den Tisch, wenn er eingeschaltet ist und einen Schlüssel hat.',
       ]),
+    );
+
+    for (const zeile of daten.providers) {
+      inhalt.append(anbieterBlock(zeile, token, daten.editable, melde, neu));
+    }
+
+    if (daten.editable) {
+      inhalt.append(neuerAnbieter(daten, token, melde, neu));
+    }
+    inhalt.append(zeitgrenze(daten, token, melde, neu));
+    inhalt.append(
       el('p', { class: 'hint' }, [
         'Hinterlegte Schlüssel liegen in der Datenbank des Dienstes und werden nie ' +
           'an die Oberfläche zurückgegeben — sichtbar sind nur Herkunft und die letzten ' +
@@ -160,22 +163,46 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
   return panel;
 }
 
-function providerZeile(
-  zeile: AdminProviderRow,
+// ------------------------------------------------------------- Ein Anbieter
+
+function anbieterBlock(
+  zeile: ProviderRow,
   token: string,
-  melde: (text: string, fehler?: boolean) => void,
+  editable: boolean,
+  melde: Melder,
   neuZeichnen: (daten: AdminSettings) => void,
 ): HTMLElement {
-  const block = el('div', { class: 'settings-zeile', 'data-provider': zeile.provider });
+  const block = el('div', {
+    class: `anbieter${zeile.ready ? ' bereit' : ''}${zeile.enabled ? '' : ' aus'}`,
+    'data-provider': zeile.id,
+  });
 
-  const zustand = el('span', { class: `tag ${zeile.ready ? 'done' : 'error'}` }, [
-    zeile.ready ? 'bereit' : 'nicht bereit',
-  ]);
+  const schalter = el('input', {
+    type: 'checkbox',
+    id: `an-${zeile.id}`,
+    'aria-label': `${zeile.label} am Tisch`,
+  }) as HTMLInputElement;
+  schalter.checked = zeile.enabled;
+  schalter.disabled = !editable;
+  schalter.addEventListener('change', async () => {
+    try {
+      neuZeichnen(await api.updateProvider(token, zeile.id, { enabled: schalter.checked }));
+      melde(`${zeile.label}: ${schalter.checked ? 'am Tisch' : 'abgeschaltet'}.`);
+    } catch (fehler) {
+      schalter.checked = !schalter.checked;
+      melde((fehler as Error).message, true);
+    }
+  });
+
   block.append(
-    el('div', { class: 'row spread' }, [
-      el('strong', {}, [zeile.label]),
+    el('div', { class: 'anbieter-kopf' }, [
+      el('div', { class: 'row' }, [
+        el('label', { class: 'schalter', for: `an-${zeile.id}` }, [schalter, zeile.label]),
+      ]),
       el('div', { class: 'tags' }, [
-        zustand,
+        el('span', { class: `tag ${zeile.ready ? 'done' : 'error'}` }, [
+          zeile.ready ? 'bereit' : 'nicht bereit',
+        ]),
         el('span', { class: 'tag' }, [
           !zeile.needs_key
             ? 'ohne Schlüssel'
@@ -183,68 +210,97 @@ function providerZeile(
               ? `Schlüssel ${zeile.key_hint} · ${QUELLE_TEXT[zeile.key_source] ?? zeile.key_source}`
               : 'kein Schlüssel',
         ]),
+        el('span', { class: 'tag' }, [zeile.is_preset ? 'mitgeliefert' : 'selbst eingetragen']),
       ]),
     ]),
   );
+
   if (!zeile.ready && zeile.reason) {
     block.append(el('p', { class: 'hint error' }, [zeile.reason]));
   }
 
-  const schluesselFeld = el('input', {
-    type: 'password',
-    id: `key-${zeile.provider}`,
-    placeholder: zeile.key_hint ? 'Neuen Schlüssel eintragen (bleibt sonst unverändert)' : 'Schlüssel eintragen',
-    'aria-label': `Schlüssel für ${zeile.label}`,
-    autocomplete: 'off',
-  }) as HTMLInputElement;
+  const felder = el('div', { class: 'anbieter-felder' });
+  const eingaben: Record<string, HTMLInputElement> = {};
 
-  const modellFeld = el('input', {
-    type: 'text',
-    id: `model-${zeile.provider}`,
-    'aria-label': `Modellname für ${zeile.label}`,
-  }) as HTMLInputElement;
-  modellFeld.value = zeile.model;
+  const feld = (
+    name: string,
+    beschriftung: string,
+    wert: string,
+    typ = 'text',
+    platzhalter = '',
+  ) => {
+    const eingabe = el('input', {
+      type: typ,
+      id: `${name}-${zeile.id}`,
+      placeholder: platzhalter,
+      autocomplete: typ === 'password' ? 'off' : 'on',
+    }) as HTMLInputElement;
+    eingabe.value = wert;
+    eingabe.disabled = !editable;
+    eingaben[name] = eingabe;
+    felder.append(
+      el('div', { class: 'feld' }, [
+        el('label', { for: `${name}-${zeile.id}` }, [beschriftung]),
+        eingabe,
+      ]),
+    );
+  };
+
+  if (zeile.needs_key) {
+    feld(
+      'key',
+      'Schlüssel',
+      '',
+      'password',
+      zeile.key_hint ? 'Neuer Schlüssel (bleibt sonst unverändert)' : 'Schlüssel eintragen',
+    );
+  }
+  feld('model', 'Modellname', zeile.model);
+  if (zeile.kind === 'openai' || zeile.kind === 'google' || !zeile.is_preset) {
+    feld('base', 'Basis-Adresse', zeile.base_url ?? '', 'text', 'Standard des Anbieters');
+  }
+  block.append(felder);
+
+  const knoepfe = el('div', { class: 'row' });
 
   const speichern = el('button', { class: 'primary', type: 'button' }, ['Speichern']);
-  const pruefen = el('button', { type: 'button' }, ['Prüfen (echter Aufruf)']);
-  const entfernen = el('button', { type: 'button' }, ['Schlüssel entfernen']);
-  if (zeile.key_source !== 'einstellungen') entfernen.setAttribute('disabled', 'true');
-
+  speichern.disabled = !editable;
   speichern.addEventListener('click', async () => {
-    const aenderung: Record<string, string> = {};
-    if (schluesselFeld.value.trim()) aenderung[zeile.key_field] = schluesselFeld.value.trim();
-    if (modellFeld.value.trim() && modellFeld.value.trim() !== zeile.model) {
-      aenderung[zeile.model_field] = modellFeld.value.trim();
+    const patch: Record<string, string | boolean> = {};
+    if (eingaben.key?.value.trim()) {
+      patch.api_key = eingaben.key.value.trim();
+      // Wer einen Schlüssel einträgt, will den Anbieter am Tisch haben.
+      if (!zeile.enabled) patch.enabled = true;
     }
-    if (Object.keys(aenderung).length === 0) {
+    if (eingaben.model && eingaben.model.value.trim() !== zeile.model) {
+      patch.model = eingaben.model.value.trim();
+    }
+    if (eingaben.base && eingaben.base.value.trim() !== (zeile.base_url ?? '')) {
+      patch.base_url = eingaben.base.value.trim();
+    }
+    if (Object.keys(patch).length === 0) {
       melde('Nichts zu speichern.', true);
       return;
     }
     try {
-      const neu = await api.saveAdminSettings(token, aenderung);
-      schluesselFeld.value = '';
-      melde(`${zeile.label}: gespeichert.`);
-      neuZeichnen(neu);
+      neuZeichnen(await api.updateProvider(token, zeile.id, patch));
+      melde(
+        patch.enabled === true
+          ? `${zeile.label}: gespeichert und an den Tisch geholt.`
+          : `${zeile.label}: gespeichert.`,
+      );
     } catch (fehler) {
       melde((fehler as Error).message, true);
     }
   });
+  knoepfe.append(speichern);
 
-  entfernen.addEventListener('click', async () => {
-    try {
-      const neu = await api.saveAdminSettings(token, { [zeile.key_field]: '' });
-      melde(`${zeile.label}: Schlüssel entfernt.`);
-      neuZeichnen(neu);
-    } catch (fehler) {
-      melde((fehler as Error).message, true);
-    }
-  });
-
+  const pruefen = el('button', { type: 'button' }, ['Prüfen (echter Aufruf)']);
   pruefen.addEventListener('click', async () => {
     pruefen.setAttribute('disabled', 'true');
     melde(`${zeile.label} wird geprüft …`);
     try {
-      const ergebnis = await api.testProvider(token, zeile.provider);
+      const ergebnis = await api.testProvider(token, zeile.id);
       melde(
         ergebnis.ok
           ? `${zeile.label} antwortet (${ergebnis.latency_ms} ms): ${ergebnis.detail}`
@@ -257,14 +313,169 @@ function providerZeile(
       pruefen.removeAttribute('disabled');
     }
   });
+  knoepfe.append(pruefen);
 
-  if (zeile.needs_key) {
-    block.append(el('label', { for: `key-${zeile.provider}` }, ['Schlüssel']), schluesselFeld);
+  if (zeile.needs_key && zeile.key_source === 'einstellungen' && editable) {
+    const entfernen = el('button', { type: 'button' }, ['Schlüssel entfernen']);
+    entfernen.addEventListener('click', async () => {
+      try {
+        neuZeichnen(await api.updateProvider(token, zeile.id, { api_key: '' }));
+        melde(`${zeile.label}: Schlüssel entfernt.`);
+      } catch (fehler) {
+        melde((fehler as Error).message, true);
+      }
+    });
+    knoepfe.append(entfernen);
   }
-  block.append(
-    el('label', { for: `model-${zeile.provider}` }, ['Modellname']),
-    modellFeld,
-    el('div', { class: 'row' }, zeile.needs_key ? [speichern, pruefen, entfernen] : [speichern, pruefen]),
-  );
+
+  if (!zeile.is_preset && editable) {
+    const loeschen = el('button', { type: 'button', class: 'gefahr' }, ['Anbieter löschen']);
+    loeschen.addEventListener('click', async () => {
+      try {
+        neuZeichnen(await api.deleteProvider(token, zeile.id));
+        melde(`${zeile.label}: gelöscht.`);
+      } catch (fehler) {
+        melde((fehler as Error).message, true);
+      }
+    });
+    knoepfe.append(loeschen);
+  }
+
+  if (zeile.key_url) {
+    knoepfe.append(
+      el('a', { class: 'btn', href: zeile.key_url, target: '_blank', rel: 'noreferrer noopener' },
+        ['Schlüssel holen ↗']),
+    );
+  }
+  if (zeile.models_url) {
+    knoepfe.append(
+      el('a', { class: 'btn', href: zeile.models_url, target: '_blank', rel: 'noreferrer noopener' },
+        ['Modellliste ↗']),
+    );
+  }
+
+  block.append(knoepfe);
   return block;
+}
+
+// ------------------------------------------------------- Eigener Anbieter
+
+function neuerAnbieter(
+  daten: AdminSettings,
+  token: string,
+  melde: Melder,
+  neuZeichnen: (daten: AdminSettings) => void,
+): HTMLElement {
+  const details = el('details', { id: 'neuer-anbieter' });
+  details.append(el('summary', {}, ['Eigenen Anbieter eintragen']));
+  details.append(
+    el('p', { class: 'hint' }, [
+      'Alles, was die OpenAI-Schnittstelle spricht, lässt sich hier anschließen — ' +
+        'OpenRouter, Together, Fireworks, Groq oder ein Server im eigenen Netz.',
+    ]),
+  );
+
+  const felder = el('div', { class: 'anbieter-felder' });
+  const mach = (id: string, beschriftung: string, platzhalter: string, typ = 'text') => {
+    const eingabe = el('input', { type: typ, id, placeholder: platzhalter }) as HTMLInputElement;
+    felder.append(
+      el('div', { class: 'feld' }, [el('label', { for: id }, [beschriftung]), eingabe]),
+    );
+    return eingabe;
+  };
+
+  const name = mach('neu-label', 'Anzeigename', 'z. B. Groq');
+  const art = el('select', { id: 'neu-kind', 'aria-label': 'Art der Schnittstelle' }) as HTMLSelectElement;
+  for (const k of daten.kinds) {
+    const option = document.createElement('option');
+    option.value = k.id;
+    option.textContent = k.label;
+    art.append(option);
+  }
+  felder.append(
+    el('div', { class: 'feld' }, [
+      el('label', { for: 'neu-kind' }, ['Art der Schnittstelle']),
+      art,
+    ]),
+  );
+  const adresse = mach('neu-base', 'Basis-Adresse', 'https://api.example.com/v1');
+  const modell = mach('neu-model', 'Modellname', 'z. B. llama-3.3-70b-versatile');
+  const schluessel = mach('neu-key', 'Schlüssel', 'Schlüssel eintragen', 'password');
+
+  details.append(felder);
+
+  const vorschlaege = el('div', { class: 'vorschlaege' });
+  for (const hinweis of daten.custom_hints as CustomHint[]) {
+    const knopf = el('button', { type: 'button' }, [hinweis.label]);
+    knopf.addEventListener('click', () => {
+      name.value = hinweis.label;
+      art.value = 'openai';
+      adresse.value = hinweis.base_url;
+      modell.value = hinweis.model;
+      schluessel.focus();
+    });
+    vorschlaege.append(knopf);
+  }
+  details.append(
+    el('div', {}, [el('p', { class: 'hint' }, ['Vorlagen zum Ausfüllen:']), vorschlaege]),
+  );
+
+  const anlegen = el('button', { class: 'primary', type: 'button', id: 'neu-anlegen' },
+    ['Anbieter hinzufügen']);
+  anlegen.addEventListener('click', async () => {
+    if (!name.value.trim() || !modell.value.trim()) {
+      melde('Anzeigename und Modellname werden gebraucht.', true);
+      return;
+    }
+    try {
+      const antwort = await api.createProvider(token, {
+        label: name.value.trim(),
+        kind: art.value,
+        base_url: adresse.value.trim(),
+        model: modell.value.trim(),
+        api_key: schluessel.value.trim(),
+      });
+      melde(`${name.value.trim()} hinzugefügt.`);
+      neuZeichnen(antwort);
+    } catch (fehler) {
+      melde((fehler as Error).message, true);
+    }
+  });
+  details.append(el('div', { class: 'row' }, [anlegen]));
+  return details;
+}
+
+// ----------------------------------------------------------------- Zeitgrenze
+
+function zeitgrenze(
+  daten: AdminSettings,
+  token: string,
+  melde: Melder,
+  neuZeichnen: (daten: AdminSettings) => void,
+): HTMLElement {
+  const eingabe = el('input', {
+    type: 'number', min: '5', max: '600', id: 'timeout',
+    'aria-label': 'Zeitgrenze je Modellaufruf in Sekunden',
+  }) as HTMLInputElement;
+  eingabe.value = String(daten.request_timeout_s);
+
+  const knopf = el('button', { type: 'button' }, ['Zeitgrenze speichern']);
+  knopf.addEventListener('click', async () => {
+    try {
+      neuZeichnen(await api.saveTimeout(token, Number(eingabe.value)));
+      melde('Zeitgrenze gespeichert.');
+    } catch (fehler) {
+      melde((fehler as Error).message, true);
+    }
+  });
+
+  return el('div', { class: 'anbieter' }, [
+    el('div', { class: 'feld' }, [
+      el('label', { for: 'timeout' }, ['Zeitgrenze je Modellaufruf (Sekunden)']),
+      el('div', { class: 'row' }, [eingabe, knopf]),
+    ]),
+    el('p', { class: 'hint' }, [
+      `Derzeit ${QUELLE_TEXT[daten.timeout_source] ?? daten.timeout_source}.`,
+    ]),
+  ]);
 }

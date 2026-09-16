@@ -89,3 +89,26 @@ describe('Verstecken von Bausteinen', () => {
     expect(css).toMatch(/\[hidden\]\s*\{[^}]*display:\s*none\s*!important/);
   });
 });
+
+describe('Werkbank-Gestaltung', () => {
+  it('bringt Farbe nur mit Bedeutung ins Spiel', () => {
+    for (const marke of ['--einig', '--gegen', '--einzeln', '--marke']) {
+      expect(css).toContain(`${marke}:`);
+    }
+  });
+
+  it('beschreibt alle drei Theme-Zustände', () => {
+    expect(css).toMatch(/^:root \{/m);
+    expect(css).toMatch(/@media \(prefers-color-scheme: dark\)/);
+    expect(css).toMatch(/:root:not\(\[data-theme='light'\]\)/);
+    expect(css).toMatch(/:root\[data-theme='dark'\]/);
+  });
+
+  it('malt den Untergrund selbst, statt ihn vom Wirt zu erben', () => {
+    expect(css).toMatch(/body \{[^}]*background: var\(--flaeche\)/);
+  });
+
+  it('trägt den Zustand einer Karte an der oberen Kante', () => {
+    expect(css).toMatch(/\.card\.zustand-error \{ border-top-color: var\(--gegen\)/);
+  });
+});
