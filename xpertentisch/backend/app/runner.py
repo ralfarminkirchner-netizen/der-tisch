@@ -1,8 +1,13 @@
-"""Auftragsausführung: ein Funke, mehrere unabhängige Modellaufträge.
+"""Auftragsausführung: Warteschlange je Anbieter, unabhängige Läufe.
 
-Jeder Auftrag läuft in einer eigenen Task. Der Ausfall eines Providers
-beendet oder verzögert die anderen Aufträge nicht — Fehler werden pro
-Auftrag gefangen und als Zustand des jeweiligen Auftrags festgehalten.
+Jeder Anbieter hat seine eigene Warteschlange. Ein freier Anbieter beginnt den
+nächsten passenden Auftrag, während ein anderer noch am vorherigen arbeitet —
+es gibt keine gemeinsame Wartebarriere. Der Ausfall eines Anbieters beendet
+oder verzögert die anderen nicht.
+
+Antworten werden gestreamt, wo der Adapter es kann: Textstücke erscheinen,
+während sie entstehen, und werden in Abständen festgeschrieben. Nach einem
+Verbindungsabbruch ist der Zwischenstand darum wieder sichtbar.
 """
 
 from __future__ import annotations
@@ -17,10 +22,12 @@ from . import context as kontext
 from .analysis import analyse
 from .config import ModelConfig, Settings
 from .db import (
+    JOB_CANCELLED,
     JOB_DONE,
     JOB_ERROR,
     JOB_NOT_REQUESTED,
     JOB_QUEUED,
+    JOB_STREAMING,
     Store,
     new_id,
     now,
@@ -29,6 +36,12 @@ from .events import EventBus
 from .providers import ProviderError, ProviderRegistry
 
 log = logging.getLogger("xpertentisch.runner")
+
+#: Wie oft der Zwischenstand einer laufenden Antwort festgeschrieben wird.
+FLUSH_INTERVAL_S = 0.4
+#: Ab so vielen neuen Zeichen wird auch vor Ablauf der Zeit geschrieben.
+FLUSH_CHARS = 240
+
 
 def _fingerprint(jobs: list[dict[str, Any]]) -> tuple:
     """Kennzeichnet den Stand der Aufträge eines Funkens."""
@@ -42,6 +55,8 @@ BEZUG_TYP = {
     "weitergabe": "abgeleitet_aus",
     "gegenposition": "widerspricht",
     "vertiefung": "vertieft",
+    "pingpong": "antwortet_auf",
+    "kuratierung": "abgeleitet_aus",
 }
 
 
@@ -57,14 +72,58 @@ class Runner:
         self.bus = bus
         self.registry = registry
         self.settings = settings
-        self._tasks: set[asyncio.Task] = set()
+        #: Je Anbieter eine Warteschlange und eigene Arbeitskräfte.
+        self._queues: dict[str, asyncio.Queue] = {}
+        self._workers: dict[str, list[asyncio.Task]] = {}
+        #: Laufende Aufträge, damit sich einzelne abbrechen lassen.
+        self._current: dict[str, asyncio.Task] = {}
+        self._cancel_requested: set[str] = set()
         #: Funken, deren Aufträge in diesem Prozess bereits gestartet wurden.
         self._started_sparks: set[str] = set()
         #: Je Funke ein Schloss. Enden zwei Aufträge gleichzeitig, liefe der
         #: Abschlusslauf sonst doppelt und legte doppelte Bezüge an.
         self._finalise_locks: dict[str, asyncio.Lock] = {}
-        #: Stand, der zuletzt ausgewertet wurde — verhindert Doppelläufe.
         self._finalised: dict[str, tuple] = {}
+        self._closing = False
+
+    # ------------------------------------------------------------ Warteschlange
+
+    def _queue_for(self, provider_id: str) -> asyncio.Queue:
+        if provider_id in self._queues:
+            return self._queues[provider_id]
+        queue: asyncio.Queue = asyncio.Queue()
+        self._queues[provider_id] = queue
+        self._workers[provider_id] = [
+            asyncio.create_task(self._worker(provider_id, queue))
+            for _ in range(max(1, self.settings.provider_concurrency))
+        ]
+        return queue
+
+    async def _worker(self, provider_id: str, queue: asyncio.Queue) -> None:
+        """Arbeitet die Aufträge eines Anbieters der Reihe nach ab."""
+        while not self._closing:
+            job, model, prompt = await queue.get()
+            try:
+                if job["id"] in self._cancel_requested:
+                    self._cancel_requested.discard(job["id"])
+                    await self._maybe_finalise(job["session_id"], job["spark_id"])
+                    continue
+                aufgabe = asyncio.create_task(self._run_job(job, model, prompt))
+                self._current[job["id"]] = aufgabe
+                try:
+                    await aufgabe
+                except asyncio.CancelledError:
+                    # Nur dieser Auftrag wurde abgebrochen, nicht der Arbeiter.
+                    if self._closing:
+                        raise
+                finally:
+                    self._current.pop(job["id"], None)
+            except asyncio.CancelledError:
+                raise
+            except Exception:  # pragma: no cover - der Arbeiter darf nie sterben
+                log.exception("Arbeiter %s: unerwarteter Fehler", provider_id)
+            finally:
+                queue.task_done()
 
     # ------------------------------------------------------------------ Start
 
@@ -75,7 +134,7 @@ class Runner:
         models: list[ModelConfig],
         untouched: list[ModelConfig] | None = None,
     ) -> list[dict[str, Any]]:
-        """Legt die Aufträge an und startet sie. Doppelte Starts sind wirkungslos.
+        """Legt die Aufträge an und reiht sie ein. Doppelte Starts sind wirkungslos.
 
         `untouched` sind einsatzbereite Anbieter, die für diesen Funken bewusst
         nicht angefragt wurden. Sie bekommen eine Zeile mit dem Zustand
@@ -120,14 +179,9 @@ class Runner:
                     "note": "",
                 }
             )
-        # Nach INSERT OR IGNORE zählt der gespeicherte Stand, nicht der lokale.
-        jobs = await self.store.list_jobs_for_spark(spark["id"])
 
-        await self.bus.publish(
-            session_id,
-            "funke.angelegt",
-            {"spark": spark, "jobs": jobs},
-        )
+        jobs = await self.store.list_jobs_for_spark(spark["id"])
+        await self.bus.publish(session_id, "funke.angelegt", {"spark": spark, "jobs": jobs})
 
         by_model = {m.id: m for m in models}
         for job in jobs:
@@ -136,17 +190,40 @@ class Runner:
             model = by_model.get(job["model_id"])
             if model is None:
                 continue
-            task = asyncio.create_task(self._run_job(job, model, spark["prompt"]))
-            self._tasks.add(task)
-            task.add_done_callback(self._tasks.discard)
+            await self._queue_for(model.provider).put((job, model, spark["prompt"]))
 
         return jobs
+
+    # ---------------------------------------------------------------- Abbruch
+
+    async def cancel_job(self, job_id: str) -> bool:
+        """Bricht genau einen Auftrag ab. Andere laufen weiter."""
+        job = await self.store.get_job(job_id)
+        if job is None or job["status"] not in (JOB_QUEUED, "running", JOB_STREAMING):
+            return False
+
+        self._cancel_requested.add(job_id)
+        aufgabe = self._current.get(job_id)
+        if aufgabe is not None:
+            aufgabe.cancel()
+            return True
+
+        # Noch in der Warteschlange: Zustand jetzt setzen, der Arbeiter überspringt ihn.
+        await self.store.set_job_status(job_id, JOB_CANCELLED, "Von dir abgebrochen.")
+        await self.bus.publish(
+            job["session_id"], "auftrag.abgebrochen",
+            {"job_id": job_id, "model_id": job["model_id"], "label": job["label"]},
+        )
+        return True
 
     # -------------------------------------------------------------- Ein Auftrag
 
     async def _run_job(self, job: dict[str, Any], model: ModelConfig, prompt: str) -> None:
         session_id = job["session_id"]
         started = time.monotonic()
+        puffer: list[str] = []
+        geschrieben = 0
+
         try:
             await self.store.mark_job_running(job["id"])
             await self.bus.publish(
@@ -158,16 +235,34 @@ class Runner:
             gesendet = await self._freeze_context(job, model, prompt)
 
             provider = self.registry.get(model.provider)
-            response = await provider.complete(
-                prompt=gesendet, model=model.model, timeout_s=self.settings.resolved_timeout_s
-            )
+
+            def on_delta(stueck: str) -> None:
+                puffer.append(stueck)
+
+            spuelen = asyncio.create_task(self._flush_loop(job, puffer))
+            try:
+                response = await provider.complete(
+                    prompt=gesendet,
+                    model=model.model,
+                    timeout_s=self.settings.resolved_timeout_s,
+                    on_delta=on_delta if provider.streams else None,
+                )
+            finally:
+                spuelen.cancel()
+                geschrieben = len("".join(puffer))
+
             latency = int((time.monotonic() - started) * 1000)
+            kosten, quelle = await self._kosten(model.provider, response)
             await self.store.finish_job(
                 job["id"],
                 status=JOB_DONE,
                 text=response.text,
                 partial=response.partial,
                 latency_ms=latency,
+                tokens_in=response.tokens_in,
+                tokens_out=response.tokens_out,
+                cost_micro=kosten,
+                cost_source=quelle,
             )
             await self.bus.publish(
                 session_id,
@@ -180,17 +275,91 @@ class Runner:
                     "partial": response.partial,
                     "note": response.note,
                     "latency_ms": latency,
+                    "tokens_in": response.tokens_in,
+                    "tokens_out": response.tokens_out,
+                    "cost_micro": kosten,
+                    "cost_source": quelle,
                 },
             )
+        except asyncio.CancelledError:
+            if self._closing:
+                raise
+            await self._cancel_job_record(job, "".join(puffer), started)
+            return
         except ProviderError as exc:
-            await self._fail_job(job, exc, started, partial_text=exc.partial_text)
-        except asyncio.CancelledError:  # pragma: no cover - Abbruch beim Herunterfahren
-            raise
+            await self._fail_job(
+                job, exc, started, partial_text=exc.partial_text or "".join(puffer)
+            )
         except Exception as exc:  # Unerwartetes bleibt auf diesen Auftrag beschränkt
             log.exception("Auftrag %s unerwartet fehlgeschlagen", job["id"])
-            await self._fail_job(job, exc, started)
+            await self._fail_job(job, exc, started, partial_text="".join(puffer))
         finally:
+            self._cancel_requested.discard(job["id"])
+            _ = geschrieben
             await self._maybe_finalise(job["session_id"], job["spark_id"])
+
+    async def _flush_loop(self, job: dict[str, Any], puffer: list[str]) -> None:
+        """Schreibt den Zwischenstand fest, solange die Antwort entsteht."""
+        zuletzt = 0
+        gemeldet = False
+        try:
+            while True:
+                await asyncio.sleep(FLUSH_INTERVAL_S)
+                stand = "".join(puffer)
+                if len(stand) == zuletzt:
+                    continue
+                if not gemeldet:
+                    await self.store.set_job_status(job["id"], JOB_STREAMING)
+                    gemeldet = True
+                await self.store.append_job_text(job["id"], stand)
+                await self.bus.publish(
+                    job["session_id"],
+                    "auftrag.teilstueck",
+                    {
+                        "job_id": job["id"],
+                        "model_id": job["model_id"],
+                        "text": stand,
+                        "chars": len(stand),
+                    },
+                )
+                zuletzt = len(stand)
+        except asyncio.CancelledError:
+            return
+
+    async def _kosten(self, provider_id: str, response: Any) -> tuple[int | None, str]:
+        """Rechnet die Kosten — nur mit hinterlegten Preisen, sonst unbekannt."""
+        if response.tokens_in is None and response.tokens_out is None:
+            return None, "unbekannt"
+        zeile = await self.store.get_provider(provider_id)
+        preis_in = (zeile or {}).get("price_in")
+        preis_out = (zeile or {}).get("price_out")
+        if preis_in is None and preis_out is None:
+            return None, "unbekannt"
+        betrag = 0.0
+        betrag += (response.tokens_in or 0) / 1_000_000 * (preis_in or 0.0)
+        betrag += (response.tokens_out or 0) / 1_000_000 * (preis_out or 0.0)
+        return int(round(betrag * 1_000_000)), "berechnet"
+
+    async def _cancel_job_record(
+        self, job: dict[str, Any], teiltext: str, started: float
+    ) -> None:
+        latency = int((time.monotonic() - started) * 1000)
+        await self.store.finish_job(
+            job["id"],
+            status=JOB_CANCELLED,
+            text=teiltext,
+            error="Von dir abgebrochen.",
+            partial=bool(teiltext),
+            latency_ms=latency,
+        )
+        await self.bus.publish(
+            job["session_id"],
+            "auftrag.abgebrochen",
+            {
+                "job_id": job["id"], "model_id": job["model_id"], "label": job["label"],
+                "text": teiltext, "partial": bool(teiltext),
+            },
+        )
 
     async def _freeze_context(
         self, job: dict[str, Any], model: ModelConfig, prompt: str
@@ -201,9 +370,7 @@ class Runner:
             return prompt
         sparks = await self.store.list_sparks(job["session_id"])
         jobs = await self.store.list_jobs(job["session_id"])
-        gesendet, eintraege, gekuerzt = kontext.build(
-            spark=spark, sparks=sparks, jobs=jobs
-        )
+        gesendet, eintraege, gekuerzt = kontext.build(spark=spark, sparks=sparks, jobs=jobs)
         await self.store.save_context_snapshot(
             {
                 "job_id": job["id"],
@@ -254,10 +421,9 @@ class Runner:
         schloss = self._finalise_locks.setdefault(spark_id, asyncio.Lock())
         async with schloss:
             jobs = await self.store.list_jobs_for_spark(spark_id)
-            if any(j["status"] in ("queued", "running") for j in jobs):
+            if any(j["status"] in (JOB_QUEUED, "running", JOB_STREAMING) for j in jobs):
                 return
             if self._finalised.get(spark_id) == _fingerprint(jobs):
-                # Derselbe Stand wurde schon ausgewertet.
                 return
             await self.recompute_assessment(session_id, spark_id, jobs)
             self._finalised[spark_id] = _fingerprint(jobs)
@@ -315,8 +481,16 @@ class Runner:
     # -------------------------------------------------------------- Herunterfahren
 
     async def shutdown(self) -> None:
-        for task in list(self._tasks):
-            task.cancel()
-        if self._tasks:
-            await asyncio.gather(*self._tasks, return_exceptions=True)
-        self._tasks.clear()
+        self._closing = True
+        for aufgaben in self._workers.values():
+            for aufgabe in aufgaben:
+                aufgabe.cancel()
+        for aufgabe in list(self._current.values()):
+            aufgabe.cancel()
+        alle = [t for liste in self._workers.values() for t in liste]
+        alle += list(self._current.values())
+        if alle:
+            await asyncio.gather(*alle, return_exceptions=True)
+        self._workers.clear()
+        self._queues.clear()
+        self._current.clear()

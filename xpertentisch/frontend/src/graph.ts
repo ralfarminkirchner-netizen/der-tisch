@@ -47,10 +47,10 @@ export function renderGraph(
     const b = positions.get(pair.b_job_id);
     if (!a || !b) continue;
     if (pair.agreements > 0) {
-      svg.appendChild(edge(pair, a, b, 'agree', pair.agreements, onSelect, -4));
+      svg.appendChild(edge(pair, a, b, 'agree', pair.agreements, onSelect, -8));
     }
     if (pair.contradictions > 0) {
-      svg.appendChild(edge(pair, a, b, 'contra', pair.contradictions, onSelect, 4));
+      svg.appendChild(edge(pair, a, b, 'contra', pair.contradictions, onSelect, 8));
     }
   }
 
@@ -111,10 +111,13 @@ function edge(
   group.appendChild(line);
 
   // Eigene Trefferfläche: eine dünne Linie ist auf dem Telefon nicht treffbar
-  // und für die Bedienung per Zeiger zu klein.
+  // und für die Bedienung per Zeiger zu klein. Laufen zwei Kanten zwischen
+  // denselben Knoten, rücken die Flächen zusätzlich längs auseinander —
+  // sonst verdeckte die eine die andere und wäre nicht mehr anzutippen.
+  const laengs = offset / 12;
   const hit = document.createElementNS(SVG_NS, 'circle');
-  hit.setAttribute('cx', String((a.x + b.x) / 2 + ox));
-  hit.setAttribute('cy', String((a.y + b.y) / 2 + oy));
+  hit.setAttribute('cx', String((a.x + b.x) / 2 + ox + dx * laengs));
+  hit.setAttribute('cy', String((a.y + b.y) / 2 + oy + dy * laengs));
   hit.setAttribute('r', '13');
   hit.setAttribute('class', 'edge-hit');
   group.appendChild(hit);

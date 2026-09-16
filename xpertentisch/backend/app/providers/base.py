@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable
+
+#: Wird mit jedem Textstück aufgerufen, sobald es eintrifft.
+OnDelta = Callable[[str], None]
 
 
 @dataclass
@@ -10,6 +14,9 @@ class ProviderResponse:
     text: str
     partial: bool = False
     note: str = ""
+    #: Verbrauch, sofern der Anbieter ihn meldet. None heißt: unbekannt.
+    tokens_in: int | None = None
+    tokens_out: int | None = None
 
 
 class ProviderError(Exception):
@@ -25,8 +32,23 @@ class ProviderError(Exception):
 
 class Provider:
     name = "base"
+    #: Liefert dieser Adapter Textstücke, während sie entstehen?
+    streams = False
 
-    async def complete(self, *, prompt: str, model: str, timeout_s: int) -> ProviderResponse:
+    async def complete(
+        self,
+        *,
+        prompt: str,
+        model: str,
+        timeout_s: int,
+        on_delta: OnDelta | None = None,
+    ) -> ProviderResponse:
+        """Holt die Antwort.
+
+        Ist `on_delta` gesetzt und kann der Adapter streamen, wird jedes
+        Textstück sofort weitergereicht. Die vollständige Antwort kommt
+        trotzdem als Rückgabewert.
+        """
         raise NotImplementedError
 
     async def aclose(self) -> None:  # pragma: no cover - Standardfall ohne Ressourcen

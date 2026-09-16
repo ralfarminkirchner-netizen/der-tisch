@@ -30,6 +30,9 @@ class ProviderRecord:
     enabled: bool
     is_preset: bool
     position: int = 0
+    #: Preis je Million Token. None heißt: unbekannt, es wird nichts geraten.
+    price_in: float | None = None
+    price_out: float | None = None
 
     @property
     def key_env(self) -> str:
@@ -95,6 +98,8 @@ class ProviderRecord:
             "reason": self.reason,
             "key_url": preset.key_url if preset else "",
             "models_url": preset.models_url if preset else "",
+            "price_in": self.price_in,
+            "price_out": self.price_out,
         }
 
 
@@ -114,6 +119,8 @@ def _from_row(row: dict[str, Any]) -> ProviderRecord:
         enabled=bool(row["enabled"]),
         is_preset=bool(row["is_preset"]),
         position=int(row["position"]),
+        price_in=row["price_in"] if "price_in" in row.keys() else None,
+        price_out=row["price_out"] if "price_out" in row.keys() else None,
     )
 
 
@@ -160,6 +167,18 @@ class ProviderTable:
             r.key_env for r in self._records
             if r.enabled and r.needs_key and not r.api_key
         ]
+
+    def curator(self) -> ModelConfig | None:
+        """Wer die Kuratierung übernimmt — oder niemand.
+
+        Es wird nie heimlich ein Modell zugeschaltet: ohne ausdrückliche
+        Einstellung gibt es keinen Kurator.
+        """
+        gewaehlt = (self._settings.overrides.get("curator") or "").strip()
+        if not gewaehlt:
+            return None
+        record = self.by_id(gewaehlt)
+        return record.as_model() if record and record.ready else None
 
     def availability(self) -> dict[str, dict[str, Any]]:
         return {

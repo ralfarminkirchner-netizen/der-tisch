@@ -61,7 +61,13 @@ CREATE TABLE IF NOT EXISTS jobs (
     created_at  REAL NOT NULL,
     started_at  REAL,
     finished_at REAL,
-    latency_ms  INTEGER
+    latency_ms  INTEGER,
+    tokens_in   INTEGER,
+    tokens_out  INTEGER,
+    -- Kosten in Millionstel der Währung, in der die Preise eingetragen sind.
+    cost_micro  INTEGER,
+    -- 'berechnet' oder 'unbekannt' — nie geraten.
+    cost_source TEXT NOT NULL DEFAULT 'unbekannt'
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_jobs_spark_model ON jobs(spark_id, model_id);
@@ -143,6 +149,9 @@ CREATE TABLE IF NOT EXISTS providers (
     base_url   TEXT,
     model      TEXT NOT NULL,
     api_key    TEXT NOT NULL DEFAULT '',
+    -- Preis je Million Token, in selbst gewählter Währung. NULL heißt unbekannt.
+    price_in   REAL,
+    price_out  REAL,
     enabled    INTEGER NOT NULL DEFAULT 0,
     is_preset  INTEGER NOT NULL DEFAULT 0,
     position   INTEGER NOT NULL DEFAULT 0,
@@ -157,7 +166,8 @@ JOB_DONE = "done"
 JOB_ERROR = "error"
 JOB_INTERRUPTED = "interrupted"
 JOB_CANCELLED = "cancelled"
-OPEN_JOB_STATES = (JOB_QUEUED, JOB_RUNNING)
+JOB_STREAMING = "streaming"
+OPEN_JOB_STATES = (JOB_QUEUED, JOB_RUNNING, JOB_STREAMING)
 
 SESSION_OPEN = "offen"
 SESSION_CLOSED = "abgeschlossen"
@@ -213,6 +223,27 @@ class Store:
             await self._conn.execute(  # type: ignore[union-attr]
                 "ALTER TABLE sparks ADD COLUMN refs TEXT NOT NULL DEFAULT '[]'"
             )
+
+        async with self._conn.execute("PRAGMA table_info(jobs)") as cur:  # type: ignore[union-attr]
+            job_spalten = {r["name"] for r in await cur.fetchall()}
+        for name, typ in (
+            ("tokens_in", "INTEGER"),
+            ("tokens_out", "INTEGER"),
+            ("cost_micro", "INTEGER"),
+            ("cost_source", "TEXT NOT NULL DEFAULT 'unbekannt'"),
+        ):
+            if name not in job_spalten:
+                await self._conn.execute(  # type: ignore[union-attr]
+                    f"ALTER TABLE jobs ADD COLUMN {name} {typ}"
+                )
+
+        async with self._conn.execute("PRAGMA table_info(providers)") as cur:  # type: ignore[union-attr]
+            anbieter_spalten = {r["name"] for r in await cur.fetchall()}
+        for name in ("price_in", "price_out"):
+            if name not in anbieter_spalten:
+                await self._conn.execute(  # type: ignore[union-attr]
+                    f"ALTER TABLE providers ADD COLUMN {name} REAL"
+                )
 
     async def close(self) -> None:
         if self._conn is not None:
@@ -390,11 +421,29 @@ class Store:
         error: str | None = None,
         partial: bool = False,
         latency_ms: int | None = None,
+        tokens_in: int | None = None,
+        tokens_out: int | None = None,
+        cost_micro: int | None = None,
+        cost_source: str = "unbekannt",
     ) -> None:
         await self.conn.execute(
             "UPDATE jobs SET status=?, text=?, error=?, partial=?, finished_at=?,"
-            " latency_ms=? WHERE id=?",
-            (status, text, error, 1 if partial else 0, now(), latency_ms, job_id),
+            " latency_ms=?, tokens_in=?, tokens_out=?, cost_micro=?, cost_source=?"
+            " WHERE id=?",
+            (status, text, error, 1 if partial else 0, now(), latency_ms,
+             tokens_in, tokens_out, cost_micro, cost_source, job_id),
+        )
+        await self.conn.commit()
+
+    async def append_job_text(self, job_id: str, text: str) -> None:
+        """Hält den Zwischenstand fest, während die Antwort noch entsteht."""
+        await self.conn.execute("UPDATE jobs SET text=? WHERE id=?", (text, job_id))
+        await self.conn.commit()
+
+    async def set_job_status(self, job_id: str, status: str, error: str | None = None) -> None:
+        await self.conn.execute(
+            "UPDATE jobs SET status=?, error=?, finished_at=? WHERE id=?",
+            (status, error, now(), job_id),
         )
         await self.conn.commit()
 
@@ -582,15 +631,17 @@ class Store:
     async def insert_provider(self, record: dict[str, Any]) -> None:
         await self.conn.execute(
             "INSERT INTO providers (id, label, kind, base_url, model, api_key, enabled,"
-            " is_preset, position, updated_at) VALUES (:id, :label, :kind, :base_url,"
-            " :model, :api_key, :enabled, :is_preset, :position, :updated_at)",
-            {**record, "updated_at": now()},
+            " is_preset, position, price_in, price_out, updated_at) VALUES (:id, :label,"
+            " :kind, :base_url, :model, :api_key, :enabled, :is_preset, :position,"
+            " :price_in, :price_out, :updated_at)",
+            {"price_in": None, "price_out": None, **record, "updated_at": now()},
         )
         await self.conn.commit()
 
     async def update_provider(self, provider_id: str, felder: dict[str, Any]) -> None:
         """Ändert genau die übergebenen Spalten."""
-        erlaubt = {"label", "kind", "base_url", "model", "api_key", "enabled", "position"}
+        erlaubt = {"label", "kind", "base_url", "model", "api_key", "enabled",
+                   "position", "price_in", "price_out"}
         gesetzt = {k: v for k, v in felder.items() if k in erlaubt}
         if not gesetzt:
             return

@@ -7,11 +7,14 @@ import { renderSettings } from './settings';
 import type {
   AppConfig,
   Bezug,
+  Entwurf,
+  PingPongRun,
   HealthInfo,
   Job,
   JobContext,
   Marker,
   Relation,
+  Session,
   SessionBundle,
   SparkEntry,
   SparkKind,
@@ -29,6 +32,14 @@ interface AppState {
   settingsOpen: boolean;
   /** Worauf sich die nächste Eingabe bezieht. */
   bezug: Bezug | null;
+  /** Nicht gesendete Gedanken — gehen bei Netzfehlern nicht verloren. */
+  entwuerfe: Entwurf[];
+  /** Laufende und beendete Wechselgespräche. */
+  pingpong: PingPongRun[];
+  /** Kuratierung für die nächste Eingabe. */
+  curate: boolean;
+  /** Alle Sitzungen, für die Auswahl im Kopf. */
+  sessions: Session[];
   /** Kennung des laufenden Absendevorgangs — bleibt bei Wiederholung gleich. */
   pendingRequestId: string | null;
 }
@@ -41,8 +52,31 @@ const state: AppState = {
   streamOpen: false,
   settingsOpen: false,
   bezug: null,
+  entwuerfe: [],
+  pingpong: [],
+  curate: false,
+  sessions: [],
   pendingRequestId: null,
 };
+
+const ENTWURF_KEY = 'xpertentisch.entwuerfe';
+const EINGABE_KEY = 'xpertentisch.eingabe';
+
+function ladeEntwuerfe(): Entwurf[] {
+  try {
+    return JSON.parse(localStorage.getItem(ENTWURF_KEY) ?? '[]') as Entwurf[];
+  } catch {
+    return [];
+  }
+}
+
+function speichereEntwuerfe(): void {
+  try {
+    localStorage.setItem(ENTWURF_KEY, JSON.stringify(state.entwuerfe));
+  } catch {
+    /* Ohne Speicher lebt der Entwurf nur in dieser Ansicht. */
+  }
+}
 
 let disconnect: (() => void) | null = null;
 const blocks = new Map<string, HTMLElement>();
@@ -86,9 +120,13 @@ async function boot(): Promise<void> {
       last_event_id: 0, exported_at: Date.now() / 1000,
     };
   }
+  state.entwuerfe = ladeEntwuerfe();
   rememberSession(state.bundle.session.id);
+  void ladeSitzungen();
+  void ladePingPong();
   renderShell();
   openStream();
+  void sendeEntwuerfe();
 }
 
 function sessionIdFromLocation(): string | null {
@@ -120,6 +158,7 @@ function renderShell(): void {
   const bundle = state.bundle!;
   root.removeAttribute('aria-busy');
   root.replaceChildren();
+  verwerfeNeueBeitraege();
 
   root.append(header());
 
@@ -145,7 +184,10 @@ function renderShell(): void {
     );
   }
   root.append(providerWarnings());
+  root.append(entwurfsliste());
   root.append(sparkForm());
+  root.append(pingpongPanel());
+  zeichnePingPong();
 
   const stream = el('div', { id: 'sparks' });
   root.append(stream);
@@ -165,6 +207,85 @@ function renderShell(): void {
   );
 }
 
+async function ladeSitzungen(): Promise<void> {
+  try {
+    state.sessions = (await api.listSessions()).sessions;
+    zeichneSitzungswahl();
+  } catch {
+    /* Die Liste ist Beiwerk; ohne sie arbeitet der Tisch weiter. */
+  }
+}
+
+async function ladePingPong(): Promise<void> {
+  try {
+    state.pingpong = (await api.listPingPong(state.bundle!.session.id)).runs;
+    zeichnePingPong();
+  } catch {
+    /* ohne Liste geht es auch */
+  }
+}
+
+/** Zeichnet nur die Liste der Läufe neu — das Formular darüber bleibt, wie es ist. */
+function zeichnePingPong(): void {
+  const liste = document.getElementById('pp-laeufe');
+  if (!liste) return;
+  liste.replaceChildren();
+  for (const lauf of state.pingpong) {
+    const zeile = el('div', { class: `pingpong-lauf ${lauf.status}` }, [
+      el('p', { class: 'hint' }, [
+        `${lauf.labels.join(' ↔ ')} · Beitrag ${lauf.turn} von ${lauf.max_turns} · ` +
+          `${PINGPONG_STAND[lauf.status] ?? lauf.status}` +
+          `${lauf.stopped_reason ? ` (${lauf.stopped_reason})` : ''}`,
+      ]),
+    ]);
+    if (lauf.status === 'laeuft') {
+      const stopp = el('button', { type: 'button', class: 'gefahr' }, ['Stoppen']);
+      stopp.addEventListener('click', async () => {
+        stopp.disabled = true;
+        try {
+          await api.stopPingPong(state.bundle!.session.id, lauf.id);
+          await ladePingPong();
+          zeichnePingPong();
+        } catch {
+          stopp.disabled = false;
+        }
+      });
+      zeile.append(stopp);
+    }
+    liste.append(zeile);
+  }
+}
+
+const PINGPONG_STAND: Record<string, string> = {
+  laeuft: 'läuft',
+  gestoppt: 'gestoppt',
+  beendet: 'beendet',
+};
+
+/** Schickt liegengebliebene Gedanken nach — mit derselben Kennung wie vorher. */
+async function sendeEntwuerfe(): Promise<void> {
+  if (state.entwuerfe.length === 0) return;
+  const bundle = state.bundle!;
+  for (const entwurf of [...state.entwuerfe]) {
+    try {
+      const ergebnis = await api.createSpark(
+        bundle.session.id, entwurf.prompt, entwurf.clientRequestId,
+        entwurf.modelIds, entwurf.refs, entwurf.kind, entwurf.curate,
+      );
+      state.entwuerfe = state.entwuerfe.filter(
+        (e) => e.clientRequestId !== entwurf.clientRequestId,
+      );
+      speichereEntwuerfe();
+      if (!ergebnis.duplicate) ensureSpark({ spark: ergebnis.spark, jobs: ergebnis.jobs, markers: [], summary: null });
+    } catch (fehler) {
+      entwurf.lastError = (fehler as Error).message;
+      speichereEntwuerfe();
+      break; // Erst wieder versuchen, wenn die Verbindung steht.
+    }
+  }
+  renderShell();
+}
+
 async function refreshHealth(): Promise<void> {
   try {
     const [health, config] = await Promise.all([api.health(), api.config()]);
@@ -177,7 +298,6 @@ async function refreshHealth(): Promise<void> {
 }
 
 function header(): HTMLElement {
-  const bundle = state.bundle!;
   const title = el('h1', {}, []);
   title.append(document.createTextNode('XPERTEN'), el('span', {}, ['TiSCH']));
 
@@ -202,10 +322,68 @@ function header(): HTMLElement {
   return el('header', { class: 'top' }, [
     el('div', { class: 'headline' }, [
       title,
-      el('p', { class: 'sub' }, ['Mobiler TiSCH · ', bundle.session.title]),
+      el('p', { class: 'sub' }, ['Mobiler TiSCH']),
+      sitzungswahl(),
     ]),
     el('div', { class: 'row' }, [status, zahnrad]),
   ]);
+}
+
+/** Zwischen Sitzungen wechseln oder eine neue beginnen. */
+function sitzungswahl(): HTMLElement {
+  const zeile = el('div', { class: 'row sitzungen' });
+  const auswahl = el('select', {
+    id: 'sitzungswahl', 'aria-label': 'Sitzung wählen',
+  }) as HTMLSelectElement;
+  zeile.append(auswahl, (() => {
+    const neu = el('button', { type: 'button' }, ['Neue Sitzung']);
+    neu.addEventListener('click', async () => {
+      neu.disabled = true;
+      try {
+        const sitzung = await api.createSession(defaultTitle());
+        await wechsleSitzung(sitzung.id);
+      } finally {
+        neu.disabled = false;
+      }
+    });
+    return neu;
+  })());
+  auswahl.addEventListener('change', () => void wechsleSitzung(auswahl.value));
+  zeichneSitzungswahl(auswahl);
+  return zeile;
+}
+
+function zeichneSitzungswahl(node?: HTMLSelectElement | null): void {
+  const auswahl = node ?? document.getElementById('sitzungswahl') as HTMLSelectElement | null;
+  if (!auswahl || !state.bundle) return;
+  const aktuell = state.bundle.session;
+  const alle = state.sessions.some((s) => s.id === aktuell.id)
+    ? state.sessions
+    : [aktuell, ...state.sessions];
+  auswahl.replaceChildren();
+  for (const sitzung of alle) {
+    const option = document.createElement('option');
+    option.value = sitzung.id;
+    option.textContent =
+      sitzung.title + (sitzung.status === 'abgeschlossen' ? ' · abgeschlossen' : '');
+    option.selected = sitzung.id === aktuell.id;
+    auswahl.append(option);
+  }
+}
+
+async function wechsleSitzung(sessionId: string): Promise<void> {
+  if (!sessionId || sessionId === state.bundle?.session.id) return;
+  try {
+    state.bundle = await api.getSession(sessionId);
+    state.bezug = null;
+    state.pingpong = [];
+    rememberSession(sessionId);
+    renderShell();
+    openStream();
+    void ladePingPong();
+  } catch (fehler) {
+    window.alert(`Sitzung konnte nicht geöffnet werden: ${(fehler as Error).message}`);
+  }
 }
 
 function updateStatusline(node?: HTMLElement | null): void {
@@ -249,6 +427,143 @@ function providerWarnings(): HTMLElement {
   return container;
 }
 
+// --------------------------------------------------------- Offene Entwürfe
+
+/** Was noch nicht beim Server ankam — sichtbar, nicht verloren. */
+function entwurfsliste(): HTMLElement {
+  const behaelter = el('div', {});
+  if (state.entwuerfe.length === 0) return behaelter;
+
+  const panel = el('div', { class: 'flaeche banner', id: 'entwuerfe' }, [
+    el('p', { class: 'hint' }, [
+      `${state.entwuerfe.length} Gedanke(n) nur auf diesem Gerät vorgemerkt — ` +
+        'noch nicht beim Dienst angekommen. Nichts davon geht verloren.',
+    ]),
+  ]);
+  for (const entwurf of state.entwuerfe) {
+    panel.append(
+      el('div', { class: 'entwurf' }, [
+        el('p', { class: 'question' }, [entwurf.prompt]),
+        entwurf.lastError ? el('p', { class: 'hint error' }, [entwurf.lastError]) : el('span', {}),
+      ]),
+    );
+  }
+  const zeile = el('div', { class: 'row' });
+  const nochmal = el('button', { class: 'primary', type: 'button', id: 'entwuerfe-senden' },
+    ['Jetzt senden']);
+  nochmal.addEventListener('click', () => void sendeEntwuerfe());
+  const verwerfen = el('button', { type: 'button', class: 'gefahr' }, ['Verwerfen']);
+  verwerfen.addEventListener('click', () => {
+    if (!window.confirm('Alle vorgemerkten Gedanken verwerfen?')) return;
+    state.entwuerfe = [];
+    speichereEntwuerfe();
+    renderShell();
+  });
+  zeile.append(nochmal, verwerfen);
+  panel.append(zeile);
+  behaelter.append(panel);
+  return behaelter;
+}
+
+// ------------------------------------------------------------- Ping-Pong
+
+/** Ein begrenztes Wechselgespräch — die Grenzen stehen vorher sichtbar da. */
+function pingpongPanel(): HTMLElement {
+  const behaelter = el('div', {});
+  const modelle = state.config?.models ?? [];
+  const bundle = state.bundle!;
+  if (modelle.length < 2 || bundle.session.status !== 'offen') return behaelter;
+
+  const laufend = state.pingpong.filter((r) => r.status === 'laeuft');
+  const panel = el('details', { class: 'flaeche pingpong', id: 'pingpong' });
+  panel.open = laufend.length > 0;
+  panel.append(el('summary', {}, ['Wechselgespräch zwischen Modellen']));
+  panel.append(el('div', { id: 'pp-laeufe' }));
+
+  const auftrag = el('textarea', {
+    id: 'pp-prompt', rows: '2',
+    placeholder: 'Untersuchungsauftrag für das Wechselgespräch …',
+    'aria-label': 'Untersuchungsauftrag',
+  }) as HTMLTextAreaElement;
+
+  const teilnehmer = el('div', { class: 'modelpicker' });
+  const gewaehlt = new Set(modelle.slice(0, 2).map((m) => m.id));
+  for (const modell of modelle) {
+    const box = el('input', { type: 'checkbox', value: modell.id }) as HTMLInputElement;
+    box.checked = gewaehlt.has(modell.id);
+    box.addEventListener('change', () => {
+      if (box.checked) gewaehlt.add(modell.id);
+      else gewaehlt.delete(modell.id);
+      zeigeGrenzen();
+    });
+    teilnehmer.append(el('label', {}, [box, modell.label]));
+  }
+
+  const runden = el('input', {
+    type: 'number', min: '2', max: '12', id: 'pp-runden',
+    'aria-label': 'Höchstzahl zusätzlicher Beiträge',
+  }) as HTMLInputElement;
+  runden.value = '4';
+  runden.addEventListener('input', () => zeigeGrenzen());
+
+  const grenzen = el('p', { class: 'hint', id: 'pp-grenzen' }, []);
+  function zeigeGrenzen(): void {
+    const namen = modelle.filter((m) => gewaehlt.has(m.id)).map((m) => m.label);
+    grenzen.textContent =
+      `Vor dem Start: ${namen.join(' ↔ ') || '— niemand gewählt —'}; ` +
+      `höchstens ${runden.value} zusätzliche Beiträge; ` +
+      `Zeitgrenze je Beitrag wie in den Einstellungen. ` +
+      (state.bezug ? `Bezug: ${state.bezug.label}.` : 'Ohne Bezugsbeitrag.');
+  }
+  zeigeGrenzen();
+
+  const starten = el('button', { class: 'primary', type: 'button', id: 'pp-start' },
+    ['Wechselgespräch starten']);
+  const meldung = el('p', { class: 'hint', id: 'pp-meldung' }, []);
+  starten.addEventListener('click', async () => {
+    if (!auftrag.value.trim()) {
+      meldung.className = 'hint error';
+      meldung.textContent = 'Ohne Untersuchungsauftrag geht es nicht.';
+      return;
+    }
+    starten.disabled = true;
+    try {
+      await api.startPingPong(bundle.session.id, {
+        prompt: auftrag.value.trim(),
+        refs: state.bezug ? [state.bezug.id] : [],
+        participants: [...gewaehlt],
+        max_turns: Number(runden.value),
+      });
+      auftrag.value = '';
+      await ladePingPong();
+    } catch (fehler) {
+      meldung.className = 'hint error';
+      meldung.textContent = (fehler as Error).message;
+    } finally {
+      starten.disabled = false;
+    }
+  });
+
+  panel.append(
+    el('p', { class: 'hint' }, [
+      'Die Modelle antworten abwechselnd aufeinander. Es läuft nur so weit, wie du ' +
+        'es hier festlegst — und lässt sich jederzeit stoppen.',
+    ]),
+    auftrag,
+    el('div', { class: 'feld' }, [
+      el('label', {}, ['Beteiligte Stimmen']), teilnehmer,
+    ]),
+    el('div', { class: 'feld' }, [
+      el('label', { for: 'pp-runden' }, ['Höchstzahl zusätzlicher Beiträge']), runden,
+    ]),
+    grenzen,
+    el('div', { class: 'row' }, [starten]),
+    meldung,
+  );
+  behaelter.append(panel);
+  return behaelter;
+}
+
 // ------------------------------------------------------------------- Bezüge
 
 const BEZUG_KNOPF: Record<SparkKind, string> = {
@@ -257,6 +572,18 @@ const BEZUG_KNOPF: Record<SparkKind, string> = {
   weitergabe: 'Zur Prüfung geben',
   gegenposition: 'Gegenposition anfragen',
   vertiefung: 'Strang vertiefen',
+  pingpong: 'Wechselgespräch',
+  kuratierung: 'Kuratierung',
+};
+
+const FUNKE_ART: Record<SparkKind, string> = {
+  funke: '',
+  antwort: 'Antwort',
+  weitergabe: 'Weitergabe',
+  gegenposition: 'Gegenposition',
+  vertiefung: 'Vertiefung',
+  pingpong: 'Wechselgespräch',
+  kuratierung: 'Kuratierung (maschinell)',
 };
 
 /** Zeigt, worauf sich die nächste Eingabe bezieht — und lässt es lösen. */
@@ -433,10 +760,26 @@ function sparkForm(): HTMLElement {
   ]);
   const message = el('p', { class: 'hint', id: 'spark-message' }, []);
 
+  const zeile = el('div', { class: 'row spread' }, [picker]);
+  const kurator = state.config?.curator;
+  if (kurator) {
+    const schalter = el('input', { type: 'checkbox', id: 'kuratierung' }) as HTMLInputElement;
+    schalter.checked = state.curate;
+    schalter.addEventListener('change', () => {
+      state.curate = schalter.checked;
+    });
+    picker.append(
+      el('label', { class: 'schalter', for: 'kuratierung',
+                    title: 'Ein zusätzlicher Modellaufruf vor der Runde' },
+        [schalter, `Kuratierung durch ${kurator.label}`]),
+    );
+  }
+  zeile.append(send);
+
   const form = el('form', { class: 'flaeche spark' }, [
     bezugsleiste(),
     textarea,
-    el('div', { class: 'row spread' }, [picker, send]),
+    zeile,
     message,
   ]);
 
@@ -464,6 +807,23 @@ function sparkForm(): HTMLElement {
     message.textContent = 'Die Sitzung ist abgeschlossen. Neue Funken sind nicht mehr möglich.';
   }
 
+  // Getipptes überlebt ein Neuladen.
+  try {
+    const gemerkt = localStorage.getItem(EINGABE_KEY);
+    if (gemerkt && !(textarea as HTMLTextAreaElement).value) {
+      (textarea as HTMLTextAreaElement).value = gemerkt;
+    }
+  } catch {
+    /* ohne Speicher eben nicht */
+  }
+  textarea.addEventListener('input', () => {
+    try {
+      localStorage.setItem(EINGABE_KEY, (textarea as HTMLTextAreaElement).value);
+    } catch {
+      /* ohne Speicher eben nicht */
+    }
+  });
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const prompt = (textarea as HTMLTextAreaElement).value.trim();
@@ -481,32 +841,56 @@ function sparkForm(): HTMLElement {
     (send as HTMLButtonElement).disabled = true;
     message.textContent = 'Der Funke läuft an …';
     const bezug = state.bezug;
+    const entwurf: Entwurf = {
+      clientRequestId: state.pendingRequestId,
+      prompt,
+      refs: bezug ? [bezug.id] : [],
+      kind: bezug?.kind ?? 'funke',
+      modelIds: bezug?.modelId ? [bezug.modelId] : [...state.selectedModels],
+      curate: state.curate,
+      createdAt: Date.now(),
+      lastError: '',
+    };
+    // Erst vormerken, dann senden: ein Netzfehler vernichtet keinen Gedanken.
+    state.entwuerfe = [...state.entwuerfe, entwurf];
+    speichereEntwuerfe();
+    (textarea as HTMLTextAreaElement).value = '';
+    try {
+      localStorage.removeItem(EINGABE_KEY);
+    } catch {
+      /* ohne Speicher eben nicht */
+    }
+
     try {
       const result = await api.createSpark(
-        bundle.session.id,
-        prompt,
-        state.pendingRequestId,
-        bezug?.modelId ? [bezug.modelId] : [...state.selectedModels],
-        bezug ? [bezug.id] : [],
-        bezug?.kind ?? 'funke',
+        bundle.session.id, entwurf.prompt, entwurf.clientRequestId,
+        entwurf.modelIds, entwurf.refs, entwurf.kind, entwurf.curate,
       );
       state.pendingRequestId = null;
       state.bezug = null;
-      (textarea as HTMLTextAreaElement).value = '';
-      message.textContent = result.duplicate
-        ? 'Dieser Funke lief bereits — es wurden keine neuen Aufträge gestartet.'
-        : '';
-      ensureSpark({
-        spark: result.spark,
-        jobs: result.jobs,
-        markers: [],
-        summary: null,
-      });
+      state.entwuerfe = state.entwuerfe.filter(
+        (e) => e.clientRequestId !== entwurf.clientRequestId,
+      );
+      speichereEntwuerfe();
+      const hinweise: string[] = [];
+      if (result.duplicate) {
+        hinweise.push('Dieser Funke lief bereits — es wurden keine neuen Aufträge gestartet.');
+      }
+      if (result.curation && !result.curation.gestartet) {
+        hinweise.push(String(result.curation.grund ?? ''));
+      }
+      message.textContent = hinweise.join(' ');
+      ensureSpark({ spark: result.spark, jobs: result.jobs, markers: [], summary: null });
+      renderShell();
     } catch (error) {
-      message.className = 'hint error';
+      state.pendingRequestId = null;
       const detail = error instanceof ApiError ? error.message : (error as Error).message;
-      message.textContent = `Der Funke konnte nicht gesetzt werden: ${detail}. ` +
-        'Erneutes Senden wiederholt denselben Auftrag, ohne ihn zu verdoppeln.';
+      entwurf.lastError = detail;
+      speichereEntwuerfe();
+      message.className = 'hint error';
+      message.textContent =
+        `Nicht gesendet: ${detail} Der Gedanke ist vorgemerkt und geht nicht verloren.`;
+      renderShell();
     } finally {
       (send as HTMLButtonElement).disabled = bundle.session.status !== 'offen';
     }
@@ -518,10 +902,12 @@ function sparkForm(): HTMLElement {
 // -------------------------------------------------------------------- Funken
 
 function renderSparkBlock(entry: SparkEntry): HTMLElement {
-  const block = el('section', { class: 'spark-block', 'data-spark-id': entry.spark.id }, [
-    el('h2', {}, [`Funke ${entry.spark.seq}`]),
-    renderQuestion(entry),
-  ]);
+  const kopf = el('h2', {}, [`Funke ${entry.spark.seq}`]);
+  const art = FUNKE_ART[entry.spark.kind] ?? '';
+  if (art) kopf.append(el('span', { class: 'tag' }, [art]));
+  const block = el('section', {
+    class: `spark-block art-${entry.spark.kind}`, 'data-spark-id': entry.spark.id,
+  }, [kopf, renderQuestion(entry)]);
 
   const cards = el('div', { class: 'cards' });
   for (const job of entry.jobs) {
@@ -543,8 +929,32 @@ function ruesteKarteAus(card: HTMLElement, job: Job, entry: SparkEntry): void {
   if (!fuss) return;
   fuss.replaceChildren();
   if (job.status === 'not_requested') return;
+  if (job.status === 'queued' || job.status === 'running' || job.status === 'streaming') {
+    fuss.append(abbruchKnopf(job));
+  }
   if ((job.text ?? '').trim()) fuss.append(kartenAktionen(job, entry));
   fuss.append(kontextAnsicht(job));
+}
+
+/** Bricht genau diesen Auftrag ab. Die anderen Modelle laufen weiter. */
+function abbruchKnopf(job: Job): HTMLElement {
+  const zeile = el('div', { class: 'row card-actions' });
+  const knopf = el('button', { type: 'button', class: 'gefahr' }, ['Abbrechen']);
+  const meldung = el('span', { class: 'hint' }, []);
+  knopf.addEventListener('click', async () => {
+    knopf.disabled = true;
+    try {
+      await api.cancelJob(job.id);
+      // Der Zustandswechsel kommt über das Ereignis; hier ist nichts zu tun.
+    } catch (fehler) {
+      // Häufigster Fall: der Auftrag war schneller fertig als der Klick.
+      knopf.disabled = false;
+      meldung.className = 'hint';
+      meldung.textContent = (fehler as Error).message;
+    }
+  });
+  zeile.append(knopf, meldung);
+  return zeile;
 }
 
 /** Maschinelle Bezüge — als Vorschlag, den man bestätigen oder verwerfen kann. */
@@ -660,7 +1070,41 @@ function ensureSpark(entry: SparkEntry): HTMLElement {
   const block = renderSparkBlock(entry);
   blocks.set(entry.spark.id, block);
   document.getElementById('sparks')?.append(block);
+  meldeNeuenBeitrag(block);
   return block;
+}
+
+/** Zählt neu eingetroffene Beiträge, die unterhalb des Sichtfelds liegen.
+ *
+ * Es wird niemals ungefragt gescrollt: wer gerade liest, bleibt, wo er ist.
+ * Der Hinweis bringt einen erst auf Klick nach unten.
+ */
+let neueBeitraege: HTMLElement | null = null;
+
+function meldeNeuenBeitrag(block: HTMLElement): void {
+  const kasten = block.getBoundingClientRect();
+  if (kasten.top < window.innerHeight) return; // schon sichtbar
+
+  const hinweis = neueBeitraege ?? el('button', {
+    type: 'button', class: 'neue-beitraege', id: 'neue-beitraege',
+  }, []);
+  const bisher = Number(hinweis.dataset.anzahl ?? '0') + 1;
+  hinweis.dataset.anzahl = String(bisher);
+  hinweis.textContent = bisher === 1 ? '1 neuer Beitrag ↓' : `${bisher} neue Beiträge ↓`;
+  if (!neueBeitraege) {
+    hinweis.addEventListener('click', () => {
+      const ziel = document.getElementById('sparks')?.lastElementChild;
+      ziel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      verwerfeNeueBeitraege();
+    });
+    document.body.append(hinweis);
+    neueBeitraege = hinweis;
+  }
+}
+
+function verwerfeNeueBeitraege(): void {
+  neueBeitraege?.remove();
+  neueBeitraege = null;
 }
 
 function findEntry(predicate: (entry: SparkEntry) => boolean): SparkEntry | undefined {
@@ -699,6 +1143,24 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
     case 'auftrag.laeuft':
       patchJob(String(payload.job_id), (job) => ({ ...job, status: 'running' }));
       break;
+    case 'auftrag.teilstueck':
+      // Der Zwischenstand ersetzt den bisherigen Text vollständig — der Server
+      // schickt immer den ganzen bisher angefallenen Text, nicht nur das Neue.
+      patchJob(String(payload.job_id), (job) => ({
+        ...job,
+        status: 'streaming',
+        text: String(payload.text ?? ''),
+      }));
+      break;
+    case 'auftrag.abgebrochen':
+      patchJob(String(payload.job_id), (job) => ({
+        ...job,
+        status: 'cancelled',
+        text: String(payload.text ?? job.text ?? ''),
+        partial: Boolean(payload.partial),
+        error: 'Von dir abgebrochen.',
+      }));
+      break;
     case 'auftrag.fertig':
       patchJob(String(payload.job_id), (job) => ({
         ...job,
@@ -707,6 +1169,12 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
         partial: Boolean(payload.partial),
         latency_ms: (payload.latency_ms as number) ?? null,
         error: null,
+        // Verbrauch und Kosten kommen mit dem Ereignis; ohne sie stünde die
+        // Karte bis zum nächsten Neuladen ohne diese Angaben da.
+        tokens_in: (payload.tokens_in as number) ?? null,
+        tokens_out: (payload.tokens_out as number) ?? null,
+        cost_micro: (payload.cost_micro as number) ?? null,
+        cost_source: payload.cost_source === 'berechnet' ? 'berechnet' : 'unbekannt',
       }));
       break;
     case 'auftrag.fehler':
@@ -748,6 +1216,16 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
         }
         renderPanels(block, entry.summary);
       }
+      break;
+    }
+    case 'pingpong.gestartet':
+    case 'pingpong.runde':
+    case 'pingpong.ende': {
+      const lauf = payload as unknown as PingPongRun;
+      const index = state.pingpong.findIndex((r) => r.id === lauf.id);
+      if (index >= 0) state.pingpong[index] = lauf;
+      else state.pingpong.push(lauf);
+      zeichnePingPong();
       break;
     }
     case 'sitzung.abgeschlossen': {

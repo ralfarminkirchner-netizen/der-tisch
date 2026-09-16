@@ -7,6 +7,7 @@ import type {
   NewProvider,
   ProviderPatch,
   ProviderTestResult,
+  PingPongRun,
   Relation,
   Session,
   SessionBundle,
@@ -58,8 +59,14 @@ export const api = {
     modelIds: string[] | null,
     refs: string[] = [],
     kind: SparkKind = 'funke',
+    curate = false,
   ) =>
-    request<{ spark: Spark; jobs: Job[]; duplicate: boolean }>(
+    request<{
+      spark: Spark;
+      jobs: Job[];
+      duplicate: boolean;
+      curation?: { gestartet: boolean; grund?: string; label?: string; spark_id?: string };
+    }>(
       `/api/sessions/${sessionId}/sparks`,
       {
         method: 'POST',
@@ -69,10 +76,28 @@ export const api = {
           model_ids: modelIds,
           refs,
           kind,
+          curate,
         }),
       },
     ),
   jobContext: (jobId: string) => request<JobContext>(`/api/jobs/${jobId}/context`),
+  cancelJob: (jobId: string) =>
+    request<{ cancelled: string }>(`/api/jobs/${jobId}/cancel`, { method: 'POST' }),
+  startPingPong: (
+    sessionId: string,
+    body: { prompt: string; refs: string[]; participants: string[]; max_turns: number },
+  ) =>
+    request<PingPongRun>(`/api/sessions/${sessionId}/pingpong`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  listPingPong: (sessionId: string) =>
+    request<{ runs: PingPongRun[] }>(`/api/sessions/${sessionId}/pingpong`),
+  stopPingPong: (sessionId: string, runId: string) =>
+    request<PingPongRun>(`/api/sessions/${sessionId}/pingpong/${runId}/stop`, {
+      method: 'POST',
+    }),
+  listSessions: () => request<{ sessions: Session[] }>('/api/sessions'),
   setRelation: (sessionId: string, relationId: string, status: Relation['status']) =>
     request<{ relations: Relation[] }>(
       `/api/sessions/${sessionId}/relations/${relationId}`,
@@ -111,6 +136,12 @@ export const api = {
       headers: { 'X-Admin-Token': token },
       body: JSON.stringify({ request_timeout_s: seconds }),
     }),
+  saveCurator: (token: string, providerId: string) =>
+    request<AdminSettings>('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify({ curator: providerId }),
+    }),
 };
 
 /** Erzeugt eine stabile Kennung je Absendevorgang.
@@ -141,6 +172,11 @@ const EVENT_TYPES = [
   'auftrag.unterbrochen',
   'einschaetzung.fertig',
   'beziehung.geaendert',
+  'auftrag.teilstueck',
+  'auftrag.abgebrochen',
+  'pingpong.gestartet',
+  'pingpong.runde',
+  'pingpong.ende',
 ];
 
 /** Verbindet den Ereignisstrom.

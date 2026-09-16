@@ -971,3 +971,121 @@ details.kontext-roh > summary {
 .bezug-zeile.bestaetigt { border-left-color: var(--einig); }
 .bezug-zeile.abgelehnt { border-left-color: var(--linie-kraeftig); opacity: 0.66; }
 .bezug-zeile button { font-size: 0.78rem; padding: 5px 10px; }
+
+/* --- Zustände, die beim Bau dazugekommen sind ---------------------------- */
+
+/* „schreibt“ ist ein laufender Zustand: dieselbe ruhige Marke wie „denkt nach“.
+   Abgebrochen ist kein Fehler, sondern eine Entscheidung — darum grau, nicht rot. */
+.card.zustand-streaming { border-top-color: var(--marke); }
+.card.zustand-cancelled { border-top-color: var(--linie-kraeftig); }
+
+.tag.streaming { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
+.tag.cancelled { color: var(--tinte-matt); background: var(--flaeche-tief); border-color: transparent; }
+
+/* Solange geschrieben wird, zeigt ein kleiner Balken, dass der Text noch wächst. */
+.card.zustand-streaming .answer::after {
+  content: '';
+  display: inline-block;
+  width: 0.5ch;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--marke);
+  animation: schreibt 1s steps(2, end) infinite;
+}
+
+@keyframes schreibt { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .card.zustand-streaming .answer::after { animation: none; }
+}
+
+/* --- Entwürfe ------------------------------------------------------------ */
+
+#entwuerfe {
+  display: grid;
+  gap: 10px;
+  border-left: 3px solid var(--achtung);
+}
+
+.entwurf {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  min-width: 0;
+  font-size: 0.86rem;
+}
+
+.entwurf p { margin: 0; overflow-wrap: anywhere; }
+.entwurf .question { font-size: 0.9rem; }
+
+/* --- Wechselgespräch ----------------------------------------------------- */
+
+.pingpong { padding: var(--pad); }
+.pingpong > summary { cursor: pointer; font-weight: 600; }
+.pingpong .feld { margin-top: 10px; }
+
+.pingpong-lauf {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--linie-kraeftig);
+  border-radius: var(--radius-klein);
+  min-width: 0;
+}
+
+.pingpong-lauf.laeuft { border-left-color: var(--marke); }
+.pingpong-lauf.beendet { border-left-color: var(--einig); }
+.pingpong-lauf.gestoppt { border-left-color: var(--achtung); }
+.pingpong-lauf button { justify-self: start; font-size: 0.78rem; padding: 5px 10px; }
+
+.modelpicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.modelpicker label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+}
+
+/* --- Hinweis auf neue Beiträge ------------------------------------------ */
+
+/* Es wird nie ungefragt gescrollt. Wer liest, bleibt stehen; dieser Knopf
+   bringt einen erst auf Klick nach unten. */
+.neue-beitraege {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: var(--marke);
+  border-color: var(--marke);
+  color: #fff;
+  box-shadow: var(--schatten-tief);
+}
+
+/* --- Sitzungswahl -------------------------------------------------------- */
+
+.sitzungen {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 8px;
+}
+
+.sitzungen select { max-width: 100%; font-size: 0.86rem; }
+.sitzungen button { font-size: 0.78rem; padding: 5px 10px; }
+
+/* --- Art des Beitrags ---------------------------------------------------- */
+
+.spark-block.art-kuratierung > h2,
+.spark-block.art-pingpong > h2 { color: var(--tinte-matt); }

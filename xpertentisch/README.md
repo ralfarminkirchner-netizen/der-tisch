@@ -69,6 +69,30 @@ xpertentisch/
   Auftragsbeginn festgeschrieben. „Worauf antwortet diese Stimme?“ zeigt es:
   Liste der Beiträge, Kürzungshinweis und den übergebenen Wortlaut. Ein später
   eingeworfener Gedanke wird **nicht** rückwirkend zum Kenntnisstand erklärt.
+- **Antworten erscheinen, während sie entstehen.** Wo ein Anbieter streamt,
+  wächst der Text auf der Karte mit; der Zwischenstand wird fortlaufend
+  festgeschrieben und übersteht Neuladen und Verbindungsabbruch.
+- **Einzelne Aufträge abbrechen.** „Abbrechen“ trifft genau diese eine Karte;
+  die übrigen Modelle laufen weiter. Der Abbruch wird als Abbruch geführt, nicht
+  als Fehler, und der bis dahin angefallene Text bleibt erhalten.
+- **Eine Warteschlange je Anbieter.** Mehrere Funken überrennen keinen Anbieter:
+  je Anbieter arbeiten standardmäßig ein Arbeiter (`XT_PROVIDER_CONCURRENCY`),
+  die Anbieter untereinander bleiben unabhängig.
+- **Wechselgespräch zwischen Modellen** (Ping-Pong) mit sichtbarer Grenze: die
+  Beteiligten, die Höchstzahl zusätzlicher Beiträge und die Zeitgrenze stehen
+  vor dem Start da. Jederzeit stoppbar.
+- **Verbrauch und Kosten.** Gemeldete Token stehen auf der Karte. Ein Betrag
+  erscheint nur, wenn du für den Anbieter Preise hinterlegt hast — sonst steht
+  dort „Kosten unbekannt“. Es wird nichts geschätzt.
+- **Kuratierung auf Wunsch.** Ein in den Einstellungen gewähltes Modell fasst
+  die Antworten eines Funkens zusammen. Die Zusammenfassung ist ein **eigener
+  Beitrag** und ersetzt keine Originalantwort; ohne Auswahl gibt es sie nicht.
+- **Sitzungsliste** im Kopf: zwischen Sitzungen wechseln oder eine neue beginnen.
+- **Entwürfe bei unterbrochener Verbindung.** Ein Gedanke, der nicht gesendet
+  werden konnte, bleibt sichtbar vorgemerkt und wird nach der Rückkehr mit
+  derselben Anfragekennung nachgereicht — also ohne doppelte Modellaufrufe.
+- **Kein erzwungenes Scrollen.** Trifft ein Beitrag unterhalb des Sichtfelds
+  ein, erscheint ein Hinweis „neue Beiträge“; wer liest, bleibt stehen.
 - **Sitzungsabschluss** mit freiwilliger Abschlussnotiz.
 - **Zwei Berichtsexporte**: eigenständiges HTML (offline, druckbar, ohne
   Skripte, alle Inhalte maskiert) und Markdown.
@@ -127,11 +151,12 @@ Oberfläche wie in allen Exporten:
 | Zustand | Bedeutung |
 | --- | --- |
 | `not_requested` | Für diesen Funken bewusst nicht angefragt. Kein Aufruf, keine Kosten. |
-| `queued` / `running` | Wartet auf den Start bzw. läuft gerade. |
+| `queued` / `running` | Wartet in der Warteschlange des Anbieters bzw. läuft gerade. |
+| `streaming` | Die Antwort läuft ein und wächst sichtbar; der Zwischenstand ist gesichert. |
 | `done` | Antwort da. Ohne Text: „Antwort kam an, enthielt aber keinen Text.“ |
 | `error` | Der Anbieter hat abgelehnt oder war nicht erreichbar; der Grund steht dabei. |
 | `interrupted` | Durch einen Serverneustart abgebrochen. Wird **nicht** blind neu gestartet. |
-| `cancelled` | Vor der Antwort abgebrochen. |
+| `cancelled` | Von dir abgebrochen. Kein Fehler — und der bis dahin angefallene Text bleibt. |
 
 ### Bezüge: gesetzt oder nur vorgeschlagen
 
@@ -205,6 +230,17 @@ cd xpertentisch/frontend && npm i -D playwright && PW_CHROMIUM=<pfad/zu/chromium
   node e2e/browser-check.mjs http://127.0.0.1:8000   # Browserprüfung; playwright ist bewusst keine feste Abhängigkeit
 ```
 
+Für die zweite Browserprüfung (Streamen, Abbrechen, Wechselgespräch, Entwürfe)
+braucht es steuerbare Test-Provider. Der Starter dafür setzt die nötigen
+Schalter ausdrücklich — im Produktionsmodus bricht die Konfigurationsprüfung
+vorher ab:
+
+```bash
+cd xpertentisch/backend && .venv/bin/python tools/demo_server.py 8077
+cd xpertentisch/frontend && PW_CHROMIUM=<pfad/zu/chromium> \
+  node e2e/gespraech-check.mjs http://127.0.0.1:8077
+```
+
 ---
 
 ## Konfiguration
@@ -221,6 +257,7 @@ cd xpertentisch/frontend && npm i -D playwright && PW_CHROMIUM=<pfad/zu/chromium
 | `XT_DB_PATH` | Pfad der SQLite-Datei | `xpertentisch.sqlite3` |
 | `XT_REQUEST_TIMEOUT_S` | Zeitgrenze je Modellaufruf | `120` |
 | `XT_MAX_PROMPT_CHARS` | Längengrenze eines Funkens | `20000` |
+| `XT_PROVIDER_CONCURRENCY` | gleichzeitige Aufträge **je Anbieter** | `1` |
 | `XT_ADMIN_TOKEN` | Zugangswort für die Einstellungsseite; ohne bleibt sie gesperrt | leer |
 | `XT_CORS_ORIGINS` | Kommaliste erlaubter Ursprünge | leer |
 | `PORT` | Port (von Railway gesetzt) | `8000` |
@@ -304,11 +341,12 @@ läuft ein geprüftes Python-Backend mit Vite-Oberfläche; ein Umbau brächte ke
 Funktion, nur Risiko. Der Bauauftrag verlangt selbst, vorhandene Arbeit zu
 bewahren.
 
-**Noch offen** — Streaming der Antworten (heute erscheint eine Antwort
-vollständig), eigene Warteschlange je Anbieter mit Parallelitätsgrenzen,
-begrenztes Ping-Pong zwischen Modellen, Token- und Kostenerfassung, eine
-vorgeschaltete Kuratierung, Sitzungsliste in der Oberfläche, Offline-Entwürfe
-und das Abbrechen einzelner Aufträge.
+**Ebenfalls übernommen, im zweiten Durchgang gebaut** — Streaming der
+Antworten, eine eigene Warteschlange je Anbieter mit Parallelitätsgrenze,
+begrenztes Ping-Pong zwischen Modellen, Token- und Kostenerfassung (ohne
+Schätzung), Kuratierung als eigener Beitrag, Sitzungsliste in der Oberfläche,
+Entwürfe bei unterbrochener Verbindung und das Abbrechen einzelner Aufträge.
+Damit ist die Liste aus diesem Bauauftrag abgearbeitet.
 
 ## Ausdrücklich nicht enthalten
 

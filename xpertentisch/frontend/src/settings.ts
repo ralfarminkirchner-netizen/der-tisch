@@ -142,6 +142,7 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
       inhalt.append(neuerAnbieter(daten, token, melde, neu));
     }
     inhalt.append(zeitgrenze(daten, token, melde, neu));
+    inhalt.append(kuratorwahl(daten, token, melde, neu));
     inhalt.append(
       el('p', { class: 'hint' }, [
         'Hinterlegte Schlüssel liegen in der Datenbank des Dienstes und werden nie ' +
@@ -164,6 +165,11 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
 }
 
 // ------------------------------------------------------------- Ein Anbieter
+
+/** Preis als Text fürs Eingabefeld — unbekannt bleibt leer, nicht null. */
+function preisText(wert: number | null): string {
+  return wert === null || wert === undefined ? '' : String(wert);
+}
 
 function anbieterBlock(
   zeile: ProviderRow,
@@ -259,14 +265,30 @@ function anbieterBlock(
   if (zeile.kind === 'openai' || zeile.kind === 'google' || !zeile.is_preset) {
     feld('base', 'Basis-Adresse', zeile.base_url ?? '', 'text', 'Standard des Anbieters');
   }
+  // Ohne eingetragenen Preis wird nichts geschätzt: die Kosten bleiben dann
+  // ausdrücklich unbekannt, statt eine Zahl zu erfinden.
+  feld(
+    'price_in', 'Preis Eingabe je Mio. Token', preisText(zeile.price_in),
+    'number', 'leer = unbekannt',
+  );
+  feld(
+    'price_out', 'Preis Ausgabe je Mio. Token', preisText(zeile.price_out),
+    'number', 'leer = unbekannt',
+  );
   block.append(felder);
+  block.append(
+    el('p', { class: 'hint' }, [
+      'Die Preise trägst du selbst ein, in deiner Währung. Fehlt einer, steht auf der ' +
+        'Karte „Kosten unbekannt“ — es wird nichts geraten.',
+    ]),
+  );
 
   const knoepfe = el('div', { class: 'row' });
 
   const speichern = el('button', { class: 'primary', type: 'button' }, ['Speichern']);
   speichern.disabled = !editable;
   speichern.addEventListener('click', async () => {
-    const patch: Record<string, string | boolean> = {};
+    const patch: Record<string, string | boolean | number> = {};
     if (eingaben.key?.value.trim()) {
       patch.api_key = eingaben.key.value.trim();
       // Wer einen Schlüssel einträgt, will den Anbieter am Tisch haben.
@@ -277,6 +299,19 @@ function anbieterBlock(
     }
     if (eingaben.base && eingaben.base.value.trim() !== (zeile.base_url ?? '')) {
       patch.base_url = eingaben.base.value.trim();
+    }
+    for (const name of ['price_in', 'price_out'] as const) {
+      const eingabe = eingaben[name];
+      if (!eingabe) continue;
+      const roh = eingabe.value.trim();
+      if (roh === preisText(zeile[name])) continue;
+      // Leeres Feld heißt: Preis wieder unbekannt. Die Null löscht ihn serverseitig.
+      const zahl = roh === '' ? 0 : Number(roh);
+      if (!Number.isFinite(zahl) || zahl < 0) {
+        melde('Preise müssen Zahlen ab null sein.', true);
+        return;
+      }
+      patch[name] = zahl;
     }
     if (Object.keys(patch).length === 0) {
       melde('Nichts zu speichern.', true);
@@ -476,6 +511,57 @@ function zeitgrenze(
     ]),
     el('p', { class: 'hint' }, [
       `Derzeit ${QUELLE_TEXT[daten.timeout_source] ?? daten.timeout_source}.`,
+    ]),
+  ]);
+}
+
+// -------------------------------------------------------------------- Kurator
+
+/** Wer die Antworten zusammenfasst — freiwillig, und niemals als Ersatz.
+ *
+ * Die Kuratierung erscheint als eigener Beitrag am Tisch. Die
+ * Originalantworten bleiben unverändert stehen.
+ */
+function kuratorwahl(
+  daten: AdminSettings,
+  token: string,
+  melde: Melder,
+  neuZeichnen: (daten: AdminSettings) => void,
+): HTMLElement {
+  const auswahl = el('select', {
+    id: 'kurator', 'aria-label': 'Anbieter für die Kuratierung',
+  }) as HTMLSelectElement;
+  const leer = document.createElement('option');
+  leer.value = '';
+  leer.textContent = '— keiner, Kuratierung abgeschaltet —';
+  auswahl.append(leer);
+  for (const zeile of daten.providers.filter((z) => z.enabled && z.ready)) {
+    const option = document.createElement('option');
+    option.value = zeile.id;
+    option.textContent = `${zeile.label} · ${zeile.model}`;
+    auswahl.append(option);
+  }
+  auswahl.value = daten.curator;
+
+  const knopf = el('button', { type: 'button', id: 'kurator-speichern' }, ['Kurator setzen']);
+  knopf.addEventListener('click', async () => {
+    try {
+      neuZeichnen(await api.saveCurator(token, auswahl.value));
+      melde(auswahl.value ? 'Kurator gesetzt.' : 'Kuratierung abgeschaltet.');
+    } catch (fehler) {
+      melde((fehler as Error).message, true);
+    }
+  });
+
+  return el('div', { class: 'anbieter' }, [
+    el('div', { class: 'feld' }, [
+      el('label', { for: 'kurator' }, ['Kuratierung durch']),
+      el('div', { class: 'row' }, [auswahl, knopf]),
+    ]),
+    el('p', { class: 'hint' }, [
+      'Auf Wunsch fasst dieses Modell die Antworten eines Funkens zusammen. Die ' +
+        'Zusammenfassung ist ein eigener Beitrag und ersetzt keine Originalantwort. ' +
+        'Ohne Auswahl gibt es keine Kuratierung.',
     ]),
   ]);
 }

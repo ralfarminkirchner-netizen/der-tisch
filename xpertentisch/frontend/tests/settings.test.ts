@@ -8,9 +8,10 @@ const updateProvider = vi.fn();
 const deleteProvider = vi.fn();
 const testProvider = vi.fn();
 const saveTimeout = vi.fn();
+const saveCurator = vi.fn();
 
 vi.mock('../src/api', () => ({
-  api: { adminSettings, createProvider, updateProvider, deleteProvider, testProvider, saveTimeout },
+  api: { adminSettings, createProvider, updateProvider, deleteProvider, testProvider, saveTimeout, saveCurator },
 }));
 
 const { renderSettings } = await import('../src/settings');
@@ -20,7 +21,7 @@ function zeile(over: Partial<ProviderRow> & Pick<ProviderRow, 'id' | 'label'>): 
     kind: 'openai', base_url: null, model: 'ein-modell', enabled: true, is_preset: true,
     needs_key: true, key_source: 'einstellungen', key_hint: '…cdef', ready: true, reason: '',
     key_env: 'IRGENDEIN_API_KEY', key_url: 'https://beispiel.test/keys',
-    models_url: 'https://beispiel.test/models',
+    models_url: 'https://beispiel.test/models', price_in: null, price_out: null,
     ...over,
   } as ProviderRow;
 }
@@ -48,6 +49,7 @@ const ANTWORT: AdminSettings = {
   ],
   request_timeout_s: 120,
   timeout_source: 'umgebung',
+  curator: '',
   env: 'production',
   fake_providers_enabled: false,
   editable: true,
@@ -242,5 +244,78 @@ describe('Fester Tisch im Entwicklungsbetrieb', () => {
     expect(panel.textContent).toContain('steht der Tisch fest im Quelltext');
     expect(panel.querySelector('#neuer-anbieter')).toBeNull();
     expect(panel.querySelector<HTMLInputElement>('#an-openai')!.disabled).toBe(true);
+  });
+});
+
+describe('Preise je Anbieter', () => {
+  it('lässt die Felder leer, solange kein Preis bekannt ist', async () => {
+    const panel = await geoeffnet();
+    const feld = panel.querySelector<HTMLInputElement>('#price_in-openai')!;
+    expect(feld.value).toBe('');
+    expect(panel.textContent).toContain('es wird nichts geraten');
+  });
+
+  it('schickt eingetragene Preise als Zahlen mit', async () => {
+    const panel = await geoeffnet();
+    updateProvider.mockResolvedValue(ANTWORT);
+    panel.querySelector<HTMLInputElement>('#price_in-openai')!.value = '2.5';
+    panel.querySelector<HTMLInputElement>('#price_out-openai')!.value = '10';
+    knopf(panel, 'openai', 'Speichern').click();
+    await warte();
+    expect(updateProvider).toHaveBeenCalledWith('zugangswort', 'openai', {
+      price_in: 2.5, price_out: 10,
+    });
+  });
+
+  it('löscht einen Preis, wenn das Feld geleert wird', async () => {
+    const mitPreis: AdminSettings = {
+      ...ANTWORT,
+      providers: [zeile({ id: 'openai', label: 'OpenAI', price_in: 3, price_out: 6 })],
+    };
+    const panel = await geoeffnet(mitPreis);
+    updateProvider.mockResolvedValue(mitPreis);
+    expect(panel.querySelector<HTMLInputElement>('#price_in-openai')!.value).toBe('3');
+    panel.querySelector<HTMLInputElement>('#price_in-openai')!.value = '';
+    knopf(panel, 'openai', 'Speichern').click();
+    await warte();
+    // Die Null ist das vereinbarte Zeichen für „wieder unbekannt“.
+    expect(updateProvider).toHaveBeenCalledWith('zugangswort', 'openai', { price_in: 0 });
+  });
+
+  it('weist negative Preise ab, statt sie zu senden', async () => {
+    const panel = await geoeffnet();
+    panel.querySelector<HTMLInputElement>('#price_in-openai')!.value = '-1';
+    knopf(panel, 'openai', 'Speichern').click();
+    await warte();
+    expect(updateProvider).not.toHaveBeenCalled();
+    expect(panel.querySelector('#einstellungen-meldung')?.textContent)
+      .toContain('Zahlen ab null');
+  });
+});
+
+describe('Kuratierung', () => {
+  it('ist ohne Auswahl abgeschaltet', async () => {
+    const panel = await geoeffnet();
+    const auswahl = panel.querySelector<HTMLSelectElement>('#kurator')!;
+    expect(auswahl.value).toBe('');
+    expect(auswahl.options[0].textContent).toContain('keiner');
+    expect(panel.textContent).toContain('ersetzt keine Originalantwort');
+  });
+
+  it('bietet nur Anbieter an, die wirklich antworten können', async () => {
+    const panel = await geoeffnet();
+    const werte = [...panel.querySelectorAll<HTMLSelectElement>('#kurator option')]
+      .map((o) => o.value);
+    // Google hat keinen Schlüssel und ist abgeschaltet — es steht nicht zur Wahl.
+    expect(werte).toEqual(['', 'openai', 'groq']);
+  });
+
+  it('speichert die Wahl', async () => {
+    const panel = await geoeffnet();
+    saveCurator.mockResolvedValue({ ...ANTWORT, curator: 'openai' });
+    panel.querySelector<HTMLSelectElement>('#kurator')!.value = 'openai';
+    panel.querySelector<HTMLButtonElement>('#kurator-speichern')!.click();
+    await warte();
+    expect(saveCurator).toHaveBeenCalledWith('zugangswort', 'openai');
   });
 });

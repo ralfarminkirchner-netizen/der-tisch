@@ -58,6 +58,8 @@ class Settings:
     openai_base_url: str | None = None
     anthropic_api_key: str | None = None
     request_timeout_s: int = 120
+    #: Wie viele Aufträge ein Anbieter gleichzeitig bearbeitet.
+    provider_concurrency: int = 1
     max_prompt_chars: int = 20000
     cors_origins: list[str] = field(default_factory=list)
     models: list[ModelConfig] = field(default_factory=list)
@@ -146,6 +148,7 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         openai_base_url=os.environ.get("OPENAI_BASE_URL") or None,
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY") or None,
         request_timeout_s=_env_int("XT_REQUEST_TIMEOUT_S", 120),
+        provider_concurrency=max(1, _env_int("XT_PROVIDER_CONCURRENCY", 1)),
         max_prompt_chars=_env_int("XT_MAX_PROMPT_CHARS", 20000),
         cors_origins=cors,
         models=models,

@@ -5,6 +5,7 @@ const STATUS_LABEL: Record<JobStatus, string> = {
   not_requested: 'nicht gefragt',
   queued: 'wartet',
   running: 'denkt nach',
+  streaming: 'schreibt',
   done: 'fertig',
   error: 'Fehler',
   interrupted: 'unterbrochen',
@@ -32,6 +33,12 @@ export function el<K extends keyof HTMLElementTagNameMap>(
     node.append(typeof child === 'string' ? document.createTextNode(child) : child);
   }
   return node;
+}
+
+/** Kosten aus Millionstel der eingetragenen Währung. */
+function formatCost(micro: number): string {
+  const betrag = micro / 1_000_000;
+  return betrag < 0.01 ? `${(betrag * 100).toFixed(2)} ct` : betrag.toFixed(4);
 }
 
 function formatDuration(ms: number | null): string {
@@ -73,8 +80,28 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
   tags.append(el('span', { class: `tag ${job.status}` }, [STATUS_LABEL[job.status] ?? job.status]));
   if (job.partial) tags.append(el('span', { class: 'tag partial' }, ['Teilantwort']));
   tags.append(el('span', { class: 'tag' }, [`${job.provider} · ${job.model}`]));
-  if (job.latency_ms !== null && job.status !== 'running') {
+  if (job.latency_ms !== null && job.status !== 'running' && job.status !== 'streaming') {
     tags.append(el('span', { class: 'tag' }, [formatDuration(job.latency_ms)]));
+  }
+  if (job.tokens_in !== null || job.tokens_out !== null) {
+    tags.append(
+      el('span', { class: 'tag', title: 'verbrauchte Token (ein/aus)' }, [
+        `${job.tokens_in ?? '?'}/${job.tokens_out ?? '?'} Token`,
+      ]),
+    );
+  }
+  if (job.cost_source === 'berechnet' && job.cost_micro !== null) {
+    tags.append(
+      el('span', { class: 'tag', title: 'mit den von dir eingetragenen Preisen berechnet' }, [
+        formatCost(job.cost_micro),
+      ]),
+    );
+  } else if ((job.tokens_in ?? job.tokens_out) !== null) {
+    tags.append(
+      el('span', { class: 'tag', title: 'ohne hinterlegte Preise wird nichts geschätzt' }, [
+        'Kosten unbekannt',
+      ]),
+    );
   }
 
   body.replaceChildren();

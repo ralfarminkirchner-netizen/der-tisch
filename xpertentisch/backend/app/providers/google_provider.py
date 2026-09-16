@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import httpx
 
-from .base import Provider, ProviderError, ProviderResponse
+from .base import OnDelta, Provider, ProviderError, ProviderResponse
 from .openai_provider import SYSTEM_PROMPT
 
 STANDARD_BASIS = "https://generativelanguage.googleapis.com/v1beta"
@@ -16,12 +16,22 @@ STANDARD_BASIS = "https://generativelanguage.googleapis.com/v1beta"
 
 class GoogleProvider(Provider):
     name = "google"
+    #: Die Schnittstelle kann streamen; hier wird bewusst der einfache Weg
+    #: gegangen. Die Antwort erscheint darum vollständig auf einmal.
+    streams = False
 
     def __init__(self, api_key: str, base_url: str | None = None) -> None:
         self._api_key = api_key
         self._base_url = (base_url or STANDARD_BASIS).rstrip("/")
 
-    async def complete(self, *, prompt: str, model: str, timeout_s: int) -> ProviderResponse:
+    async def complete(
+        self,
+        *,
+        prompt: str,
+        model: str,
+        timeout_s: int,
+        on_delta: OnDelta | None = None,
+    ) -> ProviderResponse:
         ziel = f"{self._base_url}/models/{model}:generateContent"
         nutzlast = {
             "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
@@ -60,10 +70,15 @@ class GoogleProvider(Provider):
         partial = abbruch not in (None, "STOP")
         if not text.strip():
             raise ProviderError(f"Leere Antwort erhalten (Abbruchgrund: {abbruch}).")
+        if on_delta is not None:
+            on_delta(text)
+        verbrauch = daten.get("usageMetadata") or {}
         return ProviderResponse(
             text=text,
             partial=partial,
             note=f"Abbruchgrund: {abbruch}" if partial else "",
+            tokens_in=verbrauch.get("promptTokenCount"),
+            tokens_out=verbrauch.get("candidatesTokenCount"),
         )
 
 

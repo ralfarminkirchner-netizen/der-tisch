@@ -2,13 +2,46 @@ export type JobStatus =
   | 'not_requested'
   | 'queued'
   | 'running'
+  | 'streaming'
   | 'done'
   | 'error'
   | 'interrupted'
   | 'cancelled';
 
 /** Was für eine Art Eingabe — bestimmt die gesetzte Beziehung. */
-export type SparkKind = 'funke' | 'antwort' | 'weitergabe' | 'gegenposition' | 'vertiefung';
+export type SparkKind =
+  | 'funke'
+  | 'antwort'
+  | 'weitergabe'
+  | 'gegenposition'
+  | 'vertiefung'
+  | 'pingpong'
+  | 'kuratierung';
+
+export interface PingPongRun {
+  id: string;
+  session_id: string;
+  status: 'laeuft' | 'gestoppt' | 'beendet';
+  turn: number;
+  max_turns: number;
+  participants: string[];
+  labels: string[];
+  prompt: string;
+  refs: string[];
+  stopped_reason: string;
+}
+
+/** Ein Gedanke, der noch nicht beim Server angekommen ist. */
+export interface Entwurf {
+  clientRequestId: string;
+  prompt: string;
+  refs: string[];
+  kind: SparkKind;
+  modelIds: string[] | null;
+  curate: boolean;
+  createdAt: number;
+  lastError: string;
+}
 
 export interface Relation {
   id: string;
@@ -65,6 +98,8 @@ export interface AppConfig {
   env: string;
   /** Sagt nur, ob ein Zugangswort eingerichtet ist — nie welches. */
   settings_available: boolean;
+  /** Wer die Kuratierung übernimmt — null heißt: niemand. */
+  curator: { id: string; label: string; model: string } | null;
 }
 
 export interface ProviderRow {
@@ -85,6 +120,9 @@ export interface ProviderRow {
   reason: string;
   key_url: string;
   models_url: string;
+  /** Preis je Million Token. Null heißt unbekannt — es wird nichts geraten. */
+  price_in: number | null;
+  price_out: number | null;
 }
 
 export interface CustomHint {
@@ -99,6 +137,8 @@ export interface AdminSettings {
   custom_hints: CustomHint[];
   request_timeout_s: number;
   timeout_source: string;
+  /** Anbieterkennung des Kurators, leer wenn keiner eingestellt ist. */
+  curator: string;
   env: string;
   fake_providers_enabled: boolean;
   /** Im Test- und Entwicklungsbetrieb steht der Tisch fest im Quelltext. */
@@ -125,6 +165,8 @@ export interface ProviderPatch {
   model?: string;
   api_key?: string;
   enabled?: boolean;
+  price_in?: number;
+  price_out?: number;
 }
 
 export interface Session {
@@ -160,6 +202,11 @@ export interface Job {
   error: string | null;
   partial: boolean;
   latency_ms: number | null;
+  tokens_in: number | null;
+  tokens_out: number | null;
+  /** Kosten in Millionstel der eingetragenen Währung. Null heißt unbekannt. */
+  cost_micro: number | null;
+  cost_source: 'berechnet' | 'unbekannt';
 }
 
 export interface Marker {

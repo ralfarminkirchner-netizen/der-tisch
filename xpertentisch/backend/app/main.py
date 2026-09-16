@@ -25,6 +25,7 @@ from .events import EventBus
 from .provider_table import ProviderTable
 from .providers import ProviderError, ProviderRegistry
 from .reports import render_html, render_markdown
+from .chains import Chains
 from .runner import Runner
 
 log = logging.getLogger("xpertentisch")
@@ -44,6 +45,17 @@ class SparkCreate(BaseModel):
     refs: list[str] = Field(default_factory=list, max_length=20)
     #: funke | antwort | weitergabe | gegenposition | vertiefung
     kind: str = Field(default="funke", max_length=20)
+    #: Vorgeschaltete Kuratierung durch den eingestellten Kurator.
+    curate: bool = False
+
+
+class PingPongStart(BaseModel):
+    """Ein begrenztes Wechselgespräch. Die Grenzen stehen vorher fest."""
+
+    prompt: str = Field(min_length=1, max_length=4000)
+    refs: list[str] = Field(default_factory=list, max_length=10)
+    participants: list[str] = Field(min_length=2, max_length=6)
+    max_turns: int = Field(default=4, ge=2, le=12)
 
 
 class RelationStatus(BaseModel):
@@ -58,6 +70,8 @@ class SettingsUpdate(BaseModel):
     """Allgemeine Einstellungen. `None` heißt unverändert."""
 
     request_timeout_s: int | None = Field(default=None, ge=5, le=600)
+    #: Anbieterkennung des Kurators; leerer Text schaltet die Kuratierung ab.
+    curator: str | None = Field(default=None, max_length=60)
 
 
 class ProviderCreate(BaseModel):
@@ -83,6 +97,9 @@ class ProviderUpdate(BaseModel):
     model: str | None = Field(default=None, min_length=1, max_length=160)
     api_key: str | None = Field(default=None, max_length=400)
     enabled: bool | None = None
+    #: Preis je Million Token, in selbst gewählter Währung.
+    price_in: float | None = Field(default=None, ge=0, le=100000)
+    price_out: float | None = Field(default=None, ge=0, le=100000)
 
 
 #: Welche Arten von Eingaben es gibt. Bestimmt die gesetzte Beziehungsart.
@@ -96,6 +113,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     table = ProviderTable(settings)
     registry = ProviderRegistry(settings, table)
     runner = Runner(store, bus, registry, settings)
+    chains = Chains(store, bus, runner, settings)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -128,6 +146,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         try:
             yield
         finally:
+            await chains.shutdown()
             await runner.shutdown()
             await registry.aclose()
             await store.close()
@@ -139,6 +158,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.registry = registry
     app.state.runner = runner
     app.state.table = table
+    app.state.chains = chains
 
     if settings.cors_origins:
         app.add_middleware(
@@ -178,6 +198,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "env": settings.env,
             # Sagt nur, OB ein Zugangswort eingerichtet ist — nie welches.
             "settings_available": bool(settings.admin_token),
+            "curator": (
+                {"id": k.id, "label": k.label, "model": k.model}
+                if (k := table.curator()) else None
+            ),
         }
 
     # -------------------------------------------------------------- Sitzungen
@@ -291,8 +315,79 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "duplicate": True,
             }
 
+        kuratierung = None
+        if body.curate:
+            kurator = table.curator()
+            if kurator is None:
+                kuratierung = {
+                    "gestartet": False,
+                    "grund": (
+                        "Kein Kurator eingestellt. Wähle in den Einstellungen einen "
+                        "Anbieter als Kurator; die Runde läuft auch ohne."
+                    ),
+                }
+            else:
+                funke = await chains.curate(session_id, spark, kurator)
+                kuratierung = {
+                    "gestartet": True, "spark_id": funke["id"],
+                    "label": kurator.label, "model": kurator.model,
+                }
+
         jobs = await runner.launch_spark(session_id, spark, models, untouched)
-        return {"spark": spark, "jobs": jobs, "duplicate": False}
+        return {"spark": spark, "jobs": jobs, "duplicate": False, "curation": kuratierung}
+
+    @app.post("/api/jobs/{job_id}/cancel")
+    async def cancel_job(job_id: str) -> dict[str, Any]:
+        """Bricht genau diesen Auftrag ab. Die anderen laufen weiter."""
+        job = await store.get_job(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail="Auftrag nicht gefunden.")
+        erfolgreich = await runner.cancel_job(job_id)
+        if not erfolgreich:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Dieser Auftrag läuft nicht mehr (Zustand: {job['status']}).",
+            )
+        return {"cancelled": job_id}
+
+    @app.post("/api/sessions/{session_id}/pingpong", status_code=201)
+    async def start_pingpong(session_id: str, body: PingPongStart) -> dict[str, Any]:
+        """Startet ein begrenztes Wechselgespräch zwischen Modellen."""
+        session = await _require_session(session_id)
+        if session["status"] == SESSION_CLOSED:
+            raise HTTPException(status_code=409, detail="Sitzung ist abgeschlossen.")
+
+        bereit = {m.id: m for m in table.as_models()}
+        teilnehmer = [bereit[p] for p in body.participants if p in bereit]
+        if len(teilnehmer) < 2:
+            raise HTTPException(
+                status_code=422,
+                detail="Ein Wechselgespräch braucht mindestens zwei einsatzbereite Anbieter.",
+            )
+        lauf = await chains.start_pingpong(
+            session_id,
+            prompt=body.prompt.strip(),
+            refs=[r for r in body.refs if isinstance(r, str)][:10],
+            participants=teilnehmer,
+            max_turns=body.max_turns,
+        )
+        return lauf
+
+    @app.get("/api/sessions/{session_id}/pingpong")
+    async def list_pingpong(session_id: str) -> dict[str, Any]:
+        await _require_session(session_id)
+        return {
+            "runs": [r for r in chains.runs.values() if r["session_id"] == session_id],
+        }
+
+    @app.post("/api/sessions/{session_id}/pingpong/{run_id}/stop")
+    async def stop_pingpong(session_id: str, run_id: str) -> dict[str, Any]:
+        await _require_session(session_id)
+        lauf = chains.runs.get(run_id)
+        if lauf is None or lauf["session_id"] != session_id:
+            raise HTTPException(status_code=404, detail="Lauf nicht gefunden.")
+        chains.stop_pingpong(run_id)
+        return lauf
 
     @app.get("/api/jobs/{job_id}/context")
     async def job_context(job_id: str) -> dict[str, Any]:
@@ -438,6 +533,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "custom_hints": list(CUSTOM_HINTS),
             "request_timeout_s": settings.resolved_timeout_s,
             "timeout_source": settings.timeout_source,
+            "curator": (settings.overrides.get("curator") or ""),
             "env": settings.env,
             "fake_providers_enabled": settings.allow_fake_providers,
             "editable": not settings.models,
@@ -523,6 +619,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             felder["base_url"] = body.base_url.strip() or None
         if body.enabled is not None:
             felder["enabled"] = 1 if body.enabled else 0
+        for preis in ("price_in", "price_out"):
+            wert = getattr(body, preis)
+            if wert is not None:
+                felder[preis] = wert if wert > 0 else None
         if body.api_key is not None:
             # Leerer Text löscht den Schlüssel; danach greift wieder die Umgebung.
             felder["api_key"] = body.api_key.strip()
@@ -596,11 +696,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
     ) -> dict[str, Any]:
         _require_admin(x_admin_token)
-        if body.request_timeout_s is None:
+        geaendert: list[str] = []
+        if body.request_timeout_s is not None:
+            await store.set_setting("request_timeout_s", str(body.request_timeout_s))
+            geaendert.append("request_timeout_s")
+        if body.curator is not None:
+            wahl = body.curator.strip()
+            if wahl and table.by_id(wahl) is None:
+                raise HTTPException(status_code=422, detail="Unbekannter Anbieter als Kurator.")
+            if wahl:
+                await store.set_setting("curator", wahl)
+            else:
+                await store.delete_setting("curator")
+            geaendert.append("curator")
+        if not geaendert:
             raise HTTPException(status_code=422, detail="Nichts zu ändern.")
-        await store.set_setting("request_timeout_s", str(body.request_timeout_s))
         settings.overrides = await store.all_settings()
-        return {"changed": ["request_timeout_s"], **(await _after_change())}
+        return {"changed": geaendert, **(await _after_change())}
 
     # ---------------------------------------------------------------- Oberfläche
 
