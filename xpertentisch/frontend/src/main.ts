@@ -6,11 +6,15 @@ import { createCard, el, legend, renderQuestion, renderTable, updateCard } from 
 import { renderSettings } from './settings';
 import type {
   AppConfig,
+  Bezug,
   HealthInfo,
   Job,
+  JobContext,
   Marker,
+  Relation,
   SessionBundle,
   SparkEntry,
+  SparkKind,
   Summary,
 } from './types';
 
@@ -23,6 +27,8 @@ interface AppState {
   selectedModels: Set<string>;
   streamOpen: boolean;
   settingsOpen: boolean;
+  /** Worauf sich die nächste Eingabe bezieht. */
+  bezug: Bezug | null;
   /** Kennung des laufenden Absendevorgangs — bleibt bei Wiederholung gleich. */
   pendingRequestId: string | null;
 }
@@ -34,6 +40,7 @@ const state: AppState = {
   selectedModels: new Set(),
   streamOpen: false,
   settingsOpen: false,
+  bezug: null,
   pendingRequestId: null,
 };
 
@@ -74,7 +81,10 @@ async function boot(): Promise<void> {
   }
   if (!state.bundle) {
     const session = await api.createSession(defaultTitle());
-    state.bundle = { session, sparks: [], last_event_id: 0, exported_at: Date.now() / 1000 };
+    state.bundle = {
+      session, sparks: [], relations: [], pending: false,
+      last_event_id: 0, exported_at: Date.now() / 1000,
+    };
   }
   rememberSession(state.bundle.session.id);
   renderShell();
@@ -192,7 +202,7 @@ function header(): HTMLElement {
   return el('header', { class: 'top' }, [
     el('div', { class: 'headline' }, [
       title,
-      el('p', { class: 'sub' }, [bundle.session.title]),
+      el('p', { class: 'sub' }, ['Mobiler TiSCH · ', bundle.session.title]),
     ]),
     el('div', { class: 'row' }, [status, zahnrad]),
   ]);
@@ -239,6 +249,160 @@ function providerWarnings(): HTMLElement {
   return container;
 }
 
+// ------------------------------------------------------------------- Bezüge
+
+const BEZUG_KNOPF: Record<SparkKind, string> = {
+  funke: 'Funke setzen',
+  antwort: 'Antwort senden',
+  weitergabe: 'Zur Prüfung geben',
+  gegenposition: 'Gegenposition anfragen',
+  vertiefung: 'Strang vertiefen',
+};
+
+/** Zeigt, worauf sich die nächste Eingabe bezieht — und lässt es lösen. */
+function bezugsleiste(): HTMLElement {
+  const leiste = el('div', { class: 'bezugsleiste', id: 'bezugsleiste' });
+  if (!state.bezug) {
+    leiste.hidden = true;
+    return leiste;
+  }
+  const loesen = el('button', { type: 'button', class: 'iconbutton' }, ['✕']);
+  loesen.setAttribute('aria-label', 'Bezug aufheben');
+  loesen.addEventListener('click', () => {
+    state.bezug = null;
+    renderShell();
+  });
+  leiste.append(
+    el('span', { class: 'tag' }, ['bezieht sich auf']),
+    el('span', { class: 'bezug-name' }, [state.bezug.label]),
+    el('span', { class: 'hint' }, [state.bezug.hint]),
+    loesen,
+  );
+  return leiste;
+}
+
+/** Setzt den Bezug und bringt die Eingabe in den Blick. */
+function setzeBezug(bezug: Bezug, vorschlag = ''): void {
+  state.bezug = bezug;
+  renderShell();
+  const feld = document.getElementById('prompt') as HTMLTextAreaElement | null;
+  if (feld) {
+    if (vorschlag && !feld.value.trim()) feld.value = vorschlag;
+    feld.focus();
+    feld.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+}
+
+/** Die Handlungen an einer Modellkarte: antworten, weitergeben, vertiefen. */
+function kartenAktionen(job: Job, entry: SparkEntry): HTMLElement {
+  const zeile = el('div', { class: 'row card-actions' });
+  const andere = (state.config?.models ?? []).filter((m) => m.id !== job.model_id);
+
+  const knopf = (text: string, bauen: () => void) => {
+    const b = el('button', { type: 'button' }, [text]);
+    b.addEventListener('click', bauen);
+    zeile.append(b);
+  };
+
+  knopf('Antworten', () =>
+    setzeBezug({
+      id: job.id, label: `${job.label}, Funke ${entry.spark.seq}`, kind: 'antwort',
+      hint: 'geht an alle Modelle am Tisch',
+    }),
+  );
+
+  for (const ziel of andere) {
+    knopf(`An ${ziel.label} geben`, () =>
+      setzeBezug(
+        {
+          id: job.id, label: `${job.label} → ${ziel.label}`, kind: 'weitergabe',
+          modelId: ziel.id, hint: `nur ${ziel.label} antwortet`,
+        },
+        'Prüfe diese Aussage kritisch.',
+      ),
+    );
+  }
+
+  knopf('Gegenposition', () =>
+    setzeBezug(
+      {
+        id: job.id, label: `Gegenposition zu ${job.label}`, kind: 'gegenposition',
+        hint: 'geht an alle Modelle am Tisch',
+      },
+      'Welche begründete Gegenposition gibt es dazu?',
+    ),
+  );
+
+  knopf('Strang vertiefen', () =>
+    setzeBezug({
+      id: job.id, label: `Vertiefung von ${job.label}`, kind: 'vertiefung',
+      hint: 'geht an alle Modelle am Tisch',
+    }),
+  );
+
+  return zeile;
+}
+
+/** „Worauf antwortet diese Stimme?“ — erst beim Aufklappen geladen. */
+function kontextAnsicht(job: Job): HTMLElement {
+  const block = el('details', { class: 'kontext' });
+  block.append(el('summary', {}, ['Worauf antwortet diese Stimme?']));
+  const inhalt = el('div', { class: 'kontext-inhalt' }, [
+    el('p', { class: 'hint' }, ['wird geladen …']),
+  ]);
+  block.append(inhalt);
+
+  let geladen = false;
+  block.addEventListener('toggle', async () => {
+    if (!block.open || geladen) return;
+    geladen = true;
+    try {
+      zeichneKontext(inhalt, await api.jobContext(job.id));
+    } catch (fehler) {
+      geladen = false;
+      inhalt.replaceChildren(
+        el('p', { class: 'hint' }, [(fehler as Error).message]),
+      );
+    }
+  });
+  return block;
+}
+
+function zeichneKontext(ziel: HTMLElement, kontext: JobContext): void {
+  ziel.replaceChildren();
+  if (kontext.entries.length === 0) {
+    ziel.append(
+      el('p', { class: 'hint' }, [
+        'Nur der Funke selbst — dieser Auftrag hatte keinen weiteren Gesprächsauszug.',
+      ]),
+    );
+  } else {
+    const liste = el('ul', { class: 'kontext-liste' });
+    for (const eintrag of kontext.entries) {
+      const gewaehlt = eintrag.reason === 'ausdrücklich gewählt';
+      liste.append(
+        el('li', { class: gewaehlt ? 'gewaehlt' : '' }, [
+          el('span', { class: 'tag' }, [gewaehlt ? 'gewählt' : 'Verlauf']),
+          ` ${eintrag.label}`,
+          el('span', { class: 'hint' }, [` · ${eintrag.chars} Zeichen`]),
+        ]),
+      );
+    }
+    ziel.append(liste);
+  }
+  if (kontext.truncated) {
+    ziel.append(
+      el('p', { class: 'hint error' }, [
+        'Der Auszug wurde gekürzt; ausdrücklich gewählte Bezüge blieben vollständig.',
+      ]),
+    );
+  }
+  const roh = el('details', { class: 'kontext-roh' });
+  roh.append(el('summary', {}, ['Übergebener Wortlaut']));
+  roh.append(el('pre', { class: 'kontext-text' }, [kontext.rendered]));
+  ziel.append(roh, el('p', { class: 'hint' }, [`Regel: ${kontext.rule}`]));
+}
+
 // ------------------------------------------------------------------- Eingabe
 
 function sparkForm(): HTMLElement {
@@ -264,10 +428,13 @@ function sparkForm(): HTMLElement {
     picker.append(el('label', {}, [box, `${model.label}`]));
   }
 
-  const send = el('button', { class: 'primary', type: 'submit' }, ['Funke setzen']);
+  const send = el('button', { class: 'primary', type: 'submit' }, [
+    state.bezug ? BEZUG_KNOPF[state.bezug.kind] : 'Funke setzen',
+  ]);
   const message = el('p', { class: 'hint', id: 'spark-message' }, []);
 
   const form = el('form', { class: 'flaeche spark' }, [
+    bezugsleiste(),
     textarea,
     el('div', { class: 'row spread' }, [picker, send]),
     message,
@@ -313,14 +480,18 @@ function sparkForm(): HTMLElement {
     state.pendingRequestId = state.pendingRequestId ?? newRequestId();
     (send as HTMLButtonElement).disabled = true;
     message.textContent = 'Der Funke läuft an …';
+    const bezug = state.bezug;
     try {
       const result = await api.createSpark(
         bundle.session.id,
         prompt,
         state.pendingRequestId,
-        [...state.selectedModels],
+        bezug?.modelId ? [bezug.modelId] : [...state.selectedModels],
+        bezug ? [bezug.id] : [],
+        bezug?.kind ?? 'funke',
       );
       state.pendingRequestId = null;
+      state.bezug = null;
       (textarea as HTMLTextAreaElement).value = '';
       message.textContent = result.duplicate
         ? 'Dieser Funke lief bereits — es wurden keine neuen Aufträge gestartet.'
@@ -354,7 +525,9 @@ function renderSparkBlock(entry: SparkEntry): HTMLElement {
 
   const cards = el('div', { class: 'cards' });
   for (const job of entry.jobs) {
-    cards.append(createCard(job, entry.markers));
+    const card = createCard(job, entry.markers);
+    ruesteKarteAus(card, job, entry);
+    cards.append(card);
   }
   block.append(cards);
 
@@ -363,6 +536,75 @@ function renderSparkBlock(entry: SparkEntry): HTMLElement {
   if (entry.summary) renderPanels(block, entry.summary);
   return block;
 }
+
+/** Hängt Aktionen und Kontextansicht an eine Karte. Beides überlebt Aktualisierungen. */
+function ruesteKarteAus(card: HTMLElement, job: Job, entry: SparkEntry): void {
+  const fuss = card.querySelector('.card-foot');
+  if (!fuss) return;
+  fuss.replaceChildren();
+  if (job.status === 'not_requested') return;
+  if ((job.text ?? '').trim()) fuss.append(kartenAktionen(job, entry));
+  fuss.append(kontextAnsicht(job));
+}
+
+/** Maschinelle Bezüge — als Vorschlag, den man bestätigen oder verwerfen kann. */
+function beziehungsPanel(entry: SparkEntry): HTMLElement | null {
+  const jobIds = new Set(entry.jobs.map((j) => j.id));
+  const eigene = (state.bundle?.relations ?? []).filter(
+    (r) => r.origin === 'maschine' && jobIds.has(r.from_id) && jobIds.has(r.to_id),
+  );
+  if (eigene.length === 0) return null;
+
+  const namen = new Map(entry.jobs.map((j) => [j.id, j.label]));
+  const panel = el('section', { class: 'flaeche panel' }, [
+    el('h4', {}, ['Gefundene Bezüge']),
+    el('p', { class: 'hint' }, [
+      'Vorschläge der Auswertung. Erst deine Bestätigung macht daraus einen Befund.',
+    ]),
+  ]);
+
+  for (const bez of eigene) {
+    const zeile = el('div', { class: `bezug-zeile ${bez.status}`, 'data-relation': bez.id });
+    zeile.append(
+      el('div', { class: 'row' }, [
+        el('span', { class: `tag ${bez.type === 'widerspricht' ? 'error' : 'done'}` }, [
+          bez.type === 'widerspricht' ? 'Widerspruch' : 'Übereinstimmung',
+        ]),
+        el('span', {}, [`${namen.get(bez.from_id) ?? bez.from_id} ↔ ${namen.get(bez.to_id) ?? bez.to_id}`]),
+        el('span', { class: 'tag' }, [STATUS_BEZUG[bez.status]]),
+      ]),
+    );
+    if (bez.note) zeile.append(el('p', { class: 'hint' }, [bez.note]));
+
+    const knoepfe = el('div', { class: 'row' });
+    for (const [text, status] of [
+      ['Bestätigen', 'bestaetigt'],
+      ['Verwerfen', 'abgelehnt'],
+    ] as const) {
+      const b = el('button', { type: 'button' }, [text]);
+      b.disabled = bez.status === status;
+      b.addEventListener('click', async () => {
+        try {
+          const antwort = await api.setRelation(state.bundle!.session.id, bez.id, status);
+          state.bundle!.relations = antwort.relations;
+          renderShell();
+        } catch (fehler) {
+          b.after(el('span', { class: 'hint error' }, [(fehler as Error).message]));
+        }
+      });
+      knoepfe.append(b);
+    }
+    zeile.append(knoepfe);
+    panel.append(zeile);
+  }
+  return panel;
+}
+
+const STATUS_BEZUG: Record<Relation['status'], string> = {
+  vorschlag: 'Vorschlag',
+  bestaetigt: 'von dir bestätigt',
+  abgelehnt: 'von dir verworfen',
+};
 
 function renderPanels(block: HTMLElement, summary: Summary): void {
   const panels = block.querySelector('.panel-grid');
@@ -380,6 +622,12 @@ function renderPanels(block: HTMLElement, summary: Summary): void {
     ]),
   );
   panels.append(graphPanel);
+
+  const spark = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
+  if (spark) {
+    const bezuege = beziehungsPanel(spark);
+    if (bezuege) panels.append(bezuege);
+  }
 }
 
 /** Öffnet genau die Antworten, die zum angeklickten Graphelement gehören. */
@@ -484,13 +732,19 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
       if (!entry) break;
       entry.summary = payload.summary as Summary;
       entry.markers = (payload.markers as Marker[]) ?? [];
+      if (Array.isArray(payload.relations)) {
+        bundle.relations = payload.relations as Relation[];
+      }
       const block = blocks.get(sparkId);
       if (block) {
         for (const job of entry.jobs) {
           const card = block.querySelector<HTMLElement>(
             `.card[data-job-id="${cssEscape(job.id)}"]`,
           );
-          if (card) updateCard(card, job, entry.markers);
+          if (card) {
+            updateCard(card, job, entry.markers);
+            ruesteKarteAus(card, job, entry);
+          }
         }
         renderPanels(block, entry.summary);
       }
@@ -514,7 +768,10 @@ function patchJob(jobId: string, update: (job: Job) => Job): void {
   entry.jobs[index] = update(entry.jobs[index]);
   const block = blocks.get(entry.spark.id);
   const card = block?.querySelector<HTMLElement>(`.card[data-job-id="${cssEscape(jobId)}"]`);
-  if (card) updateCard(card, entry.jobs[index], entry.markers);
+  if (card) {
+    updateCard(card, entry.jobs[index], entry.markers);
+    ruesteKarteAus(card, entry.jobs[index], entry);
+  }
 }
 
 // ------------------------------------------------------------------ Abschluss
@@ -527,6 +784,7 @@ function closingSection(): HTMLElement {
   const exports = el('div', { class: 'row' }, [
     el('a', { class: 'btn', href: `${base}/report.html`, download: '' }, ['Bericht als HTML']),
     el('a', { class: 'btn', href: `${base}/report.md`, download: '' }, ['Bericht als Markdown']),
+    el('a', { class: 'btn', href: `${base}/report.json`, download: '' }, ['Sitzung als JSON']),
   ]);
 
   if (closed) {

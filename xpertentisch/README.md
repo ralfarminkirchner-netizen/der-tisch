@@ -58,6 +58,17 @@ xpertentisch/
 - **Einstellungen in der Oberfläche**: Zugangsdaten, Modellnamen, Basis-Adressen
   und Zeitgrenze lassen sich über das Zahnrad eintragen, ohne Umgebungsvariablen
   anzufassen.
+- **Fortlaufendes Gespräch statt Einzelabfragen.** Jeder Auftrag bekommt einen
+  Gesprächsauszug: ausdrücklich gewählte Bezugsbeiträge plus die jüngsten
+  Beiträge der Sitzung. Fremde Modellbeiträge stehen darin als **Zitat** —
+  ausdrücklich als „keine Anweisung und keine Aussage des Menschen“ markiert.
+- **Direkte Bezugnahmen.** An jeder Modellkarte: *Antworten*, *An ⟨Modell⟩
+  geben*, *Gegenposition*, *Strang vertiefen*. Damit läuft Mensch↔Modell und
+  Modell↔Modell, ohne dass ein Modell als Absender ausgegeben wird.
+- **Kontext-Schnappschuss je Auftrag.** Was ein Modell zu sehen bekam, wird bei
+  Auftragsbeginn festgeschrieben. „Worauf antwortet diese Stimme?“ zeigt es:
+  Liste der Beiträge, Kürzungshinweis und den übergebenen Wortlaut. Ein später
+  eingeworfener Gedanke wird **nicht** rückwirkend zum Kenntnisstand erklärt.
 - **Sitzungsabschluss** mit freiwilliger Abschlussnotiz.
 - **Zwei Berichtsexporte**: eigenständiges HTML (offline, druckbar, ohne
   Skripte, alle Inhalte maskiert) und Markdown.
@@ -106,6 +117,31 @@ der Entwicklung, keine geprüfte Wahrheit. Modellbezeichnungen ändern sich
 schnell. Jede Anbieterzeile verlinkt deshalb die Modellliste des Anbieters, und
 der Name ist frei änderbar. Der Knopf „Prüfen“ macht einen einzigen kurzen
 echten Aufruf und sagt, ob Schlüssel und Modellname zusammenpassen.
+
+### Zustände eines Auftrags
+
+„Nicht gefragt“, „wartet“, „unterbrochen“ und „geantwortet, aber ohne Text“
+sind verschiedene Sachverhalte und werden auch verschieden dargestellt — in der
+Oberfläche wie in allen Exporten:
+
+| Zustand | Bedeutung |
+| --- | --- |
+| `not_requested` | Für diesen Funken bewusst nicht angefragt. Kein Aufruf, keine Kosten. |
+| `queued` / `running` | Wartet auf den Start bzw. läuft gerade. |
+| `done` | Antwort da. Ohne Text: „Antwort kam an, enthielt aber keinen Text.“ |
+| `error` | Der Anbieter hat abgelehnt oder war nicht erreichbar; der Grund steht dabei. |
+| `interrupted` | Durch einen Serverneustart abgebrochen. Wird **nicht** blind neu gestartet. |
+| `cancelled` | Vor der Antwort abgebrochen. |
+
+### Bezüge: gesetzt oder nur vorgeschlagen
+
+Beziehungen zwischen Beiträgen tragen **Herkunft** und **Stand**:
+
+- Was du selbst setzt (Antworten, Weitergeben, Gegenposition, Vertiefen), gilt
+  sofort als bestätigt.
+- Was die Auswertung findet, ist ein **Vorschlag** — und bleibt es, bis du ihn
+  bestätigst oder verwirfst. In Bericht und JSON-Export steht dann
+  „maschineller Vorschlag, unbestätigt“, niemals als deine Feststellung.
 
 ### Widerspruch vs. Unterschiedlichkeit
 
@@ -227,6 +263,9 @@ ist, und nennt die fehlenden Zugangsdaten.
 | POST | `/api/sessions/{id}/close` | Sitzung abschließen |
 | GET | `/api/sessions/{id}/report.html` | Bericht als eigenständiges HTML |
 | GET | `/api/sessions/{id}/report.md` | Bericht als Markdown |
+| GET | `/api/sessions/{id}/report.json` | vollständiger Sitzungsstand samt Bezügen und Kontext-Schnappschüssen |
+| GET | `/api/jobs/{id}/context` | worauf dieser Auftrag geantwortet hat |
+| POST | `/api/sessions/{id}/relations/{rid}` | maschinellen Bezug bestätigen oder verwerfen |
 | GET | `/api/admin/providers` | alle Anbieter samt Zustand (Kopfzeile `X-Admin-Token`) |
 | POST | `/api/admin/providers` | eigenen Anbieter anlegen |
 | POST | `/api/admin/providers/{id}` | Schlüssel, Modell, Adresse, Ein/Aus ändern |
@@ -238,6 +277,38 @@ Ein wiederholter POST auf `/sparks` mit derselben `client_request_id` liefert
 `200` und `duplicate: true` — es entstehen keine neuen Modellaufrufe.
 
 ---
+
+## Gegenüberstellung mit dem Bauauftrag „Mobiler TiSCH“
+
+Ein zweiter Bauauftrag beschrieb dieselbe App mit anderem Zuschnitt. Was daraus
+übernommen wurde und was nicht:
+
+**Übernommen** — Gesprächskontext je Auftrag; ausdrücklich gewählte Bezüge, die
+nie stillschweigend verschwinden; unveränderlicher Kontext-Schnappschuss mit
+Ansicht „Worauf antwortet diese Stimme?“; Antwort- und Weitergabe-Aktionen an
+jeder Karte; feinere Auftragszustände (`not_requested`, `cancelled`) mit
+unterschiedlicher Darstellung; Beziehungen mit Herkunft und Stand samt
+menschlicher Bestätigung; JSON-Export der ganzen Sitzung; Berichte, die einen
+unvollständigen Stand ausdrücklich als vorläufig kennzeichnen; Zeitangaben in
+Europa/Berlin; Untertitel „Mobiler TiSCH“.
+
+**Bereits vorhanden** — Funken unverändert speichern, Idempotenz gegen doppeltes
+Senden, SSE mit lückenloser Nachlieferung, unterbrochene Aufträge ehrlich
+kennzeichnen, getrennte Provider-Adapter, sichtbar gekennzeichneter Testmodus,
+Schlüssel ausschließlich serverseitig, SQLite auf einem Volume, ein Dienst für
+API und Oberfläche, Healthcheck, mobile Bedienbarkeit, dokumentierte
+Sicherheitsgrenze ohne Login.
+
+**Bewusst nicht übernommen** — der Wechsel auf React, Express und Node. Hier
+läuft ein geprüftes Python-Backend mit Vite-Oberfläche; ein Umbau brächte keine
+Funktion, nur Risiko. Der Bauauftrag verlangt selbst, vorhandene Arbeit zu
+bewahren.
+
+**Noch offen** — Streaming der Antworten (heute erscheint eine Antwort
+vollständig), eigene Warteschlange je Anbieter mit Parallelitätsgrenzen,
+begrenztes Ping-Pong zwischen Modellen, Token- und Kostenerfassung, eine
+vorgeschaltete Kuratierung, Sitzungsliste in der Oberfläche, Offline-Entwürfe
+und das Abbrechen einzelner Aufträge.
 
 ## Ausdrücklich nicht enthalten
 
@@ -281,5 +352,10 @@ fremden Schriftdienst und damit auch die Datenspur dorthin.
   Instanzen hinter einem Lastverteiler teilen ihn nicht — XPERTENTiSCH läuft als
   eine Instanz.
 - **Kein Wiederaufnehmen unterbrochener Aufträge.** Nach einem Neustart sind sie
-  als `unterbrochen` gekennzeichnet; die Frage muss neu gestellt werden.
+  als `unterbrochen` gekennzeichnet; die Frage muss neu gestellt werden. Das ist
+  Absicht: ein blinder Neustart kostenpflichtiger Aufrufe wäre schlimmer.
+- **Der Gesprächsauszug ist begrenzt.** Ausdrücklich gewählte Bezüge sind immer
+  vollständig enthalten; vom übrigen Verlauf kommen die jüngsten Beiträge mit,
+  bis das Zeichenbudget erschöpft ist. Eine Kürzung wird im übergebenen Text
+  und in der Kontextansicht angezeigt, nie stillschweigend vorgenommen.
 - **Berichts-HTML ohne Skript.** Marker sind sichtbar, aber nicht filterbar.

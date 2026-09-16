@@ -40,6 +40,14 @@ class SparkCreate(BaseModel):
     prompt: str = Field(min_length=1)
     client_request_id: str = Field(min_length=4, max_length=100)
     model_ids: list[str] | None = None
+    #: Ausdrücklich gewählte Bezugsbeiträge (Funken- oder Auftragskennungen).
+    refs: list[str] = Field(default_factory=list, max_length=20)
+    #: funke | antwort | weitergabe | gegenposition | vertiefung
+    kind: str = Field(default="funke", max_length=20)
+
+
+class RelationStatus(BaseModel):
+    status: str = Field(pattern="^(bestaetigt|abgelehnt|vorschlag)$")
 
 
 class SessionClose(BaseModel):
@@ -75,6 +83,10 @@ class ProviderUpdate(BaseModel):
     model: str | None = Field(default=None, min_length=1, max_length=160)
     api_key: str | None = Field(default=None, max_length=400)
     enabled: bool | None = None
+
+
+#: Welche Arten von Eingaben es gibt. Bestimmt die gesetzte Beziehungsart.
+SPARK_KINDS = ("funke", "antwort", "weitergabe", "gegenposition", "vertiefung")
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -192,6 +204,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         jobs = await store.list_jobs(session_id)
         markers = await store.list_markers(session_id)
         summaries = await store.list_assessments(session_id)
+        relations = await store.list_relations(session_id)
         by_spark: dict[str, dict[str, Any]] = {
             s["id"]: {"spark": s, "jobs": [], "markers": [], "summary": summaries.get(s["id"])}
             for s in sparks
@@ -209,6 +222,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {
             "session": session,
             "sparks": [by_spark[s["id"]] for s in sparks],
+            "relations": relations,
+            "pending": any(
+                j["status"] in ("queued", "running") for j in jobs
+            ),
             "last_event_id": await store.last_event_id(session_id),
             "exported_at": now(),
         }
@@ -257,7 +274,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 ),
             )
 
-        spark, created = await store.insert_spark(session_id, prompt, body.client_request_id)
+        untouched = [m for m in table.as_models() if m not in models]
+        spark, created = await store.insert_spark(
+            session_id,
+            prompt,
+            body.client_request_id,
+            kind=body.kind if body.kind in SPARK_KINDS else "funke",
+            refs=[r for r in body.refs if isinstance(r, str)][:20],
+        )
         if not created:
             # Doppelte Übertragung: bestehender Stand, keine neuen Modellaufrufe.
             response.status_code = 200
@@ -267,8 +291,50 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "duplicate": True,
             }
 
-        jobs = await runner.launch_spark(session_id, spark, models)
+        jobs = await runner.launch_spark(session_id, spark, models, untouched)
         return {"spark": spark, "jobs": jobs, "duplicate": False}
+
+    @app.get("/api/jobs/{job_id}/context")
+    async def job_context(job_id: str) -> dict[str, Any]:
+        """Worauf hat diese Stimme geantwortet?"""
+        job = await store.get_job(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail="Auftrag nicht gefunden.")
+        snapshot = await store.get_context_snapshot(job_id)
+        if snapshot is None:
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    "Für diesen Auftrag wurde kein Kontext festgehalten — "
+                    "er lief nicht oder stammt aus einer früheren Fassung."
+                ),
+            )
+        return {
+            "job": {
+                "id": job["id"], "label": job["label"], "provider": job["provider"],
+                "model": job["model"], "status": job["status"],
+            },
+            "entries": snapshot["message_ids"],
+            "rendered": snapshot["rendered"],
+            "rule": snapshot["rule"],
+            "truncated": snapshot["truncated"],
+            "created_at": snapshot["created_at"],
+        }
+
+    @app.post("/api/sessions/{session_id}/relations/{relation_id}")
+    async def set_relation(
+        session_id: str, relation_id: str, body: RelationStatus
+    ) -> dict[str, Any]:
+        """Bestätigt oder verwirft einen maschinellen Beziehungsvorschlag."""
+        await _require_session(session_id)
+        vorhandene = {r["id"]: r for r in await store.list_relations(session_id)}
+        if relation_id not in vorhandene:
+            raise HTTPException(status_code=404, detail="Beziehung nicht gefunden.")
+        await store.set_relation_status(relation_id, body.status)
+        relations = await store.list_relations(session_id)
+        await bus.publish(session_id, "beziehung.geaendert",
+                          {"relation_id": relation_id, "status": body.status})
+        return {"relations": relations}
 
     # -------------------------------------------------------------------- SSE
 
@@ -325,6 +391,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
             },
         )
+
+    @app.get("/api/sessions/{session_id}/report.json")
+    async def report_json(session_id: str) -> dict[str, Any]:
+        """Vollständiger Stand der Sitzung — ohne Zugangsdaten."""
+        bundle = await _bundle(session_id)
+        return {
+            **bundle,
+            "context_snapshots": await store.list_context_snapshots(session_id),
+            "hinweis": (
+                "Maschinelle Beziehungen sind Vorschläge, solange ihr Status "
+                "'vorschlag' lautet. Originaltexte sind unverändert enthalten."
+            ),
+        }
 
     @app.get("/api/sessions/{session_id}/report.md", response_class=PlainTextResponse)
     async def report_markdown(session_id: str) -> PlainTextResponse:

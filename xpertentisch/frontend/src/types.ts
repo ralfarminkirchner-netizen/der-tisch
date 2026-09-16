@@ -1,4 +1,54 @@
-export type JobStatus = 'queued' | 'running' | 'done' | 'error' | 'interrupted';
+export type JobStatus =
+  | 'not_requested'
+  | 'queued'
+  | 'running'
+  | 'done'
+  | 'error'
+  | 'interrupted'
+  | 'cancelled';
+
+/** Was für eine Art Eingabe — bestimmt die gesetzte Beziehung. */
+export type SparkKind = 'funke' | 'antwort' | 'weitergabe' | 'gegenposition' | 'vertiefung';
+
+export interface Relation {
+  id: string;
+  session_id: string;
+  from_id: string;
+  to_id: string;
+  type: string;
+  origin: 'mensch' | 'maschine';
+  status: 'vorschlag' | 'bestaetigt' | 'abgelehnt';
+  note: string;
+  created_at: number;
+}
+
+export interface ContextEntry {
+  id: string;
+  label: string;
+  role: 'mensch' | 'modell';
+  reason: string;
+  shortened: boolean;
+  chars: number;
+}
+
+export interface JobContext {
+  job: { id: string; label: string; provider: string; model: string; status: JobStatus };
+  entries: ContextEntry[];
+  rendered: string;
+  rule: string;
+  truncated: boolean;
+  created_at: number;
+}
+
+/** Ein gewählter Bezug in der Eingabe. */
+export interface Bezug {
+  id: string;
+  label: string;
+  kind: SparkKind;
+  /** Nur dieses Modell ansprechen; leer heißt: alle am Tisch. */
+  modelId?: string;
+  hint: string;
+}
 export type MarkerKind = 'uebereinstimmung' | 'widerspruch' | 'einzigartig';
 
 export interface ModelInfo {
@@ -93,6 +143,8 @@ export interface Spark {
   prompt: string;
   client_request_id: string;
   created_at: number;
+  kind: SparkKind;
+  refs: string[];
 }
 
 export interface Job {
@@ -171,6 +223,9 @@ export interface SparkEntry {
 export interface SessionBundle {
   session: Session;
   sparks: SparkEntry[];
+  relations: Relation[];
+  /** Läuft noch etwas? Ein Bericht wäre dann vorläufig. */
+  pending: boolean;
   last_event_id: number;
   exported_at: number;
 }

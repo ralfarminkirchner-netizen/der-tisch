@@ -35,7 +35,11 @@ CREATE TABLE IF NOT EXISTS sparks (
     seq               INTEGER NOT NULL,
     prompt            TEXT NOT NULL,
     client_request_id TEXT NOT NULL,
-    created_at        REAL NOT NULL
+    created_at        REAL NOT NULL,
+    -- funke | antwort | weitergabe | gegenposition | vertiefung
+    kind              TEXT NOT NULL DEFAULT 'funke',
+    -- Ausdrücklich gewählte Bezugsbeiträge (JSON-Liste von Beitragskennungen)
+    refs              TEXT NOT NULL DEFAULT '[]'
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sparks_idempotency
@@ -102,6 +106,36 @@ CREATE TABLE IF NOT EXISTS settings (
     updated_at REAL NOT NULL
 );
 
+-- Was ein Auftrag tatsächlich zu sehen bekam. Unveränderlich ab Auftragsbeginn:
+-- ein späterer Einwurf darf nicht rückwirkend zum Kenntnisstand erklärt werden.
+CREATE TABLE IF NOT EXISTS context_snapshots (
+    job_id      TEXT PRIMARY KEY REFERENCES jobs(id) ON DELETE CASCADE,
+    session_id  TEXT NOT NULL,
+    rendered    TEXT NOT NULL,
+    message_ids TEXT NOT NULL,
+    rule        TEXT NOT NULL,
+    provider    TEXT NOT NULL,
+    model       TEXT NOT NULL,
+    truncated   INTEGER NOT NULL DEFAULT 0,
+    created_at  REAL NOT NULL
+);
+
+-- Beziehungen zwischen Beiträgen. Herkunft und Stand bleiben unterscheidbar:
+-- was die Maschine vorschlägt, ist kein bestätigter Befund.
+CREATE TABLE IF NOT EXISTS relations (
+    id         TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    from_id    TEXT NOT NULL,
+    to_id      TEXT NOT NULL,
+    type       TEXT NOT NULL,
+    origin     TEXT NOT NULL,
+    status     TEXT NOT NULL DEFAULT 'bestaetigt',
+    note       TEXT NOT NULL DEFAULT '',
+    created_at REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_relations_session ON relations(session_id);
+
 CREATE TABLE IF NOT EXISTS providers (
     id         TEXT PRIMARY KEY,
     label      TEXT NOT NULL,
@@ -116,11 +150,13 @@ CREATE TABLE IF NOT EXISTS providers (
 );
 """
 
+JOB_NOT_REQUESTED = "not_requested"
 JOB_QUEUED = "queued"
 JOB_RUNNING = "running"
 JOB_DONE = "done"
 JOB_ERROR = "error"
 JOB_INTERRUPTED = "interrupted"
+JOB_CANCELLED = "cancelled"
 OPEN_JOB_STATES = (JOB_QUEUED, JOB_RUNNING)
 
 SESSION_OPEN = "offen"
@@ -133,6 +169,18 @@ def new_id(prefix: str) -> str:
 
 def now() -> float:
     return time.time()
+
+
+def _spark_row(row: Any) -> dict[str, Any]:
+    """Bezüge kommen als Liste heraus, nicht als JSON-Text."""
+    spark = dict(row)
+    roh = spark.get("refs") or "[]"
+    try:
+        spark["refs"] = json.loads(roh) if isinstance(roh, str) else list(roh)
+    except ValueError:
+        spark["refs"] = []
+    spark.setdefault("kind", "funke")
+    return spark
 
 
 class Store:
@@ -150,7 +198,21 @@ class Store:
         self._conn = await aiosqlite.connect(str(self.db_path))
         self._conn.row_factory = aiosqlite.Row
         await self._conn.executescript(SCHEMA)
+        await self._migrate()
         await self._conn.commit()
+
+    async def _migrate(self) -> None:
+        """Ergänzt Spalten, die es in älteren Datenbanken noch nicht gab."""
+        async with self._conn.execute("PRAGMA table_info(sparks)") as cur:  # type: ignore[union-attr]
+            spalten = {r["name"] for r in await cur.fetchall()}
+        if "kind" not in spalten:
+            await self._conn.execute(  # type: ignore[union-attr]
+                "ALTER TABLE sparks ADD COLUMN kind TEXT NOT NULL DEFAULT 'funke'"
+            )
+        if "refs" not in spalten:
+            await self._conn.execute(  # type: ignore[union-attr]
+                "ALTER TABLE sparks ADD COLUMN refs TEXT NOT NULL DEFAULT '[]'"
+            )
 
     async def close(self) -> None:
         if self._conn is not None:
@@ -214,10 +276,15 @@ class Store:
             (session_id, client_request_id),
         ) as cur:
             row = await cur.fetchone()
-        return dict(row) if row else None
+        return _spark_row(row) if row else None
 
     async def insert_spark(
-        self, session_id: str, prompt: str, client_request_id: str
+        self,
+        session_id: str,
+        prompt: str,
+        client_request_id: str,
+        kind: str = "funke",
+        refs: list[str] | None = None,
     ) -> tuple[dict[str, Any], bool]:
         """Legt einen Funken an. Gibt (Funke, war_neu) zurück.
 
@@ -242,12 +309,17 @@ class Store:
             "prompt": prompt,
             "client_request_id": client_request_id,
             "created_at": now(),
+            "kind": kind,
+            # Nach außen immer eine Liste. In der Datenbank steht JSON-Text;
+            # wer hier eine Zeichenkette durchreicht, iteriert sonst Buchstaben.
+            "refs": list(refs or []),
         }
         try:
             await self.conn.execute(
-                "INSERT INTO sparks (id, session_id, seq, prompt, client_request_id, created_at)"
-                " VALUES (:id, :session_id, :seq, :prompt, :client_request_id, :created_at)",
-                spark,
+                "INSERT INTO sparks (id, session_id, seq, prompt, client_request_id,"
+                " created_at, kind, refs) VALUES (:id, :session_id, :seq, :prompt,"
+                " :client_request_id, :created_at, :kind, :refs)",
+                {**spark, "refs": json.dumps(spark["refs"], ensure_ascii=False)},
             )
             await self.conn.commit()
         except aiosqlite.IntegrityError:
@@ -264,13 +336,13 @@ class Store:
             "SELECT * FROM sparks WHERE id=?", (spark_id,)
         ) as cur:
             row = await cur.fetchone()
-        return dict(row) if row else None
+        return _spark_row(row) if row else None
 
     async def list_sparks(self, session_id: str) -> list[dict[str, Any]]:
         async with self.conn.execute(
             "SELECT * FROM sparks WHERE session_id=? ORDER BY seq", (session_id,)
         ) as cur:
-            return [dict(r) for r in await cur.fetchall()]
+            return [_spark_row(r) for r in await cur.fetchall()]
 
     # -------------------------------------------------------------------- Jobs
 
@@ -417,6 +489,80 @@ class Store:
     async def settings_updated_at(self) -> dict[str, float]:
         async with self.conn.execute("SELECT name, updated_at FROM settings") as cur:
             return {r["name"]: r["updated_at"] for r in await cur.fetchall()}
+
+    # ------------------------------------------------------ Kontext-Schnappschuss
+
+    async def save_context_snapshot(self, snapshot: dict[str, Any]) -> None:
+        await self.conn.execute(
+            "INSERT OR REPLACE INTO context_snapshots (job_id, session_id, rendered,"
+            " message_ids, rule, provider, model, truncated, created_at) "
+            "VALUES (:job_id, :session_id, :rendered, :message_ids, :rule, :provider,"
+            " :model, :truncated, :created_at)",
+            {**snapshot, "created_at": now()},
+        )
+        await self.conn.commit()
+
+    async def get_context_snapshot(self, job_id: str) -> dict[str, Any] | None:
+        async with self.conn.execute(
+            "SELECT * FROM context_snapshots WHERE job_id=?", (job_id,)
+        ) as cur:
+            row = await cur.fetchone()
+        if row is None:
+            return None
+        snapshot = dict(row)
+        snapshot["message_ids"] = json.loads(snapshot["message_ids"])
+        snapshot["truncated"] = bool(snapshot["truncated"])
+        return snapshot
+
+    async def list_context_snapshots(self, session_id: str) -> list[dict[str, Any]]:
+        async with self.conn.execute(
+            "SELECT * FROM context_snapshots WHERE session_id=?", (session_id,)
+        ) as cur:
+            rows = await cur.fetchall()
+        out = []
+        for r in rows:
+            snapshot = dict(r)
+            snapshot["message_ids"] = json.loads(snapshot["message_ids"])
+            snapshot["truncated"] = bool(snapshot["truncated"])
+            out.append(snapshot)
+        return out
+
+    # ---------------------------------------------------------------- Beziehungen
+
+    async def insert_relation(self, relation: dict[str, Any]) -> dict[str, Any]:
+        record = {**relation, "id": relation.get("id") or new_id("bez"), "created_at": now()}
+        await self.conn.execute(
+            "INSERT INTO relations (id, session_id, from_id, to_id, type, origin, status,"
+            " note, created_at) VALUES (:id, :session_id, :from_id, :to_id, :type, :origin,"
+            " :status, :note, :created_at)",
+            record,
+        )
+        await self.conn.commit()
+        return record
+
+    async def list_relations(self, session_id: str) -> list[dict[str, Any]]:
+        async with self.conn.execute(
+            "SELECT * FROM relations WHERE session_id=? ORDER BY created_at", (session_id,)
+        ) as cur:
+            return [dict(r) for r in await cur.fetchall()]
+
+    async def delete_machine_relations(self, session_id: str, job_ids: list[str]) -> None:
+        """Entfernt frühere Vorschläge zu diesen Aufträgen, menschliche bleiben."""
+        if not job_ids:
+            return
+        platzhalter = ",".join("?" for _ in job_ids)
+        await self.conn.execute(
+            f"DELETE FROM relations WHERE session_id=? AND origin='maschine' "
+            f"AND (from_id IN ({platzhalter}) OR to_id IN ({platzhalter}))",
+            (session_id, *job_ids, *job_ids),
+        )
+        await self.conn.commit()
+
+    async def set_relation_status(self, relation_id: str, status: str) -> None:
+        await self.conn.execute(
+            "UPDATE relations SET status=? WHERE id=?", (status, relation_id)
+        )
+        await self.conn.commit()
 
     # ----------------------------------------------------------------- Anbieter
 

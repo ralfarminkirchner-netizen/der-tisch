@@ -3,12 +3,15 @@ import type {
   AppConfig,
   HealthInfo,
   Job,
+  JobContext,
   NewProvider,
   ProviderPatch,
   ProviderTestResult,
+  Relation,
   Session,
   SessionBundle,
   Spark,
+  SparkKind,
 } from './types';
 
 export class ApiError extends Error {
@@ -53,6 +56,8 @@ export const api = {
     prompt: string,
     clientRequestId: string,
     modelIds: string[] | null,
+    refs: string[] = [],
+    kind: SparkKind = 'funke',
   ) =>
     request<{ spark: Spark; jobs: Job[]; duplicate: boolean }>(
       `/api/sessions/${sessionId}/sparks`,
@@ -62,8 +67,16 @@ export const api = {
           prompt,
           client_request_id: clientRequestId,
           model_ids: modelIds,
+          refs,
+          kind,
         }),
       },
+    ),
+  jobContext: (jobId: string) => request<JobContext>(`/api/jobs/${jobId}/context`),
+  setRelation: (sessionId: string, relationId: string, status: Relation['status']) =>
+    request<{ relations: Relation[] }>(
+      `/api/sessions/${sessionId}/relations/${relationId}`,
+      { method: 'POST', body: JSON.stringify({ status }) },
     ),
 
   // Die Einstellungen verlangen bei jedem Aufruf das Zugangswort. Es wird nur
@@ -127,6 +140,7 @@ const EVENT_TYPES = [
   'auftrag.fehler',
   'auftrag.unterbrochen',
   'einschaetzung.fertig',
+  'beziehung.geaendert',
 ];
 
 /** Verbindet den Ereignisstrom.

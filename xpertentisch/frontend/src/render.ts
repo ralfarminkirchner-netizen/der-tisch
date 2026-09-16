@@ -2,11 +2,20 @@ import { highlightAnswer } from './markers';
 import type { Job, JobStatus, Marker, Summary, SparkEntry } from './types';
 
 const STATUS_LABEL: Record<JobStatus, string> = {
+  not_requested: 'nicht gefragt',
   queued: 'wartet',
   running: 'denkt nach',
   done: 'fertig',
   error: 'Fehler',
   interrupted: 'unterbrochen',
+  cancelled: 'abgebrochen',
+};
+
+/** Warum eine Karte leer ist — die Fälle sind nicht dasselbe. */
+const LEER_GRUND: Partial<Record<JobStatus, string>> = {
+  not_requested: 'Für diesen Funken nicht angefragt.',
+  done: 'Antwort kam an, enthielt aber keinen Text.',
+  cancelled: 'Abgebrochen, bevor eine Antwort kam.',
 };
 
 export function el<K extends keyof HTMLElementTagNameMap>(
@@ -44,6 +53,8 @@ export function createCard(job: Job, markers: Marker[]): HTMLElement {
       el('div', { class: 'tags' }),
     ]),
     el('div', { class: 'card-body' }),
+    // Bleibt beim Aktualisieren stehen: hier hängen Aktionen und Kontextansicht.
+    el('div', { class: 'card-foot' }),
   );
   updateCard(card, job, markers);
   return card;
@@ -86,8 +97,8 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
     // Der Originaltext bleibt unverändert; Marker sind nur eine Auflage darüber.
     answer.innerHTML = highlightAnswer(text, markers.filter((m) => m.job_id === job.id));
     body.append(answer);
-  } else if (job.status === 'done') {
-    body.append(el('p', { class: 'hint' }, ['Leere Antwort.']));
+  } else if (LEER_GRUND[job.status]) {
+    body.append(el('p', { class: 'hint' }, [LEER_GRUND[job.status]!]));
   }
 }
 

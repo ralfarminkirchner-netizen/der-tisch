@@ -8,15 +8,18 @@ Auftrag gefangen und als Zustand des jeweiligen Auftrags festgehalten.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import time
 from typing import Any
 
+from . import context as kontext
 from .analysis import analyse
 from .config import ModelConfig, Settings
 from .db import (
     JOB_DONE,
     JOB_ERROR,
+    JOB_NOT_REQUESTED,
     JOB_QUEUED,
     Store,
     new_id,
@@ -26,6 +29,20 @@ from .events import EventBus
 from .providers import ProviderError, ProviderRegistry
 
 log = logging.getLogger("xpertentisch.runner")
+
+def _fingerprint(jobs: list[dict[str, Any]]) -> tuple:
+    """Kennzeichnet den Stand der Aufträge eines Funkens."""
+    return tuple(sorted((j["id"], j["status"], len(j.get("text") or "")) for j in jobs))
+
+
+#: Welche Beziehungsart eine Eingabeart setzt.
+BEZUG_TYP = {
+    "funke": "antwortet_auf",
+    "antwort": "antwortet_auf",
+    "weitergabe": "abgeleitet_aus",
+    "gegenposition": "widerspricht",
+    "vertiefung": "vertieft",
+}
 
 
 class Runner:
@@ -43,20 +60,35 @@ class Runner:
         self._tasks: set[asyncio.Task] = set()
         #: Funken, deren Aufträge in diesem Prozess bereits gestartet wurden.
         self._started_sparks: set[str] = set()
+        #: Je Funke ein Schloss. Enden zwei Aufträge gleichzeitig, liefe der
+        #: Abschlusslauf sonst doppelt und legte doppelte Bezüge an.
+        self._finalise_locks: dict[str, asyncio.Lock] = {}
+        #: Stand, der zuletzt ausgewertet wurde — verhindert Doppelläufe.
+        self._finalised: dict[str, tuple] = {}
 
     # ------------------------------------------------------------------ Start
 
     async def launch_spark(
-        self, session_id: str, spark: dict[str, Any], models: list[ModelConfig]
+        self,
+        session_id: str,
+        spark: dict[str, Any],
+        models: list[ModelConfig],
+        untouched: list[ModelConfig] | None = None,
     ) -> list[dict[str, Any]]:
-        """Legt die Aufträge an und startet sie. Doppelte Starts sind wirkungslos."""
+        """Legt die Aufträge an und startet sie. Doppelte Starts sind wirkungslos.
+
+        `untouched` sind einsatzbereite Anbieter, die für diesen Funken bewusst
+        nicht angefragt wurden. Sie bekommen eine Zeile mit dem Zustand
+        `not_requested` — „nicht gefragt“ ist etwas anderes als „keine Antwort“.
+        """
         if spark["id"] in self._started_sparks:
             return await self.store.list_jobs_for_spark(spark["id"])
         self._started_sparks.add(spark["id"])
 
         ts = now()
-        job_rows = [
-            {
+
+        def zeile(m: ModelConfig, status: str) -> dict[str, Any]:
+            return {
                 "id": new_id("auf"),
                 "session_id": session_id,
                 "spark_id": spark["id"],
@@ -64,15 +96,30 @@ class Runner:
                 "label": m.label,
                 "provider": m.provider,
                 "model": m.model,
-                "status": JOB_QUEUED,
+                "status": status,
                 "text": "",
                 "error": None,
                 "partial": 0,
                 "created_at": ts,
             }
-            for m in models
-        ]
+
+        job_rows = [zeile(m, JOB_QUEUED) for m in models]
+        job_rows += [zeile(m, JOB_NOT_REQUESTED) for m in (untouched or [])]
         await self.store.insert_jobs(job_rows)
+
+        # Ausdrücklich gewählte Bezüge sind menschlich gesetzte Beziehungen.
+        for ref in spark.get("refs") or []:
+            await self.store.insert_relation(
+                {
+                    "session_id": session_id,
+                    "from_id": spark["id"],
+                    "to_id": ref,
+                    "type": BEZUG_TYP.get(spark.get("kind", "funke"), "antwortet_auf"),
+                    "origin": "mensch",
+                    "status": "bestaetigt",
+                    "note": "",
+                }
+            )
         # Nach INSERT OR IGNORE zählt der gespeicherte Stand, nicht der lokale.
         jobs = await self.store.list_jobs_for_spark(spark["id"])
 
@@ -106,9 +153,13 @@ class Runner:
                 session_id, "auftrag.laeuft", {"job_id": job["id"], "model_id": job["model_id"]}
             )
 
+            # Der Kontext wird jetzt festgehalten — was danach eingeworfen wird,
+            # gehörte nicht zum Kenntnisstand dieses Auftrags.
+            gesendet = await self._freeze_context(job, model, prompt)
+
             provider = self.registry.get(model.provider)
             response = await provider.complete(
-                prompt=prompt, model=model.model, timeout_s=self.settings.resolved_timeout_s
+                prompt=gesendet, model=model.model, timeout_s=self.settings.resolved_timeout_s
             )
             latency = int((time.monotonic() - started) * 1000)
             await self.store.finish_job(
@@ -141,6 +192,34 @@ class Runner:
         finally:
             await self._maybe_finalise(job["session_id"], job["spark_id"])
 
+    async def _freeze_context(
+        self, job: dict[str, Any], model: ModelConfig, prompt: str
+    ) -> str:
+        """Baut den Gesprächsauszug und schreibt den Schnappschuss fest."""
+        spark = await self.store.get_spark(job["spark_id"])
+        if spark is None:  # pragma: no cover - der Funke existiert immer
+            return prompt
+        sparks = await self.store.list_sparks(job["session_id"])
+        jobs = await self.store.list_jobs(job["session_id"])
+        gesendet, eintraege, gekuerzt = kontext.build(
+            spark=spark, sparks=sparks, jobs=jobs
+        )
+        await self.store.save_context_snapshot(
+            {
+                "job_id": job["id"],
+                "session_id": job["session_id"],
+                "rendered": gesendet,
+                "message_ids": json.dumps(
+                    [e.public() for e in eintraege], ensure_ascii=False
+                ),
+                "rule": kontext.REGEL,
+                "provider": model.provider,
+                "model": model.model,
+                "truncated": 1 if gekuerzt else 0,
+            }
+        )
+        return gesendet
+
     async def _fail_job(
         self, job: dict[str, Any], exc: BaseException, started: float, partial_text: str = ""
     ) -> None:
@@ -172,10 +251,16 @@ class Runner:
 
     async def _maybe_finalise(self, session_id: str, spark_id: str) -> None:
         """Berechnet die Einschätzungen, sobald alle Aufträge des Funkens ruhen."""
-        jobs = await self.store.list_jobs_for_spark(spark_id)
-        if any(j["status"] in ("queued", "running") for j in jobs):
-            return
-        await self.recompute_assessment(session_id, spark_id, jobs)
+        schloss = self._finalise_locks.setdefault(spark_id, asyncio.Lock())
+        async with schloss:
+            jobs = await self.store.list_jobs_for_spark(spark_id)
+            if any(j["status"] in ("queued", "running") for j in jobs):
+                return
+            if self._finalised.get(spark_id) == _fingerprint(jobs):
+                # Derselbe Stand wurde schon ausgewertet.
+                return
+            await self.recompute_assessment(session_id, spark_id, jobs)
+            self._finalised[spark_id] = _fingerprint(jobs)
 
     async def recompute_assessment(
         self, session_id: str, spark_id: str, jobs: list[dict[str, Any]] | None = None
@@ -184,12 +269,48 @@ class Runner:
         markers, summary = analyse(session_id, spark_id, jobs)
         await self.store.replace_markers(spark_id, session_id, markers)
         await self.store.save_assessment(spark_id, session_id, summary)
+        await self._suggest_relations(session_id, jobs, summary)
         await self.bus.publish(
             session_id,
             "einschaetzung.fertig",
-            {"spark_id": spark_id, "summary": summary, "markers": markers},
+            {
+                "spark_id": spark_id,
+                "summary": summary,
+                "markers": markers,
+                "relations": await self.store.list_relations(session_id),
+            },
         )
         return summary
+
+    async def _suggest_relations(
+        self, session_id: str, jobs: list[dict[str, Any]], summary: dict[str, Any]
+    ) -> None:
+        """Schreibt die gefundenen Bezüge — ausdrücklich als Vorschlag.
+
+        Was die Auswertung findet, ist eine Lesehilfe. Erst eine menschliche
+        Bestätigung macht daraus einen Befund; bis dahin steht der Status auf
+        `vorschlag`.
+        """
+        job_ids = [j["id"] for j in jobs]
+        await self.store.delete_machine_relations(session_id, job_ids)
+        for paar in summary.get("pairs", []):
+            for art, anzahl in (
+                ("uebereinstimmung", paar.get("agreements", 0)),
+                ("widerspricht", paar.get("contradictions", 0)),
+            ):
+                if not anzahl:
+                    continue
+                await self.store.insert_relation(
+                    {
+                        "session_id": session_id,
+                        "from_id": paar["a_job_id"],
+                        "to_id": paar["b_job_id"],
+                        "type": art,
+                        "origin": "maschine",
+                        "status": "vorschlag",
+                        "note": f"{anzahl} Fundstelle(n): {', '.join(paar.get('topics', [])[:3])}",
+                    }
+                )
 
     # -------------------------------------------------------------- Herunterfahren
 
