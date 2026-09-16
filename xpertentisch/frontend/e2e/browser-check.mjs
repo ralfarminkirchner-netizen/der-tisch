@@ -35,7 +35,9 @@ try {
   const fehler = [];
   page.on('pageerror', (e) => fehler.push(String(e)));
 
-  await page.goto(BASE, { waitUntil: 'networkidle' });
+  // Nicht auf 'networkidle' warten: der Ereignisstrom hält eine Verbindung
+  // dauerhaft offen, der Ruhezustand tritt deshalb nie ein.
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('form.spark', { timeout: 15000 });
   pruefe('Oberfläche lädt', await page.locator('h1').first().isVisible());
 

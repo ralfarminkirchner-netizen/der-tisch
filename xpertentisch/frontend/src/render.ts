@@ -93,7 +93,7 @@ export function renderTable(summary: Summary): HTMLElement {
   const table = el('table');
   const head = el('tr');
   for (const label of [
-    'Modell', 'Status', 'Zeichen', 'Sätze', 'Dauer', 'Übereinst.', 'Widerspr.', 'Einzigartig',
+    'Modell', 'Status', 'Zeichen', 'Sätze', 'Dauer', 'Überein.', 'Widerspr.', 'Einzig.',
   ]) {
     head.append(el('th', {}, [label]));
   }
