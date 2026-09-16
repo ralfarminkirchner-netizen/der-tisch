@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -18,7 +19,7 @@ from pydantic import BaseModel, Field
 from .config import Settings, load_settings
 from .db import SESSION_CLOSED, Store, now
 from .events import EventBus
-from .providers import ProviderRegistry
+from .providers import ProviderError, ProviderRegistry
 from .reports import render_html, render_markdown
 from .runner import Runner
 
@@ -41,6 +42,33 @@ class SessionClose(BaseModel):
     note: str = Field(default="", max_length=5000)
 
 
+class SettingsUpdate(BaseModel):
+    """Änderungen an den Einstellungen.
+
+    `None` heißt unverändert, ein leerer Text löscht den Wert und gibt damit
+    wieder der Umgebungsvariablen den Vorrang.
+    """
+
+    openai_api_key: str | None = Field(default=None, max_length=400)
+    anthropic_api_key: str | None = Field(default=None, max_length=400)
+    openai_model: str | None = Field(default=None, max_length=120)
+    anthropic_model: str | None = Field(default=None, max_length=120)
+    request_timeout_s: int | None = Field(default=None, ge=5, le=600)
+
+
+class ProviderTest(BaseModel):
+    provider: str = Field(min_length=2, max_length=40)
+
+
+SECRET_FIELDS = ("openai_api_key", "anthropic_api_key")
+SETTING_FIELDS = SECRET_FIELDS + ("openai_model", "anthropic_model", "request_timeout_s")
+
+
+def _hint(value: str) -> str:
+    """Erkennungshilfe für einen hinterlegten Schlüssel — nie der Schlüssel selbst."""
+    return f"…{value[-4:]}" if len(value) >= 8 else "gesetzt"
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or load_settings()
     store = Store(settings.db_path)
@@ -51,6 +79,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         await store.connect()
+        # Auf der Einstellungsseite hinterlegte Werte haben Vorrang vor der Umgebung.
+        settings.overrides = await store.all_settings()
         # Ein Neustart darf keine Aufträge im Schwebezustand hinterlassen.
         interrupted = await store.mark_open_jobs_interrupted()
         for job in interrupted:
@@ -123,6 +153,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "max_prompt_chars": settings.max_prompt_chars,
             "fake_providers_enabled": settings.allow_fake_providers,
             "env": settings.env,
+            # Sagt nur, OB ein Zugangswort eingerichtet ist — nie welches.
+            "settings_available": bool(settings.admin_token),
         }
 
     # -------------------------------------------------------------- Sitzungen
@@ -286,6 +318,127 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             media_type="text/markdown; charset=utf-8",
             headers={"Content-Disposition": f'attachment; filename="{filename}"'},
         )
+
+    # ------------------------------------------------------------ Einstellungen
+
+    def _require_admin(token: str | None) -> None:
+        """Lässt nur mit dem eingerichteten Einstellungs-Token durch."""
+        if not settings.admin_token:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Die Einstellungen sind gesperrt, weil kein Zugangswort eingerichtet "
+                    "ist. Setze die Umgebungsvariable XT_ADMIN_TOKEN auf ein selbst "
+                    "gewähltes, langes Wort und starte den Dienst neu."
+                ),
+            )
+        if not token or not secrets.compare_digest(token, settings.admin_token):
+            raise HTTPException(status_code=401, detail="Zugangswort stimmt nicht.")
+
+    def _settings_view() -> dict[str, Any]:
+        verfuegbar = registry.availability()
+        provider_zeilen = []
+        gesehen: set[str] = set()
+        for modell in settings.enabled_models():
+            if modell.provider in gesehen:
+                continue
+            gesehen.add(modell.provider)
+            braucht_schluessel = modell.provider in ("openai", "anthropic")
+            feld = f"{modell.provider}_api_key" if braucht_schluessel else ""
+            wert = settings.overrides.get(feld) or {
+                "openai": settings.openai_api_key,
+                "anthropic": settings.anthropic_api_key,
+            }.get(modell.provider)
+            zustand = verfuegbar.get(modell.provider, {"ready": False, "reason": ""})
+            provider_zeilen.append(
+                {
+                    "provider": modell.provider,
+                    "label": modell.label,
+                    "model": modell.model,
+                    "model_field": f"{modell.provider}_model",
+                    "key_field": feld,
+                    "needs_key": braucht_schluessel,
+                    "key_source": settings.source_of(feld) if feld in SECRET_FIELDS else "fehlt",
+                    "key_hint": _hint(wert) if wert else "",
+                    "ready": bool(zustand["ready"]),
+                    "reason": str(zustand["reason"]),
+                }
+            )
+        return {
+            "providers": provider_zeilen,
+            "request_timeout_s": settings.resolved_timeout_s,
+            "timeout_source": (
+                "einstellungen" if settings.overrides.get("request_timeout_s") else "umgebung"
+            ),
+            "env": settings.env,
+            "fake_providers_enabled": settings.allow_fake_providers,
+        }
+
+    @app.get("/api/admin/settings")
+    async def read_settings(
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+        return _settings_view()
+
+    @app.post("/api/admin/settings")
+    async def write_settings(
+        body: SettingsUpdate,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        _require_admin(x_admin_token)
+
+        geaendert: list[str] = []
+        for feld in SETTING_FIELDS:
+            wert = getattr(body, feld)
+            if wert is None:
+                continue
+            text = str(wert).strip()
+            if text:
+                await store.set_setting(feld, text)
+            else:
+                await store.delete_setting(feld)
+            geaendert.append(feld)
+
+        settings.overrides = await store.all_settings()
+        # Die nächsten Aufträge sollen die neuen Zugangsdaten verwenden.
+        registry.invalidate()
+        if geaendert:
+            log.info("Einstellungen geändert: %s", ", ".join(geaendert))
+        return {"changed": geaendert, **_settings_view()}
+
+    @app.post("/api/admin/test")
+    async def test_provider(
+        body: ProviderTest,
+        x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+    ) -> dict[str, Any]:
+        """Prüft einen Provider mit einem einzigen, sehr kurzen echten Aufruf."""
+        _require_admin(x_admin_token)
+        modell = next(
+            (m for m in settings.enabled_models() if m.provider == body.provider), None
+        )
+        if modell is None:
+            raise HTTPException(status_code=404, detail="Unbekannter Provider.")
+
+        import time as _time
+
+        start = _time.monotonic()
+        try:
+            provider = registry.get(modell.provider)
+            antwort = await provider.complete(
+                prompt="Antworte mit genau einem Wort: bereit.",
+                model=modell.model,
+                timeout_s=min(settings.resolved_timeout_s, 30),
+            )
+        except ProviderError as exc:
+            return {"ok": False, "detail": str(exc), "latency_ms": None}
+        except Exception as exc:  # pragma: no cover - unerwartete Fehlerklasse
+            return {"ok": False, "detail": f"{type(exc).__name__}: {exc}", "latency_ms": None}
+        return {
+            "ok": True,
+            "detail": antwort.text.strip()[:120],
+            "latency_ms": int((_time.monotonic() - start) * 1000),
+        }
 
     # ---------------------------------------------------------------- Oberfläche
 

@@ -1,4 +1,13 @@
-import type { AppConfig, HealthInfo, Job, Session, SessionBundle, Spark } from './types';
+import type {
+  AdminSettings,
+  AppConfig,
+  HealthInfo,
+  Job,
+  ProviderTestResult,
+  Session,
+  SessionBundle,
+  Spark,
+} from './types';
 
 export class ApiError extends Error {
   readonly status: number;
@@ -54,6 +63,23 @@ export const api = {
         }),
       },
     ),
+
+  // Die Einstellungen verlangen bei jedem Aufruf das Zugangswort. Es wird nur
+  // mitgeschickt, nie gespeichert und nie zurückgelesen.
+  adminSettings: (token: string) =>
+    request<AdminSettings>('/api/admin/settings', { headers: { 'X-Admin-Token': token } }),
+  saveAdminSettings: (token: string, changes: Record<string, string | number>) =>
+    request<AdminSettings>('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify(changes),
+    }),
+  testProvider: (token: string, provider: string) =>
+    request<ProviderTestResult>('/api/admin/test', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify({ provider }),
+    }),
 };
 
 /** Erzeugt eine stabile Kennung je Absendevorgang.

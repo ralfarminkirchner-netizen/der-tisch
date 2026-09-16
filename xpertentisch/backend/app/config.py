@@ -1,8 +1,13 @@
 """Konfiguration für XPERTENTiSCH.
 
-Alle Einstellungen kommen aus Umgebungsvariablen. Ein zentrales Prinzip:
-Test-Fakes (`fake`-Provider) dürfen im Produktionsmodus niemals unbemerkt
-für echte Provider einspringen. Dafür sorgt `Settings.validate()`.
+Die Grundeinstellungen kommen aus Umgebungsvariablen. Zugangsdaten und
+Modellnamen lassen sich zusätzlich zur Laufzeit über die Einstellungsseite
+setzen; solche Werte liegen in der Datenbank und haben Vorrang vor der
+Umgebung (`overrides`).
+
+Ein zentrales Prinzip bleibt: Test-Fakes (`fake`-Provider) dürfen im
+Produktionsmodus niemals unbemerkt für echte Provider einspringen. Dafür
+sorgt `Settings.validate()`.
 """
 
 from __future__ import annotations
@@ -56,13 +61,59 @@ class Settings:
     max_prompt_chars: int = 20000
     cors_origins: list[str] = field(default_factory=list)
     models: list[ModelConfig] = field(default_factory=list)
+    #: Token für die Einstellungsseite. Ohne dieses Token bleibt sie gesperrt.
+    admin_token: str | None = None
+    #: Zur Laufzeit gesetzte Werte aus der Datenbank. Vorrang vor der Umgebung.
+    overrides: dict[str, str] = field(default_factory=dict)
 
     @property
     def is_production(self) -> bool:
         return self.env == "production"
 
+    # ------------------------------------------------- Aufgelöste Einstellungen
+
+    def _resolved(self, name: str, fallback: str | None) -> str | None:
+        wert = (self.overrides.get(name) or "").strip()
+        return wert or fallback
+
+    @property
+    def resolved_openai_key(self) -> str | None:
+        return self._resolved("openai_api_key", self.openai_api_key)
+
+    @property
+    def resolved_anthropic_key(self) -> str | None:
+        return self._resolved("anthropic_api_key", self.anthropic_api_key)
+
+    @property
+    def resolved_timeout_s(self) -> int:
+        roh = (self.overrides.get("request_timeout_s") or "").strip()
+        if roh.isdigit() and 5 <= int(roh) <= 600:
+            return int(roh)
+        return self.request_timeout_s
+
+    def source_of(self, name: str) -> str:
+        """Woher ein Wert stammt: Einstellungsseite, Umgebung oder nirgendwo."""
+        if (self.overrides.get(name) or "").strip():
+            return "einstellungen"
+        env_wert = {
+            "openai_api_key": self.openai_api_key,
+            "anthropic_api_key": self.anthropic_api_key,
+        }.get(name)
+        return "umgebung" if env_wert else "fehlt"
+
     def enabled_models(self) -> list[ModelConfig]:
-        return [m for m in self.models if m.enabled]
+        """Aktive Modelle, mit den auf der Einstellungsseite gesetzten Namen."""
+        namen = {
+            "openai": (self.overrides.get("openai_model") or "").strip(),
+            "anthropic": (self.overrides.get("anthropic_model") or "").strip(),
+        }
+        aktiv = []
+        for m in self.models:
+            if not m.enabled:
+                continue
+            name = namen.get(m.provider)
+            aktiv.append(ModelConfig(m.id, m.label, m.provider, name, True) if name else m)
+        return aktiv
 
     def model_by_id(self, model_id: str) -> ModelConfig | None:
         for m in self.models:
@@ -89,9 +140,9 @@ class Settings:
         """Provider, die konfiguriert sind, aber keine Zugangsdaten haben."""
         missing: list[str] = []
         providers = {m.provider for m in self.enabled_models()}
-        if "openai" in providers and not self.openai_api_key:
+        if "openai" in providers and not self.resolved_openai_key:
             missing.append("OPENAI_API_KEY")
-        if "anthropic" in providers and not self.anthropic_api_key:
+        if "anthropic" in providers and not self.resolved_anthropic_key:
             missing.append("ANTHROPIC_API_KEY")
         return missing
 
@@ -151,6 +202,7 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         max_prompt_chars=_env_int("XT_MAX_PROMPT_CHARS", 20000),
         cors_origins=cors,
         models=models,
+        admin_token=(os.environ.get("XT_ADMIN_TOKEN") or "").strip() or None,
     )
     settings.validate()
     return settings

@@ -50,9 +50,34 @@ xpertentisch/
   wörtliches Textbelegzitat mit.
 - **Vergleichstabelle** und **Beziehungsnetz**; ein Klick auf Knoten oder Kante
   öffnet genau die zugehörigen Antworten.
+- **Einstellungen in der Oberfläche**: Zugangsdaten, Modellnamen und Zeitgrenze
+  lassen sich über das Zahnrad eintragen, ohne Umgebungsvariablen anzufassen.
 - **Sitzungsabschluss** mit freiwilliger Abschlussnotiz.
 - **Zwei Berichtsexporte**: eigenständiges HTML (offline, druckbar, ohne
   Skripte, alle Inhalte maskiert) und Markdown.
+
+### Zugangsdaten eintragen
+
+Es gibt zwei Wege, und sie lassen sich mischen:
+
+1. **Umgebungsvariablen** `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` — gut für den
+   Betrieb über Railway oder Docker.
+2. **Einstellungsseite** in der Oberfläche (Zahnrad oben rechts) — gut, wenn ein
+   Schlüssel ohne Neustart getauscht werden soll. Dort lassen sich außerdem der
+   Modellname je Anbieter und die Zeitgrenze setzen, und ein Knopf prüft mit
+   einem einzigen echten Aufruf, ob der Schlüssel funktioniert.
+
+Was auf der Einstellungsseite gesetzt wird, liegt in der Datenbank und hat
+**Vorrang** vor der Umgebung. Ein geleertes Feld löscht den Wert wieder, und die
+Umgebungsvariable greift erneut. Die Seite zeigt zu jedem Anbieter, woher sein
+Schlüssel stammt.
+
+**Die Einstellungsseite ist gesperrt, solange `XT_ADMIN_TOKEN` nicht gesetzt
+ist.** Das ist Absicht: ohne Login könnte sonst jede Person mit dem Link die
+Zugangsdaten ändern. Setze die Variable auf ein langes, selbst gewähltes Wort und
+starte den Dienst neu; die Oberfläche fragt dieses Wort dann ab. Schlüssel werden
+nie an die Oberfläche zurückgegeben — sichtbar sind nur Herkunft und die letzten
+vier Zeichen.
 
 ### Widerspruch vs. Unterschiedlichkeit
 
@@ -130,6 +155,7 @@ cd xpertentisch/frontend && npm i -D playwright && PW_CHROMIUM=<pfad/zu/chromium
 | `XT_DB_PATH` | Pfad der SQLite-Datei | `xpertentisch.sqlite3` |
 | `XT_REQUEST_TIMEOUT_S` | Zeitgrenze je Modellaufruf | `120` |
 | `XT_MAX_PROMPT_CHARS` | Längengrenze eines Funkens | `20000` |
+| `XT_ADMIN_TOKEN` | Zugangswort für die Einstellungsseite; ohne bleibt sie gesperrt | leer |
 | `XT_CORS_ORIGINS` | Kommaliste erlaubter Ursprünge | leer |
 | `PORT` | Port (von Railway gesetzt) | `8000` |
 | `XT_ALLOW_FAKE_PROVIDERS` | schaltet den Test-Provider frei | aus |
@@ -146,8 +172,10 @@ meldet `fake_providers_enabled: true`.
 - **Root Directory**: `xpertentisch`
 - **Builder**: Dockerfile (`railway.json` ist hinterlegt)
 - **Healthcheck-Pfad**: `/api/health`
-- **Variablen**: `XT_ENV=production`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
-  `XT_DB_PATH=/data/xpertentisch.sqlite3`
+- **Variablen**: `XT_ENV=production`, `XT_DB_PATH=/data/xpertentisch.sqlite3` und
+  `XT_ADMIN_TOKEN` (ein langes, selbst gewähltes Wort). Die API-Schlüssel kannst
+  du hier als `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` setzen **oder** nach dem
+  ersten Start über das Zahnrad in der Oberfläche eintragen.
 - **Volume**: unter `/data` einhängen — ohne Volume sind die Sitzungsdaten nach
   jedem Neustart weg.
 - `PORT` setzt Railway selbst; der Startbefehl übernimmt ihn.
@@ -168,6 +196,9 @@ ist, und nennt die fehlenden Zugangsdaten.
 | POST | `/api/sessions/{id}/close` | Sitzung abschließen |
 | GET | `/api/sessions/{id}/report.html` | Bericht als eigenständiges HTML |
 | GET | `/api/sessions/{id}/report.md` | Bericht als Markdown |
+| GET | `/api/admin/settings` | Zustand der Anbieter (Kopfzeile `X-Admin-Token`) |
+| POST | `/api/admin/settings` | Schlüssel, Modellnamen, Zeitgrenze setzen oder löschen |
+| POST | `/api/admin/test` | einen Anbieter mit einem echten Kurzaufruf prüfen |
 
 Ein wiederholter POST auf `/sparks` mit derselben `client_request_id` liefert
 `200` und `duplicate: true` — es entstehen keine neuen Modellaufrufe.
@@ -182,9 +213,16 @@ Nutzerinhalten, verbindliche Lehren aus Modellkonsens, Rankings der Modelle.
 
 ## Bekannte Einschränkungen
 
-- **Kein Zugriffsschutz.** Wer die Sitzungskennung kennt, sieht die Sitzung.
-  Ohne Login ist das so gewollt — die Anwendung gehört deshalb nicht ungeschützt
-  ins offene Netz, wenn die Inhalte vertraulich sind.
+- **Kein Zugriffsschutz für Sitzungen.** Wer die Sitzungskennung kennt, sieht die
+  Sitzung. Ohne Login ist das so gewollt — die Anwendung gehört deshalb nicht
+  ungeschützt ins offene Netz, wenn die Inhalte vertraulich sind. Geschützt ist
+  nur die Einstellungsseite, und zwar durch ein einziges gemeinsames Zugangswort,
+  nicht durch Benutzerkonten.
+- **Über die Einstellungsseite hinterlegte Schlüssel liegen unverschlüsselt in
+  der SQLite-Datei.** Eine Verschlüsselung mit einem Schlüssel, der daneben
+  liegt, wäre Augenwischerei; stattdessen gilt: Das Volume ist so schützenswert
+  wie die Zugangsdaten selbst. Wer das nicht will, setzt die Schlüssel weiterhin
+  als Umgebungsvariablen.
 - **Die Einschätzungen sind rein sprachstatistisch.** Sie zählen Begriffe und
   Verneinungen; sie verstehen den Inhalt nicht. Umschreibungen ohne gemeinsame
   Wörter bleiben unerkannt, ironische oder mehrgliedrige Widersprüche ebenso.

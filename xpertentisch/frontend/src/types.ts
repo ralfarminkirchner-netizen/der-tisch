@@ -13,6 +13,37 @@ export interface AppConfig {
   max_prompt_chars: number;
   fake_providers_enabled: boolean;
   env: string;
+  /** Sagt nur, ob ein Zugangswort eingerichtet ist — nie welches. */
+  settings_available: boolean;
+}
+
+export interface AdminProviderRow {
+  provider: string;
+  label: string;
+  model: string;
+  model_field: string;
+  /** Leer, wenn dieser Provider gar keinen Schlüssel braucht (Test-Provider). */
+  key_field: string;
+  needs_key: boolean;
+  key_source: 'einstellungen' | 'umgebung' | 'fehlt';
+  /** Nur die letzten vier Zeichen, nie der Schlüssel selbst. */
+  key_hint: string;
+  ready: boolean;
+  reason: string;
+}
+
+export interface AdminSettings {
+  providers: AdminProviderRow[];
+  request_timeout_s: number;
+  timeout_source: string;
+  env: string;
+  fake_providers_enabled: boolean;
+}
+
+export interface ProviderTestResult {
+  ok: boolean;
+  detail: string;
+  latency_ms: number | null;
 }
 
 export interface Session {

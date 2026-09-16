@@ -95,6 +95,12 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id, id);
+
+CREATE TABLE IF NOT EXISTS settings (
+    name       TEXT PRIMARY KEY,
+    value      TEXT NOT NULL,
+    updated_at REAL NOT NULL
+);
 """
 
 JOB_QUEUED = "queued"
@@ -375,6 +381,29 @@ class Store:
         ) as cur:
             rows = await cur.fetchall()
         return {r["spark_id"]: json.loads(r["payload"]) for r in rows}
+
+    # ------------------------------------------------------------ Einstellungen
+
+    async def all_settings(self) -> dict[str, str]:
+        async with self.conn.execute("SELECT name, value FROM settings") as cur:
+            return {r["name"]: r["value"] for r in await cur.fetchall()}
+
+    async def set_setting(self, name: str, value: str) -> None:
+        await self.conn.execute(
+            "INSERT INTO settings (name, value, updated_at) VALUES (?,?,?) "
+            "ON CONFLICT(name) DO UPDATE SET value=excluded.value,"
+            " updated_at=excluded.updated_at",
+            (name, value, now()),
+        )
+        await self.conn.commit()
+
+    async def delete_setting(self, name: str) -> None:
+        await self.conn.execute("DELETE FROM settings WHERE name=?", (name,))
+        await self.conn.commit()
+
+    async def settings_updated_at(self) -> dict[str, float]:
+        async with self.conn.execute("SELECT name, updated_at FROM settings") as cur:
+            return {r["name"]: r["updated_at"] for r in await cur.fetchall()}
 
     # ---------------------------------------------------------------- Events
 

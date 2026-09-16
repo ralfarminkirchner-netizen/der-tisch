@@ -14,7 +14,8 @@ const VERBOTEN = [
   { name: 'OpenAI-Schlüssel', re: /\bsk-[A-Za-z0-9_-]{16,}/ },
   { name: 'Anthropic-Schlüssel', re: /\bsk-ant-[A-Za-z0-9_-]{16,}/ },
   { name: 'Test-Secret', re: /(test|fake|dummy)[-_]?(secret|key|token|api[-_]?key)\s*[:=]\s*['"][^'"]{6,}/i },
-  { name: 'Zugangsdaten-Variable', re: /\b(OPENAI_API_KEY|ANTHROPIC_API_KEY)\b/ },
+  // Der bloße Name darf im Hilfetext vorkommen; verboten ist ein zugewiesener Wert.
+  { name: 'Zugewiesene Zugangsdaten', re: /\b(OPENAI_API_KEY|ANTHROPIC_API_KEY|XT_ADMIN_TOKEN)\b\s*[:=]\s*['"`][^'"`]{6,}/ },
   { name: 'Bearer-Token', re: /Bearer\s+[A-Za-z0-9._-]{20,}/ },
 ];
 

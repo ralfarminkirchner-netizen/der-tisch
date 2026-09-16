@@ -3,6 +3,7 @@ import './styles.css';
 import { ApiError, api, connectEvents, newRequestId } from './api';
 import { renderGraph, type GraphSelection } from './graph';
 import { createCard, el, legend, renderQuestion, renderTable, updateCard } from './render';
+import { renderSettings } from './settings';
 import type {
   AppConfig,
   HealthInfo,
@@ -21,6 +22,7 @@ interface AppState {
   bundle: SessionBundle | null;
   selectedModels: Set<string>;
   streamOpen: boolean;
+  settingsOpen: boolean;
   /** Kennung des laufenden Absendevorgangs — bleibt bei Wiederholung gleich. */
   pendingRequestId: string | null;
 }
@@ -31,11 +33,14 @@ const state: AppState = {
   bundle: null,
   selectedModels: new Set(),
   streamOpen: false,
+  settingsOpen: false,
   pendingRequestId: null,
 };
 
 let disconnect: (() => void) | null = null;
 const blocks = new Map<string, HTMLElement>();
+/** Das Einstellungsfeld überlebt Neuzeichnungen — sonst wären Eingaben weg. */
+let settingsPanel: HTMLElement | null = null;
 
 const root = document.getElementById('app')!;
 
@@ -107,6 +112,21 @@ function renderShell(): void {
   root.replaceChildren();
 
   root.append(header());
+
+  if (state.settingsOpen) {
+    if (!settingsPanel) {
+      settingsPanel = renderSettings(Boolean(state.config?.settings_available), () => {
+        state.settingsOpen = false;
+        settingsPanel = null;
+        renderShell();
+        void refreshHealth();
+      });
+    }
+    root.append(settingsPanel);
+  } else {
+    settingsPanel = null;
+  }
+
   if (state.config?.fake_providers_enabled) {
     root.append(
       el('div', { class: 'glass testbanner' }, [
@@ -135,6 +155,17 @@ function renderShell(): void {
   );
 }
 
+async function refreshHealth(): Promise<void> {
+  try {
+    const [health, config] = await Promise.all([api.health(), api.config()]);
+    state.health = health;
+    state.config = config;
+    renderShell();
+  } catch {
+    /* Der bisherige Zustand bleibt stehen. */
+  }
+}
+
 function header(): HTMLElement {
   const bundle = state.bundle!;
   const title = el('h1', {}, []);
@@ -143,12 +174,27 @@ function header(): HTMLElement {
   const status = el('div', { class: 'statusline', id: 'statusline' });
   updateStatusline(status);
 
+  const zahnrad = el('button', {
+    type: 'button',
+    class: 'iconbutton',
+    id: 'settings-open',
+    'aria-label': 'Einstellungen öffnen',
+    title: 'Einstellungen — Zugangsdaten und Modelle',
+  }, ['⚙︎']);
+  zahnrad.addEventListener('click', () => {
+    state.settingsOpen = !state.settingsOpen;
+    renderShell();
+    if (state.settingsOpen) {
+      document.getElementById('einstellungen')?.scrollIntoView({ block: 'nearest' });
+    }
+  });
+
   return el('header', { class: 'top' }, [
     el('div', { class: 'headline' }, [
       title,
       el('p', { class: 'sub' }, [bundle.session.title]),
     ]),
-    status,
+    el('div', { class: 'row' }, [status, zahnrad]),
   ]);
 }
 
@@ -173,13 +219,23 @@ function providerWarnings(): HTMLElement {
   if (!health) return container;
   const broken = Object.entries(health.providers).filter(([, info]) => !info.ready);
   if (broken.length === 0) return container;
-  container.append(
-    el('div', { class: 'glass testbanner' }, [
+  const banner = el('div', { class: 'glass testbanner' }, [
+    el('p', { class: 'hint' }, [
       `Nicht einsatzbereit: ${broken
         .map(([name, info]) => `${name} (${info.reason})`)
         .join(', ')}. Die übrigen Modelle antworten trotzdem.`,
     ]),
-  );
+  ]);
+  if (!state.settingsOpen) {
+    const hin = el('button', { type: 'button' }, ['Zu den Einstellungen']);
+    hin.addEventListener('click', () => {
+      state.settingsOpen = true;
+      renderShell();
+      document.getElementById('einstellungen')?.scrollIntoView({ block: 'nearest' });
+    });
+    banner.append(hin);
+  }
+  container.append(banner);
   return container;
 }
 

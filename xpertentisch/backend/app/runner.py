@@ -108,7 +108,7 @@ class Runner:
 
             provider = self.registry.get(model.provider)
             response = await provider.complete(
-                prompt=prompt, model=model.model, timeout_s=self.settings.request_timeout_s
+                prompt=prompt, model=model.model, timeout_s=self.settings.resolved_timeout_s
             )
             latency = int((time.monotonic() - started) * 1000)
             await self.store.finish_job(

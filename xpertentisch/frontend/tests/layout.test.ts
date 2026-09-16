@@ -82,3 +82,10 @@ describe('Vergleichstabelle', () => {
     expect(panel.textContent).toContain('keine Rangfolge');
   });
 });
+
+describe('Verstecken von Bausteinen', () => {
+  it('überstimmt die Anzeigeart, damit [hidden] wirklich versteckt', () => {
+    // Ohne diese Regel bleibt ein .row mit display:flex trotz hidden sichtbar.
+    expect(css).toMatch(/\[hidden\]\s*\{[^}]*display:\s*none\s*!important/);
+  });
+});

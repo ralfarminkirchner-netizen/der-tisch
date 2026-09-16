@@ -48,17 +48,23 @@ class ProviderRegistry:
                 )
             return FakeProvider()
         if name == "openai":
-            if not s.openai_api_key:
-                raise ProviderError("OPENAI_API_KEY fehlt.")
+            if not s.resolved_openai_key:
+                raise ProviderError(
+                    "Kein OpenAI-Schlüssel hinterlegt — in den Einstellungen eintragen "
+                    "oder OPENAI_API_KEY setzen."
+                )
             from .openai_provider import OpenAIProvider
 
-            return OpenAIProvider(s.openai_api_key, s.openai_base_url)
+            return OpenAIProvider(s.resolved_openai_key, s.openai_base_url)
         if name == "anthropic":
-            if not s.anthropic_api_key:
-                raise ProviderError("ANTHROPIC_API_KEY fehlt.")
+            if not s.resolved_anthropic_key:
+                raise ProviderError(
+                    "Kein Anthropic-Schlüssel hinterlegt — in den Einstellungen eintragen "
+                    "oder ANTHROPIC_API_KEY setzen."
+                )
             from .anthropic_provider import AnthropicProvider
 
-            return AnthropicProvider(s.anthropic_api_key)
+            return AnthropicProvider(s.resolved_anthropic_key)
         raise ProviderError(f"Unbekannter Provider: {name}")
 
     def availability(self) -> dict[str, dict[str, object]]:
@@ -73,6 +79,15 @@ class ProviderRegistry:
             except ProviderError as exc:
                 result[model.provider] = {"ready": False, "reason": str(exc)}
         return result
+
+    def invalidate(self) -> None:
+        """Verwirft zwischengespeicherte Provider.
+
+        Nach einer Änderung auf der Einstellungsseite muss der nächste Auftrag
+        mit den neuen Zugangsdaten gebaut werden.
+        """
+        self._instances.clear()
+        self._errors.clear()
 
     async def aclose(self) -> None:
         for provider in self._instances.values():
