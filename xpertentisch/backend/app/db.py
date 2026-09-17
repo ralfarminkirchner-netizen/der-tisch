@@ -99,6 +99,23 @@ CREATE TABLE IF NOT EXISTS assessments (
     created_at REAL NOT NULL
 );
 
+-- Versionierte Auswertungsläufe: neue Läufe überschreiben keine alten.
+-- assessments zeigt den jeweils aktuellen Lauf; analysis_runs hält die Historie.
+CREATE TABLE IF NOT EXISTS analysis_runs (
+    id              TEXT PRIMARY KEY,
+    spark_id        TEXT NOT NULL REFERENCES sparks(id) ON DELETE CASCADE,
+    session_id      TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    method_version  TEXT NOT NULL,
+    config_json     TEXT NOT NULL DEFAULT '{}',
+    job_versions    TEXT NOT NULL DEFAULT '[]',
+    payload         TEXT NOT NULL,
+    markers_json    TEXT NOT NULL DEFAULT '[]',
+    created_at      REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_analysis_runs_spark
+    ON analysis_runs(spark_id, created_at);
+
 CREATE TABLE IF NOT EXISTS events (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id TEXT NOT NULL,
@@ -244,6 +261,32 @@ class Store:
             await self._conn.execute(  # type: ignore[union-attr]
                 "ALTER TABLE markers ADD COLUMN topics TEXT NOT NULL DEFAULT '[]'"
             )
+        if "analysis_run_id" not in marker_spalten:
+            await self._conn.execute(  # type: ignore[union-attr]
+                "ALTER TABLE markers ADD COLUMN analysis_run_id TEXT"
+            )
+        if "claim_level" not in marker_spalten:
+            await self._conn.execute(  # type: ignore[union-attr]
+                "ALTER TABLE markers ADD COLUMN claim_level TEXT NOT NULL DEFAULT 'hinweis'"
+            )
+
+        # Ältere DBs ohne analysis_runs: SCHEMA legt die Tabelle bei connect an;
+        # CREATE IF NOT EXISTS reicht. Zusätzlich: request_fingerprints für Eingaben.
+        await self._conn.execute(  # type: ignore[union-attr]
+            """
+            CREATE TABLE IF NOT EXISTS request_fingerprints (
+                job_id              TEXT PRIMARY KEY REFERENCES jobs(id) ON DELETE CASCADE,
+                session_id          TEXT NOT NULL,
+                shared_briefing_fp  TEXT NOT NULL,
+                provider_request_fp TEXT NOT NULL,
+                system_prompt       TEXT NOT NULL DEFAULT '',
+                shared_briefing     TEXT NOT NULL DEFAULT '',
+                provider_content    TEXT NOT NULL DEFAULT '',
+                settings_json       TEXT NOT NULL DEFAULT '{}',
+                created_at          REAL NOT NULL
+            )
+            """
+        )
 
         async with self._conn.execute("PRAGMA table_info(jobs)") as cur:  # type: ignore[union-attr]
             job_spalten = {r["name"] for r in await cur.fetchall()}
@@ -510,14 +553,25 @@ class Store:
     async def replace_markers(
         self, spark_id: str, session_id: str, markers: list[dict[str, Any]]
     ) -> None:
+        """Aktuelle Ansichtsmarker ersetzen — Historie liegt in analysis_runs."""
         await self.conn.execute("DELETE FROM markers WHERE spark_id=?", (spark_id,))
         if markers:
             await self.conn.executemany(
                 "INSERT INTO markers (id, session_id, spark_id, job_id, related_job_id,"
-                " kind, start_offset, end_offset, quote, note, topics, created_at) "
+                " kind, start_offset, end_offset, quote, note, topics, analysis_run_id,"
+                " claim_level, created_at) "
                 "VALUES (:id, :session_id, :spark_id, :job_id, :related_job_id, :kind,"
-                " :start_offset, :end_offset, :quote, :note, :topics, :created_at)",
-                [{**m, "topics": json.dumps(m.get("topics") or [])} for m in markers],
+                " :start_offset, :end_offset, :quote, :note, :topics, :analysis_run_id,"
+                " :claim_level, :created_at)",
+                [
+                    {
+                        **m,
+                        "topics": json.dumps(m.get("topics") or []),
+                        "analysis_run_id": m.get("analysis_run_id"),
+                        "claim_level": m.get("claim_level") or "hinweis",
+                    }
+                    for m in markers
+                ],
             )
         await self.conn.commit()
 
@@ -538,6 +592,7 @@ class Store:
     async def save_assessment(
         self, spark_id: str, session_id: str, payload: dict[str, Any]
     ) -> None:
+        """Aktuelle Ansicht — Historie zusätzlich über :meth:`save_analysis_run`."""
         await self.conn.execute(
             "INSERT INTO assessments (spark_id, session_id, payload, created_at) "
             "VALUES (?,?,?,?) ON CONFLICT(spark_id) DO UPDATE SET payload=excluded.payload,"
@@ -546,12 +601,124 @@ class Store:
         )
         await self.conn.commit()
 
+    async def save_analysis_run(
+        self,
+        *,
+        run_id: str,
+        spark_id: str,
+        session_id: str,
+        method_version: str,
+        payload: dict[str, Any],
+        markers: list[dict[str, Any]],
+        config: dict[str, Any] | None = None,
+        job_versions: list[dict[str, Any]] | None = None,
+    ) -> None:
+        """Hängt einen Auswertungslauf an — überschreibt keine älteren Läufe."""
+        await self.conn.execute(
+            "INSERT INTO analysis_runs (id, spark_id, session_id, method_version,"
+            " config_json, job_versions, payload, markers_json, created_at) "
+            "VALUES (?,?,?,?,?,?,?,?,?)",
+            (
+                run_id,
+                spark_id,
+                session_id,
+                method_version,
+                json.dumps(config or {}, ensure_ascii=False),
+                json.dumps(job_versions or payload.get("job_versions") or [], ensure_ascii=False),
+                json.dumps(payload, ensure_ascii=False),
+                json.dumps(markers, ensure_ascii=False),
+                now(),
+            ),
+        )
+        await self.conn.commit()
+
+    async def list_analysis_runs(self, spark_id: str) -> list[dict[str, Any]]:
+        async with self.conn.execute(
+            "SELECT id, spark_id, session_id, method_version, config_json, job_versions,"
+            " payload, created_at FROM analysis_runs WHERE spark_id=? ORDER BY created_at",
+            (spark_id,),
+        ) as cur:
+            rows = await cur.fetchall()
+        out: list[dict[str, Any]] = []
+        for r in rows:
+            out.append(
+                {
+                    "id": r["id"],
+                    "spark_id": r["spark_id"],
+                    "session_id": r["session_id"],
+                    "method_version": r["method_version"],
+                    "config": json.loads(r["config_json"] or "{}"),
+                    "job_versions": json.loads(r["job_versions"] or "[]"),
+                    "payload": json.loads(r["payload"]),
+                    "created_at": r["created_at"],
+                }
+            )
+        return out
+
     async def list_assessments(self, session_id: str) -> dict[str, Any]:
         async with self.conn.execute(
             "SELECT spark_id, payload FROM assessments WHERE session_id=?", (session_id,)
         ) as cur:
             rows = await cur.fetchall()
         return {r["spark_id"]: json.loads(r["payload"]) for r in rows}
+
+    async def save_request_fingerprint(
+        self,
+        *,
+        job_id: str,
+        session_id: str,
+        shared_briefing_fp: str,
+        provider_request_fp: str,
+        system_prompt: str = "",
+        shared_briefing: str = "",
+        provider_content: str = "",
+        settings: dict[str, Any] | None = None,
+    ) -> None:
+        """Speichert nachweisbare Eingaben ohne Zugangsdaten."""
+        await self.conn.execute(
+            "INSERT INTO request_fingerprints (job_id, session_id, shared_briefing_fp,"
+            " provider_request_fp, system_prompt, shared_briefing, provider_content,"
+            " settings_json, created_at) VALUES (?,?,?,?,?,?,?,?,?) "
+            "ON CONFLICT(job_id) DO UPDATE SET "
+            "shared_briefing_fp=excluded.shared_briefing_fp,"
+            "provider_request_fp=excluded.provider_request_fp,"
+            "system_prompt=excluded.system_prompt,"
+            "shared_briefing=excluded.shared_briefing,"
+            "provider_content=excluded.provider_content,"
+            "settings_json=excluded.settings_json,"
+            "created_at=excluded.created_at",
+            (
+                job_id,
+                session_id,
+                shared_briefing_fp,
+                provider_request_fp,
+                system_prompt,
+                shared_briefing,
+                provider_content,
+                json.dumps(settings or {}, ensure_ascii=False),
+                now(),
+            ),
+        )
+        await self.conn.commit()
+
+    async def get_request_fingerprint(self, job_id: str) -> dict[str, Any] | None:
+        async with self.conn.execute(
+            "SELECT * FROM request_fingerprints WHERE job_id=?", (job_id,)
+        ) as cur:
+            row = await cur.fetchone()
+        if row is None:
+            return None
+        return {
+            "job_id": row["job_id"],
+            "session_id": row["session_id"],
+            "shared_briefing_fp": row["shared_briefing_fp"],
+            "provider_request_fp": row["provider_request_fp"],
+            "system_prompt": row["system_prompt"],
+            "shared_briefing": row["shared_briefing"],
+            "provider_content": row["provider_content"],
+            "settings": json.loads(row["settings_json"] or "{}"),
+            "created_at": row["created_at"],
+        }
 
     # ------------------------------------------------------------ Einstellungen
 

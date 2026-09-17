@@ -95,15 +95,24 @@ def test_folgen_zaehlen_stimmen_und_erfinden_nichts():
     karte = folgen(jobs)
     assert karte["folgen"], "drei auswertbare Antworten müssen Folgen ergeben"
     for eintrag in karte["folgen"]:
-        # Jede Folge steht wörtlich in einer Antwort — nichts wird umformuliert.
-        assert any(eintrag["text"] in j["text"] for j in jobs), eintrag["text"]
+        # Schutz: jede *Nennung* steht wörtlich in einer Antwort.
+        # Themencluster dürfen eine ehrliche Cluster-Beschriftung tragen
+        # (nicht still „alle sagen A“), solange die Einzelaussagen belegt sind.
+        for nennung in eintrag["nennungen"]:
+            assert any(nennung["quote"] in j["text"] for j in jobs), nennung["quote"]
+        if eintrag.get("art") != "themencluster":
+            assert any(eintrag["text"] in j["text"] for j in jobs), eintrag["text"]
+        else:
+            assert "Clusterbeteiligung" in eintrag["text"]
         assert eintrag["von"] == 3
         assert 1 <= eintrag["anzahl"] <= 3
         assert eintrag["anzahl"] == len({n["job_id"] for n in eintrag["nennungen"]})
 
     geteilt = [e for e in karte["folgen"] if e["anzahl"] >= 2]
-    assert geteilt, "die gleichlautende Folge zweier Stimmen muss zusammenfallen"
+    assert geteilt, "die thematisch verbundenen Folgen zweier Stimmen müssen zusammenfallen"
     assert {n["label"] for n in geteilt[0]["nennungen"]} == {"Alto", "Basso"}
+    # Fachliche Änderung: bei abweichender Formulierung Clusterbeteiligung,
+    # nicht „alle sagen den Ersttext“.
 
 
 def test_folgen_belegen_sich_selbst_im_originaltext():
@@ -291,12 +300,19 @@ async def test_szenario_kommt_als_konsequenzkarte_in_der_sitzung_an(client, sess
     assert geteilt, "zwei Stimmen nennen dieselbe Folge"
     assert geteilt[0]["von"] == 2
 
-    # Der Bericht kennt die Konsequenzkarte und beschriftet sie als Häufigkeit.
+    # Der Bericht kennt die Konsequenzkarte und beschriftet sie als Häufigkeit
+    # (gemeinsame Nennung oder Clusterbeteiligung — keine Zustimmung).
     html = (await client.get(f"/api/sessions/{session_id}/report.html")).text
-    assert "von 2 von 2 Stimmen genannt" in html
+    assert (
+        "von 2 von 2 Stimmen genannt" in html
+        or "Clusterbeteiligung: 2 von 2 Stimmen" in html
+    )
     assert "keine Wahrscheinlichkeit" in html
     markdown = (await client.get(f"/api/sessions/{session_id}/report.md")).text
-    assert "von 2 von 2 Stimmen genannt" in markdown
+    assert (
+        "von 2 von 2 Stimmen genannt" in markdown
+        or "Clusterbeteiligung: 2 von 2 Stimmen" in markdown
+    )
 
 
 @pytest.mark.asyncio

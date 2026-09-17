@@ -30,23 +30,25 @@ export const LINSEN: { id: LinsenArt; name: string; erklaerung: string }[] = [
     id: 'stimmen',
     name: 'Stimmen',
     erklaerung:
-      'Wer trifft sich mit wem, und wo widersprechen sie einander? Jede Kante ' +
-      'steht für ausgewiesene Fundstellen in beiden Antworten.',
+      'Wo zeigt das Verfahren Themenbezug oder Gegensatzhinweise zwischen Stimmen? ' +
+      'Jede Kante steht für Fundstellen — Begriffsüberschneidung ist kein Beleg für ' +
+      'inhaltliche Übereinstimmung.',
   },
   {
     id: 'themen',
     name: 'Themen',
     erklaerung:
-      'Woran hängen die Befunde? Links die Stimmen, rechts die Begriffe, an ' +
-      'denen sie sich treffen, streiten oder alleine stehen.',
+      'Woran hängen die Hinweis-Fundstellen? Links die Stimmen, rechts die Begriffe. ' +
+      'Grün = Themenbezug (Hinweis), Orange = Gegensatzhinweis, Violett = kein Treffer ' +
+      'in diesem Verfahren — keine bestätigte Einigkeit oder Einzigartigkeit.',
   },
   {
     id: 'szenario',
     name: 'Folgen',
     erklaerung:
-      'Was folgt daraus, laut den Stimmen? Links die Ausgangsaussage, rechts die ' +
-      'genannten Folgen. Die Zahl sagt, wie viele Stimmen eine Folge genannt haben — ' +
-      'das ist eine Häufigkeit, keine Wahrscheinlichkeit.',
+      'Was folgt daraus, laut den Stimmen? Links die Ausgangsaussage, rechts genannte ' +
+      'Folgen oder Themencluster. Die Zahl ist Clusterbeteiligung bzw. gemeinsame ' +
+      'Nennung — eine Häufigkeit, keine Zustimmung und keine Wahrscheinlichkeit.',
   },
   {
     id: 'herkunft',
@@ -211,8 +213,8 @@ export function renderThemen(
     const titel = document.createElementNS(SVG_NS, 'title');
     titel.textContent = ohne
       ? `${stimme.label}: berührt keinen der gezeigten Begriffe.`
-      : `${stimme.label}: ${stimme.agreements} Übereinstimmungen, ` +
-        `${stimme.contradictions} Widersprüche, ${stimme.unique} einzigartig`;
+      : `${stimme.label}: ${stimme.agreements} Themenbezüge (Hinweis), ` +
+        `${stimme.contradictions} Gegensatzhinweise, ${stimme.unique} ohne Treffer hier`;
     gruppe.appendChild(titel);
 
     bedienbar(gruppe, () => onSelect({ jobIds: [stimme.job_id], label: stimme.label }));
@@ -227,8 +229,8 @@ export function renderThemen(
     gruppe.setAttribute('tabindex', '0');
     gruppe.setAttribute('role', 'button');
     const wie = thema.gegen.size > 0
-      ? 'umstritten'
-      : thema.einig.size > 0 ? 'geteilt' : 'einzeln genannt';
+      ? 'Gegensatzhinweis'
+      : thema.einig.size > 0 ? 'Themenbezug (Hinweis)' : 'kein Treffer bei anderen';
     gruppe.setAttribute(
       'aria-label',
       `Begriff „${thema.begriff}", ${wie}, ${beteiligt.size} Stimmen — Antworten öffnen`,
@@ -253,8 +255,8 @@ export function renderThemen(
 
     const titel = document.createElementNS(SVG_NS, 'title');
     titel.textContent =
-      `„${thema.begriff}" — ${thema.einig.size} einig, ${thema.gegen.size} im Widerspruch, ` +
-      `${thema.einzeln.size} allein`;
+      `„${thema.begriff}" — ${thema.einig.size} Themenbezug (Hinweis), ` +
+      `${thema.gegen.size} Gegensatzhinweis, ${thema.einzeln.size} ohne Treffer hier`;
     gruppe.appendChild(titel);
 
     bedienbar(gruppe, () =>
@@ -624,7 +626,10 @@ export function renderSzenario(
       punkt.setAttribute('class', `stimmpunkt ${k < folge.anzahl ? `voll ${art}` : 'leer'}`);
       gruppe.appendChild(punkt);
     }
-    const haeufigkeit = `von ${folge.anzahl} von ${folge.von} Stimmen genannt`;
+    const cluster = folge.art === 'themencluster' || folge.zaehlung === 'clusterbeteiligung';
+    const haeufigkeit = cluster
+      ? `Clusterbeteiligung: ${folge.anzahl} von ${folge.von} Stimmen`
+      : `von ${folge.anzahl} von ${folge.von} Stimmen genannt`;
     gruppe.appendChild(
       text(xFolge + 16 + folge.von * 9, y + 14.5, haeufigkeit, 'haeufigkeit', 'start'),
     );
@@ -639,19 +644,22 @@ export function renderSzenario(
     const gegen = folge.gegensatz.length > 0
       ? ' — steht einer anderen genannten Folge entgegen'
       : '';
+    const einzeln = cluster
+      ? `\nEinzelaussagen:\n${folge.nennungen.map((n) => `• ${n.label}: ${n.quote}`).join('\n')}`
+      : '';
     const titel = document.createElementNS(SVG_NS, 'title');
-    titel.textContent = `${haeufigkeit} (${namen.join(', ')})${gegen}\n${folge.text}`;
+    titel.textContent = `${haeufigkeit} (${namen.join(', ')})${gegen}\n${folge.text}${einzeln}`;
     gruppe.appendChild(titel);
     gruppe.setAttribute(
       'aria-label',
-      `Folge, ${haeufigkeit}${gegen}: ${folge.text} — Antworten öffnen`,
+      `${cluster ? 'Themencluster' : 'Folge'}, ${haeufigkeit}${gegen}: ${folge.text} — Antworten öffnen`,
     );
 
     bedienbar(gruppe, () =>
       onSelect(
         {
           jobIds: [...new Set(folge.nennungen.map((n) => n.job_id))],
-          label: `Folge, ${haeufigkeit}`,
+          label: cluster ? `Themencluster, ${haeufigkeit}` : `Folge, ${haeufigkeit}`,
         },
         folge,
       ),
@@ -692,7 +700,8 @@ const BEZUGS_TEXT: Record<string, string> = {
   antwortet_auf: 'antwortet auf',
   abgeleitet_aus: 'abgeleitet aus',
   widerspricht: 'widerspricht',
-  uebereinstimmung: 'stimmt überein mit',
+  // Maschinenvorschlag = Themenbezug-Hinweis; bestätigt erst nach menschlicher Übernahme.
+  uebereinstimmung: 'Themenbezug zu',
   vertieft: 'vertieft',
 };
 

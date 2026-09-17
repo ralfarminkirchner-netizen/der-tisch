@@ -265,6 +265,12 @@ export interface Summary {
   counts: Record<MarkerKind, number>;
   analysed_jobs: string[];
   method: string;
+  /** Laufkennung der aktuellen Auswertung — verhindert unbemerkte Mischung. */
+  analysis_run_id?: string;
+  method_version?: string;
+  claim_level?: string;
+  epistemik?: string;
+  zahlen?: unknown;
 }
 
 export interface SparkEntry {
@@ -274,11 +280,18 @@ export interface SparkEntry {
   summary: Summary | null;
 }
 
-/** Eine einzelne genannte Folge in einer Szenario-Runde. */
+/** Eine einzelne genannte Folge bzw. ein Themencluster in einer Szenario-Runde. */
 export interface Folge {
   id: string;
-  /** Der Wortlaut der ersten Nennung — unverändert aus der Antwort. */
+  /**
+   * Bei `gleiche_aussage`: Wortlaut der Nennung.
+   * Bei `themencluster`: Beschriftung des Clusters — keine Behauptung „alle sagen A“.
+   */
   text: string;
+  /** Gleiche Aussage vs. Themencluster mit einzelnen Aussagen. */
+  art?: 'gleiche_aussage' | 'themencluster';
+  /** Was `anzahl` zählt: gemeinsame Nennung oder Clusterbeteiligung. */
+  zaehlung?: 'gemeinsame_nenung' | 'clusterbeteiligung';
   themen: string[];
   nennungen: {
     job_id: string;
@@ -287,7 +300,7 @@ export interface Folge {
     start_offset: number;
     end_offset: number;
   }[];
-  /** Wie viele Stimmen diese Folge genannt haben. Eine Häufigkeit. */
+  /** Stimmen in diesem Cluster / bei dieser Nennung. Eine Häufigkeit, keine Zustimmung. */
   anzahl: number;
   /** Wie viele Stimmen überhaupt auswertbar geantwortet haben. */
   von: number;

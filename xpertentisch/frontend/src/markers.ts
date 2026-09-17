@@ -7,10 +7,11 @@ const PRIORITY: Record<MarkerKind, number> = {
   einzigartig: 1,
 };
 
+/** Anzeigenamen: Hinweis-Verfahren, keine Einigkeits-/Einzigartigkeitsbehauptung. */
 export const KIND_LABEL: Record<MarkerKind, string> = {
-  widerspruch: 'Widerspruch',
-  uebereinstimmung: 'Übereinstimmung',
-  einzigartig: 'Einzigartig',
+  widerspruch: 'Gegensatzhinweis (Verfahren)',
+  uebereinstimmung: 'Themenbezug (Hinweis)',
+  einzigartig: 'Kein Treffer in diesem Verfahren',
 };
 
 export function escapeHtml(value: string): string {

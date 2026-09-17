@@ -5,8 +5,20 @@ deterministisch, reproduzierbar und kostenlos wiederholbar. Sie verändert
 die Originalantworten nicht: Marker verweisen nur über Zeichenpositionen
 auf den unveränderten Text.
 
-Leitregel für Widersprüche: Unterschiedlichkeit allein ist kein Widerspruch.
-Ein Widerspruch wird nur dann markiert, wenn zwei Aussagen dasselbe Thema
+Epistemische Leitregeln (Schutz vor Fehlschlüssen):
+
+- Begriffsüberschneidung ist ein **Hinweis** auf möglichen Text- oder
+  Themenbezug. Sie ist kein hinreichender Beleg für inhaltliche Übereinstimmung.
+- Kein erkannter Gegensatz bedeutet: mit diesem Verfahren kein Gegensatz
+  erkannt — nicht: Übereinstimmung bewiesen.
+- Keine passende Fundstelle bedeutet: im ausgewerteten Bestand mit diesem
+  Verfahren keine passende Fundstelle gefunden — nicht: die Aussage ist
+  tatsächlich einzigartig.
+- A ähnlich B und B ähnlich C ergibt einen Themencluster mit einzelnen
+  Aussagen (Clusterbeteiligung), nicht still „alle sagen A“.
+
+Leitregel für Widerspruchshinweise: Unterschiedlichkeit allein ist keiner.
+Ein Gegensatzhinweis entsteht nur, wenn zwei Aussagen dasselbe Thema
 betreffen (hohe Begriffsüberschneidung) UND entgegengesetzte Polarität
 haben (Verneinung oder bekanntes Gegensatzpaar).
 
@@ -14,6 +26,10 @@ Verglichen wird über Wortstämme (siehe :mod:`app.stemmer`), damit „Sicherung
 und „Sicherungen" ein Begriff sind und nicht zwei halb so schwere. Der Stamm
 ist nur der Schlüssel; angezeigt und zitiert wird immer die Form, die
 tatsächlich im Text steht.
+
+Die Marker-``kind``-Schlüssel ``uebereinstimmung`` / ``widerspruch`` /
+``einzigartig`` bleiben aus Kompatibilität zu Farbe und Speicherung; ihre
+Bedeutung in Hinweis-Läufen ist die der Labels in :data:`KIND_LABELS`.
 """
 
 from __future__ import annotations
@@ -25,16 +41,28 @@ from typing import Any, Iterable
 from .db import JOB_DONE, new_id, now
 from .stemmer import stamm
 
+#: Verfahrensversion — jeder gespeicherte Lauf trägt sie mit.
+METHOD_VERSION = "auswertung-hinweis-v1"
+
 KIND_AGREEMENT = "uebereinstimmung"
 KIND_CONTRADICTION = "widerspruch"
 KIND_UNIQUE = "einzigartig"
+
+#: Anzeigenamen — bewusst keine Einigkeits- oder Einzigartigkeitsbehauptung.
+KIND_LABELS = {
+    KIND_AGREEMENT: "Themenbezug (Hinweis)",
+    KIND_CONTRADICTION: "Gegensatzhinweis (Verfahren)",
+    KIND_UNIQUE: "Kein Treffer in diesem Verfahren",
+}
 
 #: Ab dieser Begriffsüberschneidung gelten zwei Sätze als themengleich.
 TOPIC_THRESHOLD = 0.34
 #: Mindestzahl gemeinsamer Inhaltswörter für einen Themenbezug.
 MIN_SHARED_TERMS = 2
-#: Unterhalb dieser Ähnlichkeit zu allen anderen Antworten gilt ein Satz als einzigartig.
+#: Unterhalb dieser Ähnlichkeit zu allen anderen Antworten: kein Treffer hier.
 UNIQUE_THRESHOLD = 0.10
+#: Ab dieser Satzähnlichkeit gelten zwei Nennungen als dieselbe Aussage.
+SAME_STATEMENT_THRESHOLD = 0.82
 MIN_TERMS_PER_SENTENCE = 3
 #: Obergrenze je Art und Antwortpaar, damit die Oberfläche lesbar bleibt.
 MAX_MARKERS_PER_PAIR = 6
@@ -197,11 +225,14 @@ def _antonym_conflict(a: Sentence, b: Sentence) -> str | None:
 
 
 def gleiches_thema(a: Sentence, b: Sentence) -> tuple[bool, float, frozenset[str]]:
-    """Betreffen zwei Sätze dasselbe Thema?
+    """Hinweis auf möglichen Text-/Themenbezug — keine inhaltliche Einigkeit.
 
     Die eine Stelle, an der diese Frage beantwortet wird. Alles, was Aussagen
     zusammenlegt — Marker, Themen-Linse, Folgen im Szenario —, ruft sie auf; es
     gibt dafür bewusst keine zweite Heuristik.
+
+    Ein Treffer bedeutet nur: die Begriffsüberschneidung liegt über dem
+    Schwellenwert. Er beweist keine inhaltliche Übereinstimmung.
     """
     score = similarity(a.terms, b.terms)
     shared = a.terms & b.terms
@@ -209,10 +240,11 @@ def gleiches_thema(a: Sentence, b: Sentence) -> tuple[bool, float, frozenset[str
 
 
 def polaritaet_verschieden(a: Sentence, b: Sentence) -> str | None:
-    """Entgegengesetzte Polarität? Gibt den Grund zurück, sonst None.
+    """Entgegengesetzte Polarität mit diesem Verfahren? Sonst None.
 
-    Erst zusammen mit :func:`gleiches_thema` ergibt das einen Widerspruch —
-    Unterschiedlichkeit allein ist keiner.
+    Erst zusammen mit :func:`gleiches_thema` ergibt das einen Gegensatzhinweis.
+    Unterschiedlichkeit allein ist keiner. ``None`` bedeutet: kein Gegensatz
+    erkannt — nicht: Übereinstimmung bewiesen.
     """
     antonym = _antonym_conflict(a, b)
     if antonym is not None:
@@ -220,6 +252,15 @@ def polaritaet_verschieden(a: Sentence, b: Sentence) -> str | None:
     if a.negated != b.negated:
         return "gegensätzliche Verneinung"
     return None
+
+
+def gleiche_aussage(a: Sentence, b: Sentence) -> bool:
+    """Sehr ähnliche Formulierung derselben Aussage — strenger als Themenbezug."""
+    if not gleiches_thema(a, b)[0]:
+        return False
+    if polaritaet_verschieden(a, b) is not None:
+        return False
+    return similarity(a.terms, b.terms) >= SAME_STATEMENT_THRESHOLD
 
 
 def _marker(
@@ -231,6 +272,7 @@ def _marker(
     related_job_id: str | None,
     note: str,
     topics: list[str] | None = None,
+    analysis_run_id: str | None = None,
 ) -> dict[str, Any]:
     return {
         "id": new_id("mrk"),
@@ -245,16 +287,34 @@ def _marker(
         "note": note,
         # Woran diese Fundstelle hängt — Grundlage der Themen-Linse.
         "topics": list(topics or []),
+        "claim_level": "hinweis",
+        "analysis_run_id": analysis_run_id,
         "created_at": now(),
     }
 
 
 def analyse(
-    session_id: str, spark_id: str, jobs: Iterable[dict[str, Any]]
+    session_id: str,
+    spark_id: str,
+    jobs: Iterable[dict[str, Any]],
+    *,
+    analysis_run_id: str | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Berechnet Marker und Zusammenfassung für einen Funken."""
+    """Berechnet Hinweis-Marker und Zusammenfassung für einen Funken."""
+    run_id = analysis_run_id or new_id("arn")
     job_list = list(jobs)
     usable = [j for j in job_list if j["status"] == JOB_DONE and (j.get("text") or "").strip()]
+    job_versions = [
+        {
+            "job_id": j["id"],
+            "status": j["status"],
+            "text_len": len(j.get("text") or ""),
+            "finished_at": j.get("finished_at"),
+            "model_id": j.get("model_id"),
+            "provider": j.get("provider"),
+        }
+        for j in usable
+    ]
 
     by_job: dict[str, list[Sentence]] = {
         j["id"]: split_sentences(j["id"], j["text"]) for j in usable
@@ -282,7 +342,7 @@ def analyse(
                 score, sb = best
                 topical, score, shared = gleiches_thema(sa, sb)
                 if not topical:
-                    # Unterschiedliche Themen sind kein Widerspruch.
+                    # Unterschiedliche Themen sind kein Gegensatzhinweis.
                     continue
 
                 grund = polaritaet_verschieden(sa, sb)
@@ -297,21 +357,32 @@ def analyse(
                 # da, wie eine der beiden Stimmen es geschrieben hat.
                 begriffe = [anzeigeform(k, sa, sb) for k in sorted(shared)[:4]]
                 topic = ", ".join(begriffe)
-                note_base = f"Themenbezug: {topic} (Überschneidung {score:.0%})"
-                note = f"{note_base}; {grund}" if grund else note_base
+                if grund:
+                    note = (
+                        f"{KIND_LABELS[KIND_CONTRADICTION]}: {topic} "
+                        f"(Überschneidung {score:.0%}); {grund}. "
+                        "Kein hinreichender Beleg für inhaltliche Einigkeit oder Wahrheit."
+                    )
+                else:
+                    note = (
+                        f"{KIND_LABELS[KIND_AGREEMENT]}: {topic} "
+                        f"(Überschneidung {score:.0%}). "
+                        "Begriffsüberschneidung ist kein Beleg für inhaltliche Übereinstimmung; "
+                        "kein Gegensatz mit diesem Verfahren erkannt bedeutet nicht Einigkeit."
+                    )
 
                 markers.append(
                     _marker(
                         session_id=session_id, spark_id=spark_id, sentence=sa,
                         kind=kind, related_job_id=sb.job_id, note=note,
-                        topics=begriffe,
+                        topics=begriffe, analysis_run_id=run_id,
                     )
                 )
                 markers.append(
                     _marker(
                         session_id=session_id, spark_id=spark_id, sentence=sb,
                         kind=kind, related_job_id=sa.job_id, note=note,
-                        topics=begriffe,
+                        topics=begriffe, analysis_run_id=run_id,
                     )
                 )
                 if kind == KIND_CONTRADICTION:
@@ -329,13 +400,17 @@ def analyse(
                     "b_model_id": job_b["model_id"],
                     "a_label": job_a["label"],
                     "b_label": job_b["label"],
+                    # Zählungen bleiben unter den alten Schlüsseln (API-Kompatibilität),
+                    # bedeuten aber Hinweis-Treffer, keine bestätigte Einigkeit.
                     "agreements": agreements,
                     "contradictions": contradictions,
+                    "themenbezuege": agreements,
+                    "gegensatzhinweise": contradictions,
                     "topics": topics[:6],
                 }
             )
 
-    # Einzigartige Aussagen: kein hinreichend ähnlicher Satz in einer anderen Antwort.
+    # Kein Treffer in diesem Verfahren — nicht: tatsächlich einzigartig.
     unique_counts: dict[str, int] = {}
     for job in usable:
         others = [s for jid, sents in by_job.items() if jid != job["id"] for s in sents]
@@ -351,10 +426,13 @@ def analyse(
                 _marker(
                     session_id=session_id, spark_id=spark_id, sentence=sa,
                     kind=KIND_UNIQUE, related_job_id=None,
-                    note="Kein vergleichbarer Satz in den anderen Antworten.",
-                    # Die tragenden Begriffe der Aussage: woran diese einzelne
-                    # Stimme hängt, wo die anderen schweigen.
+                    note=(
+                        f"{KIND_LABELS[KIND_UNIQUE]}: im ausgewerteten Bestand "
+                        "keine passende Fundstelle mit diesem Verfahren. "
+                        "Das beweist keine tatsächliche Einzigartigkeit."
+                    ),
                     topics=[anzeigeform(k, sa) for k in sorted(sa.terms)[:4]],
+                    analysis_run_id=run_id,
                 )
             )
             count += 1
@@ -368,7 +446,17 @@ def analyse(
 
     summary = {
         "spark_id": spark_id,
+        "analysis_run_id": run_id,
+        "method_version": METHOD_VERSION,
         "computed_at": now(),
+        "claim_level": "hinweis",
+        "labels": dict(KIND_LABELS),
+        "epistemik": (
+            "Begriffsüberschneidung = Hinweis auf möglichen Textbezug. "
+            "Kein Gegensatz erkannt ≠ Übereinstimmung. "
+            "Kein Treffer ≠ tatsächliche Einzigartigkeit."
+        ),
+        "job_versions": job_versions,
         "models": [
             {
                 "job_id": j["id"],
@@ -397,8 +485,10 @@ def analyse(
         "counts": counts,
         "analysed_jobs": [j["id"] for j in usable],
         "method": (
-            "Regelbasierter Vergleich auf Satzebene: Themenbezug über "
-            "Begriffsüberschneidung, Widerspruch nur bei gegensätzlicher Polarität."
+            f"{METHOD_VERSION}: regelbasierter Vergleich auf Satzebene. "
+            "Themenbezug über Begriffsüberschneidung (Hinweis, keine Einigkeit); "
+            "Gegensatzhinweis nur bei gegensätzlicher Polarität; "
+            "kein Treffer bedeutet fehlende Fundstelle in diesem Verfahren."
         ),
     }
     return markers, summary
@@ -440,20 +530,25 @@ def _kuerze(text: str, zeichen: int) -> tuple[str, bool]:
     return sauber[: zeichen - 1].rstrip() + "…", True
 
 
+def _cluster_ist_gleiche_aussage(gruppe: list[tuple[dict[str, Any], Sentence]]) -> bool:
+    """True nur wenn jede Nennung zur ersten als dieselbe Aussage gilt."""
+    if len(gruppe) <= 1:
+        return True
+    anker = gruppe[0][1]
+    return all(gleiche_aussage(anker, satz) for _, satz in gruppe[1:])
+
+
 def folgen(jobs: Iterable[dict[str, Any]]) -> dict[str, Any]:
     """Die Konsequenzkarte einer Szenario-Runde.
 
     Die Antworten auf einen Szenario-Beitrag werden mit derselben
-    Satzzerlegung zerlegt wie alles andere und über dieselbe Rechnung
-    gruppiert, die auch Übereinstimmungen findet: gleiches Thema **und**
-    gleiche Polarität legt zwei Nennungen zusammen, gleiches Thema bei
-    entgegengesetzter Polarität stellt sie einander gegenüber.
+    Satzzerlegung zerlegt und über Themenbezug gruppiert. A~B und B~C
+    erzeugen einen **Themencluster** mit einzelnen Aussagen — nicht still
+    „alle sagen A“. Nur wenn die Nennungen dieselbe Aussage tragen
+    (:func:`gleiche_aussage`), gilt die Zählung als gemeinsame Nennung.
 
-    Was hier steht, steht in den Antworten. Gezählt wird, **wie viele Stimmen**
-    eine Folge genannt haben — das ist eine Häufigkeit und ausdrücklich keine
-    Wahrscheinlichkeit, keine Prognose und keine Bewertung. Die Anwendung
-    ergänzt keine Folge, die niemand genannt hat, und gewichtet keine Stimme
-    anders als eine andere.
+    Gezählt wird Clusterbeteiligung bzw. gemeinsame Nennung — beides eine
+    Häufigkeit, keine Wahrscheinlichkeit und keine Zustimmung.
     """
     job_list = list(jobs)
     usable = [j for j in job_list if j["status"] == JOB_DONE and (j.get("text") or "").strip()]
@@ -500,14 +595,27 @@ def folgen(jobs: Iterable[dict[str, Any]]) -> dict[str, Any]:
             )
             gesehen.add(job["id"])
         erster = gruppe[0][1]
-        # Die tragenden Begriffe im Wortlaut — nie der Stamm.
         schluessel = sorted(erster.terms)[:4]
+        gleiche = _cluster_ist_gleiche_aussage(gruppe)
+        art = "gleiche_aussage" if gleiche else "themencluster"
+        zaehlung = "gemeinsame_nenung" if gleiche else "clusterbeteiligung"
+        # Vertretertext nur bei gleicher Aussage; sonst Cluster-Beschriftung,
+        # damit nicht „alle sagen A“ aus A~B~C entsteht.
+        if gleiche:
+            text = erster.text
+        else:
+            themen = [anzeigeform(k, *[s for _, s in gruppe]) for k in schluessel]
+            text = (
+                f"Themencluster ({', '.join(themen) or 'Thema'}): "
+                f"{len(nennungen)} einzelne Aussagen, {len(gesehen)} Stimmen — "
+                "Clusterbeteiligung, keine Zustimmung."
+            )
         eintraege.append(
             {
                 "id": f"flg{index}",
-                # Der Wortlaut der ersten Nennung, unverändert. Es wird nichts
-                # zusammengefasst, umformuliert oder geglättet.
-                "text": erster.text,
+                "art": art,
+                "zaehlung": zaehlung,
+                "text": text,
                 "themen": [anzeigeform(k, *[s for _, s in gruppe]) for k in schluessel],
                 "nennungen": nennungen,
                 "anzahl": len(gesehen),
@@ -516,8 +624,7 @@ def folgen(jobs: Iterable[dict[str, Any]]) -> dict[str, Any]:
             }
         )
 
-    # Widerspruch zwischen zwei Folgen: dieselbe Regel wie überall — gleiches
-    # Thema und entgegengesetzte Polarität, sonst gar nicht.
+    # Gegensatzhinweis zwischen zwei Folgen: gleiches Thema + Polarität.
     for i, gruppe_a in enumerate(gruppen):
         for j in range(i + 1, len(gruppen)):
             gruppe_b = gruppen[j]
@@ -534,9 +641,7 @@ def folgen(jobs: Iterable[dict[str, Any]]) -> dict[str, Any]:
                 eintraege[i]["gegensatz"].append(eintraege[j]["id"])
                 eintraege[j]["gegensatz"].append(eintraege[i]["id"])
 
-    # Häufigkeit nach vorn: was mehrere Stimmen genannt haben, steht oben. Bei
-    # Gleichstand bleibt die Reihenfolge der ersten Nennung — damit entsteht
-    # keine Rangfolge der Stimmen, nur eine Ordnung der genannten Folgen.
+    # Häufigkeit nach vorn: Clusterbeteiligung/Nennung, keine Rangfolge der Stimmen.
     geordnet = sorted(
         enumerate(eintraege), key=lambda paar: (-paar[1]["anzahl"], paar[0])
     )
@@ -550,9 +655,10 @@ def folgen(jobs: Iterable[dict[str, Any]]) -> dict[str, Any]:
         "folgen": gezeigt,
         "uebergangen": max(0, len(eintraege) - len(gezeigt)),
         "methode": (
-            "Sätze der Szenario-Antworten, gruppiert über dieselbe "
-            "Begriffsüberschneidung, die auch Übereinstimmungen findet. "
-            "Die Zahl nennt, wie viele Stimmen eine Folge genannt haben."
+            f"{METHOD_VERSION}: Sätze über Themenbezug gruppiert. "
+            "Ähnlichkeitsketten ohne gemeinsame Aussage = Themencluster mit "
+            "einzelnen Aussagen (Clusterbeteiligung, keine Zustimmung). "
+            "Die Zahl ist eine Häufigkeit, keine Wahrscheinlichkeit."
         ),
     }
 
