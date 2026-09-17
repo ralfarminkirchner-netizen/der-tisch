@@ -2,6 +2,8 @@ import './styles.css';
 
 import { ApiError, api, connectEvents, newRequestId } from './api';
 import { renderGraph, type GraphSelection } from './graph';
+import { LINSEN, renderThemen, renderVerlauf } from './linsen';
+import type { LinsenArt } from './linsen';
 import { createCard, el, legend, renderQuestion, renderTable, updateCard } from './render';
 import { renderSettings } from './settings';
 import type {
@@ -42,6 +44,8 @@ interface AppState {
   sessions: Session[];
   /** Kennung des laufenden Absendevorgangs — bleibt bei Wiederholung gleich. */
   pendingRequestId: string | null;
+  /** Welche Linse gerade auf die Daten gelegt ist. */
+  linse: LinsenArt;
 }
 
 const state: AppState = {
@@ -57,11 +61,13 @@ const state: AppState = {
   curate: false,
   sessions: [],
   pendingRequestId: null,
+  linse: 'stimmen',
 };
 
 const ENTWURF_KEY = 'xpertentisch.entwuerfe';
 const EINGABE_KEY = 'xpertentisch.eingabe';
 const THEMA_KEY = 'xpertentisch.thema';
+const LINSEN_KEY = 'xpertentisch.linse';
 
 function ladeEntwuerfe(): Entwurf[] {
   try {
@@ -92,6 +98,7 @@ async function boot(): Promise<void> {
   // Vor allem anderen: eine ausdrücklich gewählte Themenwahl greift sofort,
   // sonst blitzte beim Laden kurz das Thema des Geräts auf.
   themaAnwenden();
+  state.linse = gemerkteLinse();
   try {
     const [config, health] = await Promise.all([api.config(), api.health()]);
     state.config = config;
@@ -658,6 +665,7 @@ const BEZUG_KNOPF: Record<SparkKind, string> = {
   weitergabe: 'Zur Prüfung geben',
   gegenposition: 'Gegenposition anfragen',
   vertiefung: 'Strang vertiefen',
+  szenario: 'Folgen durchspielen',
   pingpong: 'Wechselgespräch',
   kuratierung: 'Kuratierung',
 };
@@ -668,6 +676,7 @@ const FUNKE_ART: Record<SparkKind, string> = {
   weitergabe: 'Weitergabe',
   gegenposition: 'Gegenposition',
   vertiefung: 'Vertiefung',
+  szenario: 'Szenario',
   pingpong: 'Wechselgespräch',
   kuratierung: 'Kuratierung (maschinell)',
 };
@@ -742,6 +751,20 @@ function kartenAktionen(job: Job, entry: SparkEntry): HTMLElement {
       id: job.id, label: `Vertiefung von ${job.label}`, kind: 'vertiefung',
       hint: 'geht an alle Modelle am Tisch',
     }),
+  );
+
+  // Folgen kommen von den Stimmen, nicht aus der Anwendung. Sie erscheinen als
+  // eigener Beitrag und tauchen im Verlauf als eigener Zweig auf.
+  knopf('Folgen durchspielen', () =>
+    setzeBezug(
+      {
+        id: job.id, label: `Folgen von ${job.label}`, kind: 'szenario',
+        hint: 'geht an alle Modelle am Tisch',
+      },
+      'Angenommen, das trifft zu: welche konkreten Folgen hätte es? Nenne die ' +
+        'wahrscheinlichen und die unangenehmen, und sag, woran man früh merken ' +
+        'würde, dass es anders kommt.',
+    ),
   );
   behaelter.append(zeile);
 
@@ -1163,23 +1186,98 @@ function renderPanels(block: HTMLElement, summary: Summary): void {
   if (!panels) return;
   panels.replaceChildren();
   panels.append(renderTable(summary));
-
-  const graphPanel = el('section', { class: 'flaeche panel' }, [el('h4', {}, ['Beziehungsnetz'])]);
-  const wrap = el('div', { class: 'graphwrap' });
-  wrap.append(renderGraph(summary, (selection) => openAnswers(block, selection)));
-  graphPanel.append(wrap, legend());
-  graphPanel.append(
-    el('p', { class: 'hint' }, [
-      'Knoten oder Kante anklicken, um die zugehörigen Antworten zu öffnen.',
-    ]),
-  );
-  panels.append(graphPanel);
+  panels.append(linsenPanel(block, summary));
 
   const spark = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
   if (spark) {
     const bezuege = beziehungsPanel(spark);
     if (bezuege) panels.append(bezuege);
   }
+}
+
+/** Welche Linse zuletzt gewählt war. Überdauert das Neuladen. */
+function gemerkteLinse(): LinsenArt {
+  try {
+    const wert = localStorage.getItem(LINSEN_KEY);
+    if (LINSEN.some((l) => l.id === wert)) return wert as LinsenArt;
+  } catch {
+    /* ohne Speicher gilt die Vorgabe */
+  }
+  return 'stimmen';
+}
+
+/**
+ * Drei Blicke auf dieselben Daten.
+ *
+ * Keine Linse rechnet etwas hinzu: die Stimmen-Linse zeigt die ausgewiesenen
+ * Fundstellen, die Themen-Linse die Begriffe, an denen sie hängen, und der
+ * Verlauf die Beiträge, die tatsächlich auseinander hervorgegangen sind.
+ */
+function linsenPanel(block: HTMLElement, summary: Summary): HTMLElement {
+  const panel = el('section', { class: 'flaeche panel linsen-panel' });
+  const kopf = el('div', { class: 'row spread' }, [el('h4', {}, ['Linsen'])]);
+  const schalter = el('div', { class: 'linsenwahl', role: 'tablist' });
+  kopf.append(schalter);
+  panel.append(kopf);
+
+  const flaeche = el('div', { class: 'graphwrap' });
+  const erklaerung = el('p', { class: 'hint linsen-text' }, []);
+  const beine = el('div', { class: 'linsen-fuss' }, [legend(), erklaerung]);
+  panel.append(flaeche, beine);
+
+  const eintrag = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
+
+  const zeichne = (art: LinsenArt) => {
+    flaeche.replaceChildren();
+    if (art === 'themen') {
+      flaeche.append(
+        renderThemen(summary, eintrag?.markers ?? [], (auswahl) => openAnswers(block, auswahl)),
+      );
+    } else if (art === 'verlauf') {
+      flaeche.append(
+        renderVerlauf(state.bundle!, summary.spark_id, (sparkId) => {
+          const ziel = blocks.get(sparkId);
+          ziel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          ziel?.classList.add('angesteuert');
+          window.setTimeout(() => ziel?.classList.remove('angesteuert'), 1600);
+        }),
+      );
+    } else {
+      flaeche.append(renderGraph(summary, (auswahl) => openAnswers(block, auswahl)));
+    }
+    erklaerung.textContent = LINSEN.find((l) => l.id === art)?.erklaerung ?? '';
+    // Die Legende erklärt die drei Bedeutungen; im Verlauf sagen sie nichts.
+    beine.querySelector('.legend')?.toggleAttribute('hidden', art === 'verlauf');
+    for (const knopf of schalter.querySelectorAll('button')) {
+      const gewaehlt = knopf.dataset.linse === art;
+      knopf.classList.toggle('gewaehlt', gewaehlt);
+      knopf.setAttribute('aria-selected', String(gewaehlt));
+    }
+  };
+
+  for (const linse of LINSEN) {
+    const knopf = el('button', {
+      type: 'button', role: 'tab', 'data-linse': linse.id, title: linse.erklaerung,
+    }, [linse.name]);
+    knopf.addEventListener('click', () => {
+      state.linse = linse.id;
+      try {
+        localStorage.setItem(LINSEN_KEY, linse.id);
+      } catch {
+        /* dann gilt die Wahl nur für diesen Besuch */
+      }
+      // Alle Funkenblöcke folgen derselben Linse: ein Wechsel ist eine
+      // Entscheidung über die Sichtweise, nicht über einen einzelnen Block.
+      for (const [sparkId, b] of blocks) {
+        const s2 = state.bundle?.sparks.find((e) => e.spark.id === sparkId)?.summary;
+        if (s2) renderPanels(b, s2);
+      }
+    });
+    schalter.append(knopf);
+  }
+
+  zeichne(state.linse);
+  return panel;
 }
 
 /** Öffnet genau die Antworten, die zum angeklickten Graphelement gehören. */

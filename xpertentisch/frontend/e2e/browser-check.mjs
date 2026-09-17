@@ -92,6 +92,15 @@ try {
   }
 
   // Zwei Kanten zwischen denselben Knoten dürfen sich nicht verdecken.
+  // Das Testmaterial erzeugt zwischen den beiden Stimmen Übereinstimmung UND
+  // Widerspruch, also zwei Kanten. Kommt nur eine an, ist dieser Nachweis
+  // nicht erbracht — und das muss auffallen, statt still zu entfallen.
+  pruefe('Zwei Kanten für den Überlagerungsnachweis vorhanden',
+    anzahlKanten >= 2,
+    anzahlKanten < 2
+      ? `nur ${anzahlKanten} — Überlagerung der Trefferflächen UNGEPRÜFT`
+      : `${anzahlKanten} Kanten`);
+
   if (anzahlKanten >= 2) {
     const mitten = await kanten.evaluateAll((gruppen) =>
       gruppen.map((g) => {

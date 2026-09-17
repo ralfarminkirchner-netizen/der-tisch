@@ -48,8 +48,17 @@ xpertentisch/
   Modellaufrufe): Übereinstimmung, Widerspruch, Einzigartig. Marker verweisen
   über Zeichenpositionen auf den **unveränderten** Antworttext und führen ein
   wörtliches Textbelegzitat mit.
-- **Vergleichstabelle** und **Beziehungsnetz**; ein Klick auf Knoten oder Kante
-  öffnet genau die zugehörigen Antworten.
+- **Vergleichstabelle** und **Linsen** auf dieselben Daten; ein Klick öffnet
+  jeweils genau die zugehörigen Antworten:
+  - **Stimmen** — wer trifft sich mit wem, wo widersprechen sie einander.
+  - **Themen** — woran die Befunde hängen: links die Stimmen, rechts die
+    Begriffe, an denen sie sich treffen, streiten oder allein stehen.
+  - **Verlauf** — welche Wege tatsächlich verfolgt wurden: jeder Zweig ein
+    Beitrag, der aus einem anderen hervorging. Keine Vorhersage.
+- **Szenarien.** „Folgen durchspielen" fragt die Stimmen nach den Konsequenzen
+  einer Aussage. Die Folgen kommen damit **von den Modellen**, nicht aus der
+  Anwendung — sie erscheinen als eigener Beitrag und als eigener Zweig im
+  Verlauf. Die Anwendung selbst sagt nichts voraus und rechnet nichts hinzu.
 - **Anbieter sind Daten, nicht Quelltext.** Mitgeliefert sind OpenAI, Anthropic,
   Google Gemini, DeepSeek, Mistral und xAI Grok; jeder davon lässt sich ändern
   oder abschalten. Über „Eigenen Anbieter eintragen“ kommt alles dazu, was die

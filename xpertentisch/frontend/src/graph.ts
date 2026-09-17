@@ -1,6 +1,6 @@
 import type { Summary, SummaryModelRow, SummaryPair } from './types';
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
+export const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /** Ein Knoten braucht Platz für seinen Kreis UND seine Beschriftung darunter. */
 const RAND = 40;
@@ -234,7 +234,7 @@ function nodeElement(
 }
 
 /** Klick und Tastatur führen zur selben Handlung. */
-function bedienbar(group: SVGGElement, handeln: () => void): void {
+export function bedienbar(group: SVGGElement, handeln: () => void): void {
   group.addEventListener('click', handeln);
   group.addEventListener('keydown', (event) => {
     const key = (event as KeyboardEvent).key;
@@ -245,7 +245,7 @@ function bedienbar(group: SVGGElement, handeln: () => void): void {
   });
 }
 
-function initialen(label: string): string {
+export function initialen(label: string): string {
   return (
     label
       .split(/[\s—–-]+/)
@@ -257,6 +257,6 @@ function initialen(label: string): string {
   );
 }
 
-function shorten(label: string): string {
+export function shorten(label: string): string {
   return label.length > 16 ? `${label.slice(0, 15)}…` : label;
 }

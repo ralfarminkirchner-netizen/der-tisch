@@ -100,21 +100,27 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
   if (job.partial) tags.append(el('span', { class: 'tag partial' }, ['Teilantwort']));
 
   // ---- Nebenangaben: eine ruhige Zeile, nicht sechs gleiche Schilder.
+  //
+  // Getrennt wird durch Abstand und durch den Kontrast zwischen Benennung und
+  // Wert — nicht durch Trennzeichen. Ein Trennpunkt stünde beim Zeilenumbruch
+  // sonst als Rest am Zeilenanfang.
   leiste.replaceChildren();
-  const angabe = (text: string, wert?: string, titel?: string, klasse = '') => {
-    const attrs: Record<string, string> = {};
-    if (klasse) attrs.class = klasse;
-    if (titel) attrs.title = titel;
-    const span = el('span', attrs, [text]);
+  const angabe = (benennung: string, wert?: string, titel?: string, klasse = '') => {
+    const span = el('span', titel ? { title: titel } : {});
+    if (benennung) {
+      span.append(el('span', { class: `leiste-name ${klasse}`.trim() }, [benennung]));
+    }
     if (wert !== undefined) {
       span.append(el('span', { class: 'leiste-wert' }, [wert]));
     }
     leiste.append(span);
   };
 
-  angabe(`${job.provider} · ${job.model}`);
+  leiste.append(
+    el('span', { class: 'leiste-herkunft' }, [`${job.provider} · ${job.model}`]),
+  );
   if (job.latency_ms !== null && job.status !== 'running' && job.status !== 'streaming') {
-    angabe('', formatDuration(job.latency_ms), 'gemessene Dauer bis zur Antwort');
+    angabe('Dauer', formatDuration(job.latency_ms), 'gemessene Zeit bis zur Antwort');
   }
   if (job.tokens_in !== null || job.tokens_out !== null) {
     angabe(
@@ -126,7 +132,8 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
   if (job.cost_source === 'berechnet' && job.cost_micro !== null) {
     angabe('Kosten', formatCost(job.cost_micro), 'mit den von dir eingetragenen Preisen berechnet');
   } else if ((job.tokens_in ?? job.tokens_out) !== null) {
-    // Ohne hinterlegte Preise wird nichts geschätzt — und das steht auch so da.
+    // Bleibt bewusst ein zusammenhängender Satzteil: ohne hinterlegte Preise
+    // wird nichts geschätzt, und genau das soll dastehen.
     angabe('Kosten unbekannt', undefined, 'ohne hinterlegte Preise wird nichts geschätzt',
       'unbekannt');
   }

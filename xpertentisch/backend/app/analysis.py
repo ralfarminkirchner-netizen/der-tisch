@@ -47,6 +47,18 @@ STOPWORDS = {
     "soll", "sollte", "über", "um", "und", "uns", "unter", "vom", "von", "vor",
     "war", "waren", "was", "weil", "welche", "wenn", "werden", "wie", "wir", "wird",
     "wurde", "zu", "zum", "zur", "zwar", "zwischen", "man", "eher", "etwas", "dabei",
+    # Füll- und Funktionswörter, die sonst als vermeintliches „Thema" oben
+    # landen: sie werden von allen benutzt und sagen über den Inhalt nichts.
+    "allein", "außerdem", "darf", "dürfen", "müssen", "sollen", "sollten",
+    "wollen", "können", "konnte", "könnte", "würde", "wäre", "sei", "seien",
+    "bereits", "immer", "jedoch", "dennoch", "sobald", "sofern", "falls",
+    "meist", "meistens", "oft", "häufig", "selten", "jeweils", "ebenfalls",
+    "insbesondere", "beispielsweise", "grundsätzlich", "generell", "gerade",
+    "genau", "darum", "deswegen", "somit", "folglich", "zudem", "ferner",
+    "weiter", "weitere", "weiteren", "weiterhin", "viel", "viele", "vielen",
+    "wenig", "wenige", "groß", "große", "klein", "kleine", "gut", "gute",
+    "besser", "schlecht", "neu", "neue", "alt", "alte", "erst", "erste",
+    "letzte", "beim", "ihrem", "ihren", "einfach", "möglich", "nötig",
     # Englisch
     "the", "and", "for", "with", "that", "this", "from", "have", "has", "are", "was",
     "were", "but", "not", "you", "your", "its", "it's", "they", "their", "can",
@@ -149,6 +161,7 @@ def _marker(
     kind: str,
     related_job_id: str | None,
     note: str,
+    topics: list[str] | None = None,
 ) -> dict[str, Any]:
     return {
         "id": new_id("mrk"),
@@ -161,6 +174,8 @@ def _marker(
         "end_offset": sentence.end,
         "quote": sentence.text,
         "note": note,
+        # Woran diese Fundstelle hängt — Grundlage der Themen-Linse.
+        "topics": list(topics or []),
         "created_at": now(),
     }
 
@@ -210,7 +225,8 @@ def analyse(
                 if kind == KIND_AGREEMENT and agreements >= MAX_MARKERS_PER_PAIR:
                     continue
 
-                topic = ", ".join(sorted(shared)[:4])
+                begriffe = sorted(shared)[:4]
+                topic = ", ".join(begriffe)
                 note_base = f"Themenbezug: {topic} (Überschneidung {score:.0%})"
                 note = (
                     f"{note_base}; Gegensatz: {antonym}"
@@ -222,12 +238,14 @@ def analyse(
                     _marker(
                         session_id=session_id, spark_id=spark_id, sentence=sa,
                         kind=kind, related_job_id=sb.job_id, note=note,
+                        topics=begriffe,
                     )
                 )
                 markers.append(
                     _marker(
                         session_id=session_id, spark_id=spark_id, sentence=sb,
                         kind=kind, related_job_id=sa.job_id, note=note,
+                        topics=begriffe,
                     )
                 )
                 if kind == KIND_CONTRADICTION:
@@ -268,6 +286,9 @@ def analyse(
                     session_id=session_id, spark_id=spark_id, sentence=sa,
                     kind=KIND_UNIQUE, related_job_id=None,
                     note="Kein vergleichbarer Satz in den anderen Antworten.",
+                    # Die tragenden Begriffe der Aussage: woran diese einzelne
+                    # Stimme hängt, wo die anderen schweigen.
+                    topics=sorted(sa.terms)[:4],
                 )
             )
             count += 1

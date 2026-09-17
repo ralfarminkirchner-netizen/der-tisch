@@ -207,6 +207,28 @@ describe('Kosten auf der Karte', () => {
   });
 });
 
+describe('Nebenangaben auf der Karte', () => {
+  it('trennt ohne Trennzeichen, damit beim Umbruch kein Rest stehenbleibt', () => {
+    // Ein '·' als ::before am Folgeelement landet beim Zeilenumbruch am
+    // Zeilenanfang. Getrennt wird darum über Abstand und Benennung.
+    expect(css).not.toMatch(/\.leiste > span \+ span::before/);
+    expect(css).toMatch(/\.leiste \{[^}]*gap:/);
+  });
+
+  it('benennt jede Angabe, statt bloße Zahlen aneinanderzureihen', () => {
+    const card = createCard(
+      { ...job, latency_ms: 2300, tokens_in: 180, tokens_out: 140 },
+      [],
+    );
+    const leiste = card.querySelector('.leiste')!;
+    const namen = [...leiste.querySelectorAll('.leiste-name')].map((n) => n.textContent);
+    expect(namen).toContain('Dauer');
+    expect(namen).toContain('Token');
+    // Die Herkunft steht für sich und braucht keine Benennung.
+    expect(leiste.querySelector('.leiste-herkunft')?.textContent).toContain('fake');
+  });
+});
+
 describe('Hinweis auf neue Beiträge', () => {
   it('liegt über dem Text und drängt sich nicht in den Lesefluss', () => {
     expect(css).toMatch(/\.neue-beitraege \{[^}]*position:\s*fixed/);

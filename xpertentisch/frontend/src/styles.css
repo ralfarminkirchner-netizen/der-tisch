@@ -949,12 +949,14 @@ label {
   border-color: var(--linie);
 }
 
-/* Nebenangaben: keine Schilder, sondern eine Zeile mit Trennpunkten. */
+/* Nebenangaben: keine Schilder und keine Trennzeichen. Getrennt wird durch
+   Abstand und durch den Kontrast zwischen Benennung und Wert — ein Trennpunkt
+   stünde beim Zeilenumbruch sonst als Rest am Zeilenanfang. */
 .leiste {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 8px;
+  align-items: baseline;
+  gap: 3px 17px;
   font-size: 0.76rem;
   color: var(--tinte-leise);
   min-width: 0;
@@ -962,15 +964,19 @@ label {
 
 .leiste > span {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 5px;
   white-space: nowrap;
 }
 
-.leiste > span + span::before {
-  content: '·';
-  color: var(--linie-kraeftig);
-  margin-right: 3px;
+.leiste-herkunft {
+  color: var(--tinte-leise);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.leiste-name {
+  color: var(--tinte-leise);
 }
 
 .leiste-wert {
@@ -1830,4 +1836,172 @@ footer.foot {
   align-items: center;
   gap: 8px;
   margin-inline-start: auto;
+}
+
+/* ------------------------------------------------------------------ Linsen */
+
+/* Drei Blicke auf dieselben Daten. Der Schalter ist eine Sichtweise, keine
+   Einstellung — er steht darum neben der Überschrift, nicht in einem Menü. */
+.linsenwahl {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--flaeche-tief);
+  border: 1px solid var(--linie);
+}
+
+.linsenwahl button {
+  border: 0;
+  background: transparent;
+  color: var(--tinte-leise);
+  font-size: 0.75rem;
+  font-weight: 560;
+  padding: 4px 11px;
+  border-radius: 999px;
+}
+
+.linsenwahl button:hover:not(.gewaehlt) {
+  background: transparent;
+  color: var(--tinte-matt);
+}
+
+.linsenwahl button.gewaehlt {
+  background: var(--karte);
+  color: var(--tinte);
+  box-shadow: 0 1px 2px oklch(0% 0 0 / 0.12);
+}
+
+.linsen-fuss {
+  display: grid;
+  gap: 9px;
+}
+
+.linsen-text {
+  max-width: 54ch;
+}
+
+/* --- Themen-Linse -------------------------------------------------------- */
+
+/* Ein Faden führt von einer Stimme zu dem Begriff, an dem ihre Fundstelle
+   hängt. Die Farbe ist dieselbe wie überall: Grün einig, Orange Widerspruch,
+   Violett allein. */
+svg.graph .faden {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-opacity: 0.75;
+  stroke-linecap: round;
+}
+
+svg.graph .faden.agree { stroke: var(--einig); }
+svg.graph .faden.contra { stroke: var(--gegen); stroke-width: 2.4; }
+svg.graph .faden.unique { stroke: var(--einzeln); stroke-dasharray: 3 3; }
+
+svg.graph .themapunkt {
+  stroke: var(--flaeche-tief);
+  stroke-width: 2;
+  transition: r var(--takt-kurz) var(--ruhig);
+}
+
+svg.graph .themapunkt.agree { fill: var(--einig); }
+svg.graph .themapunkt.contra { fill: var(--gegen); }
+svg.graph .themapunkt.unique { fill: var(--einzeln); }
+
+svg.graph .themaname {
+  fill: var(--tinte);
+  font-size: 11px;
+  font-weight: 560;
+  pointer-events: none;
+}
+
+svg.graph .thema {
+  cursor: pointer;
+}
+
+svg.graph .thema:hover .themaname,
+svg.graph .thema:focus-visible .themaname {
+  fill: var(--marke);
+}
+
+svg.graph .thema:focus-visible .themapunkt,
+svg.graph .stimme:focus-visible circle {
+  stroke: var(--marke);
+  stroke-width: 3;
+}
+
+/* --- Verlaufsbaum -------------------------------------------------------- */
+
+/* Jeder Zweig ist ein Beitrag, der aus einem anderen hervorging. Das ist
+   Vergangenheit, keine Vorhersage — darum trägt der Baum keine Wertung. */
+svg.graph .ast {
+  fill: none;
+  stroke: var(--linie-kraeftig);
+  stroke-width: 1.4;
+}
+
+svg.graph .zweig {
+  cursor: pointer;
+}
+
+svg.graph .zweig rect {
+  fill: var(--karte);
+  stroke: var(--linie);
+  stroke-width: 1;
+  transition: stroke var(--takt-kurz) var(--ruhig);
+}
+
+svg.graph .zweig:hover rect {
+  stroke: var(--marke-rand);
+}
+
+svg.graph .zweig.aktuell rect {
+  stroke: var(--marke);
+  stroke-width: 2;
+}
+
+svg.graph .zweig:focus-visible rect {
+  stroke: var(--marke);
+  stroke-width: 3;
+}
+
+svg.graph .zweigart {
+  fill: var(--tinte-leise);
+  font-size: 8.5px;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+svg.graph .zweigtext {
+  fill: var(--tinte);
+  font-size: 10px;
+  pointer-events: none;
+}
+
+/* Ein Strich je Antwort: der Zustand der Runde auf einen Blick. */
+svg.graph .zustandsstrich { fill: var(--linie-kraeftig); }
+svg.graph .zustandsstrich.zustand-done { fill: var(--einig); }
+svg.graph .zustandsstrich.zustand-error { fill: var(--gegen); }
+svg.graph .zustandsstrich.zustand-interrupted { fill: var(--achtung); }
+svg.graph .zustandsstrich.zustand-streaming,
+svg.graph .zustandsstrich.zustand-running,
+svg.graph .zustandsstrich.zustand-queued { fill: var(--marke); }
+
+/* Ein angesteuerter Beitrag hebt sich kurz hervor, damit man ihn wiederfindet. */
+.spark-block.angesteuert > .question {
+  box-shadow: -14px 0 0 -11px var(--marke);
+  padding-left: 10px;
+  transition: box-shadow var(--takt) var(--ruhig), padding var(--takt) var(--ruhig);
+}
+
+/* Eine Stimme ohne Faden berührt keinen der gezeigten Begriffe. Sie bleibt
+   sichtbar — ihr Fehlen ist selbst ein Befund — tritt aber zurück. */
+svg.graph .stimme.ohne-faden circle {
+  fill: none;
+  stroke-dasharray: 3 3;
+}
+
+svg.graph .stimme.ohne-faden text {
+  fill: var(--tinte-leise);
 }
