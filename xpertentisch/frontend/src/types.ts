@@ -16,6 +16,7 @@ export type SparkKind =
   | 'gegenposition'
   | 'vertiefung'
   | 'pingpong'
+  | 'szenario'
   | 'kuratierung';
 
 export interface PingPongRun {
@@ -220,6 +221,8 @@ export interface Marker {
   end_offset: number;
   quote: string;
   note: string;
+  /** Begriffe, an denen diese Fundstelle hängt — Grundlage der Themen-Linse. */
+  topics: string[];
 }
 
 export interface SummaryModelRow {

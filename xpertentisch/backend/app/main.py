@@ -43,7 +43,7 @@ class SparkCreate(BaseModel):
     model_ids: list[str] | None = None
     #: Ausdrücklich gewählte Bezugsbeiträge (Funken- oder Auftragskennungen).
     refs: list[str] = Field(default_factory=list, max_length=20)
-    #: funke | antwort | weitergabe | gegenposition | vertiefung
+    #: funke | antwort | weitergabe | gegenposition | vertiefung | szenario
     kind: str = Field(default="funke", max_length=20)
     #: Vorgeschaltete Kuratierung durch den eingestellten Kurator.
     curate: bool = False
@@ -103,7 +103,9 @@ class ProviderUpdate(BaseModel):
 
 
 #: Welche Arten von Eingaben es gibt. Bestimmt die gesetzte Beziehungsart.
-SPARK_KINDS = ("funke", "antwort", "weitergabe", "gegenposition", "vertiefung")
+SPARK_KINDS = (
+    "funke", "antwort", "weitergabe", "gegenposition", "vertiefung", "szenario",
+)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
