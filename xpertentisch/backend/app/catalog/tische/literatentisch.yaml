@@ -1,0 +1,10 @@
+id: literatentisch
+html: der-tisch-backend/literatentisch.html
+title: LiTERATEN TiSCH — Acht Stimmen. Ein Text.
+modi:
+  - frage
+  - werk
+perspectives:
+  []
+luecken:
+  - kein const PERSPEKTIVEN

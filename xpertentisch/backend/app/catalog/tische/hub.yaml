@@ -1,0 +1,9 @@
+id: hub
+html: der-tisch-backend/tisch-hub.html
+title: TiSCH HUB — KI-gestützte Multiperspektiv-Analyse
+modi:
+  []
+perspectives:
+  []
+luecken:
+  - kein const PERSPEKTIVEN

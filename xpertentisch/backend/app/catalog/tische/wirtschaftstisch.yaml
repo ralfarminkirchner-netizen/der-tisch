@@ -1,0 +1,65 @@
+id: wirtschaftstisch
+html: der-tisch-backend/wirtschaftstisch.html
+title: WiRTSCHAFT TiSCH — Wirtschaftliche Perspektiven
+modi:
+  - perspektiven
+  - szenario
+perspectives:
+  - id: makro
+    de: Makroökonom
+    en: Macroeconomist
+    color: "#1B7340"
+    icon: globe
+    position: ""
+    quelle: html-js
+  - id: bwl
+    de: Betriebswirtschaft
+    en: Business Economics
+    color: "#2A9A56"
+    icon: chart
+    position: ""
+    quelle: html-js
+  - id: verhalten
+    de: Verhaltensökonom
+    en: Behavioral Economist
+    color: "#50AA70"
+    icon: brain
+    position: ""
+    quelle: html-js
+  - id: finanzen
+    de: Finanzplanerin
+    en: Financial Planner
+    color: "#3A8A58"
+    icon: coins
+    position: ""
+    quelle: html-js
+  - id: unternehmen
+    de: Unternehmerin
+    en: Entrepreneur
+    color: "#1E6B36"
+    icon: rocket
+    position: ""
+    quelle: html-js
+  - id: sozial
+    de: Sozialökonom
+    en: Social Economist
+    color: "#4A9A65"
+    icon: heart
+    position: ""
+    quelle: html-js
+  - id: risiko
+    de: Risikomanager
+    en: Risk Manager
+    color: "#166030"
+    icon: shield
+    position: ""
+    quelle: html-js
+  - id: innovation
+    de: Innovationsökonom
+    en: Innovation Economist
+    color: "#6ABB80"
+    icon: zap
+    position: ""
+    quelle: html-js
+luecken:
+  []

@@ -1,0 +1,209 @@
+[
+  {
+    "id": "psych-vt",
+    "name": "Verhaltenstherapie (KVT)",
+    "fachgebiet": "Psychologie",
+    "position": "Psychische Probleme entstehen durch erlerntes Fehlverhalten und dysfunktionale Denkmuster, die systematisch verändert werden können.",
+    "grundhaltung": "Menschliches Verhalten und Erleben ist veränderbar durch Techniken, Bewusstsein und Übung.",
+    "gegenposition": "Tiefenpsychologie/Psychoanalyse",
+    "rang": 1
+  },
+  {
+    "id": "psych-psycho",
+    "name": "Psychoanalyse / Tiefenpsychologie",
+    "fachgebiet": "Psychologie",
+    "position": "Psychische Probleme wurzeln in unbewussten Konflikten, frühkindlichen Erfahrungen und Abwehrmechanismen, die nicht durch Techniken allein verändert werden können.",
+    "grundhaltung": "Das Unbewusste steuert mehr als das Bewusste. Symptome sind Botschaften, keine Fehler.",
+    "gegenposition": "Verhaltenstherapie",
+    "rang": 1
+  },
+  {
+    "id": "psych-humanistisch",
+    "name": "Humanistische Psychologie",
+    "fachgebiet": "Psychologie",
+    "position": "Der Mensch strebt von Natur aus nach Wachstum, Selbstverwirklichung und Sinnhaftigkeit. Therapie ist Begleitung dieses Prozesses, nicht Korrektur.",
+    "grundhaltung": "Menschliche Würde, Potenzial und Selbstbestimmung stehen über Diagnose und Technik.",
+    "gegenposition": "Neurobiologische Psychiatrie",
+    "rang": 2
+  },
+  {
+    "id": "psych-neuro",
+    "name": "Neurobiologische Psychiatrie",
+    "fachgebiet": "Psychologie",
+    "position": "Psychische Störungen haben biologische Grundlagen in Hirnstruktur, Neurotransmittern und Genetik. Pharmakologie ist ein legitimes Kernwerkzeug.",
+    "grundhaltung": "Das Gehirn produziert Psyche. Ohne Biologie keine vollständige Psychologie.",
+    "gegenposition": "Humanistische Psychologie",
+    "rang": 2
+  },
+  {
+    "id": "psych-systemisch",
+    "name": "Systemische Therapie",
+    "fachgebiet": "Psychologie",
+    "position": "Psychische Probleme entstehen und bestehen in Beziehungssystemen. Das Individuum ist nicht krank — das System ist dysfunktional.",
+    "grundhaltung": "Probleme sind immer Kontextprobleme. Änderung im System ändert den Menschen.",
+    "gegenposition": "Traumatherapie",
+    "rang": 3
+  },
+  {
+    "id": "psych-trauma",
+    "name": "Traumatherapie / EMDR",
+    "fachgebiet": "Psychologie",
+    "position": "Traumata hinterlassen neurobiologische Spuren, die spezifische Verarbeitung brauchen. Systemisches Denken allein reicht nicht für traumatisierte Individuen.",
+    "grundhaltung": "Das Trauma steckt im Körper und im Nervensystem, nicht nur in Beziehungen.",
+    "gegenposition": "Systemische Therapie",
+    "rang": 3
+  },
+  {
+    "id": "phil-analyt",
+    "name": "Analytische Philosophie",
+    "fachgebiet": "Philosophie",
+    "position": "Philosophie ist eine präzise, logisch strukturierte Analyse von Sprache, Begriffen und Argumenten. Unklarheit ist kein Zeichen von Tiefe.",
+    "grundhaltung": "Präzision, Logik, Sprachanalyse. Philosophische Probleme sind oft Sprachprobleme.",
+    "gegenposition": "Kontinentale Philosophie",
+    "rang": 1
+  },
+  {
+    "id": "phil-kontinent",
+    "name": "Kontinentale Philosophie",
+    "fachgebiet": "Philosophie",
+    "position": "Philosophie muss die Totalität menschlicher Existenz, Geschichte, Macht und Bedeutung erfassen. Präzision ohne Tiefe ist Selbstbetäubung.",
+    "grundhaltung": "Hermeneutik, Phänomenologie, Dialektik. Sprache ist kein neutrales Werkzeug.",
+    "gegenposition": "Analytische Philosophie",
+    "rang": 1
+  },
+  {
+    "id": "phil-pragma",
+    "name": "Pragmatismus",
+    "fachgebiet": "Philosophie",
+    "position": "Wahrheit und Bedeutung sind das, was sich in der Praxis bewährt. Philosophie muss nützlich sein.",
+    "grundhaltung": "Ideen sind Werkzeuge. Wahrheit ist dynamisch, nicht absolut.",
+    "gegenposition": "Metaphysik",
+    "rang": 2
+  },
+  {
+    "id": "phil-metaphys",
+    "name": "Metaphysik / Ontologie",
+    "fachgebiet": "Philosophie",
+    "position": "Die fundamentalen Fragen der Existenz, Substanz, Kausalität und Wirklichkeit lassen sich nicht auf Nützlichkeit reduzieren.",
+    "grundhaltung": "Es gibt echte Fragen, die nicht durch Pragmatik auflösbar sind.",
+    "gegenposition": "Pragmatismus",
+    "rang": 2
+  },
+  {
+    "id": "oek-neoklassisch",
+    "name": "Neoklassische Ökonomie",
+    "fachgebiet": "Ökonomie",
+    "position": "Märkte sind effizient, wenn sie frei sind. Preise koordinieren Angebot und Nachfrage optimal. Staatseingriffe stören mehr als sie helfen.",
+    "grundhaltung": "Homo economicus. Gleichgewichtsdenken. Marktmechanismus als Koordinationsprinzip.",
+    "gegenposition": "Keynesianismus",
+    "rang": 1
+  },
+  {
+    "id": "oek-keynes",
+    "name": "Keynesianismus",
+    "fachgebiet": "Ökonomie",
+    "position": "Märkte koordinieren sich NICHT immer selbst. Staatsausgaben und Nachfragesteuerung sind notwendige Instrumente gegen Rezessionen.",
+    "grundhaltung": "Gesamtnachfrage bestimmt Beschäftigung. Sparen in Krisen verschärft Krisen.",
+    "gegenposition": "Neoklassische Ökonomie",
+    "rang": 1
+  },
+  {
+    "id": "oek-instit",
+    "name": "Institutionenökonomik",
+    "fachgebiet": "Ökonomie",
+    "position": "Wirtschaft funktioniert nicht im Vakuum. Institutionen, Eigentumsrechte, soziale Normen und Geschichte formen wirtschaftliche Ergebnisse fundamental.",
+    "grundhaltung": "Regeln, Normen und Geschichte zählen mehr als Marktpreise allein.",
+    "gegenposition": "Marktfundamentalismus",
+    "rang": 2
+  },
+  {
+    "id": "oek-marktfunda",
+    "name": "Marktfundamentalismus / Österreichische Schule",
+    "fachgebiet": "Ökonomie",
+    "position": "Jeder Staatseingriff verzerrt den Preismechanismus und erzeugt langfristig mehr Schaden als Nutzen. Märkte brauchen Freiheit, keine Steuerung.",
+    "grundhaltung": "Spontane Ordnung. Wissen ist dezentral — kein Planer kann es besitzen.",
+    "gegenposition": "Institutionenökonomik",
+    "rang": 2
+  },
+  {
+    "id": "paed-reform",
+    "name": "Reformpädagogik / Montessori",
+    "fachgebiet": "Pädagogik",
+    "position": "Kinder sind eigenaktive Lernende. Schule soll Raum geben, nicht Führung aufzwingen. Das Kind trägt sein Entwicklungspotenzial in sich.",
+    "grundhaltung": "Vertrauen ins Kind, Selbstbestimmung, intrinsische Motivation.",
+    "gegenposition": "Neoklassische Leistungspädagogik",
+    "rang": 1
+  },
+  {
+    "id": "paed-neoklassisch",
+    "name": "Neoklassische Leistungspädagogik",
+    "fachgebiet": "Pädagogik",
+    "position": "Schule hat den Auftrag, gesellschaftlich relevantes Wissen und Kompetenzen systematisch zu vermitteln. Standards sind nicht optional.",
+    "grundhaltung": "Leistung, Vergleichbarkeit, Kompetenzorientierung.",
+    "gegenposition": "Reformpädagogik",
+    "rang": 1
+  },
+  {
+    "id": "eth-deont",
+    "name": "Deontologische Ethik / Kantianismus",
+    "fachgebiet": "Ethik",
+    "position": "Handlungen sind moralisch richtig oder falsch unabhängig von ihren Folgen. Es gibt kategorische Pflichten, die nicht verhandelbar sind.",
+    "grundhaltung": "Der gute Wille und das Prinzip zählen, nicht das Ergebnis.",
+    "gegenposition": "Utilitarismus",
+    "rang": 1
+  },
+  {
+    "id": "eth-util",
+    "name": "Utilitarismus",
+    "fachgebiet": "Ethik",
+    "position": "Das moralisch Richtige ist das, was das Gesamtwohl maximiert. Folgen zählen, nicht Absichten.",
+    "grundhaltung": "Nutzen, Wohlfahrt, Konsequenzen. Das Gute ist berechenbar.",
+    "gegenposition": "Deontologische Ethik",
+    "rang": 1
+  },
+  {
+    "id": "eth-tugend",
+    "name": "Tugendethik / Aristotelismus",
+    "fachgebiet": "Ethik",
+    "position": "Moralisches Handeln entsteht aus Charakter, Gewohnheit und dem Streben nach Eudaimonia (Gelingen des Lebens), nicht aus Regeln oder Nutzenkalkulationen.",
+    "grundhaltung": "Wer ein tugendhafter Mensch wird, handelt gut — Charakter vor Kalkül.",
+    "gegenposition": "Diskursethik",
+    "rang": 2
+  },
+  {
+    "id": "eth-diskurs",
+    "name": "Diskursethik / Habermas",
+    "fachgebiet": "Ethik",
+    "position": "Moralische Normen sind nur dann gültig, wenn sie Ergebnis eines freien, gleichberechtigten Diskurses aller Betroffenen sind.",
+    "grundhaltung": "Legitimation durch Verfahren und Diskurs, nicht durch Charakter oder Kalkül.",
+    "gegenposition": "Tugendethik",
+    "rang": 2
+  },
+  {
+    "id": "spir-westrel",
+    "name": "Westliche monotheistische Religionen",
+    "fachgebiet": "Spiritualität",
+    "position": "Eine persönliche Gottheit ist Quelle von Moral, Sinn und Existenz. Offenbarung und heilige Texte sind normative Grundlage.",
+    "grundhaltung": "Transzendenz, Schöpfung, Offenbarung, Erleuchtung durch Göttliches.",
+    "gegenposition": "Säkularer Humanismus",
+    "rang": 1
+  },
+  {
+    "id": "spir-saekular",
+    "name": "Säkularer Humanismus",
+    "fachgebiet": "Spiritualität",
+    "position": "Sinn und Moral entstehen ohne Göttliches. Der Mensch ist Quelle seiner eigenen Werte und Verantwortung.",
+    "grundhaltung": "Rationalismus, Autonomie, Humanität ohne Transzendenz.",
+    "gegenposition": "Monotheistische Religionen",
+    "rang": 1
+  },
+  {
+    "id": "spir-nondual",
+    "name": "Non-duale Traditionen",
+    "fachgebiet": "Spiritualität",
+    "position": "Subjekt und Objekt, Ich und Welt, Gott und Mensch sind letztlich nicht getrennt. Das Denken in Dualitäten ist selbst das Problem.",
+    "grundhaltung": "Einheit, Nicht-Ich, unmittelbare Erfahrung vor Konzept.",
+    "gegenposition": "Westliche monotheistische Religionen",
+    "rang": 2
+  }
+]

@@ -1,0 +1,100 @@
+id: familientisch
+html: der-tisch-backend/familientisch.html
+title: FAMiLiEN TiSCH — Familiäre Perspektiven
+modi:
+  - frage
+  - aufstellung
+  - chronik
+  - eltern
+  - geschwister
+  - grosseltern
+  - heilung
+  - jugend
+  - klaerung
+  - kompass
+  - paar
+  - perspektiven
+  - rat
+  - ritual
+  - selbst
+  - staerken
+  - vision
+perspectives:
+  - id: systemisch
+    de: Systemische Therapeutin
+    en: Systemic Therapist
+    color: "#C4622D"
+    icon: network
+    position: Positive Psychologin, die Stärken und Ressourcen sichtbar macht
+    quelle: html-js
+  - id: bindung
+    de: Bindungsexpertin
+    en: Attachment Expert
+    color: "#D4845A"
+    icon: heart
+    position: ""
+    quelle: html-js
+  - id: erziehung
+    de: Erziehungsberaterin
+    en: Parenting Counsellor
+    color: "#B85C2A"
+    icon: seedling
+    position: ""
+    quelle: html-js
+  - id: paar
+    de: Paartherapeutin
+    en: Couples Therapist
+    color: "#A84E20"
+    icon: compass
+    position: ""
+    quelle: html-js
+  - id: trauma
+    de: Traumaexpertin
+    en: Trauma Expert
+    color: "#C87050"
+    icon: shield
+    position: ""
+    quelle: html-js
+  - id: kind
+    de: Kind-Perspektive
+    en: Child Perspective
+    color: "#E0956A"
+    icon: sprout
+    position: ""
+    quelle: html-js
+  - id: grosseltern
+    de: "Großeltern & Generationen"
+    en: "Grandparents & Generations"
+    color: "#9A5A3A"
+    icon: scroll
+    position: ""
+    quelle: html-js
+  - id: konflikt
+    de: Konfliktmediation
+    en: Conflict Mediation
+    color: "#CC7040"
+    icon: zap
+    position: ""
+    quelle: html-js
+  - id: kommunikation
+    de: Kommunikationsexpertin
+    en: Communication Expert
+    color: "#B86840"
+    icon: network
+    position: ""
+    quelle: html-js
+  - id: identitaet
+    de: "Identität & Rolle"
+    en: "Identity & Role"
+    color: "#D07850"
+    icon: mirror
+    position: ""
+    quelle: html-js
+luecken:
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung
+  - zusätzliche JS-position ohne PERSPEKTIVEN-Zuordnung

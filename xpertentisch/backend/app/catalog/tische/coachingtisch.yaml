@@ -1,0 +1,92 @@
+id: coachingtisch
+html: der-tisch-backend/coachingtisch.html
+title: COACHiNG TiSCH — Perspektiven für Transformation
+modi:
+  []
+perspectives:
+  - id: lifecoach
+    de: Life Coach
+    en: Life Coach
+    color: "#7C5CBF"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M10 18V8\"/><path d=\"M6 12c0 0 1-5 4-8 3 3 4 8 4 8\"/><path d=\"M4 18c1-2 4-4 6-6\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: executive
+    de: Executive Coach
+    en: Executive Coach
+    color: "#5DADE2"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><rect x=\"2\" y=\"7\" width=\"16\" height=\"13\" rx=\"2\"/><path d=\"M6 7V5a2 2 0 012-2h4a2 2 0 012 2v2\"/><line x1=\"2\" y1=\"13\" x2=\"18\" y2=\"13\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: systemisch
+    de: Systemischer Coach
+    en: Systemic Coach
+    color: "#D4A843"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"10\" cy=\"4\" r=\"2\"/><circle cx=\"4\" cy=\"16\" r=\"2\"/><circle cx=\"16\" cy=\"16\" r=\"2\"/><line x1=\"10\" y1=\"6\" x2=\"4\" y2=\"14\"/><line x1=\"10\" y1=\"6\" x2=\"16\" y2=\"14\"/><line x1=\"6\" y1=\"16\" x2=\"14\" y2=\"16\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: sportcoach
+    de: Sportcoach
+    en: Sports Coach
+    color: "#2ECC71"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M6 2h8v8a4 4 0 01-8 0V2z\"/><path d=\"M6 4H3a3 3 0 003 3\"/><path d=\"M14 4h3a3 3 0 01-3 3\"/><line x1=\"10\" y1=\"14\" x2=\"10\" y2=\"18\"/><line x1=\"7\" y1=\"18\" x2=\"13\" y2=\"18\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: beziehung
+    de: Beziehungscoach
+    en: Relationship Coach
+    color: "#CF6060"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M20 12s-4-7-10-7S0 12 0 12s4 7 10 7 10-7 10-7z\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: karriere
+    de: Karrierecoach
+    en: Career Coach
+    color: "#E67E22"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"10\" cy=\"10\" r=\"8\"/><circle cx=\"10\" cy=\"10\" r=\"4\"/><circle cx=\"10\" cy=\"10\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: nlp
+    de: "NLP & Mentalcoach"
+    en: "NLP & Mental Coach"
+    color: "#9B59B6"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M13 3a4 4 0 014 4v1a3 3 0 013 3 3 3 0 01-3 3v1a4 4 0 01-8 0v-1a3 3 0 01-3-3 3 3 0 013-3v-1a4 4 0 014-4z\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: therapeutisch
+    de: Therapeutischer Coach
+    en: Therapeutic Coach
+    color: "#1ABC9C"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><rect x=\"5\" y=\"2\" width=\"10\" height=\"13\" rx=\"5\"/><line x1=\"10\" y1=\"15\" x2=\"10\" y2=\"19\"/><line x1=\"7\" y1=\"19\" x2=\"13\" y2=\"19\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: burnout
+    de: Burnout-Coach
+    en: Burnout Coach
+    color: "#E74C3C"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><polygon points=\"13 2 3 14 10 14 8 22 19 9 12 9\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: eltern
+    de: Eltern-Coach
+    en: Parenting Coach
+    color: "#27AE60"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"5\" cy=\"6\" r=\"2\"/><circle cx=\"15\" cy=\"6\" r=\"2\"/><circle cx=\"10\" cy=\"3\" r=\"2\"/><path d=\"M5 8v6M15 8v6M10 5v9\"/><line x1=\"3\" y1=\"14\" x2=\"17\" y2=\"14\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: gesundheit
+    de: Health Coach
+    en: Health Coach
+    color: "#16A085"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M10 18V8\"/><path d=\"M10 8c0 0-4-3-4-6 0 2 2 3 4 4 2-1 4-2 4-4 0 3-4 6-4 6z\"/></svg>"
+    position: ""
+    quelle: html-js
+  - id: sinn
+    de: "Sinn & Werte Coach"
+    en: "Purpose & Values Coach"
+    color: "#A855F7"
+    icon: "<svg width=\"16\" height=\"16\" viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8Z\"/></svg>"
+    position: ""
+    quelle: html-js
+luecken:
+  []

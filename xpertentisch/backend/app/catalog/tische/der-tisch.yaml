@@ -1,0 +1,9 @@
+id: der-tisch
+html: der-tisch-backend/der-tisch.html
+title: DER TiSCH — Mehrere Stimmen. Ein Tisch.
+modi:
+  []
+perspectives:
+  []
+luecken:
+  - kein const PERSPEKTIVEN

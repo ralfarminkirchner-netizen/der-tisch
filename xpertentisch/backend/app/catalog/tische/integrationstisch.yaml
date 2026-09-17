@@ -1,0 +1,72 @@
+id: integrationstisch
+html: der-tisch-backend/integrationstisch.html
+title: iNTEGRATiONS TiSCH — Epistemischer Perspektivenraum
+modi:
+  []
+perspectives:
+  - id: systemisch
+    de: Systemisch
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: tiefenpsychologisch
+    de: Tiefenpsychologisch
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: empirisch-rational
+    de: Empirisch-Rational
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: philosophisch
+    de: Philosophisch
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: ethisch
+    de: Ethisch
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: strategisch
+    de: Strategisch
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: risiko
+    de: Risiko
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: neurodivergent
+    de: Neurodivergent
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+  - id: aus-kinderaugen
+    de: Aus Kinderaugen
+    en: ""
+    color: ""
+    icon: ""
+    position: ""
+    quelle: roleConfig+AGENTS_DE-name
+luecken:
+  - kein const PERSPEKTIVEN
+  - PERSPEKTIVEN fehlte; Rollen aus roleConfig+AGENTS_DE

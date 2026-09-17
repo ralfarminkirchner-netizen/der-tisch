@@ -1,0 +1,9 @@
+id: expertentisch
+html: der-tisch-backend/expertentisch.html
+title: EXPERTiSEN TiSCH — Fachexpertise am Tisch
+modi:
+  []
+perspectives:
+  []
+luecken:
+  - kein const PERSPEKTIVEN
