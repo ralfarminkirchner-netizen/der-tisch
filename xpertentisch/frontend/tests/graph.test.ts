@@ -70,4 +70,12 @@ describe('renderGraph', () => {
     expect(svg.querySelectorAll('.node')).toHaveLength(0);
     expect(svg.textContent).toContain('Noch keine auswertbaren Antworten');
   });
+
+  it('schreibt die Anzahl auf die Kante, ohne eine neue Beziehung zu erfinden', () => {
+    const svg = renderGraph(summary, () => {});
+    const agree = svg.querySelector('.edge.agree .edge-count')?.textContent;
+    const contra = svg.querySelector('.edge.contra .edge-count')?.textContent;
+    expect(agree).toBe('2');
+    expect(contra).toBe('1');
+  });
 });

@@ -21,8 +21,8 @@ export function renderGraph(
   onSelect: (selection: GraphSelection) => void,
 ): SVGSVGElement {
   const nodes = summary.models.filter((m) => summary.analysed_jobs.includes(m.job_id));
-  const width = 320;
-  const height = 240;
+  const width = 360;
+  const height = 280;
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'graph');
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -47,10 +47,10 @@ export function renderGraph(
     const b = positions.get(pair.b_job_id);
     if (!a || !b) continue;
     if (pair.agreements > 0) {
-      svg.appendChild(edge(pair, a, b, 'agree', pair.agreements, onSelect, -8));
+      svg.appendChild(edge(pair, a, b, 'agree', pair.agreements, onSelect, -14));
     }
     if (pair.contradictions > 0) {
-      svg.appendChild(edge(pair, a, b, 'contra', pair.contradictions, onSelect, 8));
+      svg.appendChild(edge(pair, a, b, 'contra', pair.contradictions, onSelect, 14));
     }
   }
 
@@ -70,8 +70,8 @@ function layout(
 ): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
   const cx = width / 2;
-  const cy = height / 2;
-  const radius = Math.min(width, height) / 2 - 46;
+  const cy = height / 2 - 8;
+  const radius = Math.min(width, height) / 2 - 62;
   if (nodes.length === 1) {
     positions.set(nodes[0].job_id, { x: cx, y: cy });
     return positions;
@@ -96,31 +96,44 @@ function edge(
   offset: number,
 ): SVGGElement {
   const group = document.createElementNS(SVG_NS, 'g');
-  const line = document.createElementNS(SVG_NS, 'line');
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const length = Math.hypot(dx, dy) || 1;
   const ox = (-dy / length) * offset;
   const oy = (dx / length) * offset;
-  line.setAttribute('x1', String(a.x + ox));
-  line.setAttribute('y1', String(a.y + oy));
-  line.setAttribute('x2', String(b.x + ox));
-  line.setAttribute('y2', String(b.y + oy));
-  line.setAttribute('stroke-width', String(Math.min(2 + count, 7)));
-  line.setAttribute('stroke-opacity', '0.85');
-  group.appendChild(line);
+  const x1 = a.x + ox;
+  const y1 = a.y + oy;
+  const x2 = b.x + ox;
+  const y2 = b.y + oy;
+  const mx = (x1 + x2) / 2 + ox * 0.18;
+  const my = (y1 + y2) / 2 + oy * 0.18;
+
+  const path = document.createElementNS(SVG_NS, 'path');
+  path.setAttribute('d', `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`);
+  path.setAttribute('stroke-width', String(Math.min(2 + count, 7)));
+  path.setAttribute('stroke-opacity', '0.88');
+  path.setAttribute('fill', 'none');
+  group.appendChild(path);
 
   // Eigene Trefferfläche: eine dünne Linie ist auf dem Telefon nicht treffbar
   // und für die Bedienung per Zeiger zu klein. Laufen zwei Kanten zwischen
   // denselben Knoten, rücken die Flächen zusätzlich längs auseinander —
   // sonst verdeckte die eine die andere und wäre nicht mehr anzutippen.
-  const laengs = offset / 12;
+  const laengs = offset / 18;
   const hit = document.createElementNS(SVG_NS, 'circle');
   hit.setAttribute('cx', String((a.x + b.x) / 2 + ox + dx * laengs));
   hit.setAttribute('cy', String((a.y + b.y) / 2 + oy + dy * laengs));
-  hit.setAttribute('r', '13');
+  hit.setAttribute('r', '16');
   hit.setAttribute('class', 'edge-hit');
   group.appendChild(hit);
+
+  const countText = document.createElementNS(SVG_NS, 'text');
+  countText.setAttribute('x', String((a.x + b.x) / 2 + ox + dx * laengs));
+  countText.setAttribute('y', String((a.y + b.y) / 2 + oy + dy * laengs + 4));
+  countText.setAttribute('class', 'edge-count');
+  countText.setAttribute('text-anchor', 'middle');
+  countText.textContent = String(count);
+  group.appendChild(countText);
 
   group.setAttribute('class', `edge ${kind}`);
   group.setAttribute('tabindex', '0');
@@ -162,15 +175,33 @@ function nodeElement(
   group.setAttribute('aria-label', `Antwort von ${node.label} öffnen`);
   group.dataset.jobId = node.job_id;
 
+  const radius = 16 + Math.min(node.sentences, 8);
+
+  const hit = document.createElementNS(SVG_NS, 'circle');
+  hit.setAttribute('cx', String(pos.x));
+  hit.setAttribute('cy', String(pos.y));
+  hit.setAttribute('r', '28');
+  hit.setAttribute('fill', 'transparent');
+  hit.setAttribute('class', 'node-hit');
+  group.appendChild(hit);
+
+  const ring = document.createElementNS(SVG_NS, 'circle');
+  ring.setAttribute('cx', String(pos.x));
+  ring.setAttribute('cy', String(pos.y));
+  ring.setAttribute('r', String(radius + 6));
+  ring.setAttribute('class', 'fokusring');
+  group.appendChild(ring);
+
   const circle = document.createElementNS(SVG_NS, 'circle');
   circle.setAttribute('cx', String(pos.x));
   circle.setAttribute('cy', String(pos.y));
-  circle.setAttribute('r', String(18 + Math.min(node.sentences, 12)));
+  circle.setAttribute('r', String(radius));
+  circle.setAttribute('class', 'knoten');
   group.appendChild(circle);
 
   const text = document.createElementNS(SVG_NS, 'text');
   text.setAttribute('x', String(pos.x));
-  text.setAttribute('y', String(pos.y + 4));
+  text.setAttribute('y', String(pos.y + radius + 14));
   text.textContent = shorten(node.label);
   group.appendChild(text);
 
