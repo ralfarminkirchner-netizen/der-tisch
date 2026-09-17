@@ -27,6 +27,7 @@ from .providers import ProviderError, ProviderRegistry
 from .reports import render_html, render_markdown
 from .chains import Chains
 from .runner import Runner
+from .tisch_lauf import TischLaeufe, katalog, tisch_by_id
 
 log = logging.getLogger("xpertentisch")
 
@@ -48,6 +49,15 @@ class SparkCreate(BaseModel):
     #: Vorgeschaltete Kuratierung durch den eingestellten Kurator.
     curate: bool = False
 
+
+
+class LaufCreate(BaseModel):
+    tisch_id: str
+    modus: str = "frage"
+    question: str = Field(min_length=5)
+    model_id: str | None = None
+    reibung_model_id: str | None = None
+    integration_model_id: str | None = None
 
 class PingPongStart(BaseModel):
     """Ein begrenztes Wechselgespräch. Die Grenzen stehen vorher fest."""
@@ -159,6 +169,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.runner = runner
     app.state.table = table
     app.state.chains = chains
+    app.state.tisch_laeufe = TischLaeufe(app)
 
     if settings.cors_origins:
         app.add_middleware(
@@ -203,6 +214,58 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 if (k := table.curator()) else None
             ),
         }
+
+
+    @app.get("/api/tische")
+    async def list_tische() -> list[dict[str, Any]]:
+        return [
+            {
+                "id": tisch.id,
+                "title": tisch.title,
+                "modi": tisch.modi,
+                "perspectives": len(tisch.perspectives),
+                "luecken": tisch.luecken,
+            }
+            for tisch in katalog().tische
+        ]
+
+    @app.get("/api/tische/{tisch_id}")
+    async def get_tisch(tisch_id: str) -> dict[str, Any]:
+        try:
+            return tisch_by_id(tisch_id).model_dump()
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unbekannter Tisch")
+
+    @app.post("/api/laeufe", status_code=201)
+    async def start_lauf(req: LaufCreate) -> dict[str, Any]:
+        try:
+            rec = await app.state.tisch_laeufe.start(
+                tisch_id=req.tisch_id,
+                modus=req.modus,
+                question=req.question,
+                model_id=req.model_id,
+                reibung_model_id=req.reibung_model_id,
+                integration_model_id=req.integration_model_id,
+            )
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unbekannter Tisch")
+        return {"id": rec["id"], "status": rec["status"], "phase": rec["phase"]}
+
+    @app.get("/api/laeufe/{lauf_id}")
+    async def get_lauf(lauf_id: str) -> dict[str, Any]:
+        try:
+            return app.state.tisch_laeufe.get(lauf_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unbekannter Lauf")
+
+    @app.post("/api/laeufe/{lauf_id}/cancel/{perspective_id}")
+    async def cancel_lauf_perspektive(lauf_id: str, perspective_id: str) -> dict[str, str]:
+        try:
+            app.state.tisch_laeufe.get(lauf_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="unbekannter Lauf")
+        app.state.tisch_laeufe.cancel_perspective(lauf_id, perspective_id)
+        return {"status": "cancel-requested", "perspective_id": perspective_id}
 
     # -------------------------------------------------------------- Sitzungen
 
