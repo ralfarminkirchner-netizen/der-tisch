@@ -14,7 +14,12 @@ from datetime import datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from .analysis import KIND_AGREEMENT, KIND_CONTRADICTION, KIND_UNIQUE
+from .analysis import (
+    KIND_AGREEMENT,
+    KIND_CONTRADICTION,
+    KIND_UNIQUE,
+    themen_aus_markern,
+)
 
 KIND_LABELS = {
     KIND_AGREEMENT: "Übereinstimmung",
@@ -79,6 +84,127 @@ def _leer_grund(job: dict[str, Any]) -> str:
         "queued": "Wartet noch.",
         "running": "Läuft noch.",
     }.get(job["status"], "Keine Antwort erfasst.")
+
+
+ART_KURZ = {
+    "funke": "Funke",
+    "antwort": "Antwort",
+    "weitergabe": "Weitergabe",
+    "gegenposition": "Gegenposition",
+    "vertiefung": "Vertiefung",
+    "szenario": "Szenario",
+    "kuratierung": "Kuratierung",
+    "pingpong": "Wechselrede",
+}
+
+
+def _zweige(bundle: dict[str, Any]) -> list[dict[str, Any]]:
+    """Ordnet die Beiträge einer Sitzung zu einem Baum.
+
+    Dieselbe Regel wie in der Oberfläche: ein Beitrag hängt an dem Beitrag, aus
+    dessen Antwort er hervorging — das steht in seinen ausdrücklich gesetzten
+    Bezügen. Ringe in den Bezügen werden abgefangen, statt den Bericht zu
+    sprengen.
+    """
+    spark_von_job: dict[str, str] = {}
+    for entry in bundle["sparks"]:
+        for job in entry["jobs"]:
+            spark_von_job[job["id"]] = entry["spark"]["id"]
+
+    eltern_von: dict[str, str | None] = {}
+    for entry in bundle["sparks"]:
+        spark = entry["spark"]
+        eltern: str | None = None
+        for ref in spark.get("refs") or []:
+            quelle = spark_von_job.get(ref)
+            if quelle and quelle != spark["id"]:
+                eltern = quelle
+                break
+        eltern_von[spark["id"]] = eltern
+
+    tiefe_von: dict[str, int] = {}
+
+    def tiefe(sid: str, gesehen: set[str] | None = None) -> int:
+        if sid in tiefe_von:
+            return tiefe_von[sid]
+        gesehen = set() if gesehen is None else gesehen
+        if sid in gesehen:
+            return 0
+        gesehen.add(sid)
+        eltern = eltern_von.get(sid)
+        wert = tiefe(eltern, gesehen) + 1 if eltern else 0
+        tiefe_von[sid] = wert
+        return wert
+
+    return [
+        {
+            "spark": entry["spark"],
+            "jobs": entry["jobs"],
+            "tiefe": tiefe(entry["spark"]["id"]),
+            "eltern_id": eltern_von.get(entry["spark"]["id"]),
+        }
+        for entry in bundle["sparks"]
+    ]
+
+
+def _verlauf_svg(bundle: dict[str, Any]) -> str:
+    """Der Verlauf als eingebettetes SVG — ohne Skript, ohne Nachladen.
+
+    Bewusst **ohne** xmlns-Angabe: in HTML setzt der Parser den Namensraum
+    selbst, und eine Adresse im Quelltext — sei es auch nur ein Namensraum —
+    widerspräche der Zusicherung, dass im Bericht keine externe Adresse steht.
+    """
+    zweige = _zweige(bundle)
+    if not zweige:
+        return ""
+    kasten_b, kasten_h = 150, 40
+    spalte, zeile, rand = 44, 16, 10
+    max_tiefe = max(z["tiefe"] for z in zweige)
+    breite = rand * 2 + (max_tiefe + 1) * kasten_b + max_tiefe * spalte
+    hoehe = rand * 2 + len(zweige) * (kasten_h + zeile) - zeile
+
+    pos = {
+        z["spark"]["id"]: (
+            rand + z["tiefe"] * (kasten_b + spalte),
+            rand + i * (kasten_h + zeile),
+        )
+        for i, z in enumerate(zweige)
+    }
+
+    teile = [
+        f'<svg class="verlauf" viewBox="0 0 {breite} {hoehe}" '
+        f'role="img" aria-label="Verlauf der Sitzung als Baum">'
+    ]
+    for z in zweige:
+        if not z["eltern_id"] or z["eltern_id"] not in pos:
+            continue
+        vx, vy = pos[z["eltern_id"]]
+        nx, ny = pos[z["spark"]["id"]]
+        x1, y1 = vx + kasten_b, vy + kasten_h / 2
+        x2, y2 = nx, ny + kasten_h / 2
+        mx = x1 + spalte / 2
+        teile.append(f'<path class="ast" d="M {x1} {y1} H {mx} V {y2} H {x2}" />')
+    for z in zweige:
+        spark = z["spark"]
+        x, y = pos[spark["id"]]
+        art = ART_KURZ.get(spark["kind"], spark["kind"])
+        kurz, _ = _kurz(spark["prompt"], 24)
+        teile.append(
+            f'<g class="zweig"><rect x="{x}" y="{y}" width="{kasten_b}" '
+            f'height="{kasten_h}" rx="8" />'
+            f'<text class="zweigart" x="{x + 10}" y="{y + 16}">'
+            f'{esc(art)} {esc(spark["seq"])}</text>'
+            f'<text class="zweigtext" x="{x + 10}" y="{y + 31}">{esc(kurz)}</text></g>'
+        )
+    teile.append("</svg>")
+    return "".join(teile)
+
+
+def _kurz(text: str, zeichen: int) -> tuple[str, bool]:
+    sauber = " ".join((text or "").split())
+    if len(sauber) <= zeichen:
+        return sauber, False
+    return sauber[: zeichen - 1].rstrip() + "…", True
 
 
 def _beitragsnamen(bundle: dict[str, Any]) -> dict[str, str]:
@@ -314,6 +440,63 @@ footer {
   }
 }
 
+/* Der Verlauf als Baum. Ein Bild sagt hier mehr als eine Einrückung, und ein
+   eingebettetes SVG lädt nichts nach — es ist Teil der Datei. */
+svg.verlauf {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  margin: 10px 0 4px;
+  font-family: var(--sans);
+}
+
+svg.verlauf .ast {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.4;
+}
+
+svg.verlauf .zweig rect {
+  fill: var(--card);
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+
+svg.verlauf .zweigart {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  fill: var(--muted);
+}
+
+svg.verlauf .zweigtext {
+  font-size: 11px;
+  fill: var(--ink);
+}
+
+/* Die Folgen einer Szenario-Runde. Die Zahl davor ist eine Häufigkeit. */
+.folge {
+  border-left: 3px solid var(--line);
+  padding: 2px 0 2px 14px;
+  margin: 12px 0;
+}
+
+.folge.geteilt { border-left-color: var(--agree); }
+.folge.umstritten { border-left-color: var(--contra); }
+.folge.einzeln { border-left-color: var(--unique); }
+
+.folge .haeufigkeit {
+  font-family: var(--sans);
+  font-size: .72rem;
+  font-weight: 560;
+  letter-spacing: .02em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 3px;
+}
+
 @media (max-width: 640px) {
   body { font-size: 16px; }
 }
@@ -403,6 +586,25 @@ def render_html(bundle: dict[str, Any]) -> str:
                   f"<td>{esc(r['unique'])}</td></tr>")
             a("</tbody></table></div>")
 
+        # Themen: woran die Fundstellen dieses Funkens hängen. Bisher war das
+        # nur in der Oberfläche zu sehen und fehlte im Bericht vollständig.
+        themen = themen_aus_markern(entry["markers"])
+        if themen:
+            a("<h3>Themen</h3><div class=\"tablewrap\"><table><thead><tr>"
+              "<th>Begriff</th><th>Stimmen</th><th>einig</th><th>im Widerspruch</th>"
+              "<th>allein</th></tr></thead><tbody>")
+            for t in themen[:12]:
+                a("<tr>"
+                  f"<td>{esc(t['begriff'])}</td><td>{esc(t['stimmen'])}</td>"
+                  f"<td>{esc(t['einig'])}</td><td>{esc(t['gegen'])}</td>"
+                  f"<td>{esc(t['einzeln'])}</td></tr>")
+            a("</tbody></table></div>")
+            if len(themen) > 12:
+                a(f'<p class="note">{esc(len(themen) - 12)} weitere Begriffe sind '
+                  "nicht aufgeführt.</p>")
+            a('<p class="note">Die Zahlen nennen, wie viele Stimmen an einem Begriff '
+              "hängen. Sie sagen nichts darüber, ob etwas zutrifft.</p>")
+
         for job in entry["jobs"]:
             badges = [f'<span class="badge">{esc(job["provider"])} · {esc(job["model"])}</span>']
             if job["status"] == "error":
@@ -431,6 +633,54 @@ def render_html(bundle: dict[str, Any]) -> str:
                       f'<div class="note">{esc(m["note"])}</div></blockquote>')
                 a("</details>")
             a("</div>")
+
+    szenarien = bundle.get("szenarien") or []
+    if szenarien:
+        a("<h2>Folgen</h2>")
+        a('<p class="note">Die Folgen stammen aus den Antworten der Stimmen. Die Zahl '
+          "vor einer Folge sagt, <strong>wie viele Stimmen sie genannt haben</strong> — "
+          "eine Häufigkeit, keine Wahrscheinlichkeit und keine Vorhersage.</p>")
+        for sz in szenarien:
+            a(f"<h3>Szenario zu Funke {esc(sz['seq'])}</h3>")
+            a('<div class="card">')
+            if sz.get("ausgang"):
+                a(f'<p class="note">Ausgangsaussage — {esc(sz["ausgang"]["label"])}</p>')
+                a(f'<blockquote>{esc(sz["ausgang"]["auszug"])}</blockquote>')
+            a(f'<p class="note">Gefragt wurde: {esc(sz["prompt"])}</p>')
+            if not sz["folgen"]:
+                a('<p class="note">Keine auswertbare Folge genannt.</p>')
+            for folge in sz["folgen"]:
+                klasse = (
+                    "umstritten" if folge["gegensatz"]
+                    else ("geteilt" if folge["anzahl"] > 1 else "einzeln")
+                )
+                namen_der_stimmen = []
+                for nennung in folge["nennungen"]:
+                    if nennung["label"] not in namen_der_stimmen:
+                        namen_der_stimmen.append(nennung["label"])
+                a(f'<div class="folge {klasse}">')
+                a('<span class="haeufigkeit">'
+                  f'von {esc(folge["anzahl"])} von {esc(folge["von"])} Stimmen genannt'
+                  f' · {esc(", ".join(namen_der_stimmen))}</span>')
+                a(f'<div class="answer">{esc(folge["text"])}</div>')
+                if folge["gegensatz"]:
+                    a('<p class="note">Steht einer anderen genannten Folge entgegen '
+                      "(gleiches Thema, entgegengesetzte Polarität).</p>")
+                a("</div>")
+            if sz["uebergangen"]:
+                a(f'<p class="note">{esc(sz["uebergangen"])} weitere genannte Folgen '
+                  "sind hier nicht aufgeführt.</p>")
+            a("</div>")
+
+    baum = _verlauf_svg(bundle)
+    if baum:
+        a("<h2>Verlauf</h2>")
+        a('<div class="card">')
+        a(baum)
+        a('<p class="note">Jeder Zweig ist ein Beitrag, der aus der Antwort eines '
+          "anderen hervorging — abgelesen an den gesetzten Bezügen. Das ist keine "
+          "Vorhersage, sondern das, was geschehen ist.</p>")
+        a("</div>")
 
     beziehungen = bundle.get("relations") or []
     if beziehungen:
@@ -504,6 +754,20 @@ def render_markdown(bundle: dict[str, Any]) -> str:
                   f"{r['sentences']} | {dur} | {r['agreements']} | {r['contradictions']} | {r['unique']} |")
             a("")
 
+        themen = themen_aus_markern(entry["markers"])
+        if themen:
+            a("**Themen**")
+            a("")
+            a("| Begriff | Stimmen | einig | im Widerspruch | allein |")
+            a("| --- | ---: | ---: | ---: | ---: |")
+            for t in themen[:12]:
+                a(f"| {t['begriff']} | {t['stimmen']} | {t['einig']} | "
+                  f"{t['gegen']} | {t['einzeln']} |")
+            a("")
+            if len(themen) > 12:
+                a(f"_{len(themen) - 12} weitere Begriffe sind nicht aufgeführt._")
+                a("")
+
         for job in entry["jobs"]:
             a(f"### {job['label']} ({job['provider']} · {job['model']})")
             a("")
@@ -529,6 +793,55 @@ def render_markdown(bundle: dict[str, Any]) -> str:
                 for m in job_markers:
                     a(f"- _{KIND_LABELS.get(m['kind'], m['kind'])}_: „{m['quote']}“ — {m['note']}")
                 a("")
+
+    szenarien = bundle.get("szenarien") or []
+    if szenarien:
+        a("## Folgen")
+        a("")
+        a("Die Folgen stammen aus den Antworten der Stimmen. Die Zahl sagt, wie viele "
+          "Stimmen eine Folge genannt haben — eine Häufigkeit, keine Wahrscheinlichkeit "
+          "und keine Vorhersage.")
+        a("")
+        for sz in szenarien:
+            a(f"### Szenario zu Funke {sz['seq']}")
+            a("")
+            if sz.get("ausgang"):
+                a(f"_Ausgangsaussage — {sz['ausgang']['label']}_")
+                a("")
+                a(f"> {sz['ausgang']['auszug']}")
+                a("")
+            if not sz["folgen"]:
+                a("_Keine auswertbare Folge genannt._")
+                a("")
+            for folge in sz["folgen"]:
+                namen_der_stimmen: list[str] = []
+                for nennung in folge["nennungen"]:
+                    if nennung["label"] not in namen_der_stimmen:
+                        namen_der_stimmen.append(nennung["label"])
+                hinweis = " — steht einer anderen genannten Folge entgegen" \
+                    if folge["gegensatz"] else ""
+                a(f"- **von {folge['anzahl']} von {folge['von']} Stimmen genannt** "
+                  f"({', '.join(namen_der_stimmen)}){hinweis}: {folge['text']}")
+            a("")
+            if sz["uebergangen"]:
+                a(f"_{sz['uebergangen']} weitere genannte Folgen sind hier nicht "
+                  "aufgeführt._")
+                a("")
+
+    zweige = _zweige(bundle)
+    if zweige:
+        a("## Verlauf")
+        a("")
+        for z in zweige:
+            spark = z["spark"]
+            art = ART_KURZ.get(spark["kind"], spark["kind"])
+            kurz, _ = _kurz(spark["prompt"], 70)
+            a(f"{'  ' * z['tiefe']}- **{art} {spark['seq']}** — {kurz} "
+              f"({len(z['jobs'])} Antwort(en))")
+        a("")
+        a("Jeder Zweig ist ein Beitrag, der aus der Antwort eines anderen hervorging — "
+          "abgelesen an den gesetzten Bezügen.")
+        a("")
 
     beziehungen = bundle.get("relations") or []
     if beziehungen:

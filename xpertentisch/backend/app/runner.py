@@ -19,7 +19,7 @@ import time
 from typing import Any
 
 from . import context as kontext
-from .analysis import analyse
+from .analysis import analyse, szenario_block
 from .config import ModelConfig, Settings
 from .db import (
     JOB_CANCELLED,
@@ -211,10 +211,13 @@ class Runner:
             return True
 
         # Noch in der Warteschlange: Zustand jetzt setzen, der Arbeiter überspringt ihn.
-        await self.store.set_job_status(job_id, JOB_CANCELLED, "Von dir abgebrochen.")
+        beendet = await self.store.set_job_status(
+            job_id, JOB_CANCELLED, "Von dir abgebrochen."
+        )
         await self.bus.publish(
             job["session_id"], "auftrag.abgebrochen",
-            {"job_id": job_id, "model_id": job["model_id"], "label": job["label"]},
+            {"job_id": job_id, "model_id": job["model_id"], "label": job["label"],
+             "finished_at": beendet},
         )
         return True
 
@@ -227,9 +230,11 @@ class Runner:
         geschrieben = 0
 
         try:
-            await self.store.mark_job_running(job["id"])
+            begonnen = await self.store.mark_job_running(job["id"])
             await self.bus.publish(
-                session_id, "auftrag.laeuft", {"job_id": job["id"], "model_id": job["model_id"]}
+                session_id,
+                "auftrag.laeuft",
+                {"job_id": job["id"], "model_id": job["model_id"], "started_at": begonnen},
             )
 
             # Der Kontext wird jetzt festgehalten — was danach eingeworfen wird,
@@ -255,7 +260,7 @@ class Runner:
 
             latency = int((time.monotonic() - started) * 1000)
             kosten, quelle = await self._kosten(model.provider, response)
-            await self.store.finish_job(
+            beendet = await self.store.finish_job(
                 job["id"],
                 status=JOB_DONE,
                 text=response.text,
@@ -281,6 +286,7 @@ class Runner:
                     "tokens_out": response.tokens_out,
                     "cost_micro": kosten,
                     "cost_source": quelle,
+                    "finished_at": beendet,
                 },
             )
         except asyncio.CancelledError:
@@ -346,7 +352,7 @@ class Runner:
         self, job: dict[str, Any], teiltext: str, started: float
     ) -> None:
         latency = int((time.monotonic() - started) * 1000)
-        await self.store.finish_job(
+        beendet = await self.store.finish_job(
             job["id"],
             status=JOB_CANCELLED,
             text=teiltext,
@@ -359,7 +365,7 @@ class Runner:
             "auftrag.abgebrochen",
             {
                 "job_id": job["id"], "model_id": job["model_id"], "label": job["label"],
-                "text": teiltext, "partial": bool(teiltext),
+                "text": teiltext, "partial": bool(teiltext), "finished_at": beendet,
             },
         )
 
@@ -394,7 +400,7 @@ class Runner:
     ) -> None:
         latency = int((time.monotonic() - started) * 1000)
         message = str(exc) or type(exc).__name__
-        await self.store.finish_job(
+        beendet = await self.store.finish_job(
             job["id"],
             status=JOB_ERROR,
             text=partial_text,
@@ -413,6 +419,7 @@ class Runner:
                 "text": partial_text,
                 "partial": bool(partial_text),
                 "latency_ms": latency,
+                "finished_at": beendet,
             },
         )
 
@@ -446,9 +453,28 @@ class Runner:
                 "summary": summary,
                 "markers": markers,
                 "relations": await self.store.list_relations(session_id),
+                # Die Konsequenzkarte reist mit: sonst kennte die Oberfläche
+                # ein gerade durchgespieltes Szenario erst nach dem nächsten
+                # vollständigen Laden.
+                "szenario": await self._szenario(session_id, spark_id, jobs),
             },
         )
         return summary
+
+    async def _szenario(
+        self, session_id: str, spark_id: str, jobs: list[dict[str, Any]]
+    ) -> dict[str, Any] | None:
+        """Die Konsequenzkarte dieses Funkens — oder None, wenn es keiner ist."""
+        spark = await self.store.get_spark(spark_id)
+        if spark is None or spark.get("kind") != "szenario":
+            return None
+        ausgang = None
+        for ref in spark.get("refs") or []:
+            treffer = await self.store.get_job(ref)
+            if treffer is not None:
+                ausgang = treffer
+                break
+        return szenario_block(spark, jobs, ausgang=ausgang)
 
     async def _suggest_relations(
         self, session_id: str, jobs: list[dict[str, Any]], summary: dict[str, Any]

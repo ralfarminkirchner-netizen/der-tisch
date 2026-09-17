@@ -2,7 +2,15 @@ import './styles.css';
 
 import { ApiError, api, connectEvents, newRequestId } from './api';
 import { renderGraph, type GraphSelection } from './graph';
-import { LINSEN, renderThemen, renderVerlauf } from './linsen';
+import {
+  LINSEN,
+  VERLAUF_ERKLAERUNG,
+  renderHerkunft,
+  renderSzenario,
+  renderThemen,
+  renderVerlauf,
+  renderZeit,
+} from './linsen';
 import type { LinsenArt } from './linsen';
 import { createCard, el, legend, renderQuestion, renderTable, updateCard } from './render';
 import { renderSettings } from './settings';
@@ -10,6 +18,7 @@ import type {
   AppConfig,
   Bezug,
   Entwurf,
+  Folge,
   PingPongRun,
   HealthInfo,
   Job,
@@ -21,6 +30,7 @@ import type {
   SparkEntry,
   SparkKind,
   Summary,
+  Szenario,
 } from './types';
 
 const STORAGE_KEY = 'xpertentisch.session';
@@ -46,6 +56,15 @@ interface AppState {
   pendingRequestId: string | null;
   /** Welche Linse gerade auf die Daten gelegt ist. */
   linse: LinsenArt;
+  /** Auf welchen Funken die Linsen schauen. Null heißt: den letzten. */
+  gewaehlterSpark: string | null;
+  /**
+   * Fundstellen der aktuellen Auswahl, je Auftrag.
+   *
+   * Nicht gespeichert und nicht vom Server: sie entstehen beim Klick auf eine
+   * genannte Folge und verschwinden mit der nächsten Auswahl wieder.
+   */
+  zusatzMarker: Map<string, Marker[]>;
 }
 
 const state: AppState = {
@@ -62,6 +81,8 @@ const state: AppState = {
   sessions: [],
   pendingRequestId: null,
   linse: 'stimmen',
+  gewaehlterSpark: null,
+  zusatzMarker: new Map(),
 };
 
 const ENTWURF_KEY = 'xpertentisch.entwuerfe';
@@ -127,7 +148,7 @@ async function boot(): Promise<void> {
   if (!state.bundle) {
     const session = await api.createSession(defaultTitle());
     state.bundle = {
-      session, sparks: [], relations: [], pending: false,
+      session, sparks: [], szenarien: [], relations: [], pending: false,
       last_event_id: 0, exported_at: Date.now() / 1000,
     };
   }
@@ -209,6 +230,13 @@ function renderShell(): void {
     stream.append(block);
   }
   if (bundle.sparks.length === 0) stream.append(gedeckterTisch());
+
+  // Ohne einen einzigen Beitrag gäbe es nichts zu betrachten: eine leere
+  // Linsenfläche wäre nur Möblierung.
+  if (bundle.sparks.length > 0) {
+    root.append(linsenFlaeche());
+    zeichneLinsen();
+  }
 
   root.append(closingSection());
   root.append(
@@ -1069,7 +1097,7 @@ function renderSparkBlock(entry: SparkEntry): HTMLElement {
 
   const cards = el('div', { class: 'cards' });
   for (const job of entry.jobs) {
-    const card = createCard(job, entry.markers);
+    const card = createCard(job, markerFuer(entry, job.id));
     ruesteKarteAus(card, job, entry);
     cards.append(card);
   }
@@ -1181,18 +1209,26 @@ const STATUS_BEZUG: Record<Relation['status'], string> = {
   abgelehnt: 'von dir verworfen',
 };
 
+/**
+ * Was unter einem Funken steht: der Vergleich und die gefundenen Bezüge.
+ *
+ * Die Linsen sind hier ausgezogen. Sie sitzen jetzt in einer eigenen Fläche,
+ * die den ganzen Verlauf und den gewählten Funken zusammen zeigt — mit fünf
+ * Linsen wäre das Panel unter jedem Funken zu eng geworden, und der Verlauf
+ * war dort ohnehin nur zu Gast: er gilt für die ganze Sitzung.
+ */
 function renderPanels(block: HTMLElement, summary: Summary): void {
   const panels = block.querySelector('.panel-grid');
   if (!panels) return;
   panels.replaceChildren();
   panels.append(renderTable(summary));
-  panels.append(linsenPanel(block, summary));
 
   const spark = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
   if (spark) {
     const bezuege = beziehungsPanel(spark);
     if (bezuege) panels.append(bezuege);
   }
+  zeichneLinsen();
 }
 
 /** Welche Linse zuletzt gewählt war. Überdauert das Neuladen. */
@@ -1206,54 +1242,64 @@ function gemerkteLinse(): LinsenArt {
   return 'stimmen';
 }
 
+/** Der Funke, auf den die Linsen gerade schauen — der letzte, solange keiner gewählt ist. */
+function gewaehlterEintrag(): SparkEntry | null {
+  const sparks = state.bundle?.sparks ?? [];
+  if (sparks.length === 0) return null;
+  const gewaehlt = sparks.find((e) => e.spark.id === state.gewaehlterSpark);
+  return gewaehlt ?? sparks[sparks.length - 1];
+}
+
+/** Die Namen aller Beiträge — für die Herkunfts-Linse, die über Funken hinweg zeigt. */
+function beitragsNamen(): Map<string, string> {
+  const namen = new Map<string, string>();
+  for (const eintrag of state.bundle?.sparks ?? []) {
+    namen.set(eintrag.spark.id, `Funke ${eintrag.spark.seq}`);
+    for (const job of eintrag.jobs) {
+      namen.set(job.id, `${job.label} · F${eintrag.spark.seq}`);
+    }
+  }
+  return namen;
+}
+
 /**
- * Drei Blicke auf dieselben Daten.
+ * Die Linsenfläche: der ganze Verlauf und der gewählte Funke nebeneinander.
  *
- * Keine Linse rechnet etwas hinzu: die Stimmen-Linse zeigt die ausgewiesenen
- * Fundstellen, die Themen-Linse die Begriffe, an denen sie hängen, und der
- * Verlauf die Beiträge, die tatsächlich auseinander hervorgegangen sind.
+ * Links steht der Verlauf der Sitzung. Er ist keine Linse unter mehreren,
+ * sondern der Weg durch die Sitzung — und zugleich die Auswahl: ein Klick auf
+ * einen Zweig entscheidet, worauf die gewählte Linse rechts schaut. So bleibt
+ * sichtbar, wo man ist, während man die Sichtweise wechselt.
  */
-function linsenPanel(block: HTMLElement, summary: Summary): HTMLElement {
-  const panel = el('section', { class: 'flaeche panel linsen-panel' });
-  const kopf = el('div', { class: 'row spread' }, [el('h4', {}, ['Linsen'])]);
+function linsenFlaeche(): HTMLElement {
+  const panel = el('section', { class: 'flaeche linsenraum', id: 'linsen' });
+  panel.append(
+    el('div', { class: 'row spread' }, [
+      el('h3', {}, ['Linsen']),
+      el('p', { class: 'hint' }, [
+        'Dieselben Daten, verschieden gelesen. Keine Linse rechnet etwas hinzu.',
+      ]),
+    ]),
+  );
+
+  const raum = el('div', { class: 'linsenraster' });
+  const navigator = el('div', { class: 'verlaufsnavigator' }, [
+    el('h4', {}, ['Verlauf']),
+    el('div', { class: 'verlaufwrap' }),
+    el('p', { class: 'hint' }, [VERLAUF_ERKLAERUNG]),
+  ]);
+
+  const buehne = el('div', { class: 'linsenbuehne' });
+  const kopf = el('div', { class: 'row spread linsenkopf' }, [
+    el('h4', { class: 'linsentitel' }, []),
+  ]);
   const schalter = el('div', { class: 'linsenwahl', role: 'tablist' });
   kopf.append(schalter);
-  panel.append(kopf);
-
   const flaeche = el('div', { class: 'graphwrap' });
   const erklaerung = el('p', { class: 'hint linsen-text' }, []);
   const beine = el('div', { class: 'linsen-fuss' }, [legend(), erklaerung]);
-  panel.append(flaeche, beine);
-
-  const eintrag = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
-
-  const zeichne = (art: LinsenArt) => {
-    flaeche.replaceChildren();
-    if (art === 'themen') {
-      flaeche.append(
-        renderThemen(summary, eintrag?.markers ?? [], (auswahl) => openAnswers(block, auswahl)),
-      );
-    } else if (art === 'verlauf') {
-      flaeche.append(
-        renderVerlauf(state.bundle!, summary.spark_id, (sparkId) => {
-          const ziel = blocks.get(sparkId);
-          ziel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          ziel?.classList.add('angesteuert');
-          window.setTimeout(() => ziel?.classList.remove('angesteuert'), 1600);
-        }),
-      );
-    } else {
-      flaeche.append(renderGraph(summary, (auswahl) => openAnswers(block, auswahl)));
-    }
-    erklaerung.textContent = LINSEN.find((l) => l.id === art)?.erklaerung ?? '';
-    // Die Legende erklärt die drei Bedeutungen; im Verlauf sagen sie nichts.
-    beine.querySelector('.legend')?.toggleAttribute('hidden', art === 'verlauf');
-    for (const knopf of schalter.querySelectorAll('button')) {
-      const gewaehlt = knopf.dataset.linse === art;
-      knopf.classList.toggle('gewaehlt', gewaehlt);
-      knopf.setAttribute('aria-selected', String(gewaehlt));
-    }
-  };
+  const auswahlnote = el('p', { class: 'hint selection-note' }, []);
+  auswahlnote.hidden = true;
+  buehne.append(kopf, flaeche, auswahlnote, beine);
 
   for (const linse of LINSEN) {
     const knopf = el('button', {
@@ -1266,36 +1312,198 @@ function linsenPanel(block: HTMLElement, summary: Summary): HTMLElement {
       } catch {
         /* dann gilt die Wahl nur für diesen Besuch */
       }
-      // Alle Funkenblöcke folgen derselben Linse: ein Wechsel ist eine
-      // Entscheidung über die Sichtweise, nicht über einen einzelnen Block.
-      for (const [sparkId, b] of blocks) {
-        const s2 = state.bundle?.sparks.find((e) => e.spark.id === sparkId)?.summary;
-        if (s2) renderPanels(b, s2);
-      }
+      zeichneLinsen();
     });
     schalter.append(knopf);
   }
 
-  zeichne(state.linse);
+  raum.append(navigator, buehne);
+  panel.append(raum);
   return panel;
 }
 
-/** Öffnet genau die Antworten, die zum angeklickten Graphelement gehören. */
-function openAnswers(block: HTMLElement, selection: GraphSelection): void {
-  const cards = block.querySelectorAll<HTMLElement>('.card');
-  cards.forEach((card) => card.classList.remove('highlight'));
+/**
+ * Zeichnet Verlauf und gewählte Linse neu.
+ *
+ * Eine Stelle, ein Bild: die Linsenfläche gibt es genau einmal, darum genügt
+ * hier ein Aufruf — es gibt keine Funkenblöcke mehr, die einzeln nachziehen
+ * müssten.
+ */
+function zeichneLinsen(): void {
+  const panel = root.querySelector<HTMLElement>('.linsenraum');
+  if (!panel) return;
+  const bundle = state.bundle;
+  if (!bundle) return;
+
+  const eintrag = gewaehlterEintrag();
+  const sparkId = eintrag?.spark.id ?? null;
+
+  // --- Der Verlauf, links.
+  const verlaufwrap = panel.querySelector<HTMLElement>('.verlaufwrap');
+  if (verlaufwrap) {
+    verlaufwrap.replaceChildren(
+      renderVerlauf(bundle, sparkId, (id) => {
+        state.gewaehlterSpark = id;
+        zeichneLinsen();
+        const ziel = blocks.get(id);
+        ziel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        ziel?.classList.add('angesteuert');
+        window.setTimeout(() => ziel?.classList.remove('angesteuert'), 1600);
+      }),
+    );
+  }
+
+  // --- Die gewählte Linse, rechts.
+  const flaeche = panel.querySelector<HTMLElement>('.graphwrap');
+  const erklaerung = panel.querySelector<HTMLElement>('.linsen-text');
+  const titel = panel.querySelector<HTMLElement>('.linsentitel');
+  const beine = panel.querySelector<HTMLElement>('.linsen-fuss');
+  if (!flaeche || !erklaerung || !titel || !beine) return;
+
+  const art = state.linse;
+  flaeche.replaceChildren();
+  titel.textContent = eintrag
+    ? `${LINSEN.find((l) => l.id === art)?.name ?? ''} — Funke ${eintrag.spark.seq}`
+    : (LINSEN.find((l) => l.id === art)?.name ?? '');
+
+  if (art === 'herkunft') {
+    // Bezüge gelten sitzungsweit, nicht je Funke: sie sind der einzige Ort,
+    // an dem steht, worauf du dich berufen kannst.
+    titel.textContent = 'Herkunft — ganze Sitzung';
+    flaeche.append(
+      renderHerkunft(bundle.relations ?? [], beitragsNamen(), (auswahl) =>
+        openAnswers(auswahl)),
+    );
+  } else if (art === 'szenario') {
+    const szenario =
+      (bundle.szenarien ?? []).find((s) => s.spark_id === sparkId)
+      ?? (bundle.szenarien ?? [])[bundle.szenarien.length - 1]
+      ?? null;
+    if (szenario) titel.textContent = `Folgen — Funke ${szenario.seq}`;
+    flaeche.append(
+      renderSzenario(szenario, (auswahl, folge) =>
+        openAnswers(auswahl, folgenMarker(folge))),
+    );
+    if (szenario?.ausgang) {
+      flaeche.append(
+        el('p', { class: 'hint ausgangstext' }, [
+          `Ausgangsaussage — ${szenario.ausgang.label}: „${szenario.ausgang.auszug}"`,
+        ]),
+      );
+    }
+  } else if (art === 'zeit') {
+    flaeche.append(renderZeit(eintrag?.jobs ?? [], (auswahl) => openAnswers(auswahl)));
+  } else if (art === 'themen' && eintrag?.summary) {
+    flaeche.append(
+      renderThemen(eintrag.summary, eintrag.markers, (auswahl) => openAnswers(auswahl)),
+    );
+  } else if (eintrag?.summary) {
+    flaeche.append(renderGraph(eintrag.summary, (auswahl) => openAnswers(auswahl)));
+  } else {
+    flaeche.append(
+      el('p', { class: 'hint' }, ['Noch keine ausgewertete Antwort für diesen Funken.']),
+    );
+  }
+
+  erklaerung.textContent = LINSEN.find((l) => l.id === art)?.erklaerung ?? '';
+  // Die Legende erklärt die drei Bedeutungen. In der Zeitlinse sagen sie
+  // nichts — dort steht keine Farbe für einen Befund.
+  beine.querySelector('.legend')?.toggleAttribute('hidden', art === 'zeit');
+
+  for (const knopf of panel.querySelectorAll('button[data-linse]')) {
+    const gewaehlt = knopf.getAttribute('data-linse') === art;
+    knopf.classList.toggle('gewaehlt', gewaehlt);
+    knopf.setAttribute('aria-selected', String(gewaehlt));
+  }
+}
+
+/**
+ * Macht aus einer genannten Folge eine Auflage über den Antworttext.
+ *
+ * Die Marker entstehen hier nur für diesen einen Klick; gespeichert wird
+ * nichts. Gelegt werden sie wie jede andere Auflage ausschließlich über
+ * markers.ts — der Originaltext bleibt unangetastet, und ein Zitat, das nicht
+ * mehr passt, wird dort stillschweigend übergangen statt den Text zu
+ * verfälschen.
+ */
+function folgenMarker(folge: Folge): Marker[] {
+  const art: Marker['kind'] =
+    folge.gegensatz.length > 0
+      ? 'widerspruch'
+      : folge.anzahl > 1 ? 'uebereinstimmung' : 'einzigartig';
+  const sitzung = state.bundle?.session.id ?? '';
+  return folge.nennungen.map((nennung, i) => ({
+    id: `folge-${folge.id}-${i}`,
+    session_id: sitzung,
+    spark_id: '',
+    job_id: nennung.job_id,
+    related_job_id: null,
+    kind: art,
+    start_offset: nennung.start_offset,
+    end_offset: nennung.end_offset,
+    quote: nennung.quote,
+    note: `Genannte Folge — von ${folge.anzahl} von ${folge.von} Stimmen genannt`,
+    topics: folge.themen,
+  }));
+}
+
+/**
+ * Öffnet genau die Antworten, die zum angeklickten Element gehören.
+ *
+ * Die Linsen stehen jetzt außerhalb der Funkenblöcke, und die Herkunfts-Linse
+ * zeigt über Funken hinweg. Gesucht wird darum in der ganzen Seite, nicht mehr
+ * in einem Block — sonst bliebe ein Bezug zwischen zwei Funken stumm.
+ *
+ * ``markers`` legt zusätzlich eine Fundstelle über den Text. Sie wird nicht
+ * gespeichert und verschwindet mit der nächsten Auswahl wieder.
+ */
+function openAnswers(selection: GraphSelection, markers: Marker[] = []): void {
+  root.querySelectorAll<HTMLElement>('.card.highlight')
+    .forEach((card) => card.classList.remove('highlight'));
+
+  // Die Auflage der vorigen Auswahl zuerst abräumen, damit nicht zwei
+  // Fundstellen gleichzeitig behauptet werden.
+  const vorher = [...state.zusatzMarker.keys()];
+  state.zusatzMarker.clear();
+  for (const jobId of markers.map((m) => m.job_id)) {
+    state.zusatzMarker.set(jobId, markers.filter((m) => m.job_id === jobId));
+  }
+  for (const jobId of new Set([...vorher, ...state.zusatzMarker.keys()])) {
+    zeichneKarteNeu(jobId);
+  }
+
   let first: HTMLElement | null = null;
   for (const jobId of selection.jobIds) {
-    const card = block.querySelector<HTMLElement>(`.card[data-job-id="${cssEscape(jobId)}"]`);
+    const card = root.querySelector<HTMLElement>(`.card[data-job-id="${cssEscape(jobId)}"]`);
     if (!card) continue;
     card.classList.add('highlight');
     if (!first) first = card;
   }
   first?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  const message = block.querySelector<HTMLElement>('.selection-note');
-  const note = message ?? el('p', { class: 'hint selection-note' }, []);
-  note.textContent = `Geöffnet: ${selection.label}`;
-  if (!message) block.querySelector('.panel-grid')?.after(note);
+
+  const note = root.querySelector<HTMLElement>('.linsenraum .selection-note');
+  if (note) {
+    note.hidden = false;
+    note.textContent = first
+      ? `Geöffnet: ${selection.label}`
+      : `${selection.label} — die zugehörige Antwort steht nicht mehr in dieser Ansicht.`;
+  }
+}
+
+/** Alle Fundstellen einer Karte: die gespeicherten und die der aktuellen Auswahl. */
+function markerFuer(entry: SparkEntry, jobId: string): Marker[] {
+  return [...entry.markers, ...(state.zusatzMarker.get(jobId) ?? [])];
+}
+
+/** Zeichnet genau eine Karte neu — die übrigen bleiben unberührt. */
+function zeichneKarteNeu(jobId: string): void {
+  const entry = findEntry((e) => e.jobs.some((j) => j.id === jobId));
+  const job = entry?.jobs.find((j) => j.id === jobId);
+  if (!entry || !job) return;
+  const card = root.querySelector<HTMLElement>(`.card[data-job-id="${cssEscape(jobId)}"]`);
+  if (!card) return;
+  updateCard(card, job, markerFuer(entry, jobId));
+  ruesteKarteAus(card, job, entry);
 }
 
 function cssEscape(value: string): string {
@@ -1311,6 +1519,8 @@ function ensureSpark(entry: SparkEntry): HTMLElement {
   blocks.set(entry.spark.id, block);
   document.getElementById('sparks')?.append(block);
   meldeNeuenBeitrag(block);
+  // Der Verlauf ist sitzungsweit: ein neuer Beitrag ist ein neuer Zweig.
+  zeichneLinsen();
   return block;
 }
 
@@ -1381,7 +1591,13 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
       break;
     }
     case 'auftrag.laeuft':
-      patchJob(String(payload.job_id), (job) => ({ ...job, status: 'running' }));
+      // Der gemessene Beginn reist mit dem Ereignis; ohne ihn bliebe die
+      // Zeitlinse bis zum nächsten vollständigen Laden blind.
+      patchJob(String(payload.job_id), (job) => ({
+        ...job,
+        status: 'running',
+        started_at: zeitpunkt(payload.started_at) ?? job.started_at,
+      }));
       break;
     case 'auftrag.teilstueck':
       // Der Zwischenstand ersetzt den bisherigen Text vollständig — der Server
@@ -1399,6 +1615,7 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
         text: String(payload.text ?? job.text ?? ''),
         partial: Boolean(payload.partial),
         error: 'Von dir abgebrochen.',
+        finished_at: zeitpunkt(payload.finished_at) ?? job.finished_at,
       }));
       break;
     case 'auftrag.fertig':
@@ -1415,6 +1632,7 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
         tokens_out: (payload.tokens_out as number) ?? null,
         cost_micro: (payload.cost_micro as number) ?? null,
         cost_source: payload.cost_source === 'berechnet' ? 'berechnet' : 'unbekannt',
+        finished_at: zeitpunkt(payload.finished_at) ?? job.finished_at,
       }));
       break;
     case 'auftrag.fehler':
@@ -1425,6 +1643,7 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
         partial: Boolean(payload.partial),
         error: String(payload.error ?? 'Unbekannter Fehler'),
         latency_ms: (payload.latency_ms as number) ?? null,
+        finished_at: zeitpunkt(payload.finished_at) ?? job.finished_at,
       }));
       break;
     case 'auftrag.unterbrochen':
@@ -1443,6 +1662,15 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
       if (Array.isArray(payload.relations)) {
         bundle.relations = payload.relations as Relation[];
       }
+      // Die Konsequenzkarte kommt vom Server mit — gerechnet wird sie dort,
+      // damit Satzzerlegung und Ähnlichkeit genau einmal existieren.
+      if (payload.szenario) {
+        const karte = payload.szenario as Szenario;
+        bundle.szenarien = [
+          ...(bundle.szenarien ?? []).filter((x) => x.spark_id !== karte.spark_id),
+          karte,
+        ].sort((x, y) => x.seq - y.seq);
+      }
       const block = blocks.get(sparkId);
       if (block) {
         for (const job of entry.jobs) {
@@ -1450,7 +1678,7 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
             `.card[data-job-id="${cssEscape(job.id)}"]`,
           );
           if (card) {
-            updateCard(card, job, entry.markers);
+            updateCard(card, job, markerFuer(entry, job.id));
             ruesteKarteAus(card, job, entry);
           }
         }
@@ -1478,6 +1706,16 @@ function handleEvent(type: string, payload: Record<string, unknown>): void {
   }
 }
 
+/**
+ * Ein gemessener Zeitpunkt aus einem Ereignis — oder null.
+ *
+ * Nur was als Zahl ankommt, gilt als gemessen. Es wird nichts ersatzweise aus
+ * der Ankunftszeit des Ereignisses gebildet: das wäre eine erfundene Messung.
+ */
+function zeitpunkt(wert: unknown): number | null {
+  return typeof wert === 'number' && Number.isFinite(wert) ? wert : null;
+}
+
 /** Aktualisiert genau eine Modellkarte — die übrigen bleiben unberührt. */
 function patchJob(jobId: string, update: (job: Job) => Job): void {
   const entry = findEntry((e) => e.jobs.some((j) => j.id === jobId));
@@ -1487,9 +1725,11 @@ function patchJob(jobId: string, update: (job: Job) => Job): void {
   const block = blocks.get(entry.spark.id);
   const card = block?.querySelector<HTMLElement>(`.card[data-job-id="${cssEscape(jobId)}"]`);
   if (card) {
-    updateCard(card, entry.jobs[index], entry.markers);
+    updateCard(card, entry.jobs[index], markerFuer(entry, jobId));
     ruesteKarteAus(card, entry.jobs[index], entry);
   }
+  // Die Zeitlinse liest dieselben Zeitstempel — sie muss mitziehen.
+  if (state.linse === 'zeit') zeichneLinsen();
 }
 
 // ------------------------------------------------------------------ Abschluss

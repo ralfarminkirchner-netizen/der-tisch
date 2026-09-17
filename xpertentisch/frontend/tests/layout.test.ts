@@ -53,6 +53,7 @@ const job: Job = {
   text: 'Ein sehr langes Wort: ' + 'a'.repeat(300),
   error: null, partial: false, latency_ms: 12,
   tokens_in: null, tokens_out: null, cost_micro: null, cost_source: 'unbekannt',
+  created_at: 1000, started_at: 1000.2, finished_at: 1001,
 };
 
 describe('Modellkarte', () => {
@@ -232,5 +233,67 @@ describe('Nebenangaben auf der Karte', () => {
 describe('Hinweis auf neue Beiträge', () => {
   it('liegt über dem Text und drängt sich nicht in den Lesefluss', () => {
     expect(css).toMatch(/\.neue-beitraege \{[^}]*position:\s*fixed/);
+  });
+});
+
+describe('Die Linsenfläche', () => {
+  it('stapelt auf schmalen Geräten und stellt erst mit Platz nebeneinander', () => {
+    expect(css).toMatch(/\.linsenraster \{[^}]*grid-template-columns: minmax\(0, 1fr\)/);
+    expect(css).toMatch(
+      /@media \(min-width: 860px\) \{\s*\.linsenraster \{[^}]*grid-template-columns:/,
+    );
+  });
+
+  it('lässt fünf Linsenschalter umbrechen, statt die Seite breiter zu machen', () => {
+    expect(css).toMatch(/\.linsenwahl \{[^}]*flex-wrap: wrap/);
+    expect(css).toMatch(/\.linsenwahl \{[^}]*max-width: 100%/);
+  });
+
+  it('gibt dem Verlaufsbaum einen eigenen Scrollbereich statt ihn zu schrumpfen', () => {
+    expect(css).toMatch(/\.verlaufwrap \{[^}]*overflow-x: auto/);
+    expect(css).toMatch(/\.verlaufwrap svg\.graph \{[^}]*width: auto/);
+  });
+
+  it('begrenzt die zeilenförmigen Linsen, damit ihre Schrift nicht mitwächst', () => {
+    expect(css).toMatch(
+      /svg\.graph\.szenario,\s*svg\.graph\.herkunft,\s*svg\.graph\.zeit \{[^}]*max-width:/,
+    );
+  });
+});
+
+describe('Die neuen Linsen in der Gestaltung', () => {
+  it('gibt jeder bedienbaren Linsenzeile einen sichtbaren Fokus', () => {
+    for (const teil of ['.folge', '.bezug', '.zeitzeile']) {
+      const regel = new RegExp(
+        `svg\\.graph\\.\\w+ \\${teil}:focus-visible [^{]*\\{[^}]*stroke: var\\(--marke\\)`,
+      );
+      expect(css, `${teil} braucht einen sichtbaren Fokus`).toMatch(regel);
+    }
+  });
+
+  it('kodiert den Stand eines Bezugs über die Strichart, nicht über eine Farbe', () => {
+    expect(css).toMatch(/\.bezug\.bestaetigt \.bezugstrich \{ stroke-dasharray: none/);
+    expect(css).toMatch(/\.bezug\.vorschlag \.bezugstrich \{ stroke-dasharray: \d/);
+    expect(css).toMatch(/\.bezug\.abgelehnt \.bezugstrich \{[^}]*stroke-dasharray: /);
+  });
+
+  it('unterscheidet die Herkunft über die Form, nicht über eine eigene Farbe', () => {
+    // Beide Zeichen tragen dieselben Farbtöne; verschieden ist die Form
+    // (gefüllte Raute gegenüber offenem Ring) und die Füllung.
+    expect(css).toMatch(/\.herkunftszeichen \{[^}]*fill: var\(--tinte-matt\)/);
+    expect(css).toMatch(/\.herkunftszeichen\.maschine \{[^}]*fill: var\(--flaeche-tief\)/);
+  });
+
+  it('gibt der Häufigkeit einer Folge ihre Bedeutungsfarbe — dieselben drei wie überall', () => {
+    expect(css).toMatch(/\.stimmpunkt\.voll\.agree \{ fill: var\(--einig\)/);
+    expect(css).toMatch(/\.stimmpunkt\.voll\.contra \{ fill: var\(--gegen\)/);
+    expect(css).toMatch(/\.stimmpunkt\.voll\.unique \{ fill: var\(--einzeln\)/);
+  });
+
+  it('richtet den Begriff der Themen-Linse hinter seinem Punkt aus', () => {
+    // Die Sammelregel für Knotentexte setzt `middle` und überstimmt das
+    // Attribut am Element. Ohne diese Regel lag die Scheibe im Wort.
+    expect(css).toMatch(/\.thema \.themaname \{ text-anchor: start/);
+    expect(css).toMatch(/\.stimme \.zahl \{ text-anchor: end/);
   });
 });

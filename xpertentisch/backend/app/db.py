@@ -426,12 +426,20 @@ class Store:
         ) as cur:
             return [dict(r) for r in await cur.fetchall()]
 
-    async def mark_job_running(self, job_id: str) -> None:
+    async def mark_job_running(self, job_id: str) -> float:
+        """Setzt den Auftrag auf „läuft" und gibt den festgehaltenen Zeitpunkt zurück.
+
+        Der Rückgabewert geht in das Ereignis: sonst kennte die Oberfläche die
+        gemessenen Zeiten erst nach dem nächsten vollständigen Laden — und die
+        Zeitlinse zeigte während der Runde ein falsches Bild.
+        """
+        ts = now()
         await self.conn.execute(
             "UPDATE jobs SET status=?, started_at=? WHERE id=?",
-            (JOB_RUNNING, now(), job_id),
+            (JOB_RUNNING, ts, job_id),
         )
         await self.conn.commit()
+        return ts
 
     async def finish_job(
         self,
@@ -446,27 +454,35 @@ class Store:
         tokens_out: int | None = None,
         cost_micro: int | None = None,
         cost_source: str = "unbekannt",
-    ) -> None:
+    ) -> float:
+        """Schließt den Auftrag ab und gibt den festgehaltenen Zeitpunkt zurück."""
+        ts = now()
         await self.conn.execute(
             "UPDATE jobs SET status=?, text=?, error=?, partial=?, finished_at=?,"
             " latency_ms=?, tokens_in=?, tokens_out=?, cost_micro=?, cost_source=?"
             " WHERE id=?",
-            (status, text, error, 1 if partial else 0, now(), latency_ms,
+            (status, text, error, 1 if partial else 0, ts, latency_ms,
              tokens_in, tokens_out, cost_micro, cost_source, job_id),
         )
         await self.conn.commit()
+        return ts
 
     async def append_job_text(self, job_id: str, text: str) -> None:
         """Hält den Zwischenstand fest, während die Antwort noch entsteht."""
         await self.conn.execute("UPDATE jobs SET text=? WHERE id=?", (text, job_id))
         await self.conn.commit()
 
-    async def set_job_status(self, job_id: str, status: str, error: str | None = None) -> None:
+    async def set_job_status(
+        self, job_id: str, status: str, error: str | None = None
+    ) -> float:
+        """Setzt einen Endzustand und gibt den festgehaltenen Zeitpunkt zurück."""
+        ts = now()
         await self.conn.execute(
             "UPDATE jobs SET status=?, error=?, finished_at=? WHERE id=?",
-            (status, error, now(), job_id),
+            (status, error, ts, job_id),
         )
         await self.conn.commit()
+        return ts
 
     async def mark_open_jobs_interrupted(self) -> list[dict[str, Any]]:
         """Nach einem Neustart: laufende Aufträge als unterbrochen kennzeichnen."""

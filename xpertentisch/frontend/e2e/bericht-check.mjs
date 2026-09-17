@@ -21,12 +21,51 @@ function pruefe(name, bedingung, detail = '') {
   console.log(`${bedingung ? 'OK  ' : 'FEHL'}  ${name}${detail ? ` — ${detail}` : ''}`);
 }
 
-const sitzungen = await (await fetch(`${BASE}/api/sessions`)).json();
-const sitzung = sitzungen.sessions[0];
-if (!sitzung) {
-  console.log('FEHL  Keine Sitzung vorhanden — nichts zu prüfen.');
+/* Der Bericht muss an einer Sitzung geprüft werden, in der auch etwas steht.
+   Über einer Sitzung ohne Auswertung bestünde jede Zusicherung hier von
+   selbst: kein Marker, keine Themen, kein Baum — und damit auch kein Beleg,
+   dass das eingebettete SVG den Bericht nicht doch nach außen öffnet. Fehlt
+   eine solche Sitzung, wird eine angelegt, statt über Leerem zu bestehen. */
+async function sitzungMitInhalt() {
+  const liste = (await (await fetch(`${BASE}/api/sessions`)).json()).sessions ?? [];
+  for (const kandidat of liste) {
+    const buendel = await (await fetch(`${BASE}/api/sessions/${kandidat.id}`)).json();
+    if ((buendel.sparks ?? []).some((e) => e.summary && e.markers.length > 0)) {
+      return { sitzung: kandidat, buendel };
+    }
+  }
+
+  const neue = await (await fetch(`${BASE}/api/sessions`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ title: 'Berichtsprüfung' }),
+  })).json();
+  await fetch(`${BASE}/api/sessions/${neue.id}/sparks`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      prompt: 'Ist eine tägliche Sicherung der Datenbank notwendig?',
+      client_request_id: `bericht-${Date.now()}`,
+    }),
+  });
+  const frist = Date.now() + 180000;
+  while (Date.now() < frist) {
+    const buendel = await (await fetch(`${BASE}/api/sessions/${neue.id}`)).json();
+    const jobs = (buendel.sparks ?? []).flatMap((e) => e.jobs);
+    const ruht = jobs.length > 0
+      && jobs.every((j) => !['queued', 'running', 'streaming'].includes(j.status));
+    if (ruht && (buendel.sparks ?? []).every((e) => e.summary)) return { sitzung: neue, buendel };
+    await new Promise((weiter) => setTimeout(weiter, 500));
+  }
+  return null;
+}
+
+const gefunden = await sitzungMitInhalt();
+if (!gefunden) {
+  console.log('FEHL  Keine Sitzung mit ausgewerteten Antworten — nichts zu prüfen.');
   process.exit(1);
 }
+const { sitzung, buendel } = gefunden;
 
 const html = await (await fetch(`${BASE}/api/sessions/${sitzung.id}/report.html`)).text();
 const ordner = mkdtempSync(join(tmpdir(), 'xt-bericht-'));
@@ -42,6 +81,18 @@ const externe = html.replace(/http-equiv/g, '').match(/https?:\/\/[^\s"'<)]+/g) 
 pruefe('Keine externe Adresse im Quelltext', externe.length === 0, externe.join(', '));
 pruefe('Eigenes Stylesheet eingebettet', html.includes('<style>'));
 pruefe('Eigene Druckregeln vorhanden', html.includes('@media print'));
+
+// Die Linsen im Bericht: der Verlaufsbaum ist das einzige eingebettete Bild.
+// Er darf die Offline-Zusicherung nicht aufweichen — auch nicht über einen
+// Namensraum, der als Adresse im Quelltext stünde.
+pruefe('Der Verlauf steht als eingebettetes SVG im Bericht',
+  /<svg class="verlauf"/.test(html));
+pruefe('Das eingebettete SVG bringt keine Adresse mit',
+  !/<svg[^>]*xmlns/i.test(html));
+const hatMarker = (buendel.sparks ?? []).some((e) => (e.markers ?? []).length > 0);
+pruefe('Die Themen der Auswertung stehen im Bericht',
+  !hatMarker || html.includes('<h3>Themen</h3>'),
+  hatMarker ? '' : 'keine Fundstellen in dieser Sitzung — Themen wären hier leer');
 
 const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM ?? undefined });
 try {
@@ -87,6 +138,8 @@ try {
   await page.emulateMedia({ media: 'print' });
   const imDruck = await page.locator('.answer').first().isVisible();
   pruefe('Antworttext ist auch im Druckbild sichtbar', imDruck);
+  const baumImDruck = await page.locator('svg.verlauf').first().isVisible();
+  pruefe('Der Verlaufsbaum ist auch im Druckbild sichtbar', baumImDruck);
   await page.emulateMedia({ media: 'screen' });
 
   if (BILD) {

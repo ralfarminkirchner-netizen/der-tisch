@@ -208,6 +208,10 @@ export interface Job {
   /** Kosten in Millionstel der eingetragenen Währung. Null heißt unbekannt. */
   cost_micro: number | null;
   cost_source: 'berechnet' | 'unbekannt';
+  /** Gemessene Zeitpunkte in Sekunden seit Epoche. Null heißt: nie eingetreten. */
+  created_at: number;
+  started_at: number | null;
+  finished_at: number | null;
 }
 
 export interface Marker {
@@ -270,9 +274,45 @@ export interface SparkEntry {
   summary: Summary | null;
 }
 
+/** Eine einzelne genannte Folge in einer Szenario-Runde. */
+export interface Folge {
+  id: string;
+  /** Der Wortlaut der ersten Nennung — unverändert aus der Antwort. */
+  text: string;
+  themen: string[];
+  nennungen: {
+    job_id: string;
+    label: string;
+    quote: string;
+    start_offset: number;
+    end_offset: number;
+  }[];
+  /** Wie viele Stimmen diese Folge genannt haben. Eine Häufigkeit. */
+  anzahl: number;
+  /** Wie viele Stimmen überhaupt auswertbar geantwortet haben. */
+  von: number;
+  /** Folgen, die dieser bei gleichem Thema entgegenstehen. */
+  gegensatz: string[];
+}
+
+/** Die Konsequenzkarte einer Szenario-Runde. Vom Server gerechnet. */
+export interface Szenario {
+  spark_id: string;
+  seq: number;
+  prompt: string;
+  ausgang: { job_id: string; label: string; auszug: string; gekuerzt: boolean } | null;
+  stimmen: { job_id: string; label: string }[];
+  folgen: Folge[];
+  /** Genannte Folgen, die nicht gezeigt werden — gezählt, nicht verschwiegen. */
+  uebergangen: number;
+  methode: string;
+}
+
 export interface SessionBundle {
   session: Session;
   sparks: SparkEntry[];
+  /** Konsequenzkarten der Szenario-Runden dieser Sitzung. */
+  szenarien: Szenario[];
   relations: Relation[];
   /** Läuft noch etwas? Ein Bericht wäre dann vorläufig. */
   pending: boolean;

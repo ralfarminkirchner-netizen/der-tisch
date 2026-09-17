@@ -99,6 +99,27 @@ async function messeKontrast(page, waehler) {
   }, waehler);
 }
 
+/* Bedienbarkeit über die echte Tabulatortaste, nicht über focus():
+   programmatisches focus() löst :focus-visible nicht aus und prüfte etwas
+   anderes, als ein Mensch erlebt. */
+async function erreichbarPerTabulator(page, waehler, schluesselAttribut) {
+  const ziel = page.locator(waehler).first();
+  if ((await ziel.count()) === 0) return false;
+  const kennung = await ziel.getAttribute(schluesselAttribut);
+  if (kennung === null) return false;
+  await ziel.scrollIntoViewIfNeeded();
+  await page.locator('#prompt').focus();
+  for (let i = 0; i < 400; i += 1) {
+    await page.keyboard.press('Tab');
+    const getroffen = await page.evaluate(
+      ([attr, wert]) => document.activeElement?.getAttribute?.(attr) === wert,
+      [schluesselAttribut, kennung],
+    );
+    if (getroffen) return true;
+  }
+  return false;
+}
+
 const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM ?? undefined });
 try {
   for (const thema of ['light', 'dark']) {
@@ -132,50 +153,103 @@ try {
     await messe('td', 4.5, 'Tabellenzelle');
     await messe('footer.foot', 4.5, 'Fußzeile');
 
+    // --- Ein Szenario durchspielen, damit die Folgen-Linse etwas zu zeigen hat.
+    // Ohne diesen Schritt liefe die Prüfung über die leere Fläche und bestünde
+    // aus dem falschen Grund.
+    const folgenKnopf = page
+      .locator('.card .card-actions button', { hasText: 'Folgen durchspielen' })
+      .first();
+    if (await folgenKnopf.count()) {
+      await folgenKnopf.click();
+      await page.click('form.spark button.primary');
+      await page.waitForFunction(
+        () => document.querySelectorAll('.spark-block').length >= 2, null, { timeout: 120000 },
+      );
+      await page.waitForFunction(
+        () => document.querySelectorAll('.spark-block .panel-grid table').length >= 2,
+        null, { timeout: 180000 },
+      );
+    }
+    pruefe(`Szenario für die Folgen-Linse angelegt (${thema})`,
+      (await page.locator('.spark-block').count()) >= 2,
+      'ohne Szenario wäre die Folgen-Linse UNGEPRÜFT');
+
+    // --- Der Verlauf steht jetzt in einer eigenen Spalte der Linsenfläche.
+    // Er ist keine Linse unter mehreren mehr, aber dieselben Zusicherungen
+    // gelten weiter: lesbar, mit der echten Tabulatortaste erreichbar.
+    const verlaufZweige = await page.locator('.verlaufwrap .zweig').count();
+    pruefe(`Der Verlauf zeichnet etwas (${thema})`, verlaufZweige >= 1,
+      `${verlaufZweige} Zweige`);
+    if (verlaufZweige >= 1) {
+      const wert = await messeKontrast(page, '.verlaufwrap .zweigtext');
+      pruefe(`Beschriftung des Verlaufs (${thema}) erreicht 4.5:1`,
+        wert !== null && wert.wert >= 4.5,
+        wert ? `${wert.wert.toFixed(2)}:1 — ${wert.vorne} auf ${wert.hinten}` : 'nicht gefunden');
+      pruefe(`Der Verlauf ist per Tabulator erreichbar (${thema})`,
+        await erreichbarPerTabulator(page, '.verlaufwrap .zweig', 'data-spark-id'),
+        'mit der echten Tabulatortaste');
+    }
+
     // --- Die Linsen: jede muss lesbar und ohne Maus bedienbar sein, nicht nur
     // die, die zufällig zuerst angezeigt wird.
-    for (const linse of ['themen', 'verlauf']) {
-      const schalter = page.locator(`.linsenwahl button[data-linse="${linse}"]`).first();
+    const LINSEN_PRUEFUNG = [
+      { id: 'themen', element: 'svg.graph .thema', schrift: '.themaname',
+        schluessel: 'data-thema', nebensache: null },
+      // Die Nebenangaben tragen die leisere Farbe und die kleinere Schrift —
+      // sie sind der Teil, an dem der Kontrast zuerst reißt. Sie mitzuprüfen
+      // ist der eigentliche Nachweis, nicht die kräftige Hauptzeile.
+      { id: 'szenario', element: 'svg.graph .folge', schrift: '.folgentext',
+        schluessel: 'data-folge', nebensache: '.haeufigkeit' },
+      { id: 'herkunft', element: 'svg.graph .bezug', schrift: '.bezugname',
+        schluessel: 'data-relation', nebensache: '.bezugart' },
+      { id: 'zeit', element: 'svg.graph .zeitzeile', schrift: '.zeitname',
+        schluessel: 'data-job-id', nebensache: '.zeitmarke' },
+    ];
+
+    for (const linse of LINSEN_PRUEFUNG) {
+      const schalter = page.locator(`.linsenwahl button[data-linse="${linse.id}"]`).first();
       if ((await schalter.count()) === 0) {
-        pruefe(`Linse „${linse}" vorhanden (${thema})`, false, 'Schalter nicht gefunden');
+        pruefe(`Linse „${linse.id}" vorhanden (${thema})`, false, 'Schalter nicht gefunden');
         continue;
       }
       await schalter.click();
       await page.waitForTimeout(250);
 
-      const gezeichnet = await page.locator(
-        linse === 'themen' ? 'svg.graph .thema' : 'svg.graph .zweig',
-      ).count();
-      pruefe(`Linse „${linse}" zeichnet etwas (${thema})`, gezeichnet >= 1,
-        `${gezeichnet} Elemente`);
+      const gezeichnet = await page.locator(`.graphwrap ${linse.element}`).count();
+      pruefe(`Linse „${linse.id}" zeichnet etwas (${thema})`, gezeichnet >= 1,
+        gezeichnet === 0
+          ? 'nichts gezeichnet — diese Linse ist damit UNGEPRÜFT'
+          : `${gezeichnet} Elemente`);
+      if (gezeichnet === 0) continue;
 
-      if (gezeichnet >= 1) {
-        const beschriftung = linse === 'themen' ? '.themaname' : '.zweigtext';
-        const wert = await messeKontrast(page, `svg.graph ${beschriftung}`);
-        pruefe(`Beschriftung der Linse „${linse}" (${thema}) erreicht 4.5:1`,
-          wert !== null && wert.wert >= 4.5,
-          wert ? `${wert.wert.toFixed(2)}:1 — ${wert.vorne} auf ${wert.hinten}` : 'nicht gefunden');
+      const wert = await messeKontrast(page, `.graphwrap ${linse.schrift}`);
+      pruefe(`Beschriftung der Linse „${linse.id}" (${thema}) erreicht 4.5:1`,
+        wert !== null && wert.wert >= 4.5,
+        wert ? `${wert.wert.toFixed(2)}:1 — ${wert.vorne} auf ${wert.hinten}` : 'nicht gefunden');
 
-        // Bedienbarkeit über die echte Tabulatortaste, nicht über focus().
-        const ziel = page.locator(
-          linse === 'themen' ? 'svg.graph .thema' : 'svg.graph .zweig',
-        ).first();
-        const kennung = await ziel.evaluate((el) =>
-          el.getAttribute('data-thema') ?? el.getAttribute('data-spark-id'));
-        await page.locator('#prompt').focus();
-        let erreicht = false;
-        for (let i = 0; i < 400 && !erreicht; i += 1) {
-          await page.keyboard.press('Tab');
-          erreicht = await page.evaluate((k) => {
-            const a = document.activeElement;
-            return !!a && (a.getAttribute?.('data-thema') === k
-              || a.getAttribute?.('data-spark-id') === k);
-          }, kennung);
-        }
-        pruefe(`Linse „${linse}" ist per Tabulator erreichbar (${thema})`,
-          erreicht, String(kennung));
+      if (linse.nebensache) {
+        const neben = await messeKontrast(page, `.graphwrap ${linse.nebensache}`);
+        pruefe(`Nebenangabe der Linse „${linse.id}" (${thema}) erreicht 4.5:1`,
+          neben !== null && neben.wert >= 4.5,
+          neben
+            ? `${neben.wert.toFixed(2)}:1 — ${neben.vorne} auf ${neben.hinten}, `
+              + `${neben.groesse}px/${neben.gewicht}`
+            : 'nicht gefunden');
       }
+
+      pruefe(`Linse „${linse.id}" ist per Tabulator erreichbar (${thema})`,
+        await erreichbarPerTabulator(page, `.graphwrap ${linse.element}`, linse.schluessel),
+        'mit der echten Tabulatortaste');
+
+      // Bedienen: die Tastatur muss dieselbe Handlung auslösen wie die Maus.
+      await page.locator(`.graphwrap ${linse.element}`).first().focus();
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(150);
+      const geoeffnet = await page.locator('.card.highlight').count();
+      pruefe(`Linse „${linse.id}" öffnet per Tastatur eine Antwort (${thema})`,
+        geoeffnet >= 1, `${geoeffnet} Karten geöffnet`);
     }
+
     await page.locator('.linsenwahl button[data-linse="stimmen"]').first().click();
     await page.waitForTimeout(200);
 
