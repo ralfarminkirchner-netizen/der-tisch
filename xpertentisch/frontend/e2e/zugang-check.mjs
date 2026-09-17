@@ -71,7 +71,12 @@ async function messeKontrast(page, waehler) {
     const u = ctx.getImageData(0, 0, 1, 1).data;
     const unterlage = `rgb(${u[0]}, ${u[1]}, ${u[2]})`;
 
-    const vorneRoh = getComputedStyle(el).color;
+    // SVG-Text färbt über 'fill', nicht über 'color'. Wer hier 'color' misst,
+    // misst den vererbten Wert und damit etwas anderes als das, was dasteht.
+    const stil = getComputedStyle(el);
+    const istSVG = el.namespaceURI === 'http://www.w3.org/2000/svg';
+    const fuellung = stil.fill;
+    const vorneRoh = istSVG && fuellung && fuellung !== 'none' ? fuellung : stil.color;
     const vorne = alsRGB(vorneRoh, unterlage);
 
     const lum = (rgb) => {
@@ -88,8 +93,8 @@ async function messeKontrast(page, waehler) {
       wert: (hell + 0.05) / (dunkel + 0.05),
       vorne: `rgb(${vorne.join(', ')})`,
       hinten: unterlage,
-      groesse: parseFloat(getComputedStyle(el).fontSize),
-      gewicht: getComputedStyle(el).fontWeight,
+      groesse: parseFloat(stil.fontSize),
+      gewicht: stil.fontWeight,
     };
   }, waehler);
 }
@@ -126,6 +131,53 @@ try {
     await messe('.tag.zustand', 4.5, 'Zustandsschild');
     await messe('td', 4.5, 'Tabellenzelle');
     await messe('footer.foot', 4.5, 'Fußzeile');
+
+    // --- Die Linsen: jede muss lesbar und ohne Maus bedienbar sein, nicht nur
+    // die, die zufällig zuerst angezeigt wird.
+    for (const linse of ['themen', 'verlauf']) {
+      const schalter = page.locator(`.linsenwahl button[data-linse="${linse}"]`).first();
+      if ((await schalter.count()) === 0) {
+        pruefe(`Linse „${linse}" vorhanden (${thema})`, false, 'Schalter nicht gefunden');
+        continue;
+      }
+      await schalter.click();
+      await page.waitForTimeout(250);
+
+      const gezeichnet = await page.locator(
+        linse === 'themen' ? 'svg.graph .thema' : 'svg.graph .zweig',
+      ).count();
+      pruefe(`Linse „${linse}" zeichnet etwas (${thema})`, gezeichnet >= 1,
+        `${gezeichnet} Elemente`);
+
+      if (gezeichnet >= 1) {
+        const beschriftung = linse === 'themen' ? '.themaname' : '.zweigtext';
+        const wert = await messeKontrast(page, `svg.graph ${beschriftung}`);
+        pruefe(`Beschriftung der Linse „${linse}" (${thema}) erreicht 4.5:1`,
+          wert !== null && wert.wert >= 4.5,
+          wert ? `${wert.wert.toFixed(2)}:1 — ${wert.vorne} auf ${wert.hinten}` : 'nicht gefunden');
+
+        // Bedienbarkeit über die echte Tabulatortaste, nicht über focus().
+        const ziel = page.locator(
+          linse === 'themen' ? 'svg.graph .thema' : 'svg.graph .zweig',
+        ).first();
+        const kennung = await ziel.evaluate((el) =>
+          el.getAttribute('data-thema') ?? el.getAttribute('data-spark-id'));
+        await page.locator('#prompt').focus();
+        let erreicht = false;
+        for (let i = 0; i < 400 && !erreicht; i += 1) {
+          await page.keyboard.press('Tab');
+          erreicht = await page.evaluate((k) => {
+            const a = document.activeElement;
+            return !!a && (a.getAttribute?.('data-thema') === k
+              || a.getAttribute?.('data-spark-id') === k);
+          }, kennung);
+        }
+        pruefe(`Linse „${linse}" ist per Tabulator erreichbar (${thema})`,
+          erreicht, String(kennung));
+      }
+    }
+    await page.locator('.linsenwahl button[data-linse="stimmen"]').first().click();
+    await page.waitForTimeout(200);
 
     // --- Tastatur: das Netz ist ohne Maus bedienbar, und der Fokus ist sichtbar.
     // Programmatisches focus() löst :focus-visible nicht aus — es muss die
