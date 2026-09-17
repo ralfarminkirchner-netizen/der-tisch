@@ -64,8 +64,18 @@ try {
     markiert.length === 1 && markiert[0] === jobId,
     `markiert: ${markiert.join(', ')} / erwartet: ${jobId}`);
 
-  // Geklickt wird die Gruppe: die Trefferfläche darin gehört zu ihr,
-  // ein Klick darauf landet über das Ereignis ohnehin bei der Gruppe.
+  // Geklickt wird die Trefferfläche der Kante — der Kreis, der eigens dafür
+  // da ist, dass ein Bogen mit dem Daumen zu treffen ist. Das Ereignis steigt
+  // von dort ohnehin zur Gruppe auf.
+  //
+  // Vorher wurde die Gruppe selbst geklickt. Playwright zielt dabei auf die
+  // Mitte ihres umschließenden Rechtecks — und die liegt bei einem Bogen im
+  // Leeren, zwischen den Bögen eines Paares und auf keinem gezeichneten Teil.
+  // Der Klick landete dort auf dem SVG und lief in einen Zeitablauf; der
+  // Nachweis hing also daran, dass diese Mitte zufällig auf der Trefferfläche
+  // lag. Geprüft wird weiterhin dasselbe Schutzziel — ein Klick auf die Kante
+  // öffnet genau die beiden beteiligten Antworten —, nur an der Stelle, an
+  // der ein Mensch tatsächlich klickt.
   //
   // Dieser Nachweis setzt Testdaten mit einer bekannten Beziehung voraus.
   // „Keine Kante vorhanden" ist hier KEIN Erfolg: dann ist der Kantenklick
@@ -82,7 +92,11 @@ try {
     const kante = kanten.first();
     const a = await kante.getAttribute('data-job-a');
     const b = await kante.getAttribute('data-job-b');
-    await kante.click();
+    const treffer = kante.locator('.edge-hit');
+    pruefe('Die Kante hat eine eigene Trefferfläche',
+      (await treffer.count()) === 1,
+      'ohne sie wäre ein Bogen auf dem Telefon nicht zu treffen');
+    await treffer.click();
     const paar = await page.locator('.card.highlight').evaluateAll((nodes) =>
       nodes.map((n) => n.getAttribute('data-job-id')).sort(),
     );

@@ -1844,11 +1844,15 @@ footer.foot {
    Einstellung — er steht darum neben der Überschrift, nicht in einem Menü. */
 .linsenwahl {
   display: flex;
+  /* Fünf Linsen passen auf dem Telefon nicht in eine Zeile. Sie brechen um,
+     statt die Seite über ihre Breite hinauszuschieben. */
+  flex-wrap: wrap;
   gap: 2px;
   padding: 2px;
   border-radius: 999px;
   background: var(--flaeche-tief);
   border: 1px solid var(--linie);
+  max-width: 100%;
 }
 
 .linsenwahl button {
@@ -2005,3 +2009,330 @@ svg.graph .stimme.ohne-faden circle {
 svg.graph .stimme.ohne-faden text {
   fill: var(--tinte-leise);
 }
+
+/* ------------------------------------------------------- Die Linsenfläche */
+
+/* Die Linsen sind aus den Funkenblöcken ausgezogen. Sie brauchen Raum: fünf
+   Sichtweisen und der Verlauf der ganzen Sitzung stehen hier nebeneinander,
+   statt sich unter jedem Funken zu wiederholen. */
+.linsenraum {
+  margin-top: 22px;
+  scroll-margin-top: 12px;
+}
+
+.linsenraster {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+  /* Auf dem Telefon untereinander: der Verlauf zuerst, dann die Linse. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Erst wenn wirklich Platz da ist, stehen Weg und Blick nebeneinander. */
+@media (min-width: 860px) {
+  .linsenraster {
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.verlaufsnavigator,
+.linsenbuehne {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.verlaufsnavigator h4,
+.linsenbuehne h4 {
+  margin: 0;
+}
+
+.verlaufwrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-klein);
+  background: var(--flaeche-tief);
+  border: 1px solid var(--linie);
+  padding: 8px;
+}
+
+.verlaufwrap svg.graph {
+  /* Der Baum wächst mit der Sitzung. Er darf im eigenen Bereich scrollen,
+     statt die Seite breiter zu machen. */
+  min-width: 240px;
+}
+
+.linsenkopf {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.linsentitel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ausgangstext {
+  margin-top: 8px;
+  max-width: 62ch;
+}
+
+/* --- Szenario-Linse ------------------------------------------------------ */
+
+/* Links die Ausgangsaussage, rechts die Folgen, die die Stimmen genannt
+   haben. Gewicht trägt eine Folge einzig über die Zahl der Stimmen: so viele
+   gefüllte Punkte wie Nennungen, von so vielen Punkten wie Stimmen. Das ist
+   eine Häufigkeit; die Beschriftung daneben sagt es in Worten. */
+svg.graph.szenario .ausgang rect {
+  fill: var(--karte);
+  stroke: var(--linie-kraeftig);
+  stroke-width: 1.2;
+}
+
+svg.graph.szenario .ausgangssignet {
+  fill: var(--flaeche-tief);
+  stroke: var(--linie-kraeftig);
+  stroke-width: 1.2;
+}
+
+svg.graph.szenario .ausgang text {
+  fill: var(--tinte);
+  font-size: 11px;
+  font-weight: 620;
+  pointer-events: none;
+}
+
+svg.graph.szenario .ausgang .zahl {
+  font-size: 10px;
+  font-weight: 560;
+  fill: var(--tinte-matt);
+}
+
+svg.graph.szenario .folgenflaeche {
+  fill: var(--karte);
+  stroke: var(--linie);
+  stroke-width: 1;
+}
+
+svg.graph.szenario .folge { cursor: pointer; }
+
+svg.graph.szenario .folge:hover .folgenflaeche {
+  stroke: var(--linie-kraeftig);
+}
+
+svg.graph.szenario .folge:focus { outline: none; }
+
+svg.graph.szenario .folge:focus-visible .folgenflaeche {
+  stroke: var(--marke);
+  stroke-width: 3;
+}
+
+/* Ein Punkt je Stimme. Gefüllt heißt: diese Stimme hat die Folge genannt. */
+svg.graph.szenario .stimmpunkt.leer {
+  fill: none;
+  stroke: var(--linie-kraeftig);
+  stroke-width: 1.2;
+}
+
+svg.graph.szenario .stimmpunkt.voll.agree { fill: var(--einig); }
+svg.graph.szenario .stimmpunkt.voll.contra { fill: var(--gegen); }
+svg.graph.szenario .stimmpunkt.voll.unique { fill: var(--einzeln); }
+
+svg.graph.szenario .haeufigkeit {
+  fill: var(--tinte-matt);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+svg.graph.szenario .folgentext {
+  fill: var(--tinte);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+/* --- Herkunfts-Linse ----------------------------------------------------- */
+
+/* Der Stand steht in der Strichart, die Herkunft in der Form, die Bedeutung
+   in der Farbe. Drei Kodierungen, drei getrennte Fragen — und keine eigene
+   Farbe für Identität oder Herkunft. */
+svg.graph.herkunft .bandkopf {
+  fill: var(--tinte-matt);
+  font-size: 10px;
+  font-weight: 640;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+svg.graph.herkunft .bezug { cursor: pointer; }
+svg.graph.herkunft .bezug:focus { outline: none; }
+
+svg.graph.herkunft .bezugflaeche {
+  fill: transparent;
+  stroke: transparent;
+}
+
+svg.graph.herkunft .bezug:hover .bezugflaeche {
+  fill: var(--karte);
+  stroke: var(--linie);
+}
+
+svg.graph.herkunft .bezug:focus-visible .bezugflaeche {
+  fill: var(--karte);
+  stroke: var(--marke);
+  stroke-width: 3;
+}
+
+svg.graph.herkunft .bezugstrich {
+  fill: none;
+  stroke: var(--linie-kraeftig);
+  stroke-width: 2;
+}
+
+svg.graph.herkunft .bezug.agree .bezugstrich { stroke: var(--einig); }
+svg.graph.herkunft .bezug.contra .bezugstrich { stroke: var(--gegen); }
+
+/* Bestätigt: durchgezogen. */
+svg.graph.herkunft .bezug.bestaetigt .bezugstrich { stroke-dasharray: none; }
+/* Vorschlag: gestrichelt — noch von niemandem festgestellt. */
+svg.graph.herkunft .bezug.vorschlag .bezugstrich { stroke-dasharray: 7 4; }
+/* Verworfen: ausgegraut und gepunktet. Es bleibt sichtbar, tritt aber zurück. */
+svg.graph.herkunft .bezug.abgelehnt .bezugstrich {
+  stroke: var(--linie-kraeftig);
+  stroke-dasharray: 1.5 3.5;
+  stroke-opacity: 0.8;
+}
+
+svg.graph.herkunft .herkunftszeichen {
+  fill: var(--tinte-matt);
+  stroke: var(--flaeche-tief);
+  stroke-width: 1;
+}
+
+/* Maschineller Vorschlag: ein offener Ring, keine eigene Farbe. */
+svg.graph.herkunft .herkunftszeichen.maschine {
+  fill: var(--flaeche-tief);
+  stroke: var(--tinte-matt);
+  stroke-width: 1.6;
+}
+
+svg.graph.herkunft .bezug.abgelehnt .herkunftszeichen {
+  fill: var(--linie-kraeftig);
+  stroke: var(--flaeche-tief);
+}
+
+svg.graph.herkunft .bezug.abgelehnt .bezugname,
+svg.graph.herkunft .bezug.abgelehnt .bezugart {
+  fill: var(--tinte-leise);
+}
+
+svg.graph.herkunft .bezugname {
+  fill: var(--tinte);
+  font-size: 10.5px;
+  font-weight: 560;
+  pointer-events: none;
+}
+
+svg.graph.herkunft .bezugart {
+  fill: var(--tinte-matt);
+  font-size: 9.5px;
+  pointer-events: none;
+}
+
+/* --- Zeitlinse ----------------------------------------------------------- */
+
+/* Zwei Abschnitte je Auftrag: das Warten in der Schlange und das Schreiben.
+   Erst dadurch ist zu sehen, dass eine Karte nicht langsam war, sondern
+   gewartet hat. Die Zeilen stehen in der Reihenfolge des Tisches und nicht
+   nach Dauer — hier entsteht keine Rangfolge. */
+svg.graph.zeit .zeitgitter {
+  fill: none;
+  stroke: var(--linie);
+  stroke-width: 1;
+}
+
+svg.graph.zeit .zeitmarke {
+  fill: var(--tinte-matt);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+svg.graph.zeit .zeitname {
+  fill: var(--tinte);
+  font-size: 10.5px;
+  font-weight: 560;
+  pointer-events: none;
+}
+
+svg.graph.zeit .zeitzeile { cursor: pointer; }
+svg.graph.zeit .zeitzeile:focus { outline: none; }
+
+svg.graph.zeit .zeitflaeche {
+  fill: transparent;
+  stroke: transparent;
+}
+
+svg.graph.zeit .zeitzeile:hover .zeitflaeche {
+  fill: var(--karte);
+  stroke: var(--linie);
+}
+
+svg.graph.zeit .zeitzeile:focus-visible .zeitflaeche {
+  fill: var(--karte);
+  stroke: var(--marke);
+  stroke-width: 3;
+}
+
+/* Das Warten ist ein dünner Strich: es ist Zeit, in der nichts geschah. */
+svg.graph.zeit .warteband {
+  fill: var(--linie-kraeftig);
+}
+
+/* Das Schreiben trägt den Zustand — dieselbe Zuordnung wie im Verlaufsbaum. */
+svg.graph.zeit .schreibband { fill: var(--linie-kraeftig); }
+svg.graph.zeit .schreibband.zustand-done { fill: var(--einig); }
+svg.graph.zeit .schreibband.zustand-error { fill: var(--gegen); }
+svg.graph.zeit .schreibband.zustand-interrupted,
+svg.graph.zeit .schreibband.zustand-cancelled { fill: var(--achtung); }
+svg.graph.zeit .schreibband.zustand-streaming,
+svg.graph.zeit .schreibband.zustand-running,
+svg.graph.zeit .schreibband.zustand-queued { fill: var(--marke); }
+
+/* Läuft noch: ein offener Strich statt eines erfundenen Endes. */
+svg.graph.zeit .offenesband {
+  fill: none;
+  stroke: var(--marke);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+}
+
+/* Die neuen Linsen sind zeilenförmig: ohne Begrenzung würde ihre Schrift auf
+   breiten Schirmen mitwachsen, bis sie plakativ wirkt. Sie bekommen darum ein
+   Maß und stehen darin mittig — auf dem Telefon füllen sie weiterhin alles. */
+svg.graph.szenario,
+svg.graph.herkunft,
+svg.graph.zeit {
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+/* Der Verlaufsbaum steht in seiner natürlichen Größe und scrollt im eigenen
+   Bereich. In der schmalen Spalte geschrumpft wäre seine Beschriftung zu
+   klein zum Lesen — und eine Linse, die man nicht lesen kann, ist keine. */
+.verlaufwrap svg.graph {
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+
+/* Die Sammelregel für Knotenbeschriftungen setzt `text-anchor: middle` und
+   überstimmt damit die Ausrichtung, die die Themen-Linse am Element selbst
+   angibt. Der Begriff wurde dadurch um seinen eigenen Punkt zentriert, statt
+   dahinter zu beginnen — bei langen Wörtern lag die Scheibe mitten im Wort.
+   Hier steht, was dort gemeint war. */
+svg.graph .thema .themaname { text-anchor: start; }
+svg.graph .stimme .zahl { text-anchor: end; }

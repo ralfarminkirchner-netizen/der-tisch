@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Erzeugt den Ansichtsnachweis: sechs Ansichten, je hell und dunkel, je bei
- * 390 px und 1440 px.
+ * Erzeugt den Ansichtsnachweis: jede Linse und jede Ansicht, je hell und
+ * dunkel, je bei 390 px und 1440 px.
  *
  *   node e2e/ansichten.mjs http://127.0.0.1:8077 ./ansichten
  *
@@ -64,12 +64,31 @@ try {
       await page.waitForTimeout(800);
       await schuss(page, 'auswertung', thema, breite);
 
-      // 4) Das Beziehungsnetz für sich.
-      const netz = page.locator('.panel', { has: page.locator('svg.graph') }).first();
-      await netz.scrollIntoViewIfNeeded();
-      await schuss(page, 'beziehungsnetz', thema, breite, netz);
+      // 4) Ein Szenario durchspielen — sonst hätte die Folgen-Linse nichts
+      // zu zeigen, und der Beleg zeigte eine leere Fläche.
+      const folgenKnopf = page
+        .locator('.card .card-actions button', { hasText: 'Folgen durchspielen' })
+        .first();
+      if (await folgenKnopf.count()) {
+        await folgenKnopf.click();
+        await page.click('form.spark button.primary');
+        await page.waitForFunction(
+          () => document.querySelectorAll('.spark-block .panel-grid table').length >= 2,
+          null, { timeout: 180000 },
+        );
+        await page.waitForTimeout(600);
+      }
 
-      // 5) Die Einstellungen.
+      // 5) Jede Linse für sich — das ist der Ansichtsbeleg je Linse.
+      const raum = page.locator('.linsenraum');
+      await raum.scrollIntoViewIfNeeded();
+      for (const linse of ['stimmen', 'themen', 'szenario', 'herkunft', 'zeit']) {
+        await page.locator(`.linsenwahl button[data-linse="${linse}"]`).first().click();
+        await page.waitForTimeout(400);
+        await schuss(page, `linse-${linse}`, thema, breite, raum);
+      }
+
+      // 6) Die Einstellungen.
       await page.click('#settings-open');
       await page.fill('#admin-token', ZUGANGSWORT);
       await page.click('#einstellungen button.primary');

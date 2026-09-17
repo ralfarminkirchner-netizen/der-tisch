@@ -12,9 +12,18 @@
 
 import { SVG_NS, bedienbar, initialen, shorten } from './graph';
 import type { GraphSelection } from './graph';
-import type { Marker, SessionBundle, SparkEntry, Summary } from './types';
+import type {
+  Folge,
+  Job,
+  Marker,
+  Relation,
+  SessionBundle,
+  SparkEntry,
+  Summary,
+  Szenario,
+} from './types';
 
-export type LinsenArt = 'stimmen' | 'themen' | 'verlauf';
+export type LinsenArt = 'stimmen' | 'themen' | 'szenario' | 'herkunft' | 'zeit';
 
 export const LINSEN: { id: LinsenArt; name: string; erklaerung: string }[] = [
   {
@@ -32,13 +41,35 @@ export const LINSEN: { id: LinsenArt; name: string; erklaerung: string }[] = [
       'denen sie sich treffen, streiten oder alleine stehen.',
   },
   {
-    id: 'verlauf',
-    name: 'Verlauf',
+    id: 'szenario',
+    name: 'Folgen',
     erklaerung:
-      'Welche Wege wurden verfolgt? Jeder Zweig ist ein Beitrag, der aus einem ' +
-      'anderen hervorgegangen ist — keine Vorhersage, sondern das, was geschah.',
+      'Was folgt daraus, laut den Stimmen? Links die Ausgangsaussage, rechts die ' +
+      'genannten Folgen. Die Zahl sagt, wie viele Stimmen eine Folge genannt haben — ' +
+      'das ist eine Häufigkeit, keine Wahrscheinlichkeit.',
+  },
+  {
+    id: 'herkunft',
+    name: 'Herkunft',
+    erklaerung:
+      'Worauf kannst du dich berufen? Durchgezogen, was du bestätigt hast; ' +
+      'gestrichelt, was die Auswertung bloß vorschlägt; ausgegraut, was du ' +
+      'verworfen hast.',
+  },
+  {
+    id: 'zeit',
+    name: 'Zeit',
+    erklaerung:
+      'Wie lief diese Runde ab? Wer wann anfing, wie lange schrieb, wo die ' +
+      'Warteschlange bremste. Die Zeilen stehen in der Reihenfolge des Tisches — ' +
+      'schneller ist hier nicht besser.',
   },
 ];
+
+/** Der Verlauf ist sitzungsweit und steht darum außerhalb der Linsenwahl. */
+export const VERLAUF_ERKLAERUNG =
+  'Welche Wege wurden verfolgt? Jeder Zweig ist ein Beitrag, der aus einem ' +
+  'anderen hervorgegangen ist — keine Vorhersage, sondern das, was geschah.';
 
 function text(
   x: number, y: number, inhalt: string, klasse = '', anker = 'middle',
@@ -330,6 +361,10 @@ export function renderVerlauf(
   const breite = rand * 2 + (maxTiefe + 1) * kastenBreite + maxTiefe * spaltenAbstand;
   const hoehe = rand * 2 + zweige.length * (kastenHoehe + zeilenAbstand) - zeilenAbstand;
   svg.setAttribute('viewBox', `0 0 ${breite} ${hoehe}`);
+  // Natürliche Größe mitgeben: in der schmalen Spalte des Linsenraums soll der
+  // Baum scrollen, nicht schrumpfen — sonst wäre seine Beschriftung zu klein.
+  svg.setAttribute('width', String(breite));
+  svg.setAttribute('height', String(hoehe));
 
   const pos = new Map<string, { x: number; y: number }>();
   zweige.forEach((zweig, i) => {
@@ -413,4 +448,529 @@ export function renderVerlauf(
 function gekuerzt(satz: string, zeichen: number): string {
   const sauber = satz.replace(/\s+/g, ' ').trim();
   return sauber.length > zeichen ? `${sauber.slice(0, zeichen - 1)}…` : sauber;
+}
+
+// ---------------------------------------------------------- Szenario-Linse
+
+/**
+ * Bricht einen Satz in Zeilen, die in die Fläche passen.
+ *
+ * Handgemacht, weil SVG von sich aus keinen Umbruch kennt. Ein zu langes Wort
+ * wird nicht zerschnitten — lieber eine überstehende Zeile als ein zerrissenes
+ * Wort; die Fläche ist dafür breit genug bemessen.
+ */
+export function umbruch(satz: string, zeichen: number, hoechstens: number): string[] {
+  const woerter = satz.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  if (woerter.length === 0) return [];
+  const zeilen: string[] = [];
+  let laufend = '';
+  for (const wort of woerter) {
+    const versuch = laufend ? `${laufend} ${wort}` : wort;
+    if (versuch.length <= zeichen || !laufend) {
+      laufend = versuch;
+    } else {
+      zeilen.push(laufend);
+      laufend = wort;
+    }
+  }
+  zeilen.push(laufend);
+  if (zeilen.length <= hoechstens) return zeilen;
+  const gekappt = zeilen.slice(0, hoechstens);
+  const letzte = gekappt[hoechstens - 1];
+  gekappt[hoechstens - 1] = `${letzte.slice(0, Math.max(0, zeichen - 1)).trimEnd()}…`;
+  return gekappt;
+}
+
+/** Welche Bedeutung eine Folge trägt — dieselben drei wie überall sonst. */
+export function folgenArt(folge: Folge): 'agree' | 'contra' | 'unique' {
+  if (folge.gegensatz.length > 0) return 'contra';
+  return folge.anzahl > 1 ? 'agree' : 'unique';
+}
+
+const FOLGE_ZEICHEN = 40;
+const FOLGE_ZEILEN = 4;
+
+/**
+ * Die Konsequenzkarte einer Szenario-Runde.
+ *
+ * Links die Ausgangsaussage, rechts die Folgen, die die Stimmen genannt haben.
+ * Gewicht trägt eine Folge **ausschließlich** über die Zahl der Stimmen, die
+ * sie genannt haben: so viele gefüllte Punkte, wie Stimmen sie nannten, von so
+ * vielen Punkten, wie Stimmen geantwortet haben. Das ist eine Häufigkeit und
+ * keine Wahrscheinlichkeit — die Beschriftung sagt das auch so.
+ */
+export function renderSzenario(
+  szenario: Szenario | null,
+  onSelect: (auswahl: GraphSelection, folge: Folge) => void,
+): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'graph szenario');
+  svg.setAttribute('role', 'group');
+  svg.setAttribute('aria-label', 'Genannte Folgen eines Szenarios');
+
+  if (!szenario) {
+    leereFlaeche(svg, 380, 140,
+      'Noch kein Szenario durchgespielt.');
+    return svg;
+  }
+  if (szenario.folgen.length === 0) {
+    leereFlaeche(svg, 380, 140, 'Keine auswertbare Folge genannt.');
+    return svg;
+  }
+
+  const breite = 380;
+  const xAusgang = 8;
+  const bAusgang = 96;
+  const xFolge = 128;
+  const bFolge = breite - xFolge - 8;
+  const zeilenHoehe = 13;
+  const kopfHoehe = 18;
+  const abstand = 12;
+  const rand = 10;
+
+  // Jede Folge bekommt so viel Platz, wie ihr Wortlaut braucht.
+  const gesetzt = szenario.folgen.map((folge) => ({
+    folge,
+    zeilen: umbruch(folge.text, FOLGE_ZEICHEN, FOLGE_ZEILEN),
+  }));
+  const hoehen = gesetzt.map((g) => kopfHoehe + g.zeilen.length * zeilenHoehe + 8);
+  const fussraum = szenario.uebergangen > 0 ? 14 : 0;
+  const hoehe = rand * 2 + fussraum + hoehen.reduce((a, b) => a + b, 0)
+    + abstand * Math.max(0, gesetzt.length - 1);
+  svg.setAttribute('viewBox', `0 0 ${breite} ${hoehe}`);
+
+  const yOben: number[] = [];
+  let lauf = rand;
+  for (const h of hoehen) {
+    yOben.push(lauf);
+    lauf += h + abstand;
+  }
+  const mitteAusgang = (hoehe - fussraum) / 2;
+
+  // Fäden zuerst: die Kästen liegen darüber und bleiben lesbar.
+  gesetzt.forEach((g, i) => {
+    const y = yOben[i] + hoehen[i] / 2;
+    const x1 = xAusgang + bAusgang;
+    const mx = (x1 + xFolge) / 2;
+    const pfad = document.createElementNS(SVG_NS, 'path');
+    pfad.setAttribute('d', `M ${x1} ${mitteAusgang} C ${mx} ${mitteAusgang}, ${mx} ${y}, ${xFolge} ${y}`);
+    pfad.setAttribute('class', `faden ${folgenArt(g.folge)}`);
+    // Die Strichbreite trägt die Zahl der Stimmen — nichts sonst.
+    pfad.setAttribute('stroke-width', String(Math.min(1.4 + g.folge.anzahl * 0.8, 5)));
+    svg.appendChild(pfad);
+  });
+
+  // --- Die Ausgangsaussage.
+  const ausgang = document.createElementNS(SVG_NS, 'g');
+  ausgang.setAttribute('class', 'ausgang');
+  const hAusgang = 62;
+  const kasten = document.createElementNS(SVG_NS, 'rect');
+  kasten.setAttribute('x', String(xAusgang));
+  kasten.setAttribute('y', String(mitteAusgang - hAusgang / 2));
+  kasten.setAttribute('width', String(bAusgang));
+  kasten.setAttribute('height', String(hAusgang));
+  kasten.setAttribute('rx', '8');
+  ausgang.appendChild(kasten);
+
+  const name = szenario.ausgang?.label ?? 'deine Eingabe';
+  const kreis = document.createElementNS(SVG_NS, 'circle');
+  kreis.setAttribute('cx', String(xAusgang + bAusgang / 2));
+  kreis.setAttribute('cy', String(mitteAusgang - hAusgang / 2 + 18));
+  kreis.setAttribute('r', '12');
+  kreis.setAttribute('class', 'ausgangssignet');
+  ausgang.appendChild(kreis);
+  ausgang.appendChild(
+    text(xAusgang + bAusgang / 2, mitteAusgang - hAusgang / 2 + 22, initialen(name)),
+  );
+  ausgang.appendChild(
+    text(xAusgang + bAusgang / 2, mitteAusgang - hAusgang / 2 + 44, shorten(name), 'zahl'),
+  );
+  ausgang.appendChild(
+    text(xAusgang + bAusgang / 2, mitteAusgang - hAusgang / 2 + 56, 'sagte', 'leer'),
+  );
+  const titelAusgang = document.createElementNS(SVG_NS, 'title');
+  titelAusgang.textContent = szenario.ausgang
+    ? `${szenario.ausgang.label}: ${szenario.ausgang.auszug}`
+    : `Deine Eingabe: ${szenario.prompt}`;
+  ausgang.appendChild(titelAusgang);
+  svg.appendChild(ausgang);
+
+  // --- Die genannten Folgen.
+  gesetzt.forEach((g, i) => {
+    const { folge, zeilen } = g;
+    const y = yOben[i];
+    const art = folgenArt(folge);
+    const gruppe = document.createElementNS(SVG_NS, 'g');
+    gruppe.setAttribute('class', `folge ${art}`);
+    gruppe.setAttribute('tabindex', '0');
+    gruppe.setAttribute('role', 'button');
+    gruppe.dataset.folge = folge.id;
+
+    const flaeche = document.createElementNS(SVG_NS, 'rect');
+    flaeche.setAttribute('x', String(xFolge));
+    flaeche.setAttribute('y', String(y));
+    flaeche.setAttribute('width', String(bFolge));
+    flaeche.setAttribute('height', String(hoehen[i]));
+    flaeche.setAttribute('rx', '7');
+    flaeche.setAttribute('class', 'folgenflaeche');
+    gruppe.appendChild(flaeche);
+
+    // Die Auszählung: ein Punkt je Stimme, gefüllt für jede, die es nannte.
+    for (let k = 0; k < folge.von; k += 1) {
+      const punkt = document.createElementNS(SVG_NS, 'circle');
+      punkt.setAttribute('cx', String(xFolge + 10 + k * 9));
+      punkt.setAttribute('cy', String(y + 11));
+      punkt.setAttribute('r', '3.4');
+      punkt.setAttribute('class', `stimmpunkt ${k < folge.anzahl ? `voll ${art}` : 'leer'}`);
+      gruppe.appendChild(punkt);
+    }
+    const haeufigkeit = `von ${folge.anzahl} von ${folge.von} Stimmen genannt`;
+    gruppe.appendChild(
+      text(xFolge + 16 + folge.von * 9, y + 14.5, haeufigkeit, 'haeufigkeit', 'start'),
+    );
+
+    zeilen.forEach((zeile, z) => {
+      gruppe.appendChild(
+        text(xFolge + 10, y + kopfHoehe + 10 + z * zeilenHoehe, zeile, 'folgentext', 'start'),
+      );
+    });
+
+    const namen = [...new Set(folge.nennungen.map((n) => n.label))];
+    const gegen = folge.gegensatz.length > 0
+      ? ' — steht einer anderen genannten Folge entgegen'
+      : '';
+    const titel = document.createElementNS(SVG_NS, 'title');
+    titel.textContent = `${haeufigkeit} (${namen.join(', ')})${gegen}\n${folge.text}`;
+    gruppe.appendChild(titel);
+    gruppe.setAttribute(
+      'aria-label',
+      `Folge, ${haeufigkeit}${gegen}: ${folge.text} — Antworten öffnen`,
+    );
+
+    bedienbar(gruppe, () =>
+      onSelect(
+        {
+          jobIds: [...new Set(folge.nennungen.map((n) => n.job_id))],
+          label: `Folge, ${haeufigkeit}`,
+        },
+        folge,
+      ),
+    );
+    svg.appendChild(gruppe);
+  });
+
+  if (szenario.uebergangen > 0) {
+    svg.appendChild(
+      text(breite / 2, hoehe - 4, `+ ${szenario.uebergangen} weitere genannte Folgen`, 'leer'),
+    );
+  }
+
+  return svg;
+}
+
+// --------------------------------------------------------- Herkunfts-Linse
+
+const HERKUNFT_BAENDER: { status: Relation['status']; titel: string; satz: string }[] = [
+  {
+    status: 'bestaetigt',
+    titel: 'Von dir bestätigt',
+    satz: 'Darauf kannst du dich berufen.',
+  },
+  {
+    status: 'vorschlag',
+    titel: 'Vorschlag der Auswertung',
+    satz: 'Noch von niemandem festgestellt.',
+  },
+  {
+    status: 'abgelehnt',
+    titel: 'Von dir verworfen',
+    satz: 'Bleibt sichtbar, damit die Entscheidung nachvollziehbar bleibt.',
+  },
+];
+
+const BEZUGS_TEXT: Record<string, string> = {
+  antwortet_auf: 'antwortet auf',
+  abgeleitet_aus: 'abgeleitet aus',
+  widerspricht: 'widerspricht',
+  uebereinstimmung: 'stimmt überein mit',
+  vertieft: 'vertieft',
+};
+
+/** Welche Bedeutung ein Bezug trägt. Ohne Befund bleibt er farblos. */
+function bezugsArt(typ: string): 'agree' | 'contra' | 'neutral' {
+  if (typ === 'widerspricht') return 'contra';
+  if (typ === 'uebereinstimmung') return 'agree';
+  return 'neutral';
+}
+
+/**
+ * Was der Mensch festgestellt hat — und was bloß ein Vorschlag ist.
+ *
+ * In einem Werkzeug, das keine Wahrheit behauptet, ist das die Linse, die
+ * „worauf kann ich mich hier berufen?" beantwortet. Der Stand steht in der
+ * **Strichart**: bestätigt durchgezogen, Vorschlag gestrichelt, verworfen
+ * ausgegraut und gepunktet. Die **Herkunft** steht in der Form am Faden:
+ * eine gefüllte Raute, wo du selbst gesetzt hast, ein offener Ring, wo die
+ * Auswertung vorgeschlagen hat. Farbe bleibt dem Befund vorbehalten.
+ */
+export function renderHerkunft(
+  relations: Relation[],
+  namen: Map<string, string>,
+  onSelect: (auswahl: GraphSelection) => void,
+): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'graph herkunft');
+  svg.setAttribute('role', 'group');
+  svg.setAttribute('aria-label', 'Herkunft und Stand der gesetzten Bezüge');
+
+  if (relations.length === 0) {
+    leereFlaeche(svg, 380, 120,
+      'Noch kein Bezug gesetzt — es gibt hier nichts, worauf du dich berufen könntest.');
+    return svg;
+  }
+
+  const breite = 380;
+  const zeile = 30;
+  const bandKopf = 26;
+  const rand = 8;
+  const gruppiert = HERKUNFT_BAENDER.map((band) => ({
+    ...band,
+    bezuege: relations.filter((r) => r.status === band.status),
+  }));
+
+  let hoehe = rand;
+  const yBand: number[] = [];
+  for (const band of gruppiert) {
+    yBand.push(hoehe);
+    hoehe += bandKopf + Math.max(1, band.bezuege.length) * zeile + 6;
+  }
+  hoehe += rand;
+  svg.setAttribute('viewBox', `0 0 ${breite} ${hoehe}`);
+
+  gruppiert.forEach((band, i) => {
+    const y = yBand[i];
+    svg.appendChild(
+      text(8, y + 12, `${band.titel} — ${band.bezuege.length}`, 'bandkopf', 'start'),
+    );
+    if (band.bezuege.length === 0) {
+      svg.appendChild(text(8, y + bandKopf + 14, '— keiner —', 'leer', 'start'));
+      return;
+    }
+
+    band.bezuege.forEach((bezug, k) => {
+      const zy = y + bandKopf + k * zeile + 14;
+      const gruppe = document.createElementNS(SVG_NS, 'g');
+      gruppe.setAttribute('class', `bezug ${band.status} ${bezugsArt(bezug.type)}`);
+      gruppe.setAttribute('tabindex', '0');
+      gruppe.setAttribute('role', 'button');
+      gruppe.dataset.relation = bezug.id;
+
+      const von = namen.get(bezug.from_id) ?? bezug.from_id;
+      const nach = namen.get(bezug.to_id) ?? bezug.to_id;
+      const x1 = 124;
+      const x2 = 252;
+
+      const flaeche = document.createElementNS(SVG_NS, 'rect');
+      flaeche.setAttribute('x', '4');
+      flaeche.setAttribute('y', String(zy - 12));
+      flaeche.setAttribute('width', String(breite - 8));
+      flaeche.setAttribute('height', '24');
+      flaeche.setAttribute('rx', '6');
+      flaeche.setAttribute('class', 'bezugflaeche');
+      gruppe.appendChild(flaeche);
+
+      const strich = document.createElementNS(SVG_NS, 'path');
+      strich.setAttribute('d', `M ${x1} ${zy} H ${x2}`);
+      strich.setAttribute('class', 'bezugstrich');
+      gruppe.appendChild(strich);
+
+      // Die Herkunft als Form in der Mitte des Fadens, nie als eigene Farbe.
+      const mx = (x1 + x2) / 2;
+      const zeichen = document.createElementNS(SVG_NS, 'path');
+      zeichen.setAttribute(
+        'd',
+        bezug.origin === 'mensch'
+          ? `M ${mx} ${zy - 5} L ${mx + 5} ${zy} L ${mx} ${zy + 5} L ${mx - 5} ${zy} Z`
+          : `M ${mx - 4.5} ${zy} a 4.5 4.5 0 1 0 9 0 a 4.5 4.5 0 1 0 -9 0`,
+      );
+      zeichen.setAttribute('class', `herkunftszeichen ${bezug.origin}`);
+      gruppe.appendChild(zeichen);
+
+      gruppe.appendChild(text(x1 - 6, zy + 4, shorten(von), 'bezugname', 'end'));
+      gruppe.appendChild(text(x2 + 6, zy + 4, shorten(nach), 'bezugname', 'start'));
+      gruppe.appendChild(
+        text(mx, zy - 9, BEZUGS_TEXT[bezug.type] ?? bezug.type, 'bezugart'),
+      );
+
+      const herkunftswort = bezug.origin === 'mensch'
+        ? 'von dir gesetzt'
+        : 'maschineller Vorschlag';
+      const standwort = band.titel.toLowerCase();
+      const titel = document.createElementNS(SVG_NS, 'title');
+      titel.textContent =
+        `${von} ${BEZUGS_TEXT[bezug.type] ?? bezug.type} ${nach}\n` +
+        `${herkunftswort}, ${standwort}` + (bezug.note ? `\n${bezug.note}` : '');
+      gruppe.appendChild(titel);
+      gruppe.setAttribute(
+        'aria-label',
+        `${von} ${BEZUGS_TEXT[bezug.type] ?? bezug.type} ${nach}, ` +
+          `${herkunftswort}, ${standwort} — Antworten öffnen`,
+      );
+
+      bedienbar(gruppe, () =>
+        onSelect({
+          jobIds: [bezug.from_id, bezug.to_id],
+          label: `${von} ${BEZUGS_TEXT[bezug.type] ?? bezug.type} ${nach}`,
+        }),
+      );
+      svg.appendChild(gruppe);
+    });
+  });
+
+  return svg;
+}
+
+// -------------------------------------------------------------- Zeitlinse
+
+/** Sekunden lesbar machen, ohne etwas zu runden, was nicht gemessen wurde. */
+export function dauerText(sekunden: number): string {
+  if (sekunden < 1) return `${Math.round(sekunden * 1000)} ms`;
+  return `${sekunden.toFixed(1)} s`;
+}
+
+/**
+ * Eine Runde als Zeitbild.
+ *
+ * Je Auftrag zwei Abschnitte: das Warten in der Schlange des Anbieters und das
+ * Schreiben. Erst dadurch wird sichtbar, dass eine Karte nicht langsam war,
+ * sondern lange gewartet hat — die Warteschlange je Anbieter hatte bisher kein
+ * Bild.
+ *
+ * Die Zeilen stehen in der Reihenfolge des Tisches und **nicht** nach Dauer
+ * sortiert: es entsteht keine Rangfolge. Gezeigt wird nur, was gemessen wurde;
+ * wo eine Zeit fehlt, steht kein Balken.
+ */
+export function renderZeit(
+  jobs: Job[],
+  onSelect: (auswahl: GraphSelection) => void,
+): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'graph zeit');
+  svg.setAttribute('role', 'group');
+  svg.setAttribute('aria-label', 'Zeitlicher Ablauf der Runde');
+
+  const zeiten = jobs.filter((j) => Number.isFinite(j.created_at));
+  const enden = zeiten
+    .flatMap((j) => [j.started_at, j.finished_at])
+    .filter((t): t is number => typeof t === 'number' && Number.isFinite(t));
+  if (zeiten.length === 0 || enden.length === 0) {
+    leereFlaeche(svg, 380, 120, 'Noch keine Zeiten erfasst.');
+    return svg;
+  }
+
+  const beginn = Math.min(...zeiten.map((j) => j.created_at));
+  const ende = Math.max(...enden, beginn);
+  // Eine Runde ohne messbare Dauer bekommt trotzdem eine Skala, damit die
+  // Balken nicht durch Null geteilt werden.
+  const spanne = Math.max(ende - beginn, 0.001);
+
+  const breite = 380;
+  const xAchse = 76;
+  const bAchse = breite - xAchse - 10;
+  const zeile = 26;
+  const oben = 22;
+  const hoehe = oben + jobs.length * zeile + 8;
+  svg.setAttribute('viewBox', `0 0 ${breite} ${hoehe}`);
+
+  const x = (t: number) => xAchse + ((t - beginn) / spanne) * bAchse;
+
+  // --- Achse: vier Marken über die gemessene Spanne.
+  for (let i = 0; i <= 4; i += 1) {
+    const anteil = i / 4;
+    const px = xAchse + anteil * bAchse;
+    const linie = document.createElementNS(SVG_NS, 'path');
+    linie.setAttribute('d', `M ${px} ${oben - 8} V ${oben + jobs.length * zeile - 6}`);
+    linie.setAttribute('class', 'zeitgitter');
+    svg.appendChild(linie);
+    // Die äußeren Marken werden nach innen gesetzt, sonst stünde ihre Hälfte
+    // außerhalb der Fläche und wäre abgeschnitten.
+    const anker = i === 0 ? 'start' : i === 4 ? 'end' : 'middle';
+    svg.appendChild(
+      text(px, oben - 12, dauerText(spanne * anteil), 'zeitmarke', anker),
+    );
+  }
+
+  jobs.forEach((job, i) => {
+    const y = oben + i * zeile;
+    const gruppe = document.createElementNS(SVG_NS, 'g');
+    gruppe.setAttribute('class', `zeitzeile zustand-${job.status}`);
+    gruppe.setAttribute('tabindex', '0');
+    gruppe.setAttribute('role', 'button');
+    gruppe.dataset.jobId = job.id;
+
+    const flaeche = document.createElementNS(SVG_NS, 'rect');
+    flaeche.setAttribute('x', '2');
+    flaeche.setAttribute('y', String(y - 2));
+    flaeche.setAttribute('width', String(breite - 4));
+    flaeche.setAttribute('height', String(zeile - 4));
+    flaeche.setAttribute('rx', '6');
+    flaeche.setAttribute('class', 'zeitflaeche');
+    gruppe.appendChild(flaeche);
+
+    gruppe.appendChild(text(xAchse - 8, y + 13, shorten(job.label), 'zeitname', 'end'));
+
+    const start = typeof job.started_at === 'number' ? job.started_at : null;
+    const schluss = typeof job.finished_at === 'number' ? job.finished_at : null;
+    const teile: string[] = [];
+
+    if (start !== null && start > job.created_at) {
+      const warten = document.createElementNS(SVG_NS, 'rect');
+      warten.setAttribute('x', String(x(job.created_at)));
+      warten.setAttribute('y', String(y + 7));
+      warten.setAttribute('width', String(Math.max(1, x(start) - x(job.created_at))));
+      warten.setAttribute('height', '3');
+      warten.setAttribute('class', 'warteband');
+      gruppe.appendChild(warten);
+      teile.push(`${dauerText(start - job.created_at)} gewartet`);
+    }
+
+    if (start !== null && schluss !== null && schluss >= start) {
+      const schreiben = document.createElementNS(SVG_NS, 'rect');
+      schreiben.setAttribute('x', String(x(start)));
+      schreiben.setAttribute('y', String(y + 3));
+      schreiben.setAttribute('width', String(Math.max(2, x(schluss) - x(start))));
+      schreiben.setAttribute('height', '11');
+      schreiben.setAttribute('rx', '2');
+      schreiben.setAttribute('class', `schreibband zustand-${job.status}`);
+      gruppe.appendChild(schreiben);
+      teile.push(`${dauerText(schluss - start)} geschrieben`);
+    } else if (start !== null) {
+      // Läuft noch: ein offener Strich statt eines erfundenen Endes.
+      const offen = document.createElementNS(SVG_NS, 'path');
+      offen.setAttribute('d', `M ${x(start)} ${y + 8.5} H ${xAchse + bAchse}`);
+      offen.setAttribute('class', 'offenesband');
+      gruppe.appendChild(offen);
+      teile.push('läuft noch');
+    } else {
+      teile.push('nicht begonnen');
+    }
+
+    const satz = `${job.label}: ${teile.join(', ')}`;
+    const titel = document.createElementNS(SVG_NS, 'title');
+    titel.textContent = satz;
+    gruppe.appendChild(titel);
+    gruppe.setAttribute('aria-label', `${satz} — Antwort öffnen`);
+
+    bedienbar(gruppe, () => onSelect({ jobIds: [job.id], label: job.label }));
+    svg.appendChild(gruppe);
+  });
+
+  // Der erklärende Satz steht als Fließtext neben der Linse, nicht im Bild:
+  // im SVG bricht er nicht um und stünde über den Rand hinaus.
+  svg.setAttribute(
+    'aria-label',
+    'Zeitlicher Ablauf der Runde — gemessene Zeiten in der Reihenfolge des Tisches, '
+      + 'keine Rangfolge',
+  );
+  return svg;
 }

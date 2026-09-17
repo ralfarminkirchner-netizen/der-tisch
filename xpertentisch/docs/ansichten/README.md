@@ -1,18 +1,29 @@
 # Ansichtsnachweis
 
-Sieben Ansichten, jede hell und dunkel, jede bei 390 px und 1440 px —
-**28 Belege**. Alle zeigen tatsächliche Anwendungszustände; nichts ist
-nachträglich zusammengesetzt oder retuschiert.
+Elf Ansichten, jede hell und dunkel, jede bei 390 px und 1440 px — **44
+Belege**. Alle zeigen tatsächliche Anwendungszustände; nichts ist nachträglich
+zusammengesetzt oder retuschiert.
 
 | Ansicht | Was darauf zu sehen ist |
 | --- | --- |
 | `leerer-tisch` | vor dem ersten Funken |
 | `einlaufen` | mehrere Antworten entstehen gleichzeitig, eine ist gescheitert |
-| `auswertung` | fertiger Funke mit Vergleich, Netz und Bezügen |
-| `beziehungsnetz` | das Netz für sich |
+| `auswertung` | fertiger Funke mit Vergleich und gefundenen Bezügen |
+| `linse-stimmen` | wer sich mit wem trifft und wo widersprochen wird |
+| `linse-themen` | woran die Fundstellen hängen |
+| `linse-szenario` | die Konsequenzkarte: links die Ausgangsaussage, rechts die genannten Folgen |
+| `linse-herkunft` | was bestätigt ist, was Vorschlag, was verworfen |
+| `linse-zeit` | die Runde als Zeitbild: Warten und Schreiben getrennt |
 | `einstellungen` | Anbieter, Preise, Zeitgrenze, Kurator |
 | `bericht` | der exportierte HTML-Bericht, über `file://` geöffnet |
 | `zustaende` | alle acht Auftragszustände nebeneinander |
+
+Der **Verlauf** hat keinen eigenen Beleg: er steht auf jedem `linse-*`-Bild
+links, weil er sitzungsweit gilt und die Linsenfläche ihn dauerhaft zeigt.
+
+Die Linsenbilder entstehen aus zwei Runden — einem Funken und einem daraus
+durchgespielten Szenario. Ohne die zweite Runde hätte die Folgen-Linse nichts
+zu zeigen, und der Beleg zeigte eine leere Fläche.
 
 ## Womit sie entstanden sind
 

@@ -18,6 +18,7 @@ from fastapi.responses import HTMLResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from .analysis import szenario_block
 from .catalog import CUSTOM_HINTS, KIND_LABELS, KIND_OPENAI, KINDS
 from .config import Settings, load_settings
 from .db import SESSION_CLOSED, Store, now
@@ -245,9 +246,32 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             entry = by_spark.get(marker["spark_id"])
             if entry:
                 entry["markers"].append(marker)
+
+        # Die Konsequenzkarte der Szenario-Runden. Sie wird hier gerechnet und
+        # nicht in der Oberfläche: Satzzerlegung und Ähnlichkeitsrechnung
+        # stehen in app.analysis und sollen genau einmal existieren.
+        nach_job = {j["id"]: j for j in jobs}
+        szenarien = [
+            szenario_block(
+                entry["spark"],
+                entry["jobs"],
+                ausgang=next(
+                    (
+                        nach_job[ref]
+                        for ref in (entry["spark"].get("refs") or [])
+                        if ref in nach_job
+                    ),
+                    None,
+                ),
+            )
+            for entry in by_spark.values()
+            if entry["spark"].get("kind") == "szenario"
+        ]
+
         return {
             "session": session,
             "sparks": [by_spark[s["id"]] for s in sparks],
+            "szenarien": szenarien,
             "relations": relations,
             "pending": any(
                 j["status"] in ("queued", "running") for j in jobs

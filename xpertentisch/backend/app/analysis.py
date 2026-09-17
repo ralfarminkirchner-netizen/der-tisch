@@ -9,6 +9,11 @@ Leitregel für Widersprüche: Unterschiedlichkeit allein ist kein Widerspruch.
 Ein Widerspruch wird nur dann markiert, wenn zwei Aussagen dasselbe Thema
 betreffen (hohe Begriffsüberschneidung) UND entgegengesetzte Polarität
 haben (Verneinung oder bekanntes Gegensatzpaar).
+
+Verglichen wird über Wortstämme (siehe :mod:`app.stemmer`), damit „Sicherung"
+und „Sicherungen" ein Begriff sind und nicht zwei halb so schwere. Der Stamm
+ist nur der Schlüssel; angezeigt und zitiert wird immer die Form, die
+tatsächlich im Text steht.
 """
 
 from __future__ import annotations
@@ -18,6 +23,7 @@ from dataclasses import dataclass
 from typing import Any, Iterable
 
 from .db import JOB_DONE, new_id, now
+from .stemmer import stamm
 
 KIND_AGREEMENT = "uebereinstimmung"
 KIND_CONTRADICTION = "widerspruch"
@@ -101,9 +107,23 @@ class Sentence:
     start: int
     end: int
     text: str
+    #: Die Wortstämme des Satzes — der Schlüssel, über den verglichen wird.
     terms: frozenset[str]
     negated: bool
     raw_terms: frozenset[str]
+    #: Stamm -> Wortform, die im Satz wirklich steht. Nur diese wird gezeigt.
+    forms: dict[str, str]
+
+
+def _inhaltswort(w: str) -> bool:
+    """Trägt dieses Wort Inhalt? Geprüft wird die Form, die dasteht.
+
+    Die Stoppwortliste wird ausdrücklich **vor** dem Stemmen angewandt. Ein
+    Stamm kann mit dem Stamm eines Funktionsworts zusammenfallen („sicher" und
+    „sich" ergeben beide „sich"); würde nach dem Stemmen gefiltert, verschwände
+    ein tragender Begriff still aus der Auswertung.
+    """
+    return len(w) >= 3 and w not in STOPWORDS and w not in NEGATIONS and not w.isdigit()
 
 
 def split_sentences(job_id: str, text: str) -> list[Sentence]:
@@ -120,19 +140,28 @@ def split_sentences(job_id: str, text: str) -> list[Sentence]:
         end = start + len(stripped)
         words = [w.lower() for w in WORD_RE.findall(stripped)]
         raw_terms = frozenset(words)
-        terms = frozenset(
-            w for w in words
-            if len(w) >= 3 and w not in STOPWORDS and w not in NEGATIONS and not w.isdigit()
-        )
+        forms: dict[str, str] = {}
+        for w in words:
+            if not _inhaltswort(w):
+                continue
+            schluessel = stamm(w)
+            if len(schluessel) < 2:
+                continue
+            # Die kürzeste Form gewinnt, bei Gleichstand das Alphabet. So hängt
+            # die Beschriftung nicht daran, in welcher Reihenfolge gelesen wurde.
+            vorhanden = forms.get(schluessel)
+            if vorhanden is None or (len(w), w) < (len(vorhanden), vorhanden):
+                forms[schluessel] = w
         sentences.append(
             Sentence(
                 job_id=job_id,
                 start=start,
                 end=end,
                 text=stripped,
-                terms=terms,
+                terms=frozenset(forms),
                 negated=bool(raw_terms & NEGATIONS),
                 raw_terms=raw_terms,
+                forms=forms,
             )
         )
     return sentences
@@ -144,12 +173,52 @@ def similarity(a: frozenset[str], b: frozenset[str]) -> float:
     return len(a & b) / len(a | b)
 
 
+def anzeigeform(schluessel: str, *saetze: Sentence) -> str:
+    """Die Wortform, die für einen Stamm gezeigt wird.
+
+    Genommen wird, was in den beteiligten Sätzen wirklich steht — nie der
+    Stamm selbst. Bei mehreren Formen entscheidet Länge, dann Alphabet, damit
+    dieselbe Fundstelle immer dieselbe Beschriftung trägt.
+    """
+    formen = sorted(
+        {s.forms[schluessel] for s in saetze if schluessel in s.forms},
+        key=lambda w: (len(w), w),
+    )
+    return formen[0] if formen else schluessel
+
+
 def _antonym_conflict(a: Sentence, b: Sentence) -> str | None:
     for left, right in ANTONYMS:
         if (left in a.raw_terms and right in b.raw_terms) or (
             right in a.raw_terms and left in b.raw_terms
         ):
             return f"{left} ↔ {right}"
+    return None
+
+
+def gleiches_thema(a: Sentence, b: Sentence) -> tuple[bool, float, frozenset[str]]:
+    """Betreffen zwei Sätze dasselbe Thema?
+
+    Die eine Stelle, an der diese Frage beantwortet wird. Alles, was Aussagen
+    zusammenlegt — Marker, Themen-Linse, Folgen im Szenario —, ruft sie auf; es
+    gibt dafür bewusst keine zweite Heuristik.
+    """
+    score = similarity(a.terms, b.terms)
+    shared = a.terms & b.terms
+    return (score >= TOPIC_THRESHOLD and len(shared) >= MIN_SHARED_TERMS), score, shared
+
+
+def polaritaet_verschieden(a: Sentence, b: Sentence) -> str | None:
+    """Entgegengesetzte Polarität? Gibt den Grund zurück, sonst None.
+
+    Erst zusammen mit :func:`gleiches_thema` ergibt das einen Widerspruch —
+    Unterschiedlichkeit allein ist keiner.
+    """
+    antonym = _antonym_conflict(a, b)
+    if antonym is not None:
+        return f"Gegensatz: {antonym}"
+    if a.negated != b.negated:
+        return "gegensätzliche Verneinung"
     return None
 
 
@@ -211,28 +280,25 @@ def analyse(
                 if best is None:
                     continue
                 score, sb = best
-                shared = sa.terms & sb.terms
-                antonym = _antonym_conflict(sa, sb)
-                topical = score >= TOPIC_THRESHOLD and len(shared) >= MIN_SHARED_TERMS
+                topical, score, shared = gleiches_thema(sa, sb)
                 if not topical:
                     # Unterschiedliche Themen sind kein Widerspruch.
                     continue
 
-                polarity_differs = sa.negated != sb.negated or antonym is not None
-                kind = KIND_CONTRADICTION if polarity_differs else KIND_AGREEMENT
+                grund = polaritaet_verschieden(sa, sb)
+                kind = KIND_CONTRADICTION if grund else KIND_AGREEMENT
                 if kind == KIND_CONTRADICTION and contradictions >= MAX_MARKERS_PER_PAIR:
                     continue
                 if kind == KIND_AGREEMENT and agreements >= MAX_MARKERS_PER_PAIR:
                     continue
 
-                begriffe = sorted(shared)[:4]
+                # Beschriftet wird mit dem Wortlaut aus den Antworten, nicht mit
+                # dem Stamm: „Sicherungen" zählt wie „Sicherung", steht aber so
+                # da, wie eine der beiden Stimmen es geschrieben hat.
+                begriffe = [anzeigeform(k, sa, sb) for k in sorted(shared)[:4]]
                 topic = ", ".join(begriffe)
                 note_base = f"Themenbezug: {topic} (Überschneidung {score:.0%})"
-                note = (
-                    f"{note_base}; Gegensatz: {antonym}"
-                    if antonym
-                    else (f"{note_base}; gegensätzliche Verneinung" if polarity_differs else note_base)
-                )
+                note = f"{note_base}; {grund}" if grund else note_base
 
                 markers.append(
                     _marker(
@@ -288,7 +354,7 @@ def analyse(
                     note="Kein vergleichbarer Satz in den anderen Antworten.",
                     # Die tragenden Begriffe der Aussage: woran diese einzelne
                     # Stimme hängt, wo die anderen schweigen.
-                    topics=sorted(sa.terms)[:4],
+                    topics=[anzeigeform(k, sa) for k in sorted(sa.terms)[:4]],
                 )
             )
             count += 1
@@ -356,3 +422,202 @@ def validate_markers(markers: list[dict[str, Any]], jobs: list[dict[str, Any]]) 
         if text[start:end] != m["quote"]:
             problems.append(f"Marker {m['id']}: Textbeleg stimmt nicht mit der Antwort überein")
     return problems
+
+
+# ---------------------------------------------------------------- Szenarien
+
+#: Höchstens so viele Folgen werden gezeigt. Was darüber hinausgeht, wird
+#: gezählt und benannt — es verschwindet nicht stillschweigend.
+MAX_FOLGEN = 12
+#: So lang darf der Auszug der Ausgangsaussage sein.
+AUSGANG_ZEICHEN = 240
+
+
+def _kuerze(text: str, zeichen: int) -> tuple[str, bool]:
+    sauber = " ".join(text.split())
+    if len(sauber) <= zeichen:
+        return sauber, False
+    return sauber[: zeichen - 1].rstrip() + "…", True
+
+
+def folgen(jobs: Iterable[dict[str, Any]]) -> dict[str, Any]:
+    """Die Konsequenzkarte einer Szenario-Runde.
+
+    Die Antworten auf einen Szenario-Beitrag werden mit derselben
+    Satzzerlegung zerlegt wie alles andere und über dieselbe Rechnung
+    gruppiert, die auch Übereinstimmungen findet: gleiches Thema **und**
+    gleiche Polarität legt zwei Nennungen zusammen, gleiches Thema bei
+    entgegengesetzter Polarität stellt sie einander gegenüber.
+
+    Was hier steht, steht in den Antworten. Gezählt wird, **wie viele Stimmen**
+    eine Folge genannt haben — das ist eine Häufigkeit und ausdrücklich keine
+    Wahrscheinlichkeit, keine Prognose und keine Bewertung. Die Anwendung
+    ergänzt keine Folge, die niemand genannt hat, und gewichtet keine Stimme
+    anders als eine andere.
+    """
+    job_list = list(jobs)
+    usable = [j for j in job_list if j["status"] == JOB_DONE and (j.get("text") or "").strip()]
+    stimmen = [{"job_id": j["id"], "label": j["label"]} for j in usable]
+
+    # Sätze in fester Reihenfolge: Tischreihenfolge, darin Lesereihenfolge.
+    # Nur davon hängt die Gruppierung ab — sie ist damit wiederholbar.
+    saetze: list[tuple[dict[str, Any], Sentence]] = []
+    for job in usable:
+        for satz in split_sentences(job["id"], job["text"]):
+            if len(satz.terms) < MIN_TERMS_PER_SENTENCE:
+                continue
+            saetze.append((job, satz))
+
+    gruppen: list[list[tuple[dict[str, Any], Sentence]]] = []
+    for job, satz in saetze:
+        ziel: list[tuple[dict[str, Any], Sentence]] | None = None
+        for gruppe in gruppen:
+            for _, anderer in gruppe:
+                gleich, _score, _shared = gleiches_thema(satz, anderer)
+                if gleich and polaritaet_verschieden(satz, anderer) is None:
+                    ziel = gruppe
+                    break
+            if ziel is not None:
+                break
+        if ziel is None:
+            gruppen.append([(job, satz)])
+        else:
+            ziel.append((job, satz))
+
+    eintraege: list[dict[str, Any]] = []
+    for index, gruppe in enumerate(gruppen, start=1):
+        nennungen: list[dict[str, Any]] = []
+        gesehen: set[str] = set()
+        for job, satz in gruppe:
+            nennungen.append(
+                {
+                    "job_id": job["id"],
+                    "label": job["label"],
+                    "quote": satz.text,
+                    "start_offset": satz.start,
+                    "end_offset": satz.end,
+                }
+            )
+            gesehen.add(job["id"])
+        erster = gruppe[0][1]
+        # Die tragenden Begriffe im Wortlaut — nie der Stamm.
+        schluessel = sorted(erster.terms)[:4]
+        eintraege.append(
+            {
+                "id": f"flg{index}",
+                # Der Wortlaut der ersten Nennung, unverändert. Es wird nichts
+                # zusammengefasst, umformuliert oder geglättet.
+                "text": erster.text,
+                "themen": [anzeigeform(k, *[s for _, s in gruppe]) for k in schluessel],
+                "nennungen": nennungen,
+                "anzahl": len(gesehen),
+                "von": len(usable),
+                "gegensatz": [],
+            }
+        )
+
+    # Widerspruch zwischen zwei Folgen: dieselbe Regel wie überall — gleiches
+    # Thema und entgegengesetzte Polarität, sonst gar nicht.
+    for i, gruppe_a in enumerate(gruppen):
+        for j in range(i + 1, len(gruppen)):
+            gruppe_b = gruppen[j]
+            treffer = False
+            for _, sa in gruppe_a:
+                for _, sb in gruppe_b:
+                    gleich, _score, _shared = gleiches_thema(sa, sb)
+                    if gleich and polaritaet_verschieden(sa, sb) is not None:
+                        treffer = True
+                        break
+                if treffer:
+                    break
+            if treffer:
+                eintraege[i]["gegensatz"].append(eintraege[j]["id"])
+                eintraege[j]["gegensatz"].append(eintraege[i]["id"])
+
+    # Häufigkeit nach vorn: was mehrere Stimmen genannt haben, steht oben. Bei
+    # Gleichstand bleibt die Reihenfolge der ersten Nennung — damit entsteht
+    # keine Rangfolge der Stimmen, nur eine Ordnung der genannten Folgen.
+    geordnet = sorted(
+        enumerate(eintraege), key=lambda paar: (-paar[1]["anzahl"], paar[0])
+    )
+    gezeigt = [eintrag for _, eintrag in geordnet[:MAX_FOLGEN]]
+    sichtbare_ids = {e["id"] for e in gezeigt}
+    for eintrag in gezeigt:
+        eintrag["gegensatz"] = [g for g in eintrag["gegensatz"] if g in sichtbare_ids]
+
+    return {
+        "stimmen": stimmen,
+        "folgen": gezeigt,
+        "uebergangen": max(0, len(eintraege) - len(gezeigt)),
+        "methode": (
+            "Sätze der Szenario-Antworten, gruppiert über dieselbe "
+            "Begriffsüberschneidung, die auch Übereinstimmungen findet. "
+            "Die Zahl nennt, wie viele Stimmen eine Folge genannt haben."
+        ),
+    }
+
+
+def szenario_block(
+    spark: dict[str, Any],
+    jobs: Iterable[dict[str, Any]],
+    ausgang: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Ein Szenario mit seiner Ausgangsaussage und den genannten Folgen.
+
+    ``ausgang`` ist der Auftrag, aus dessen Antwort das Szenario hervorging —
+    ermittelt aus den ausdrücklich gesetzten Bezügen des Beitrags, nicht
+    geraten. Fehlt er, steht die Eingabe selbst als Ausgang da.
+    """
+    karte = folgen(jobs)
+    herkunft: dict[str, Any] | None = None
+    if ausgang is not None:
+        auszug, gekuerzt = _kuerze(ausgang.get("text") or "", AUSGANG_ZEICHEN)
+        herkunft = {
+            "job_id": ausgang["id"],
+            "label": ausgang["label"],
+            "auszug": auszug,
+            "gekuerzt": gekuerzt,
+        }
+    return {
+        "spark_id": spark["id"],
+        "seq": spark["seq"],
+        "prompt": spark["prompt"],
+        "ausgang": herkunft,
+        **karte,
+    }
+
+
+def themen_aus_markern(markers: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Sammelt die Begriffe der Fundstellen mit den Stimmen, die daran hängen.
+
+    Reine Projektion vorhandener Marker — es wird nichts gerechnet und nichts
+    hinzugefügt. Dieselbe Ordnung wie in der Themen-Linse der Oberfläche:
+    schwerste zuerst, bei Gleichstand das Alphabet.
+    """
+    nach: dict[str, dict[str, set[str]]] = {}
+    for marker in markers:
+        for begriff in marker.get("topics") or []:
+            if not begriff:
+                continue
+            knoten = nach.setdefault(
+                begriff, {"einig": set(), "gegen": set(), "einzeln": set()}
+            )
+            if marker["kind"] == KIND_AGREEMENT:
+                knoten["einig"].add(marker["job_id"])
+            elif marker["kind"] == KIND_CONTRADICTION:
+                knoten["gegen"].add(marker["job_id"])
+            else:
+                knoten["einzeln"].add(marker["job_id"])
+
+    zeilen = [
+        {
+            "begriff": begriff,
+            "einig": len(mengen["einig"]),
+            "gegen": len(mengen["gegen"]),
+            "einzeln": len(mengen["einzeln"]),
+            "stimmen": len(mengen["einig"] | mengen["gegen"] | mengen["einzeln"]),
+        }
+        for begriff, mengen in nach.items()
+    ]
+    zeilen.sort(key=lambda z: (-(z["einig"] + z["gegen"] + z["einzeln"]), z["begriff"]))
+    return zeilen
