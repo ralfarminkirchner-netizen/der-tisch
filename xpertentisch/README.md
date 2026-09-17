@@ -356,13 +356,14 @@ Nutzerinhalten, verbindliche Lehren aus Modellkonsens, Rankings der Modelle.
 
 ## Gestaltung
 
-Die Oberfläche folgt der Idee einer **Werkbank**: eine ruhige, warme Fläche,
-darauf körperhafte Karten mit einer farbigen Kante, die den Zustand trägt. Farbe
-ist reserviert für Bedeutung — Grün für Übereinstimmung, Orange für Widerspruch,
-Violett für Einzelaussagen; das Tiefblau der Marke mischt sich da nicht ein.
-Beide Themen (hell und dunkel) sind ausgearbeitet und folgen der Einstellung des
-Geräts. Gesetzt wird in der Systemschrift: das spart den Ladeweg zu einem
-fremden Schriftdienst und damit auch die Datenspur dorthin.
+Die Oberfläche setzt mehrere Stimmen nebeneinander auf eine ruhige Fläche.
+Farbe ist den drei Einschätzungen vorbehalten — Grün für Übereinstimmung,
+Orange für Widerspruch, Violett für Einzelaussagen — und liegt als Auflage
+über dem unveränderten Text. Die acht Auftragzustände bleiben unterscheidbar
+über Klasse, Schild und Kante; ein Ereignis im Strom ist kein neunter Zustand.
+Schriften liegen im Repository. Es wird kein fremder Schriftdienst aufgerufen.
+
+Das ist eine Gestaltungsänderung, kein Qualitätsurteil über den Tisch.
 
 ## Bekannte Einschränkungen
 
@@ -383,9 +384,6 @@ fremden Schriftdienst und damit auch die Datenspur dorthin.
   Verneinungen; sie verstehen den Inhalt nicht. Umschreibungen ohne gemeinsame
   Wörter bleiben unerkannt, ironische oder mehrgliedrige Widersprüche ebenso.
   Die Marker sind Lesehilfen, keine Bewertung.
-- **Keine Streaming-Ausgabe der Modelle.** Eine Antwort erscheint vollständig,
-  sobald sie fertig ist; Teilantworten entstehen nur bei Längenabbruch oder
-  Fehler.
 - **SQLite und Prozessspeicher.** Der Ereignisbus lebt im Prozess. Mehrere
   Instanzen hinter einem Lastverteiler teilen ihn nicht — XPERTENTiSCH läuft als
   eine Instanz.

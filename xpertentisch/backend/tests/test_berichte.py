@@ -155,3 +155,21 @@ async def test_bericht_nennt_bezuege_mit_herkunft_und_stand(client, session_id):
     assert "maschineller Vorschlag" in html
     assert "unbestätigt" in html
     assert "keine von dir getroffenen" in html
+
+
+def test_bericht_unterscheidet_acht_zustaende_ohne_neunten():
+    from app.reports import _status_label
+
+    erwartet = {
+        "not_requested": "nicht angefragt",
+        "queued": "wartet",
+        "running": "denkt nach",
+        "streaming": "schreibt",
+        "done": "fertig",
+        "error": "Fehler",
+        "interrupted": "unterbrochen",
+        "cancelled": "abgebrochen",
+    }
+    for status, label in erwartet.items():
+        assert _status_label({"status": status}) == label
+    assert _status_label({"status": "spark.created"}) == "spark.created"

@@ -44,7 +44,8 @@ def _status_label(job: dict[str, Any]) -> str:
         "error": "Fehler",
         "interrupted": "unterbrochen",
         "queued": "wartet",
-        "running": "läuft",
+        "running": "denkt nach",
+        "streaming": "schreibt",
         "not_requested": "nicht angefragt",
         "cancelled": "abgebrochen",
     }.get(job["status"], job["status"])
@@ -77,7 +78,8 @@ def _leer_grund(job: dict[str, Any]) -> str:
         "cancelled": "Abgebrochen, bevor eine Antwort kam.",
         "done": "Antwort kam an, enthielt aber keinen Text.",
         "queued": "Wartet noch.",
-        "running": "Läuft noch.",
+        "running": "Denkt noch nach.",
+        "streaming": "Antwort läuft ein.",
     }.get(job["status"], "Keine Antwort erfasst.")
 
 
@@ -93,8 +95,9 @@ def _beitragsnamen(bundle: dict[str, Any]) -> dict[str, str]:
 REPORT_CSS = """
 :root {
   color-scheme: light;
-  --ink: #1b1f2a; --muted: #5b6478; --line: #d8dde8; --bg: #f6f7fb;
+  --ink: #1b1f2a; --muted: #5b6478; --line: #d8dde8; --bg: #f4f5f8;
   --card: #ffffff; --agree: #1f7a4d; --contra: #b03a2e; --unique: #6b4fa8;
+  --mark: #3a4a73;
 }
 * { box-sizing: border-box; }
 body {
@@ -106,13 +109,19 @@ h1 { font-size: 1.9rem; margin: 0 0 4px; letter-spacing: .02em; }
 h2 { font-size: 1.3rem; margin: 40px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
 h3 { font-size: 1.05rem; margin: 24px 0 8px; }
 .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+.card { background: var(--card); border: 1px solid var(--line); border-top-width: 3px; border-radius: 12px;
         padding: 18px 20px; margin: 14px 0; }
 .answer { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
 .badge { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px;
          border: 1px solid var(--line); color: var(--muted); margin-right: 6px; font-family: system-ui, sans-serif; }
 .badge.err { color: var(--contra); border-color: var(--contra); }
 .badge.part { color: #8a6d1f; border-color: #c8a43a; }
+.badge.writes { color: var(--mark); border-color: var(--mark); }
+.badge.stop { color: var(--muted); text-decoration: line-through; }
+mark { background: transparent; color: inherit; padding: 0 2px; box-decoration-break: clone; }
+mark.uebereinstimmung { background: #e7f4ea; box-shadow: inset 0 -2px 0 var(--agree); }
+mark.widerspruch { background: #f8e8e4; box-shadow: inset 0 -2px 0 var(--contra); }
+mark.einzigartig { background: #efe8f6; box-shadow: inset 0 -2px 0 var(--unique); }
 table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .92rem;
         font-family: system-ui, -apple-system, sans-serif; }
 th, td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; vertical-align: top; }
@@ -205,6 +214,10 @@ def render_html(bundle: dict[str, Any]) -> str:
                 badges.append('<span class="badge err">Fehler</span>')
             if job["status"] == "interrupted":
                 badges.append('<span class="badge err">unterbrochen</span>')
+            if job["status"] == "streaming":
+                badges.append('<span class="badge writes">schreibt</span>')
+            if job["status"] == "cancelled":
+                badges.append('<span class="badge stop">abgebrochen</span>')
             if job.get("partial"):
                 badges.append('<span class="badge part">Teilantwort</span>')
             a(f'<div class="card"><h3>{esc(job["label"])}</h3>')
