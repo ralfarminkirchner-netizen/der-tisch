@@ -1,3 +1,11 @@
+# VERALTET — nicht mehr als Arbeitsstand verwenden
+
+Stand des Dokuments: 2026-05-17. Der Kernauftrag 2026-09-17 arbeitet auf Zweig `tisch/kern` (Basis `main` / ea75cd4) im Ordner `xpertentisch/`.
+
+**Schlüssel:** In dieser Datei lag ein OpenAI-Key-Fragment. Es wurde hier entfernt. Die Git-History dieses Repos enthält es weiter. **Key rotieren** (OpenAI-Konsole: alten Key löschen, neuen nur in gitignorierter `.env` / Railway-Env). Nicht erneut in Markdown, Issues oder Handoffs legen.
+
+---
+
 # TiSCH — Handoff
 **Projekt:** `ralfarminkirchner-netizen/der-tisch`
 **Repo lokal:** `/Users/ralfkirchner/Documents/der-tisch`
@@ -28,7 +36,7 @@ Dann prüfen: `http://127.0.0.1:8082/trainingstisch.html` — muss dunkles Sport
 ## Kurzstand
 
 - Backend läuft auf Railway: `https://der-tisch-production.up.railway.app`
-- OPENAI_API_KEY ist korrekt gesetzt (`sk-proj-iVw6z88h...`)
+- OPENAI_API_KEY ist korrekt gesetzt (`[ENTFERNT — Key rotieren; Git-History behält das Fragment]...`)
 - Alle 11 TiSCH-Seiten sind live und erreichbar
 - OpenAI GPT-4o-mini liefert Antworten — `/api/ask` getestet ✅
 - Lokaler Preview: `http://127.0.0.1:8082/` (python3 -m http.server 8082 in der-tisch-backend)
