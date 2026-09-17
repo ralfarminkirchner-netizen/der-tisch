@@ -53,11 +53,14 @@ function formatDuration(ms: number | null): string {
  * sich nicht auf die Karten der anderen Modelle aus.
  */
 export function createCard(job: Job, markers: Marker[]): HTMLElement {
-  const card = el('article', { class: 'flaeche card', 'data-job-id': job.id });
+  const card = el('article', { class: 'card', 'data-job-id': job.id });
   card.append(
     el('header', {}, [
-      el('h3', {}, [job.label]),
+      el('h3', {}, [signet(job.label), job.label]),
+      // Zwei Ebenen statt einer Reihe gleichrangiger Schilder: oben der
+      // Zustand, darunter die Nebenangaben.
       el('div', { class: 'tags' }),
+      el('div', { class: 'leiste' }),
     ]),
     el('div', { class: 'card-body' }),
     // Bleibt beim Aktualisieren stehen: hier hängen Aktionen und Kontextansicht.
@@ -67,50 +70,76 @@ export function createCard(job: Job, markers: Marker[]): HTMLElement {
   return card;
 }
 
+/** Trägt die Herkunft, ohne eine Farbe zu belegen — Farbe gehört der Auswertung. */
+function signet(label: string): HTMLElement {
+  const zeichen = label
+    .split(/[\s—–-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((teil) => teil[0])
+    .join('')
+    .toUpperCase();
+  return el('span', { class: 'signet', 'aria-hidden': 'true' }, [zeichen || '?']);
+}
+
 export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void {
-  // Die farbige Kante oben trägt den Zustand.
-  card.className = `flaeche card zustand-${job.status}${
+  // Die Lichtkante oben trägt den Zustand; die Beschriftung trägt ihn ebenso.
+  card.className = `card zustand-${job.status}${
     card.classList.contains('highlight') ? ' highlight' : ''
   }`;
   const tags = card.querySelector('.tags');
+  const leiste = card.querySelector('.leiste');
   const body = card.querySelector('.card-body');
-  if (!tags || !body) return;
+  if (!tags || !leiste || !body) return;
 
+  // ---- Zustand: das eine Schild, das zählt.
   tags.replaceChildren();
-  tags.append(el('span', { class: `tag ${job.status}` }, [STATUS_LABEL[job.status] ?? job.status]));
+  tags.append(
+    el('span', { class: `tag zustand ${job.status}` }, [STATUS_LABEL[job.status] ?? job.status]),
+  );
   if (job.partial) tags.append(el('span', { class: 'tag partial' }, ['Teilantwort']));
-  tags.append(el('span', { class: 'tag' }, [`${job.provider} · ${job.model}`]));
+
+  // ---- Nebenangaben: eine ruhige Zeile, nicht sechs gleiche Schilder.
+  leiste.replaceChildren();
+  const angabe = (text: string, wert?: string, titel?: string, klasse = '') => {
+    const attrs: Record<string, string> = {};
+    if (klasse) attrs.class = klasse;
+    if (titel) attrs.title = titel;
+    const span = el('span', attrs, [text]);
+    if (wert !== undefined) {
+      span.append(el('span', { class: 'leiste-wert' }, [wert]));
+    }
+    leiste.append(span);
+  };
+
+  angabe(`${job.provider} · ${job.model}`);
   if (job.latency_ms !== null && job.status !== 'running' && job.status !== 'streaming') {
-    tags.append(el('span', { class: 'tag' }, [formatDuration(job.latency_ms)]));
+    angabe('', formatDuration(job.latency_ms), 'gemessene Dauer bis zur Antwort');
   }
   if (job.tokens_in !== null || job.tokens_out !== null) {
-    tags.append(
-      el('span', { class: 'tag', title: 'verbrauchte Token (ein/aus)' }, [
-        `${job.tokens_in ?? '?'}/${job.tokens_out ?? '?'} Token`,
-      ]),
+    angabe(
+      'Token',
+      `${job.tokens_in ?? '?'}/${job.tokens_out ?? '?'}`,
+      'vom Anbieter gemeldeter Verbrauch (ein/aus)',
     );
   }
   if (job.cost_source === 'berechnet' && job.cost_micro !== null) {
-    tags.append(
-      el('span', { class: 'tag', title: 'mit den von dir eingetragenen Preisen berechnet' }, [
-        formatCost(job.cost_micro),
-      ]),
-    );
+    angabe('Kosten', formatCost(job.cost_micro), 'mit den von dir eingetragenen Preisen berechnet');
   } else if ((job.tokens_in ?? job.tokens_out) !== null) {
-    tags.append(
-      el('span', { class: 'tag', title: 'ohne hinterlegte Preise wird nichts geschätzt' }, [
-        'Kosten unbekannt',
-      ]),
-    );
+    // Ohne hinterlegte Preise wird nichts geschätzt — und das steht auch so da.
+    angabe('Kosten unbekannt', undefined, 'ohne hinterlegte Preise wird nichts geschätzt',
+      'unbekannt');
   }
 
+  // ---- Körper.
   body.replaceChildren();
 
   if (job.status === 'queued' || job.status === 'running') {
+    // Ein Puls, kein Fortschrittsbalken: niemand kennt hier einen Fortschritt.
     body.append(
-      el('div', { class: 'skeleton' }),
-      el('div', { class: 'skeleton' }),
-      el('div', { class: 'skeleton' }),
+      el('div', { class: 'puls', role: 'presentation' }, [
+        el('span', {}), el('span', {}), el('span', {}),
+      ]),
     );
   }
 

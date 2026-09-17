@@ -1,8 +1,24 @@
-/* XPERTENTiSCH — Werkbank.
-   Eine ruhige, warme Fläche; darauf körperhafte Karten mit einer farbigen
-   Kante oben, die den Zustand trägt. Farbe wird sparsam und immer bedeutungs-
-   tragend eingesetzt: Grün Übereinstimmung, Orange Widerspruch, Violett
-   Einzelaussage. Die Marke selbst ist tiefblau und mischt sich da nicht ein.
+/* XPERTENTiSCH — DER SAAL.
+   ----------------------------------------------------------------------------
+   Die Behauptung dieses Entwurfs: mehrere Stimmen sprechen gleichzeitig, jede
+   für sich, und niemand entscheidet zwischen ihnen. Der Raum ist darum ruhig
+   gehalten, und jede Antwort ist ein beleuchtetes Pult darin.
+
+   LICHT BEDEUTET AUFMERKSAMKEIT, nicht Qualität. Was gerade geschrieben wird,
+   leuchtet; was fertig ist, ruht im vollen Licht; was scheiterte oder
+   abgebrochen wurde, bleibt gedämpft — aber immer lesbar. Keine Stimme wird
+   heller, weil sie „besser" wäre. Es gibt hier keine Rangfolge.
+
+   FARBE SPRICHT NUR, WO DIE AUSWERTUNG SPRICHT: Grün Übereinstimmung, Orange
+   Widerspruch, Violett Einzelaussage. Das Blau der Anwendung ist Bedienung,
+   nie Befund, und mischt sich unter diese drei nicht.
+
+   ZWEI SCHRIFTEN, ZWEI RÄNGE: Der Funke — die Setzung des Menschen — steht in
+   der Serife. Alles, was die Maschine beisteuert, steht in der Grotesk.
+
+   Das helle Thema ist derselbe Saal bei Tag, nicht das umgedrehte dunkle:
+   dort trägt nicht Leuchten die Aufmerksamkeit, sondern Papier, Erhebung und
+   Kontrast.
 
    Regeln gegen horizontale Überbreite:
    - jedes Rasterkind bekommt min-width: 0
@@ -10,731 +26,312 @@
    - breite Elemente (Tabelle, Diagramm) bekommen einen eigenen Scrollbereich
 */
 
+/* ------------------------------------------------------------------ Schrift */
+/* Beide Dateien liegen im Repository (src/schrift/). Zur Laufzeit wird nichts
+   von einem fremden Server geladen — siehe src/schrift/HERKUNFT.md. */
+
+@font-face {
+  font-family: 'Inter var';
+  src: url('./schrift/inter-latin-variabel.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Newsreader var';
+  src: url('./schrift/newsreader-latin-variabel.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* -------------------------------------------------------------------- Marken */
+
 :root {
   color-scheme: light;
 
-  --flaeche: #e9e7e2;
-  --flaeche-tief: #dedbd4;
-  --karte: #ffffff;
-  --karte-matt: #f6f4f0;
-  --tinte: #1c1b19;
-  --tinte-matt: #6b6862;
-  --linie: #d5d1c8;
-  --linie-kraeftig: #bdb8ac;
+  /* Der Saal bei Tag: warmes Papier, keine kalte Bürofläche. */
+  --flaeche: oklch(96.5% 0.006 85);
+  --flaeche-tief: oklch(93.2% 0.008 85);
+  --karte: oklch(99.4% 0.003 85);
+  --karte-matt: oklch(97.4% 0.005 85);
+  --karte-hoch: oklch(100% 0 0);
+  --tinte: oklch(24% 0.012 60);
+  --tinte-matt: oklch(46% 0.012 60);
+  /* Muss auch auf der (dunkleren) Raumfläche 4.5:1 erreichen, nicht nur auf
+     der helleren Karte — gemessen in e2e/zugang-check.mjs. */
+  --tinte-leise: oklch(51% 0.010 60);
+  --linie: oklch(88% 0.008 80);
+  --linie-kraeftig: oklch(79% 0.010 80);
 
-  --marke: #1e3a5f;
-  --marke-hell: #e7edf5;
-  --einig: #15803d;
-  --einig-hell: #e4f2e8;
-  --gegen: #c2410c;
-  --gegen-hell: #fbeadf;
-  --einzeln: #6d28d9;
-  --einzeln-hell: #eee9fb;
-  --achtung: #92600a;
-  --achtung-hell: #f8eed9;
+  /* Bedienung. Nie ein Befund. */
+  --marke: oklch(46% 0.115 250);
+  --marke-hell: oklch(94.5% 0.030 250);
+  --marke-rand: oklch(72% 0.085 250);
 
-  --radius: 10px;
-  --radius-klein: 6px;
-  --kante: 4px;
-  --schatten: 0 1px 2px rgba(28, 27, 25, 0.06), 0 8px 20px rgba(28, 27, 25, 0.07);
-  --schatten-tief: 0 2px 4px rgba(28, 27, 25, 0.08), 0 16px 34px rgba(28, 27, 25, 0.12);
-  --pad: clamp(16px, 2.4vw, 24px);
+  /* Die drei Bedeutungen der Auswertung. */
+  --einig: oklch(45% 0.125 152);
+  --gegen: oklch(48% 0.155 42);
+  --einzeln: oklch(45% 0.175 300);
+  --achtung: oklch(47% 0.105 75);
 
-  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, 'Noto Sans', sans-serif;
+  --einig-hell: color-mix(in oklch, var(--einig) 12%, var(--karte));
+  --gegen-hell: color-mix(in oklch, var(--gegen) 12%, var(--karte));
+  --einzeln-hell: color-mix(in oklch, var(--einzeln) 12%, var(--karte));
+  --achtung-hell: color-mix(in oklch, var(--achtung) 14%, var(--karte));
+
+  /* Das „Licht" der Karte ist bei Tag eine Erhebung, kein Leuchten. */
+  --licht-staerke: 0;
+  --pult-schatten:
+    0 1px 2px oklch(24% 0.012 60 / 0.07),
+    0 8px 22px oklch(24% 0.012 60 / 0.08);
+  --pult-schatten-hoch:
+    0 2px 4px oklch(24% 0.012 60 / 0.09),
+    0 18px 44px oklch(24% 0.012 60 / 0.14);
+  --saallicht: radial-gradient(
+    120% 80% at 50% -10%,
+    oklch(100% 0 0 / 0.9) 0%,
+    oklch(100% 0 0 / 0) 60%
+  );
+  --korn-deckung: 0.035;
+
+  --radius: 14px;
+  --radius-klein: 9px;
+  --radius-winzig: 6px;
+  --kante: 2px;
+  --pad: clamp(16px, 2.4vw, 26px);
+  --mass: 68ch;
+
+  --schrift: 'Inter var', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --schrift-setzung: 'Newsreader var', ui-serif, Georgia, 'Iowan Old Style',
+    'Times New Roman', serif;
+
+  /* Bewegung mit Masse: die Feder schwingt leicht über und kommt zur Ruhe. */
+  --feder: linear(
+    0, 0.0039 1.3%, 0.0157 2.6%, 0.0625 5.4%, 0.1407 8.3%, 0.25 11.4%,
+    0.3906 14.7%, 0.5625 18.4%, 0.6543 20.4%, 0.7422 22.5%, 0.8203 24.7%,
+    0.8867 27%, 0.9414 29.5%, 0.9805 32.1%, 1.0039 34.9%, 1.0156 38%,
+    1.0195 41.4%, 1.0156 48.6%, 1.0039 57.6%, 0.9996 69.2%, 1
+  );
+  --ruhig: cubic-bezier(0.25, 0.46, 0.35, 1);
+  --takt: 240ms;
+  --takt-kurz: 140ms;
 }
 
+/* Systemvorgabe dunkel — solange nichts ausdrücklich Helles gewählt wurde. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --flaeche: #191817;
-    --flaeche-tief: #121111;
-    --karte: #232221;
-    --karte-matt: #2b2a28;
-    --tinte: #edeae4;
-    --tinte-matt: #a39e95;
-    --linie: #3a3836;
-    --linie-kraeftig: #4e4b47;
-    --marke: #7fa9d9;
-    --marke-hell: #24313f;
-    --einig: #5fbf82;
-    --einig-hell: #1e2f25;
-    --gegen: #f08a5d;
-    --gegen-hell: #38251c;
-    --einzeln: #b49bf0;
-    --einzeln-hell: #2b2440;
-    --achtung: #e0b45f;
-    --achtung-hell: #362c19;
-    --schatten: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.32);
-    --schatten-tief: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 34px rgba(0, 0, 0, 0.44);
+
+    --flaeche: oklch(17.5% 0.010 65);
+    --flaeche-tief: oklch(13.5% 0.009 65);
+    --karte: oklch(22.5% 0.011 65);
+    --karte-matt: oklch(20% 0.010 65);
+    --karte-hoch: oklch(26% 0.013 65);
+    --tinte: oklch(94% 0.006 85);
+    --tinte-matt: oklch(74% 0.009 75);
+    --tinte-leise: oklch(64% 0.009 75);
+    --linie: oklch(31% 0.011 65);
+    --linie-kraeftig: oklch(42% 0.013 65);
+
+    --marke: oklch(78% 0.105 250);
+    --marke-hell: oklch(30% 0.055 250);
+    --marke-rand: oklch(52% 0.085 250);
+
+    --einig: oklch(80% 0.145 152);
+    --gegen: oklch(78% 0.150 48);
+    --einzeln: oklch(80% 0.130 300);
+    --achtung: oklch(83% 0.120 85);
+
+    --einig-hell: color-mix(in oklch, var(--einig) 18%, var(--karte));
+    --gegen-hell: color-mix(in oklch, var(--gegen) 18%, var(--karte));
+    --einzeln-hell: color-mix(in oklch, var(--einzeln) 18%, var(--karte));
+    --achtung-hell: color-mix(in oklch, var(--achtung) 18%, var(--karte));
+
+    /* Im dunklen Saal trägt tatsächlich Licht. */
+    --licht-staerke: 1;
+    --pult-schatten:
+      0 1px 0 oklch(100% 0 0 / 0.04) inset,
+      0 2px 6px oklch(0% 0 0 / 0.5),
+      0 16px 40px oklch(0% 0 0 / 0.42);
+    --pult-schatten-hoch:
+      0 1px 0 oklch(100% 0 0 / 0.07) inset,
+      0 3px 10px oklch(0% 0 0 / 0.55),
+      0 26px 60px oklch(0% 0 0 / 0.5);
+    --saallicht: radial-gradient(
+      125% 85% at 50% -12%,
+      oklch(72% 0.045 250 / 0.17) 0%,
+      oklch(72% 0.045 250 / 0) 58%
+    );
+    --korn-deckung: 0.055;
   }
 }
 
+/* Ausdrücklich dunkel gewählt — hat Vorrang vor der Systemvorgabe. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --flaeche: #191817;
-  --flaeche-tief: #121111;
-  --karte: #232221;
-  --karte-matt: #2b2a28;
-  --tinte: #edeae4;
-  --tinte-matt: #a39e95;
-  --linie: #3a3836;
-  --linie-kraeftig: #4e4b47;
-  --marke: #7fa9d9;
-  --marke-hell: #24313f;
-  --einig: #5fbf82;
-  --einig-hell: #1e2f25;
-  --gegen: #f08a5d;
-  --gegen-hell: #38251c;
-  --einzeln: #b49bf0;
-  --einzeln-hell: #2b2440;
-  --achtung: #e0b45f;
-  --achtung-hell: #362c19;
-  --schatten: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.32);
-  --schatten-tief: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 34px rgba(0, 0, 0, 0.44);
+
+  --flaeche: oklch(17.5% 0.010 65);
+  --flaeche-tief: oklch(13.5% 0.009 65);
+  --karte: oklch(22.5% 0.011 65);
+  --karte-matt: oklch(20% 0.010 65);
+  --karte-hoch: oklch(26% 0.013 65);
+  --tinte: oklch(94% 0.006 85);
+  --tinte-matt: oklch(74% 0.009 75);
+  --tinte-leise: oklch(64% 0.009 75);
+  --linie: oklch(31% 0.011 65);
+  --linie-kraeftig: oklch(42% 0.013 65);
+
+  --marke: oklch(78% 0.105 250);
+  --marke-hell: oklch(30% 0.055 250);
+  --marke-rand: oklch(52% 0.085 250);
+
+  --einig: oklch(80% 0.145 152);
+  --gegen: oklch(78% 0.150 48);
+  --einzeln: oklch(80% 0.130 300);
+  --achtung: oklch(83% 0.120 85);
+
+  --einig-hell: color-mix(in oklch, var(--einig) 18%, var(--karte));
+  --gegen-hell: color-mix(in oklch, var(--gegen) 18%, var(--karte));
+  --einzeln-hell: color-mix(in oklch, var(--einzeln) 18%, var(--karte));
+  --achtung-hell: color-mix(in oklch, var(--achtung) 18%, var(--karte));
+
+  --licht-staerke: 1;
+  --pult-schatten:
+    0 1px 0 oklch(100% 0 0 / 0.04) inset,
+    0 2px 6px oklch(0% 0 0 / 0.5),
+    0 16px 40px oklch(0% 0 0 / 0.42);
+  --pult-schatten-hoch:
+    0 1px 0 oklch(100% 0 0 / 0.07) inset,
+    0 3px 10px oklch(0% 0 0 / 0.55),
+    0 26px 60px oklch(0% 0 0 / 0.5);
+  --saallicht: radial-gradient(
+    125% 85% at 50% -12%,
+    oklch(72% 0.045 250 / 0.17) 0%,
+    oklch(72% 0.045 250 / 0) 58%
+  );
+  --korn-deckung: 0.055;
 }
+
+/* --------------------------------------------------------------- Grundlagen */
 
 * {
   box-sizing: border-box;
+  min-width: 0;
 }
 
-/* Muss die Anzeigearten der Bausteine schlagen: ein Element mit display:flex
-   würde das eingebaute [hidden] sonst überstimmen. */
 [hidden] {
+  /* Muss die Anzeigeart überstimmen: ein .row mit display:flex bliebe sonst
+     trotz hidden sichtbar. */
   display: none !important;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
   max-width: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  min-height: 100svh;
+  margin: 0;
   background: var(--flaeche);
   color: var(--tinte);
-  font: 400 16px/1.6 var(--schrift);
+  font-family: var(--schrift);
+  font-size: 16px;
+  line-height: 1.55;
+  font-variation-settings: 'opsz' 16;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  min-height: 100dvh;
+}
+
+/* Das Licht des Saals und ein feines Korn darüber. Beides liegt hinter allem
+   und nimmt keine Zeigereingaben an. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  background: var(--saallicht);
+}
+
+body::after {
+  opacity: var(--korn-deckung);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23k)'/%3E%3C/svg%3E");
+}
+
+/* Leere Behälter (kein Hinweis, keine Entwürfe) sollen keine Lücke reißen. */
+#app > div:empty {
+  display: none;
 }
 
 #app {
-  width: 100%;
-  max-width: 1200px;
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
   margin: 0 auto;
-  padding-block: clamp(20px, 3vw, 36px) 96px;
-  padding-inline: clamp(16px, 3vw, 32px);
+  padding: clamp(18px, 3vw, 40px) var(--pad) 80px;
+  display: grid;
+  gap: clamp(20px, 2.6vw, 32px);
 }
 
 .boot {
   color: var(--tinte-matt);
+  padding: 48px 0;
   text-align: center;
-  padding: 80px 0;
 }
 
-/* ------------------------------------------------------------------- Flächen */
-
+/* Die Fläche eines Pults: ein Körper im Raum, keine bloße Umrandung. */
 .flaeche {
   background: var(--karte);
   border: 1px solid var(--linie);
   border-radius: var(--radius);
-  box-shadow: var(--schatten);
-  padding: var(--pad);
-  min-width: 0;
+  box-shadow: var(--pult-schatten);
 }
 
-/* -------------------------------------------------------------------- Kopf */
-
-header.top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 20px;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding-bottom: 16px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid var(--linie-kraeftig);
+::selection {
+  background: color-mix(in oklch, var(--marke) 28%, transparent);
 }
 
-header.top h1 {
-  font-size: clamp(1.5rem, 4.4vw, 2rem);
-  font-weight: 750;
-  letter-spacing: -0.02em;
+/* ---------------------------------------------------------------- Typografie */
+
+h1,
+h2,
+h3,
+h4 {
   margin: 0;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  color: var(--tinte);
+  font-weight: 620;
+  letter-spacing: -0.014em;
+  line-height: 1.2;
 }
 
-header.top h1 span {
-  color: var(--marke);
+p {
+  margin: 0 0 0.75em;
 }
 
-.sub {
-  color: var(--tinte-matt);
-  font-size: 0.86rem;
-  margin: 4px 0 0;
+p:last-child {
+  margin-bottom: 0;
 }
 
-.statusline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-  align-items: center;
-  font-size: 0.78rem;
-  color: var(--tinte-matt);
-  min-width: 0;
+/* Zahlen in Spalten müssen untereinander stehen. */
+table td,
+table th,
+.leiste-wert {
   font-variant-numeric: tabular-nums;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--tinte-matt);
-  flex: none;
-}
-.dot.ok { background: var(--einig); }
-.dot.warn { background: var(--achtung); }
-.dot.err { background: var(--gegen); }
-
-/* ------------------------------------------------------------- Bedienelemente */
-
-button,
-.btn {
-  appearance: none;
-  border: 1px solid var(--linie-kraeftig);
-  background: var(--karte);
-  color: var(--tinte);
-  border-radius: var(--radius-klein);
-  padding: 9px 16px;
-  font: inherit;
-  font-size: 0.88rem;
-  font-weight: 550;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.12s ease, border-color 0.12s ease;
-}
-
-button:hover:not(:disabled),
-.btn:hover {
-  background: var(--karte-matt);
-  border-color: var(--tinte-matt);
-}
-
-button.primary {
-  background: var(--marke);
-  border-color: var(--marke);
-  color: var(--karte);
-}
-
-button.primary:hover:not(:disabled) {
-  background: var(--tinte);
-  border-color: var(--tinte);
-  color: var(--karte);
-}
-
-button.gefahr {
-  color: var(--gegen);
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--marke);
-  outline-offset: 2px;
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  max-width: 100%;
-  padding: 10px 12px;
-  border-radius: var(--radius-klein);
-  border: 1px solid var(--linie-kraeftig);
-  background: var(--karte);
-  color: var(--tinte);
-  font: inherit;
-  font-size: 0.92rem;
-  min-width: 0;
-}
-
-input[type='checkbox'] {
-  width: auto;
-  accent-color: var(--marke);
-}
-
-label {
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--tinte-matt);
-}
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  min-width: 0;
-}
-
-.row.spread {
-  justify-content: space-between;
-}
-
-.iconbutton {
-  padding: 8px 11px;
-  font-size: 0.95rem;
-  line-height: 1;
-  flex: none;
-}
-
-.hint {
-  color: var(--tinte-matt);
-  font-size: 0.82rem;
-  margin: 0;
-  line-height: 1.55;
-}
-
-.hint.error {
-  color: var(--gegen);
-}
-
-/* ------------------------------------------------------------------ Eingabe */
-
-.spark {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 28px;
-  border-top: var(--kante) solid var(--marke);
-  padding-top: calc(var(--pad) - 2px);
-}
-
-.spark textarea {
-  min-height: 108px;
-  resize: vertical;
-  line-height: 1.55;
-  font-size: 1rem;
-}
-
-.modelpicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  min-width: 0;
-}
-
-.modelpicker label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--tinte);
-  padding: 7px 12px;
-  border: 1px solid var(--linie);
-  border-radius: var(--radius-klein);
-  background: var(--karte-matt);
-  cursor: pointer;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-}
-
-/* ------------------------------------------------------------------- Funken */
-
-.spark-block {
-  margin: 32px 0;
-}
-
-.spark-block > h2 {
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tinte-matt);
-  margin: 0 0 10px;
-}
-
-.question {
-  margin: 0 0 18px;
-  padding: 0 0 0 16px;
-  border-left: var(--kante) solid var(--linie-kraeftig);
-  font-size: 1.12rem;
-  font-weight: 550;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-/* -------------------------------------------------------------- Modellkarten */
-
-.cards {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-  scroll-margin-top: 16px;
-  border-top: var(--kante) solid var(--linie-kraeftig);
-  padding-top: calc(var(--pad) - 2px);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.card.zustand-done { border-top-color: var(--einig); }
-.card.zustand-error { border-top-color: var(--gegen); }
-.card.zustand-interrupted { border-top-color: var(--achtung); }
-.card.zustand-running,
-.card.zustand-queued { border-top-color: var(--marke); }
-
-.card.highlight {
-  box-shadow: var(--schatten-tief);
-  border-color: var(--marke);
-}
-
-.card > header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: baseline;
-  justify-content: space-between;
-  min-width: 0;
-}
-
-.card h3 {
-  margin: 0;
-  font-size: 1.02rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-width: 0;
-}
-
-.tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: var(--radius-klein);
-  background: var(--karte-matt);
-  border: 1px solid var(--linie);
-  color: var(--tinte-matt);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.tag.done { color: var(--einig); background: var(--einig-hell); border-color: transparent; }
-.tag.error { color: var(--gegen); background: var(--gegen-hell); border-color: transparent; }
-.tag.interrupted,
-.tag.partial { color: var(--achtung); background: var(--achtung-hell); border-color: transparent; }
-.tag.running,
-.tag.queued { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
-
-.answer {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: normal;
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.62;
-  max-height: 460px;
-  overflow-y: auto;
-}
-
-/* Marker liegen als Fläche über dem Text — der Text selbst bleibt unverändert. */
-.answer mark {
-  background: transparent;
-  color: inherit;
-  padding: 1px 2px;
-  border-radius: 3px;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-}
-
-.answer mark.uebereinstimmung {
-  background: var(--einig-hell);
-  box-shadow: inset 0 -2px 0 var(--einig);
-}
-.answer mark.widerspruch {
-  background: var(--gegen-hell);
-  box-shadow: inset 0 -2px 0 var(--gegen);
-}
-.answer mark.einzigartig {
-  background: var(--einzeln-hell);
-  box-shadow: inset 0 -2px 0 var(--einzeln);
-}
-
-.errorbox {
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: var(--radius-klein);
-  border-left: 3px solid var(--gegen);
-  background: var(--gegen-hell);
-  color: var(--tinte);
-  font-size: 0.86rem;
-  overflow-wrap: anywhere;
-}
-
-.skeleton {
-  height: 10px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--karte-matt), var(--flaeche-tief), var(--karte-matt));
-  background-size: 220% 100%;
-  animation: schimmer 1.6s linear infinite;
-}
-.skeleton + .skeleton { margin-top: 9px; width: 84%; }
-.skeleton + .skeleton + .skeleton { width: 62%; }
-
-@keyframes schimmer {
-  from { background-position: 180% 0; }
-  to { background-position: -40% 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-/* ------------------------------------------------------ Tabelle und Diagramm */
-
-.panel-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
-  align-items: start;
-  margin-top: 18px;
-}
-
-@media (min-width: 780px) {
-  .panel-grid {
-    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
-  }
-}
-
-.panel {
-  border-top: var(--kante) solid var(--linie-kraeftig);
-  padding-top: calc(var(--pad) - 2px);
-}
-
-.panel h4 {
-  margin: 0 0 12px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tinte-matt);
-}
-
-.tablewrap {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-table {
-  border-collapse: collapse;
-  font-size: 0.84rem;
-  min-width: 420px;
-  width: 100%;
-  font-variant-numeric: tabular-nums;
-}
-
-th,
-td {
-  text-align: right;
-  padding: 8px;
-  border-bottom: 1px solid var(--linie);
-  white-space: nowrap;
-}
-
-th:first-child,
-td:first-child,
-th:nth-child(2),
-td:nth-child(2) {
-  text-align: left;
-}
-
-th {
-  color: var(--tinte-matt);
-  font-weight: 700;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-bottom-color: var(--linie-kraeftig);
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-td.name {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  font-weight: 600;
-}
-
-.graphwrap {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-svg.graph {
-  width: 100%;
-  height: auto;
-  display: block;
-  touch-action: manipulation;
-}
-
-svg.graph .node {
-  cursor: pointer;
-}
-
-/* Der Standard-Fokusrahmen umschließt bei SVG-Gruppen den ganzen Kasten und
-   erscheint auch nach einem Mausklick. Wir zeichnen stattdessen selbst — und
-   nur bei Bedienung über die Tastatur. */
-svg.graph .node:focus,
-svg.graph .edge:focus {
-  outline: none;
-}
-
-svg.graph .node circle {
-  fill: var(--karte-matt);
-  stroke: var(--linie-kraeftig);
-  stroke-width: 1.5;
-  transition: stroke 0.15s ease;
-}
-
-svg.graph .node:hover circle,
-svg.graph .node:focus-visible circle {
-  stroke: var(--marke);
-  stroke-width: 2.5;
-}
-
-svg.graph .node text {
-  fill: var(--tinte);
-  font-size: 11px;
-  font-weight: 600;
-  text-anchor: middle;
-  pointer-events: none;
-}
-
-svg.graph .edge {
-  cursor: pointer;
-  stroke-linecap: round;
-}
-
-svg.graph .edge.agree line { stroke: var(--einig); }
-svg.graph .edge.contra line { stroke: var(--gegen); }
-svg.graph .edge line { transition: stroke-width 0.12s ease; }
-svg.graph .edge:hover line,
-svg.graph .edge:focus-visible line { stroke-width: 7; }
-
-svg.graph .edge-hit {
-  fill: transparent;
-  stroke: transparent;
-  stroke-width: 10;
-}
-
-svg.graph .edge:hover .edge-hit,
-svg.graph .edge:focus-visible .edge-hit {
-  fill: currentColor;
-  fill-opacity: 0.16;
-}
-
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: var(--tinte-matt);
-  margin-top: 12px;
-}
-
-.legend span::before {
-  content: '';
-  display: inline-block;
-  width: 12px;
-  height: 8px;
-  border-radius: 2px;
-  margin-right: 6px;
-  vertical-align: middle;
-  background: currentColor;
-}
-
-.legend .l-agree { color: var(--einig); }
-.legend .l-contra { color: var(--gegen); }
-.legend .l-unique { color: var(--einzeln); }
-
-/* --------------------------------------------------------------- Hinweise */
-
-.banner {
-  border-top: var(--kante) solid var(--achtung);
-  padding-top: calc(var(--pad) - 2px);
-  margin-bottom: 20px;
-  display: grid;
-  gap: 10px;
-  justify-items: start;
-}
-
-.banner .hint {
-  color: var(--tinte);
-}
-
-/* --------------------------------------------------------------- Abschluss */
-
-.closing {
-  margin-top: 36px;
-  display: grid;
-  gap: 14px;
-  border-top: var(--kante) solid var(--linie-kraeftig);
-  padding-top: calc(var(--pad) - 2px);
-}
-
-.closing textarea {
-  min-height: 80px;
-}
-
-.closed-banner {
-  border-top-color: var(--achtung);
-}
-
-footer.foot {
-  margin-top: 48px;
-  padding-top: 20px;
-  border-top: 1px solid var(--linie);
-  color: var(--tinte-matt);
-  font-size: 0.78rem;
-  overflow-wrap: anywhere;
+  font-feature-settings: 'tnum' 1;
 }
 
 .sr-only {
@@ -744,70 +341,241 @@ footer.foot {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
 
-/* ----------------------------------------------------------- Einstellungen */
+/* ----------------------------------------------------------------- Kopfzeile */
 
-.settings {
-  display: grid;
-  gap: 16px;
-  margin-bottom: 28px;
-  border-top: var(--kante) solid var(--marke);
-  padding-top: calc(var(--pad) - 2px);
-}
-
-.settings h4 {
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tinte-matt);
-}
-
-.settings-body {
-  display: grid;
-  gap: 12px;
-  min-width: 0;
-}
-
-.anbieter {
-  display: grid;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--linie);
-  border-left: 3px solid var(--linie-kraeftig);
-  border-radius: var(--radius-klein);
-  background: var(--karte-matt);
-  min-width: 0;
-}
-
-.anbieter.bereit { border-left-color: var(--einig); }
-.anbieter.aus { opacity: 0.72; }
-
-.anbieter-kopf {
+header.top {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
-  min-width: 0;
+  gap: 16px;
+  padding-bottom: 4px;
 }
 
-.anbieter-name {
+header.top h1 {
+  font-size: clamp(1.45rem, 1rem + 2.2vw, 2.15rem);
   font-weight: 700;
-  font-size: 0.98rem;
-  min-width: 0;
-  overflow-wrap: anywhere;
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 32;
+  margin: 0;
 }
 
-.anbieter-felder {
-  display: grid;
+header.top h1 span {
+  color: var(--marke);
+}
+
+.sub {
+  margin: 4px 0 0;
+  color: var(--tinte-leise);
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+}
+
+.statusline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--tinte-matt);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--linie-kraeftig);
+  flex: none;
+}
+
+.dot.ok {
+  background: var(--einig);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--einig) 22%, transparent);
+}
+
+.dot.warn {
+  background: var(--achtung);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--achtung) 22%, transparent);
+}
+
+.dot.err {
+  background: var(--gegen);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--gegen) 22%, transparent);
+}
+
+/* Sitzungswahl sitzt unter dem Titel und bleibt Beiwerk. */
+.sitzungen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  min-width: 0;
+}
+
+.sitzungen select {
+  max-width: 100%;
+  font-size: 0.85rem;
+}
+
+.sitzungen button {
+  font-size: 0.8rem;
+  padding: 6px 11px;
+}
+
+/* ---------------------------------------------------------------- Bedienung */
+
+button,
+.btn {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 520;
+  color: var(--tinte);
+  background: var(--karte-matt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  padding: 8px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition:
+    background var(--takt-kurz) var(--ruhig),
+    border-color var(--takt-kurz) var(--ruhig),
+    transform var(--takt-kurz) var(--ruhig);
+}
+
+button:hover:not(:disabled),
+.btn:hover {
+  background: var(--karte-hoch);
+  border-color: var(--linie-kraeftig);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button.primary {
+  background: var(--marke);
+  border-color: transparent;
+  color: var(--flaeche);
+  font-weight: 600;
+}
+
+button.primary:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--marke) 86%, var(--tinte));
+  border-color: transparent;
+}
+
+button.gefahr {
+  color: var(--gegen);
+  border-color: color-mix(in oklch, var(--gegen) 35%, var(--linie));
+  background: transparent;
+}
+
+button.gefahr:hover:not(:disabled) {
+  background: var(--gegen-hell);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.iconbutton {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
+/* Der Themenschalter zeigt seinen Zustand auch im Zeichen, nicht nur im Text. */
+#thema-schalter {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+#thema-schalter[data-thema='dark'],
+#thema-schalter[data-thema='light'] {
+  border-color: var(--marke-rand);
+  color: var(--marke);
+}
+
+/* Ein Fokusring, der auf beiden Themen trägt — nur bei Tastaturbedienung. */
+:focus-visible {
+  outline: 2px solid var(--marke);
+  outline-offset: 2px;
+  border-radius: var(--radius-winzig);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  font-size: 0.925rem;
+  color: var(--tinte);
+  background: var(--karte-matt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  padding: 9px 12px;
+  width: 100%;
+  max-width: 100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--marke-rand);
+  outline: none;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--marke);
+  outline-offset: 1px;
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+input[type='checkbox'] {
+  width: auto;
+  accent-color: var(--marke);
+  margin: 0;
+}
+
+input[type='number'] {
+  font-variant-numeric: tabular-nums;
+}
+
+label {
+  font-size: 0.82rem;
+  font-weight: 560;
+  color: var(--tinte-matt);
+  letter-spacing: 0.01em;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  min-width: 0;
+}
+
+.row.spread {
+  justify-content: space-between;
 }
 
 .feld {
@@ -816,192 +584,882 @@ footer.foot {
   min-width: 0;
 }
 
-.schalter {
+.hint {
+  color: var(--tinte-leise);
+  font-size: 0.83rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.hint.error {
+  color: var(--gegen);
+}
+
+/* ------------------------------------------------------------ Funken setzen */
+
+.spark {
+  display: grid;
+  gap: 14px;
+  padding: var(--pad);
+  position: relative;
+}
+
+/* Das Eingabefeld ist der Ort der Setzung — es steht in der Serife. */
+.spark textarea {
+  font-family: var(--schrift-setzung);
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.3rem);
+  line-height: 1.45;
+  font-weight: 380;
+  background: transparent;
+  border: 0;
+  border-left: 2px solid var(--linie-kraeftig);
+  border-radius: 0;
+  padding: 2px 0 2px 16px;
+  min-height: 3.2em;
+  transition: border-color var(--takt) var(--ruhig);
+}
+
+.spark textarea::placeholder {
+  color: var(--tinte-leise);
+  font-style: italic;
+}
+
+.spark textarea:focus {
+  border-left-color: var(--marke);
+  outline: none;
+}
+
+.spark textarea:focus-visible {
+  outline: none;
+  border-left-color: var(--marke);
+}
+
+.spark:focus-within {
+  border-color: var(--marke-rand);
+}
+
+.modelpicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* Die Stimmenwahl als Marken, nicht als Kästchenliste. */
+.modelpicker label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.8rem;
-  font-weight: 550;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--tinte);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.steps {
-  margin: 0;
-  padding-left: 20px;
+  gap: 7px;
+  font-weight: 500;
+  font-size: 0.83rem;
   color: var(--tinte-matt);
-  font-size: 0.86rem;
-  line-height: 1.75;
+  border: 1px solid var(--linie);
+  border-radius: 999px;
+  padding: 5px 12px 5px 10px;
+  cursor: pointer;
+  background: var(--karte-matt);
+  transition:
+    border-color var(--takt-kurz) var(--ruhig),
+    color var(--takt-kurz) var(--ruhig),
+    background var(--takt-kurz) var(--ruhig);
 }
 
-.settings details {
-  border: 1px dashed var(--linie-kraeftig);
-  border-radius: var(--radius-klein);
-  padding: 12px 14px;
+.modelpicker label:has(input:checked) {
+  color: var(--tinte);
+  border-color: var(--marke-rand);
+  background: var(--marke-hell);
 }
 
-.settings details[open] {
+.modelpicker label:has(input:focus-visible) {
+  outline: 2px solid var(--marke);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------- Funkenblock */
+
+.spark-block {
+  display: grid;
+  gap: 18px;
+  container-type: inline-size;
+  container-name: block;
+}
+
+.spark-block > h2 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.72rem;
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinte-leise);
+}
+
+/* Der Funke selbst: gesetzt, nicht beiläufig. */
+.question {
+  font-family: var(--schrift-setzung);
+  font-size: clamp(1.28rem, 1.05rem + 1.1vw, 1.78rem);
+  font-weight: 400;
+  line-height: 1.28;
+  letter-spacing: -0.012em;
+  color: var(--tinte);
+  max-width: 34ch;
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+/* Beiträge, die nicht der ursprüngliche Funke sind, treten zurück. */
+.spark-block:not(.art-funke) .question {
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.25rem);
+  max-width: 46ch;
+  color: var(--tinte-matt);
+}
+
+/* ---------------------------------------------------------- Der leere Tisch */
+
+/* Der erste Eindruck. Er sagt die Regeln an, statt eine leere Fläche zu zeigen. */
+.leerer-tisch {
+  padding: clamp(28px, 5vw, 56px) var(--pad);
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  background:
+    radial-gradient(
+      90% 120% at 12% 0%,
+      color-mix(in oklch, var(--marke) 6%, transparent) 0%,
+      transparent 62%
+    ),
+    var(--karte);
+}
+
+.gedeckt-zahl {
+  font-family: var(--schrift-setzung);
+  font-size: clamp(2rem, 1.4rem + 3.2vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.gedeckt-satz {
+  font-family: var(--schrift-setzung);
+  font-size: clamp(1.1rem, 0.95rem + 0.8vw, 1.5rem);
+  font-weight: 300;
+  line-height: 1.3;
+  color: var(--tinte-matt);
+  max-width: 34ch;
+  margin: 0 0 10px;
+}
+
+.leerer-tisch .hint {
+  max-width: 54ch;
+}
+
+/* ------------------------------------------------------------- Modellkarten */
+
+.cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+  align-items: start;
+}
+
+.card {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: calc(var(--pad) * 0.8) var(--pad) calc(var(--pad) * 0.72);
+  background: var(--karte);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+  box-shadow: var(--pult-schatten);
+  overflow: hidden;
+  container-type: inline-size;
+  transition:
+    box-shadow var(--takt) var(--ruhig),
+    border-color var(--takt) var(--ruhig),
+    background var(--takt) var(--ruhig);
+}
+
+/* Die Lichtkante oben trägt den Zustand — im dunklen Saal als Leuchten, bei
+   Tag als kräftiger Strich. Der Zustand ist zusätzlich immer beschriftet;
+   niemand muss die Farbe erkennen können. */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--kante);
+  background: var(--zustandsfarbe, var(--linie-kraeftig));
+  opacity: 0.9;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 90px;
+  pointer-events: none;
+  opacity: calc(var(--licht-staerke) * 0.5);
+  background: radial-gradient(
+    60% 100% at 50% 0%,
+    color-mix(in oklch, var(--zustandsfarbe, var(--linie-kraeftig)) 50%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.card.zustand-done { --zustandsfarbe: var(--einig); }
+.card.zustand-error { --zustandsfarbe: var(--gegen); }
+.card.zustand-interrupted { --zustandsfarbe: var(--achtung); }
+.card.zustand-streaming,
+.card.zustand-running,
+.card.zustand-queued { --zustandsfarbe: var(--marke); }
+.card.zustand-cancelled { --zustandsfarbe: var(--linie-kraeftig); }
+
+/* Nicht gefragt heißt: dieses Pult ist unbesetzt. Es bleibt sichtbar, damit
+   der Unterschied zu „gefragt und ohne Antwort" erkennbar ist. */
+.card.zustand-not_requested {
+  --zustandsfarbe: transparent;
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+/* Gedämpft, aber lesbar: der Text bleibt auf vollem Kontrast. */
+.card.zustand-cancelled,
+.card.zustand-interrupted {
   background: var(--karte-matt);
 }
 
-.settings summary {
-  cursor: pointer;
-  font-size: 0.86rem;
-  font-weight: 650;
-  color: var(--marke);
+/* Wer gerade schreibt, steht im Licht. */
+.card.zustand-streaming {
+  background: var(--karte-hoch);
+  box-shadow: var(--pult-schatten-hoch);
+  border-color: var(--marke-rand);
 }
 
-.settings details .anbieter-felder {
-  margin-top: 12px;
+.card.highlight {
+  border-color: var(--marke-rand);
+  box-shadow:
+    var(--pult-schatten-hoch),
+    0 0 0 2px color-mix(in oklch, var(--marke) 45%, transparent);
 }
 
-.vorschlaege {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.vorschlaege button {
-  font-size: 0.76rem;
-  padding: 5px 10px;
-}
-
-@media (max-width: 480px) {
-  .answer { max-height: 340px; }
-  button, .btn { padding: 8px 12px; font-size: 0.85rem; }
-  header.top { align-items: flex-start; }
-}
-
-/* ------------------------------------------------------ Bezüge und Kontext */
-
-.bezugsleiste {
-  display: flex;
-  flex-wrap: wrap;
+.card > header {
+  display: grid;
   gap: 8px;
+}
+
+.card h3 {
+  font-size: 1rem;
+  font-weight: 620;
+  letter-spacing: -0.008em;
+  display: flex;
   align-items: center;
-  padding: 10px 12px;
-  border-left: 3px solid var(--marke);
-  background: var(--marke-hell);
-  border-radius: var(--radius-klein);
+  gap: 9px;
   min-width: 0;
 }
 
-.bezug-name {
-  font-weight: 650;
-  font-size: 0.9rem;
+/* Das Signet trägt die Herkunft, ohne eine Farbe zu belegen: Farbe gehört
+   der Auswertung. Es zeichnet nur den Anfangsbuchstaben aus. */
+.signet {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--tinte-matt);
+  background: var(--karte-matt);
+  border: 1px solid var(--linie);
+}
+
+/* Die Zustandsleiste: ein Schild trägt den Zustand, alles Weitere ist
+   Nebenangabe und steht als ruhige Zeile darunter. Vorher standen sechs
+   gleich aussehende Schilder nebeneinander — ohne jede Rangordnung. */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 0.78rem;
+  color: var(--tinte-leise);
   min-width: 0;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  border: 1px solid var(--linie);
+  background: var(--karte-matt);
+  color: var(--tinte-matt);
+  font-size: 0.75rem;
+  font-weight: 560;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* Der Zustand bekommt zusätzlich einen Punkt: nicht allein über Farbe. */
+.tag.zustand::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.tag.done {
+  color: var(--einig);
+  background: var(--einig-hell);
+  border-color: color-mix(in oklch, var(--einig) 25%, transparent);
+}
+
+.tag.error {
+  color: var(--gegen);
+  background: var(--gegen-hell);
+  border-color: color-mix(in oklch, var(--gegen) 25%, transparent);
+}
+
+.tag.interrupted,
+.tag.partial {
+  color: var(--achtung);
+  background: var(--achtung-hell);
+  border-color: color-mix(in oklch, var(--achtung) 25%, transparent);
+}
+
+.tag.running,
+.tag.queued,
+.tag.streaming {
+  color: var(--marke);
+  background: var(--marke-hell);
+  border-color: color-mix(in oklch, var(--marke) 25%, transparent);
+}
+
+.tag.cancelled,
+.tag.not_requested {
+  color: var(--tinte-matt);
+  background: var(--flaeche-tief);
+  border-color: var(--linie);
+}
+
+/* Nebenangaben: keine Schilder, sondern eine Zeile mit Trennpunkten. */
+.leiste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 0.76rem;
+  color: var(--tinte-leise);
+  min-width: 0;
+}
+
+.leiste > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.leiste > span + span::before {
+  content: '·';
+  color: var(--linie-kraeftig);
+  margin-right: 3px;
+}
+
+.leiste-wert {
+  color: var(--tinte-matt);
+  font-weight: 560;
+}
+
+.leiste .unbekannt {
+  font-style: italic;
+}
+
+.card-body {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Der Antworttext. Bleibt in jedem Zustand auf vollem Lesekontrast. */
+.answer {
+  font-size: 0.95rem;
+  line-height: 1.68;
+  color: var(--tinte);
+  max-width: var(--mass);
   overflow-wrap: anywhere;
+  font-variation-settings: 'opsz' 16;
+}
+
+/* Marker sind eine Auflage über dem unveränderten Text, keine Änderung daran. */
+.answer mark {
+  background: none;
+  color: inherit;
+  border-radius: 3px;
+  padding: 1px 0;
+  box-decoration-break: clone;
+}
+
+.answer mark.uebereinstimmung {
+  background: color-mix(in oklch, var(--einig) 16%, transparent);
+  box-shadow: inset 0 -2px 0 color-mix(in oklch, var(--einig) 65%, transparent);
+}
+
+.answer mark.widerspruch {
+  background: color-mix(in oklch, var(--gegen) 16%, transparent);
+  box-shadow: inset 0 -2px 0 color-mix(in oklch, var(--gegen) 65%, transparent);
+}
+
+.answer mark.einzigartig {
+  background: color-mix(in oklch, var(--einzeln) 16%, transparent);
+  box-shadow: inset 0 -2px 0 color-mix(in oklch, var(--einzeln) 65%, transparent);
+}
+
+.errorbox {
+  background: var(--gegen-hell);
+  border: 1px solid color-mix(in oklch, var(--gegen) 30%, transparent);
+  border-radius: var(--radius-klein);
+  padding: 9px 12px;
+  font-size: 0.85rem;
+  color: var(--tinte);
+  overflow-wrap: anywhere;
+}
+
+/* Der Puls des Wartens: ein Licht, das über die Zeilen wandert. Es zeigt
+   „es läuft" — und behauptet keinen Fortschritt, den niemand kennt. */
+.puls {
+  display: grid;
+  gap: 9px;
+}
+
+/* Der Grundton leitet sich von der Karte ab, nicht von der Raumfläche: sonst
+   kippt der Puls im dunklen Saal ins Bräunliche statt in die Bedienfarbe. */
+.puls span {
+  height: 9px;
+  border-radius: 5px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--tinte) 9%, var(--karte)) 0%,
+    color-mix(in oklch, var(--marke) 34%, var(--karte)) 45%,
+    color-mix(in oklch, var(--tinte) 9%, var(--karte)) 90%
+  );
+  background-size: 260% 100%;
+  animation: pulswandern 2.1s var(--ruhig) infinite;
+}
+
+.puls span:nth-child(2) {
+  width: 92%;
+  animation-delay: 0.14s;
+}
+
+.puls span:nth-child(3) {
+  width: 64%;
+  animation-delay: 0.28s;
+}
+
+@keyframes pulswandern {
+  from { background-position: 130% 0; }
+  to { background-position: -130% 0; }
+}
+
+/* Solange geschrieben wird, steht ein Schreibzeiger am Textende. */
+.card.zustand-streaming .answer::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: var(--marke);
+  animation: schreibt 1.05s steps(2, end) infinite;
+}
+
+@keyframes schreibt {
+  50% { opacity: 0; }
+}
+
+@keyframes aufgehen {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .card-foot {
   display: grid;
   gap: 8px;
   min-width: 0;
-  border-top: 1px solid var(--linie);
-  padding-top: 10px;
+}
+
+.card-actions {
+  gap: 7px;
 }
 
 .card-actions button {
   font-size: 0.78rem;
-  padding: 5px 10px;
+  padding: 5px 11px;
 }
 
-details.kontext > summary,
-details.kontext-roh > summary {
+/* --------------------------------------------------------------- Auswertung */
+
+.panel-grid {
+  display: grid;
+  gap: 16px;
+}
+
+@container block (min-width: 860px) {
+  .panel-grid {
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .panel-grid > .panel:nth-child(n + 3) {
+    grid-column: 1 / -1;
+  }
+}
+
+.panel {
+  padding: calc(var(--pad) * 0.8) var(--pad);
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.panel h4 {
+  font-size: 0.72rem;
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinte-leise);
+}
+
+.tablewrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.83rem;
+}
+
+th {
+  text-align: right;
+  font-weight: 560;
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--tinte-leise);
+  padding: 0 0 8px 14px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--linie);
+}
+
+td {
+  text-align: right;
+  padding: 9px 0 9px 14px;
+  border-bottom: 1px solid color-mix(in oklch, var(--linie) 55%, transparent);
+  color: var(--tinte-matt);
+  white-space: nowrap;
+}
+
+th:first-child,
+td:first-child {
+  text-align: left;
+  padding-left: 0;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+td.name {
+  color: var(--tinte);
+  font-weight: 560;
+  white-space: normal;
+  min-width: 8ch;
+}
+
+/* ---------------------------------------------------------- Beziehungsnetz */
+
+.graphwrap {
+  max-width: 100%;
+  border-radius: var(--radius-klein);
+  background:
+    radial-gradient(
+      70% 70% at 50% 42%,
+      color-mix(in oklch, var(--marke) 7%, transparent) 0%,
+      transparent 70%
+    ),
+    var(--flaeche-tief);
+  border: 1px solid var(--linie);
+  padding: 10px;
+}
+
+svg.graph {
+  width: 100%;
+  height: auto;
+  display: block;
+  color: var(--tinte-matt);
+}
+
+svg.graph .leer {
+  fill: var(--tinte-leise);
+  font-size: 12px;
+}
+
+svg.graph .node {
   cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 650;
+}
+
+/* Der schwarze Standardrahmen umschlösse den ganzen Kasten der Gruppe und
+   liefe quer über das Netz. Hervorgehoben wird darum selbst — und nur bei
+   Bedienung über die Tastatur. */
+svg.graph .node:focus,
+svg.graph .edge:focus {
+  outline: none;
+}
+
+svg.graph .node circle {
+  fill: var(--karte);
+  stroke: var(--linie-kraeftig);
+  stroke-width: 1.5;
+  transition:
+    fill var(--takt-kurz) var(--ruhig),
+    stroke var(--takt-kurz) var(--ruhig);
+}
+
+svg.graph .node:hover circle {
+  fill: var(--karte-hoch);
+  stroke: var(--marke-rand);
+}
+
+svg.graph .node:focus-visible circle {
+  stroke: var(--marke);
+  stroke-width: 3;
+}
+
+svg.graph .node text {
+  fill: var(--tinte);
+  font-size: 11px;
+  font-weight: 620;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+svg.graph .node .zahl {
+  fill: var(--tinte-leise);
+  font-size: 9.5px;
+  font-weight: 560;
+}
+
+svg.graph .edge {
+  cursor: pointer;
+}
+
+svg.graph .edge path {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-width var(--takt-kurz) var(--ruhig);
+}
+
+svg.graph .edge.agree path { stroke: var(--einig); }
+svg.graph .edge.contra path { stroke: var(--gegen); }
+
+svg.graph .edge:hover path,
+svg.graph .edge:focus-visible path {
+  stroke-width: 7;
+}
+
+/* Eigene Trefferfläche: eine Linie allein ist auf dem Telefon nicht treffbar. */
+svg.graph .edge-hit {
+  fill: transparent;
+  stroke: transparent;
+}
+
+svg.graph .edge:hover .edge-hit,
+svg.graph .edge:focus-visible .edge-hit {
+  fill: currentColor;
+  fill-opacity: 0.14;
+}
+
+/* Die Zahl an der Kante sitzt auf einer eigenen Scheibe: so bleibt sie auch
+   lesbar, wenn die andere Kante des Paares dahinter durchläuft. */
+svg.graph .edge-scheibe {
+  pointer-events: none;
+  stroke: var(--flaeche-tief);
+  stroke-width: 2;
+}
+
+svg.graph .edge.agree .edge-scheibe { fill: var(--einig); }
+svg.graph .edge.contra .edge-scheibe { fill: var(--gegen); }
+
+svg.graph .edge-zahl {
+  font-size: 10px;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: var(--flaeche-tief);
+}
+
+/* Der Name eines Knotens schneidet die Kanten frei, die hinter ihm liegen. */
+svg.graph .node .zahl {
+  paint-order: stroke;
+  stroke: var(--flaeche-tief);
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 0.76rem;
+  color: var(--tinte-leise);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend span::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--linie-kraeftig);
+}
+
+.legend .l-agree::before { background: var(--einig); }
+.legend .l-contra::before { background: var(--gegen); }
+.legend .l-unique::before { background: var(--einzeln); }
+
+.selection-note {
   color: var(--marke);
 }
 
-.kontext-inhalt {
-  display: grid;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.kontext-liste {
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-  display: grid;
-  gap: 6px;
-  font-size: 0.82rem;
-}
-
-.kontext-liste li {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.kontext-liste li.gewaehlt {
-  font-weight: 600;
-}
-
-.kontext-text {
-  margin: 8px 0 0;
-  padding: 10px 12px;
-  background: var(--karte-matt);
-  border: 1px solid var(--linie);
-  border-radius: var(--radius-klein);
-  font-size: 0.78rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  max-height: 320px;
-  overflow-y: auto;
-}
+/* ------------------------------------------------------------------ Bezüge */
 
 .bezug-zeile {
   display: grid;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--linie);
-  border-left: 3px solid var(--tinte-matt);
+  border-left: 3px solid var(--linie-kraeftig);
   border-radius: var(--radius-klein);
   margin-bottom: 8px;
   min-width: 0;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
+  background: var(--karte-matt);
 }
 
 .bezug-zeile.bestaetigt { border-left-color: var(--einig); }
-.bezug-zeile.abgelehnt { border-left-color: var(--linie-kraeftig); opacity: 0.66; }
-.bezug-zeile button { font-size: 0.78rem; padding: 5px 10px; }
 
-/* --- Zustände, die beim Bau dazugekommen sind ---------------------------- */
-
-/* „schreibt“ ist ein laufender Zustand: dieselbe ruhige Marke wie „denkt nach“.
-   Abgebrochen ist kein Fehler, sondern eine Entscheidung — darum grau, nicht rot. */
-.card.zustand-streaming { border-top-color: var(--marke); }
-.card.zustand-cancelled { border-top-color: var(--linie-kraeftig); }
-
-.tag.streaming { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
-.tag.cancelled { color: var(--tinte-matt); background: var(--flaeche-tief); border-color: transparent; }
-
-/* Solange geschrieben wird, zeigt ein kleiner Balken, dass der Text noch wächst. */
-.card.zustand-streaming .answer::after {
-  content: '';
-  display: inline-block;
-  width: 0.5ch;
-  height: 1em;
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  background: var(--marke);
-  animation: schreibt 1s steps(2, end) infinite;
+.bezug-zeile.abgelehnt {
+  border-left-color: var(--linie-kraeftig);
+  opacity: 0.62;
 }
 
-@keyframes schreibt { 50% { opacity: 0; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .card.zustand-streaming .answer::after { animation: none; }
+.bezug-zeile button {
+  font-size: 0.78rem;
+  padding: 5px 10px;
 }
 
-/* --- Entwürfe ------------------------------------------------------------ */
+.bezugsleiste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--tinte-matt);
+  padding: 8px 12px;
+  border-radius: var(--radius-klein);
+  background: var(--marke-hell);
+  border: 1px solid color-mix(in oklch, var(--marke) 22%, transparent);
+  min-width: 0;
+}
 
+.bezug-name {
+  font-weight: 600;
+  color: var(--tinte);
+  overflow-wrap: anywhere;
+}
+
+.vorschlaege {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.vorschlaege button {
+  font-size: 0.78rem;
+  padding: 5px 11px;
+}
+
+/* ----------------------------------------------------------------- Kontext */
+
+.kontext {
+  font-size: 0.82rem;
+}
+
+.kontext summary {
+  cursor: pointer;
+  color: var(--tinte-leise);
+  font-size: 0.79rem;
+  padding: 3px 0;
+}
+
+.kontext summary:hover {
+  color: var(--tinte-matt);
+}
+
+.kontext pre,
+.kontexttext {
+  background: var(--flaeche-tief);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  padding: 11px 13px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 8px 0 0;
+  color: var(--tinte-matt);
+}
+
+/* ------------------------------------------------------------- Mitteilungen */
+
+.banner {
+  padding: 13px var(--pad);
+  border-left: 3px solid var(--achtung);
+  background: var(--achtung-hell);
+  font-size: 0.87rem;
+  display: grid;
+  gap: 10px;
+}
+
+.banner .hint {
+  color: var(--tinte-matt);
+}
+
+/* Entwürfe: ein Gedanke, der nicht rausging, bleibt sichtbar vorgemerkt. */
 #entwuerfe {
   display: grid;
   gap: 10px;
@@ -1011,81 +1469,365 @@ details.kontext-roh > summary {
 .entwurf {
   display: grid;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--linie);
   border-radius: var(--radius-klein);
   min-width: 0;
-  font-size: 0.86rem;
+  background: var(--karte);
 }
 
-.entwurf p { margin: 0; overflow-wrap: anywhere; }
-.entwurf .question { font-size: 0.9rem; }
+.entwurf p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
 
-/* --- Wechselgespräch ----------------------------------------------------- */
+.entwurf .question {
+  font-size: 1rem;
+  max-width: none;
+  color: var(--tinte);
+}
 
-.pingpong { padding: var(--pad); }
-.pingpong > summary { cursor: pointer; font-weight: 600; }
-.pingpong .feld { margin-top: 10px; }
+/* ---------------------------------------------------------- Wechselgespräch */
+
+.pingpong {
+  padding: calc(var(--pad) * 0.7) var(--pad);
+}
+
+.pingpong > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.pingpong > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pingpong > summary::before {
+  content: '▸';
+  color: var(--tinte-leise);
+  transition: transform var(--takt-kurz) var(--ruhig);
+}
+
+.pingpong[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.pingpong .feld {
+  margin-top: 12px;
+}
 
 .pingpong-lauf {
   display: grid;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 11px 13px;
   margin: 10px 0;
   border: 1px solid var(--linie);
   border-left: 3px solid var(--linie-kraeftig);
   border-radius: var(--radius-klein);
   min-width: 0;
+  background: var(--karte-matt);
 }
 
 .pingpong-lauf.laeuft { border-left-color: var(--marke); }
 .pingpong-lauf.beendet { border-left-color: var(--einig); }
 .pingpong-lauf.gestoppt { border-left-color: var(--achtung); }
-.pingpong-lauf button { justify-self: start; font-size: 0.78rem; padding: 5px 10px; }
 
-.modelpicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
+.pingpong-lauf button {
+  justify-self: start;
+  font-size: 0.78rem;
+  padding: 5px 10px;
 }
 
-.modelpicker label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 400;
-}
+/* ------------------------------------------------ Hinweis auf neue Beiträge */
 
-/* --- Hinweis auf neue Beiträge ------------------------------------------ */
-
-/* Es wird nie ungefragt gescrollt. Wer liest, bleibt stehen; dieser Knopf
+/* Es wird nie ungefragt gescrollt: wer liest, bleibt stehen. Der Hinweis
    bringt einen erst auf Klick nach unten. */
 .neue-beitraege {
   position: fixed;
   left: 50%;
-  bottom: 18px;
+  bottom: 20px;
   transform: translateX(-50%);
   z-index: 20;
   background: var(--marke);
-  border-color: var(--marke);
-  color: #fff;
-  box-shadow: var(--schatten-tief);
+  border-color: transparent;
+  color: var(--flaeche);
+  font-weight: 600;
+  box-shadow: var(--pult-schatten-hoch);
+  animation: hereinkommen var(--takt) var(--feder) both;
 }
 
-/* --- Sitzungswahl -------------------------------------------------------- */
+.neue-beitraege:hover {
+  background: color-mix(in oklch, var(--marke) 86%, var(--tinte));
+  border-color: transparent;
+}
 
-.sitzungen {
+@keyframes hereinkommen {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* --------------------------------------------------------------- Abschluss */
+
+.closing {
+  padding: var(--pad);
+  display: grid;
+  gap: 14px;
+}
+
+.closing textarea {
+  min-height: 4.5em;
+}
+
+.closed-banner {
+  border-left: 3px solid var(--einig);
+  background: var(--einig-hell);
+  padding: 12px var(--pad);
+  font-size: 0.87rem;
+  border-radius: var(--radius-klein);
+}
+
+footer.foot {
+  color: var(--tinte-leise);
+  font-size: 0.79rem;
+  line-height: 1.6;
+  max-width: 62ch;
+  padding-top: 8px;
+  border-top: 1px solid var(--linie);
+}
+
+/* ------------------------------------------------------------ Einstellungen */
+
+.settings {
+  padding: var(--pad);
+  display: grid;
+  gap: 16px;
+}
+
+.settings h4 {
+  font-size: 0.95rem;
+  letter-spacing: -0.008em;
+  text-transform: none;
+  color: var(--tinte);
+}
+
+.settings-body {
+  display: grid;
+  gap: 14px;
+}
+
+.anbieter {
+  display: grid;
+  gap: 11px;
+  padding: 14px var(--pad);
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--linie-kraeftig);
+  border-radius: var(--radius-klein);
+  background: var(--karte-matt);
+  min-width: 0;
+}
+
+.anbieter.bereit { border-left-color: var(--einig); }
+
+.anbieter.aus {
+  opacity: 0.72;
+  border-left-color: var(--linie-kraeftig);
+}
+
+.anbieter-kopf {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  min-width: 0;
-  margin-top: 8px;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.sitzungen select { max-width: 100%; font-size: 0.86rem; }
-.sitzungen button { font-size: 0.78rem; padding: 5px 10px; }
+.anbieter-name {
+  font-weight: 600;
+}
 
-/* --- Art des Beitrags ---------------------------------------------------- */
+.anbieter-felder {
+  display: grid;
+  gap: 11px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+}
 
-.spark-block.art-kuratierung > h2,
-.spark-block.art-pingpong > h2 { color: var(--tinte-matt); }
+.schalter {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--tinte);
+  cursor: pointer;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--tinte-matt);
+  font-size: 0.86rem;
+  display: grid;
+  gap: 5px;
+}
+
+.settings details {
+  border: 1px dashed var(--linie-kraeftig);
+  border-radius: var(--radius-klein);
+  padding: 11px var(--pad);
+}
+
+.settings details[open] {
+  background: var(--karte-matt);
+  border-style: solid;
+}
+
+.settings summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.settings details .anbieter-felder {
+  margin-top: 11px;
+}
+
+/* ---------------------------------------------------- Bewegung zurückdrehen */
+
+/* Wer keine Bewegung will, bekommt dieselbe Information ohne sie. Kein
+   Zustand und keine Aktion hängt an einer Animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .puls span {
+    background: color-mix(in oklch, var(--tinte) 9%, var(--karte));
+  }
+
+  .card.zustand-streaming .answer::after {
+    opacity: 1;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ Übergänge */
+
+/* View Transitions nur dort, wo ein echter Zustandswechsel verständlicher
+   wird: beim Wechsel der Sitzung. Während Antworten einlaufen, wird
+   ausdrücklich NICHT die ganze Ansicht überblendet — das verschöbe die
+   Leseposition dessen, der gerade liest. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: verblassen 170ms var(--ruhig) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: aufgehen 240ms var(--ruhig) both;
+  }
+}
+
+@keyframes verblassen {
+  to { opacity: 0; }
+}
+
+/* ------------------------------------------------------------------- Druck */
+
+@media print {
+  body::before,
+  body::after {
+    display: none;
+  }
+
+  .card,
+  .flaeche {
+    box-shadow: none;
+    border: 1px solid #999;
+  }
+
+  .neue-beitraege,
+  .spark,
+  .pingpong,
+  .settings {
+    display: none !important;
+  }
+}
+
+/* Handlungen an einer Karte: drei offene, die an den ganzen Tisch gehen —
+   und die Weitergabe an eine einzelne Stimme einen Griff entfernt. Sonst
+   stünden bei fünf Stimmen acht gleich aussehende Knöpfe nebeneinander. */
+.aktionen {
+  display: grid;
+  gap: 7px;
+  justify-items: start;
+}
+
+.weitergabe {
+  font-size: 0.78rem;
+  width: 100%;
+}
+
+.weitergabe > summary {
+  cursor: pointer;
+  color: var(--tinte-leise);
+  padding: 2px 0;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.weitergabe > summary::-webkit-details-marker {
+  display: none;
+}
+
+.weitergabe > summary::before {
+  content: '▸';
+  transition: transform var(--takt-kurz) var(--ruhig);
+}
+
+.weitergabe[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.weitergabe > summary:hover {
+  color: var(--tinte-matt);
+}
+
+.weitergabe .row {
+  margin-top: 7px;
+  gap: 6px;
+}
+
+.weitergabe button {
+  font-size: 0.76rem;
+  padding: 4px 10px;
+}
+
+/* Der Abbruch steht am Ende der Zeile: die einzige Handlung, die beendet. */
+.abbruch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}

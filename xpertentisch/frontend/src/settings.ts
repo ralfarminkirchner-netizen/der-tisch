@@ -133,6 +133,14 @@ export function renderSettings(settingsAvailable: boolean, onClose: () => void):
           'Ein Anbieter kommt an den Tisch, wenn er eingeschaltet ist und einen Schlüssel hat.',
       ]),
     );
+    // Der Preishinweis gilt für alle Anbieter und steht darum einmal hier,
+    // statt fünfmal gleichlautend unter jedem einzelnen.
+    inhalt.append(
+      el('p', { class: 'hint' }, [
+        'Preise trägst du selbst ein, in deiner Währung. Fehlt einer, steht auf der ' +
+          'Karte „Kosten unbekannt“ — es wird nichts geraten.',
+      ]),
+    );
 
     for (const zeile of daten.providers) {
       inhalt.append(anbieterBlock(zeile, token, daten.editable, melde, neu));
@@ -276,16 +284,12 @@ function anbieterBlock(
     'number', 'leer = unbekannt',
   );
   block.append(felder);
-  block.append(
-    el('p', { class: 'hint' }, [
-      'Die Preise trägst du selbst ein, in deiner Währung. Fehlt einer, steht auf der ' +
-        'Karte „Kosten unbekannt“ — es wird nichts geraten.',
-    ]),
-  );
 
   const knoepfe = el('div', { class: 'row' });
 
-  const speichern = el('button', { class: 'primary', type: 'button' }, ['Speichern']);
+  // Bewusst kein 'primary': sonst stünden auf der Seite so viele laute Knöpfe
+  // wie es Anbieter gibt, und keiner führte mehr.
+  const speichern = el('button', { type: 'button' }, ['Speichern']);
   speichern.disabled = !editable;
   speichern.addEventListener('click', async () => {
     const patch: Record<string, string | boolean | number> = {};

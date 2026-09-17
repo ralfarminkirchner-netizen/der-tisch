@@ -61,6 +61,7 @@ const state: AppState = {
 
 const ENTWURF_KEY = 'xpertentisch.entwuerfe';
 const EINGABE_KEY = 'xpertentisch.eingabe';
+const THEMA_KEY = 'xpertentisch.thema';
 
 function ladeEntwuerfe(): Entwurf[] {
   try {
@@ -88,6 +89,9 @@ const root = document.getElementById('app')!;
 // --------------------------------------------------------------------- Start
 
 async function boot(): Promise<void> {
+  // Vor allem anderen: eine ausdrücklich gewählte Themenwahl greift sofort,
+  // sonst blitzte beim Laden kurz das Thema des Geräts auf.
+  themaAnwenden();
   try {
     const [config, health] = await Promise.all([api.config(), api.health()]);
     state.config = config;
@@ -197,6 +201,7 @@ function renderShell(): void {
     blocks.set(entry.spark.id, block);
     stream.append(block);
   }
+  if (bundle.sparks.length === 0) stream.append(gedeckterTisch());
 
   root.append(closingSection());
   root.append(
@@ -325,7 +330,7 @@ function header(): HTMLElement {
       el('p', { class: 'sub' }, ['Mobiler TiSCH']),
       sitzungswahl(),
     ]),
-    el('div', { class: 'row' }, [status, zahnrad]),
+    el('div', { class: 'row' }, [status, themenschalter(), zahnrad]),
   ]);
 }
 
@@ -378,12 +383,93 @@ async function wechsleSitzung(sessionId: string): Promise<void> {
     state.bezug = null;
     state.pingpong = [];
     rememberSession(sessionId);
-    renderShell();
+    mitUebergang(renderShell);
     openStream();
     void ladePingPong();
   } catch (fehler) {
     window.alert(`Sitzung konnte nicht geöffnet werden: ${(fehler as Error).message}`);
   }
+}
+
+/** Blendet einen echten Zustandswechsel über, wo der Browser das kann.
+ *
+ * Bewusst nur beim Wechsel der Sitzung: dort wechselt der ganze Inhalt, und
+ * die Überblendung macht verständlich, dass man woanders ist. Während
+ * Antworten einlaufen, wird NICHT überblendet — das verschöbe die Leseposition
+ * dessen, der gerade liest. Kann der Browser es nicht, passiert dasselbe ohne
+ * Überblendung; es geht dabei nichts verloren.
+ */
+function mitUebergang(zeichnen: () => void): void {
+  const starten = (document as Document & {
+    startViewTransition?: (cb: () => void) => unknown;
+  }).startViewTransition;
+  const ruhig = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (typeof starten !== 'function' || ruhig) {
+    zeichnen();
+    return;
+  }
+  starten.call(document, zeichnen);
+}
+
+// ------------------------------------------------------------------- Thema
+
+/** Systemvorgabe, ausdrücklich hell oder ausdrücklich dunkel.
+ *
+ * Das Gestaltungssystem kennt diese drei Zustände; ohne Schalter wären die
+ * beiden ausdrücklichen Zustände nicht erreichbar. Eine ausdrückliche Wahl
+ * hat Vorrang vor der Einstellung des Geräts und überdauert das Neuladen.
+ */
+type Thema = 'system' | 'light' | 'dark';
+
+const THEMA_TEXT: Record<Thema, { zeichen: string; name: string }> = {
+  system: { zeichen: '◐', name: 'Thema: dem Gerät folgen' },
+  light: { zeichen: '☀', name: 'Thema: hell' },
+  dark: { zeichen: '☾', name: 'Thema: dunkel' },
+};
+
+function gemerktesThema(): Thema {
+  try {
+    const wert = localStorage.getItem(THEMA_KEY);
+    if (wert === 'light' || wert === 'dark') return wert;
+  } catch {
+    /* Ohne Speicher folgt das Thema dem Gerät. */
+  }
+  return 'system';
+}
+
+export function themaAnwenden(thema: Thema = gemerktesThema()): void {
+  if (thema === 'system') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', thema);
+}
+
+function themenschalter(): HTMLElement {
+  const folge: Thema[] = ['system', 'light', 'dark'];
+  let aktuell = gemerktesThema();
+  const knopf = el('button', {
+    type: 'button', class: 'iconbutton', id: 'thema-schalter',
+  }, []);
+
+  const zeichnen = () => {
+    knopf.textContent = THEMA_TEXT[aktuell].zeichen;
+    knopf.setAttribute('aria-label', THEMA_TEXT[aktuell].name);
+    knopf.setAttribute('title', `${THEMA_TEXT[aktuell].name} — zum Wechseln klicken`);
+    knopf.dataset.thema = aktuell;
+  };
+
+  knopf.addEventListener('click', () => {
+    aktuell = folge[(folge.indexOf(aktuell) + 1) % folge.length];
+    try {
+      if (aktuell === 'system') localStorage.removeItem(THEMA_KEY);
+      else localStorage.setItem(THEMA_KEY, aktuell);
+    } catch {
+      /* Dann gilt die Wahl nur für diesen Besuch. */
+    }
+    themaAnwenden(aktuell);
+    zeichnen();
+  });
+
+  zeichnen();
+  return knopf;
 }
 
 function updateStatusline(node?: HTMLElement | null): void {
@@ -622,33 +708,24 @@ function setzeBezug(bezug: Bezug, vorschlag = ''): void {
 
 /** Die Handlungen an einer Modellkarte: antworten, weitergeben, vertiefen. */
 function kartenAktionen(job: Job, entry: SparkEntry): HTMLElement {
+  const behaelter = el('div', { class: 'aktionen' });
   const zeile = el('div', { class: 'row card-actions' });
   const andere = (state.config?.models ?? []).filter((m) => m.id !== job.model_id);
 
-  const knopf = (text: string, bauen: () => void) => {
+  const knopf = (text: string, bauen: () => void, wohin: HTMLElement = zeile) => {
     const b = el('button', { type: 'button' }, [text]);
     b.addEventListener('click', bauen);
-    zeile.append(b);
+    wohin.append(b);
+    return b;
   };
 
+  // Die drei Handlungen, die sich an den ganzen Tisch richten, stehen offen da.
   knopf('Antworten', () =>
     setzeBezug({
       id: job.id, label: `${job.label}, Funke ${entry.spark.seq}`, kind: 'antwort',
       hint: 'geht an alle Modelle am Tisch',
     }),
   );
-
-  for (const ziel of andere) {
-    knopf(`An ${ziel.label} geben`, () =>
-      setzeBezug(
-        {
-          id: job.id, label: `${job.label} → ${ziel.label}`, kind: 'weitergabe',
-          modelId: ziel.id, hint: `nur ${ziel.label} antwortet`,
-        },
-        'Prüfe diese Aussage kritisch.',
-      ),
-    );
-  }
 
   knopf('Gegenposition', () =>
     setzeBezug(
@@ -666,8 +743,38 @@ function kartenAktionen(job: Job, entry: SparkEntry): HTMLElement {
       hint: 'geht an alle Modelle am Tisch',
     }),
   );
+  behaelter.append(zeile);
 
-  return zeile;
+  // Die Weitergabe an eine einzelne Stimme ist eine andere Art von Handlung —
+  // und mit fünf Stimmen am Tisch wären es fünf weitere gleich aussehende
+  // Knöpfe. Sie stehen darum zusammengefasst darunter, einen Griff entfernt.
+  if (andere.length > 0) {
+    const auswahl = el('details', { class: 'weitergabe' });
+    auswahl.append(
+      el('summary', {}, [
+        andere.length === 1 ? 'An eine andere Stimme geben' : 'An eine Stimme geben',
+      ]),
+    );
+    const ziele = el('div', { class: 'row' });
+    for (const ziel of andere) {
+      knopf(
+        ziel.label,
+        () =>
+          setzeBezug(
+            {
+              id: job.id, label: `${job.label} → ${ziel.label}`, kind: 'weitergabe',
+              modelId: ziel.id, hint: `nur ${ziel.label} antwortet`,
+            },
+            'Prüfe diese Aussage kritisch.',
+          ),
+        ziele,
+      );
+    }
+    auswahl.append(ziele);
+    behaelter.append(auswahl);
+  }
+
+  return behaelter;
 }
 
 /** „Worauf antwortet diese Stimme?“ — erst beim Aufklappen geladen. */
@@ -901,6 +1008,34 @@ function sparkForm(): HTMLElement {
 
 // -------------------------------------------------------------------- Funken
 
+/** Der leere Tisch: kein Formular ins Leere, sondern eine Ansage der Regeln.
+ *
+ * Es ist der erste Eindruck der Anwendung, und er soll sagen, worauf man sich
+ * einlässt — nicht bloß, dass hier noch nichts steht.
+ */
+function gedeckterTisch(): HTMLElement {
+  const anzahl = state.config?.models.length ?? 0;
+  const namen = (state.config?.models ?? []).map((m) => m.label);
+  return el('section', { class: 'flaeche leerer-tisch', id: 'leerer-tisch' }, [
+    el('p', { class: 'gedeckt-zahl' }, [
+      anzahl === 0 ? 'Niemand' : anzahl === 1 ? 'Eine Stimme' : `${anzahl} Stimmen`,
+    ]),
+    el('p', { class: 'gedeckt-satz' }, [
+      anzahl === 0
+        ? 'sitzt bisher am Tisch.'
+        : 'am Tisch. Sie antworten unabhängig voneinander auf denselben Funken.',
+    ]),
+    anzahl > 0
+      ? el('p', { class: 'hint' }, [namen.join(' · ')])
+      : el('span', {}),
+    el('p', { class: 'hint' }, [
+      'Es entsteht keine Rangfolge und keine gemeinsame Antwort. Was ' +
+        'übereinstimmt, was sich widerspricht und was nur einer sagt, wird ' +
+        'markiert — einordnen musst du selbst.',
+    ]),
+  ]);
+}
+
 function renderSparkBlock(entry: SparkEntry): HTMLElement {
   const kopf = el('h2', {}, [`Funke ${entry.spark.seq}`]);
   const art = FUNKE_ART[entry.spark.kind] ?? '';
@@ -929,16 +1064,23 @@ function ruesteKarteAus(card: HTMLElement, job: Job, entry: SparkEntry): void {
   if (!fuss) return;
   fuss.replaceChildren();
   if (job.status === 'not_requested') return;
-  if (job.status === 'queued' || job.status === 'running' || job.status === 'streaming') {
-    fuss.append(abbruchKnopf(job));
+  const laeuft =
+    job.status === 'queued' || job.status === 'running' || job.status === 'streaming';
+  if ((job.text ?? '').trim()) {
+    const aktionen = kartenAktionen(job, entry);
+    // Der Abbruch gehört in dieselbe Zeile, aber ans Ende: er ist die einzige
+    // Handlung hier, die etwas beendet.
+    if (laeuft) aktionen.querySelector('.card-actions')?.append(abbruchKnopf(job));
+    fuss.append(aktionen);
+  } else if (laeuft) {
+    fuss.append(el('div', { class: 'row card-actions' }, [abbruchKnopf(job)]));
   }
-  if ((job.text ?? '').trim()) fuss.append(kartenAktionen(job, entry));
   fuss.append(kontextAnsicht(job));
 }
 
 /** Bricht genau diesen Auftrag ab. Die anderen Modelle laufen weiter. */
 function abbruchKnopf(job: Job): HTMLElement {
-  const zeile = el('div', { class: 'row card-actions' });
+  const gruppe = el('span', { class: 'abbruch' });
   const knopf = el('button', { type: 'button', class: 'gefahr' }, ['Abbrechen']);
   const meldung = el('span', { class: 'hint' }, []);
   knopf.addEventListener('click', async () => {
@@ -953,8 +1095,8 @@ function abbruchKnopf(job: Job): HTMLElement {
       meldung.textContent = (fehler as Error).message;
     }
   });
-  zeile.append(knopf, meldung);
-  return zeile;
+  gruppe.append(knopf, meldung);
+  return gruppe;
 }
 
 /** Maschinelle Bezüge — als Vorschlag, den man bestätigen oder verwerfen kann. */

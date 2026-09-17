@@ -4,7 +4,13 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { createCard, renderTable } from '../src/render';
-import type { Job, Summary } from '../src/types';
+import type { Job, JobStatus, Summary } from '../src/types';
+
+/** Die acht Sachverhalte, die nicht zusammenfallen dürfen. */
+const ZUSTAENDE: JobStatus[] = [
+  'not_requested', 'queued', 'running', 'streaming',
+  'done', 'error', 'interrupted', 'cancelled',
+];
 
 const css = readFileSync(resolve(__dirname, '../src/styles.css'), 'utf8');
 
@@ -109,8 +115,13 @@ describe('Werkbank-Gestaltung', () => {
     expect(css).toMatch(/body \{[^}]*background: var\(--flaeche\)/);
   });
 
-  it('trägt den Zustand einer Karte an der oberen Kante', () => {
-    expect(css).toMatch(/\.card\.zustand-error \{ border-top-color: var\(--gegen\)/);
+  it('trägt den Zustand einer Karte an der oberen Lichtkante', () => {
+    // Geändert gegenüber der Werkbank: die Kante ist keine border-top-color
+    // mehr, sondern eine eigene Fläche, die ihre Farbe aus --zustandsfarbe
+    // bezieht. Geprüft wird weiterhin dasselbe: der Zustand steht an der
+    // oberen Kante, und Fehler bekommt die Widerspruchsfarbe.
+    expect(css).toMatch(/\.card::before \{[^}]*background: var\(--zustandsfarbe/);
+    expect(css).toMatch(/\.card\.zustand-error \{ --zustandsfarbe: var\(--gegen\)/);
   });
 });
 
@@ -134,14 +145,37 @@ describe('Laufende und abgebrochene Karten', () => {
 
   it('verschweigt bei laufenden Karten die Dauer, weil sie noch nicht feststeht', () => {
     const card = createCard({ ...job, status: 'streaming', latency_ms: 900 }, []);
-    expect(card.querySelector('.tags')?.textContent).not.toContain('0,9');
+    // Die Dauer steht jetzt in der Nebenangabenzeile — dort darf sie ebenso
+    // wenig auftauchen, solange sie nicht feststeht.
+    expect(card.querySelector('.leiste')?.textContent).not.toContain('900');
+    expect(card.querySelector('.leiste')?.textContent).not.toContain('0,9');
   });
 
-  it('gibt den neuen Zuständen eine eigene Kante und ein eigenes Schild', () => {
-    expect(css).toMatch(/\.card\.zustand-streaming \{ border-top-color: var\(--marke\)/);
-    expect(css).toMatch(/\.card\.zustand-cancelled \{ border-top-color/);
+  it('gibt jedem der acht Zustände eine eigene Darstellung', () => {
+    // Dieselbe Formänderung wie oben; die Aussage bleibt: acht Sachverhalte,
+    // acht unterscheidbare Darstellungen.
+    for (const zustand of ZUSTAENDE) {
+      expect(css).toMatch(new RegExp(`\\.card\\.zustand-${zustand}\\b`));
+    }
     expect(css).toMatch(/\.tag\.streaming/);
     expect(css).toMatch(/\.tag\.cancelled/);
+  });
+
+  it('macht den Zustand nie allein an der Farbe fest', () => {
+    // Jeder Zustand trägt zusätzlich eine Beschriftung, und das Zustandsschild
+    // bekommt einen eigenen Punkt — wer Farben nicht unterscheidet, liest ihn
+    // trotzdem.
+    const beschriftungen = new Set<string>();
+    for (const zustand of ZUSTAENDE) {
+      const card = createCard({ ...job, status: zustand }, []);
+      const schild = card.querySelector('.tag.zustand');
+      expect(schild, `Zustand ${zustand} ohne Schild`).not.toBeNull();
+      const text = (schild!.textContent ?? '').trim();
+      expect(text.length, `Zustand ${zustand} ohne Beschriftung`).toBeGreaterThan(0);
+      beschriftungen.add(text);
+    }
+    expect(beschriftungen.size).toBe(ZUSTAENDE.length);
+    expect(css).toMatch(/\.tag\.zustand::before \{[^}]*content: ''/);
   });
 
   it('hält die Schreibanimation für Menschen zurück, die keine Bewegung wollen', () => {
@@ -155,8 +189,13 @@ describe('Kosten auf der Karte', () => {
       { ...job, tokens_in: 100, tokens_out: 200, cost_micro: null, cost_source: 'unbekannt' },
       [],
     );
-    expect(card.textContent).toContain('100/200 Token');
-    expect(card.textContent).toContain('Kosten unbekannt');
+    // Geändert: Verbrauch und Kosten stehen nicht mehr als gleichrangige
+    // Schilder, sondern in der Nebenangabenzeile. Geprüft bleibt, DASS der
+    // gemeldete Verbrauch dasteht und dass ohne Preise nichts geschätzt wird.
+    const leiste = card.querySelector('.leiste')!;
+    expect(leiste.textContent).toContain('Token');
+    expect(leiste.textContent).toContain('100/200');
+    expect(leiste.textContent).toContain('Kosten unbekannt');
   });
 
   it('zeigt einen Betrag nur, wenn er wirklich gerechnet wurde', () => {
