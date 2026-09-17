@@ -167,11 +167,22 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
 
 export function renderTable(summary: Summary): HTMLElement {
   const panel = el('section', { class: 'flaeche panel' }, [el('h4', {}, ['Vergleich'])]);
+  if (summary.analysis_run_id || summary.method_version || summary.epistemik) {
+    const meta = [
+      summary.method_version ? `Verfahren ${summary.method_version}` : '',
+      summary.analysis_run_id ? `Lauf ${summary.analysis_run_id}` : '',
+    ].filter(Boolean).join(' · ');
+    panel.append(
+      el('p', { class: 'hint' }, [
+        meta + (summary.epistemik ? ` — ${summary.epistemik}` : ''),
+      ]),
+    );
+  }
   const wrap = el('div', { class: 'tablewrap' });
   const table = el('table');
   const head = el('tr');
   for (const label of [
-    'Modell', 'Status', 'Zeichen', 'Sätze', 'Dauer', 'Übereinst.', 'Widerspr.', 'Einzigartig',
+    'Modell', 'Status', 'Zeichen', 'Sätze', 'Dauer', 'Themenbez.', 'Gegensatz', 'Kein Treffer',
   ]) {
     head.append(el('th', {}, [label]));
   }
@@ -209,8 +220,8 @@ export function renderQuestion(entry: SparkEntry): HTMLElement {
 
 export function legend(): HTMLElement {
   return el('div', { class: 'legend' }, [
-    el('span', { class: 'l-agree' }, ['Übereinstimmung']),
-    el('span', { class: 'l-contra' }, ['Widerspruch']),
-    el('span', { class: 'l-unique' }, ['Einzigartig']),
+    el('span', { class: 'l-agree' }, ['Themenbezug (Hinweis)']),
+    el('span', { class: 'l-contra' }, ['Gegensatzhinweis']),
+    el('span', { class: 'l-unique' }, ['Kein Treffer hier']),
   ]);
 }

@@ -1171,7 +1171,7 @@ function beziehungsPanel(entry: SparkEntry): HTMLElement | null {
     zeile.append(
       el('div', { class: 'row' }, [
         el('span', { class: `tag ${bez.type === 'widerspricht' ? 'error' : 'done'}` }, [
-          bez.type === 'widerspricht' ? 'Widerspruch' : 'Übereinstimmung',
+          bez.type === 'widerspricht' ? 'Gegensatzhinweis' : 'Themenbezug (Hinweis)',
         ]),
         el('span', {}, [`${namen.get(bez.from_id) ?? bez.from_id} ↔ ${namen.get(bez.to_id) ?? bez.to_id}`]),
         el('span', { class: 'tag' }, [STATUS_BEZUG[bez.status]]),
@@ -1442,7 +1442,10 @@ function folgenMarker(folge: Folge): Marker[] {
     start_offset: nennung.start_offset,
     end_offset: nennung.end_offset,
     quote: nennung.quote,
-    note: `Genannte Folge — von ${folge.anzahl} von ${folge.von} Stimmen genannt`,
+    note:
+      folge.art === 'themencluster' || folge.zaehlung === 'clusterbeteiligung'
+        ? `Themencluster — Clusterbeteiligung ${folge.anzahl} von ${folge.von} Stimmen (keine Zustimmung)`
+        : `Genannte Folge — von ${folge.anzahl} von ${folge.von} Stimmen genannt`,
     topics: folge.themen,
   }));
 }

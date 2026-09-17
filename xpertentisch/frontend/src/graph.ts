@@ -25,7 +25,7 @@ export interface GraphSelection {
  * einer Kante beide beteiligten Antworten.
  *
  * Gestalterisch: die Knoten stehen als Ring, damit keiner oben und keiner
- * unten steht — es gibt hier keine Rangfolge. Übereinstimmung und Widerspruch
+ * unten steht — es gibt hier keine Rangfolge. Themenbezug-Hinweis und Gegensatzhinweis
  * zwischen denselben zwei Stimmen biegen sich voneinander weg, damit beide
  * getrennt sichtbar und getrennt treffbar bleiben.
  */
@@ -178,8 +178,8 @@ function edge(
 
   const label =
     kind === 'agree'
-      ? `${count} Übereinstimmung(en): ${pair.a_label} ↔ ${pair.b_label}`
-      : `${count} Widerspruch/Widersprüche: ${pair.a_label} ↔ ${pair.b_label}`;
+      ? `${count} Themenbezug-Hinweis(e): ${pair.a_label} ↔ ${pair.b_label}`
+      : `${count} Gegensatzhinweis(e): ${pair.a_label} ↔ ${pair.b_label}`;
   const title = document.createElementNS(SVG_NS, 'title');
   title.textContent = pair.topics.length ? `${label} — Themen: ${pair.topics.join('; ')}` : label;
   group.appendChild(title);
@@ -225,8 +225,8 @@ function nodeElement(
 
   const title = document.createElementNS(SVG_NS, 'title');
   title.textContent =
-    `${node.label}: ${node.sentences} Sätze, ${node.agreements} Übereinstimmungen, ` +
-    `${node.contradictions} Widersprüche, ${node.unique} einzigartig`;
+    `${node.label}: ${node.sentences} Sätze, ${node.agreements} Themenbezüge (Hinweis), ` +
+    `${node.contradictions} Gegensatzhinweise, ${node.unique} ohne Treffer in diesem Verfahren`;
   group.appendChild(title);
 
   bedienbar(group, () => onSelect({ jobIds: [node.job_id], label: node.label }));

@@ -13,6 +13,7 @@ Verbindungsabbruch ist der Zwischenstand darum wieder sichtbar.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import logging
 import time
@@ -393,6 +394,28 @@ class Runner:
                 "truncated": 1 if gekuerzt else 0,
             }
         )
+        # Nachweisbare Eingaben: gemeinsamer Briefing-Inhalt vs. anbieterbezogen.
+        # Keine Zugangsdaten — nur Inhalte und Fingerprints.
+        shared = prompt
+        provider_content = gesendet
+        system_prompt = f"provider={model.provider}; model={model.model}; rule={kontext.REGEL}"
+        await self.store.save_request_fingerprint(
+            job_id=job["id"],
+            session_id=job["session_id"],
+            shared_briefing_fp=hashlib.sha256(shared.encode("utf-8")).hexdigest(),
+            provider_request_fp=hashlib.sha256(
+                (system_prompt + "\n" + provider_content).encode("utf-8")
+            ).hexdigest(),
+            system_prompt=system_prompt,
+            shared_briefing=shared,
+            provider_content=provider_content,
+            settings={
+                "provider": model.provider,
+                "model": model.model,
+                "truncated": bool(gekuerzt),
+                "rule": kontext.REGEL,
+            },
+        )
         return gesendet
 
     async def _fail_job(
@@ -440,8 +463,37 @@ class Runner:
     async def recompute_assessment(
         self, session_id: str, spark_id: str, jobs: list[dict[str, Any]] | None = None
     ) -> dict[str, Any]:
+        from .analysis import METHOD_VERSION
+        from .db import new_id
+
         jobs = jobs if jobs is not None else await self.store.list_jobs_for_spark(spark_id)
-        markers, summary = analyse(session_id, spark_id, jobs)
+        run_id = new_id("arn")
+        markers, summary = analyse(session_id, spark_id, jobs, analysis_run_id=run_id)
+        from .analysis import (
+            MIN_SHARED_TERMS,
+            SAME_STATEMENT_THRESHOLD,
+            TOPIC_THRESHOLD,
+            UNIQUE_THRESHOLD,
+        )
+        from .zahlen import zahlen_analyse
+
+        summary["zahlen"] = zahlen_analyse(jobs)
+        # Historie zuerst: neuer Lauf überschreibt keine alten Ergebnisse.
+        await self.store.save_analysis_run(
+            run_id=run_id,
+            spark_id=spark_id,
+            session_id=session_id,
+            method_version=METHOD_VERSION,
+            payload=summary,
+            markers=markers,
+            config={
+                "topic_threshold": TOPIC_THRESHOLD,
+                "min_shared_terms": MIN_SHARED_TERMS,
+                "unique_threshold": UNIQUE_THRESHOLD,
+                "same_statement_threshold": SAME_STATEMENT_THRESHOLD,
+            },
+            job_versions=summary.get("job_versions") or [],
+        )
         await self.store.replace_markers(spark_id, session_id, markers)
         await self.store.save_assessment(spark_id, session_id, summary)
         await self._suggest_relations(session_id, jobs, summary)
@@ -450,6 +502,7 @@ class Runner:
             "einschaetzung.fertig",
             {
                 "spark_id": spark_id,
+                "analysis_run_id": run_id,
                 "summary": summary,
                 "markers": markers,
                 "relations": await self.store.list_relations(session_id),
@@ -488,9 +541,9 @@ class Runner:
         job_ids = [j["id"] for j in jobs]
         await self.store.delete_machine_relations(session_id, job_ids)
         for paar in summary.get("pairs", []):
-            for art, anzahl in (
-                ("uebereinstimmung", paar.get("agreements", 0)),
-                ("widerspricht", paar.get("contradictions", 0)),
+            for art, anzahl, label in (
+                ("uebereinstimmung", paar.get("agreements", 0), "Themenbezug-Hinweis"),
+                ("widerspricht", paar.get("contradictions", 0), "Gegensatzhinweis"),
             ):
                 if not anzahl:
                     continue
@@ -502,7 +555,10 @@ class Runner:
                         "type": art,
                         "origin": "maschine",
                         "status": "vorschlag",
-                        "note": f"{anzahl} Fundstelle(n): {', '.join(paar.get('topics', [])[:3])}",
+                        "note": (
+                            f"{anzahl} {label}(e): {', '.join(paar.get('topics', [])[:3])}. "
+                            "Vorschlag der Auswertung, kein bestätigter Befund."
+                        ),
                     }
                 )
 

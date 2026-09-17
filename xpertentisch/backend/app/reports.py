@@ -17,15 +17,10 @@ from zoneinfo import ZoneInfo
 from .analysis import (
     KIND_AGREEMENT,
     KIND_CONTRADICTION,
+    KIND_LABELS,
     KIND_UNIQUE,
     themen_aus_markern,
 )
-
-KIND_LABELS = {
-    KIND_AGREEMENT: "Übereinstimmung",
-    KIND_CONTRADICTION: "Widerspruch",
-    KIND_UNIQUE: "Einzigartig",
-}
 
 
 def esc(value: Any) -> str:
@@ -572,9 +567,15 @@ def render_html(bundle: dict[str, Any]) -> str:
         summary = entry.get("summary") or {}
         rows = summary.get("models") or []
         if rows:
+            if summary.get("analysis_run_id") or summary.get("method_version"):
+                a('<p class="note">Auswertungslauf '
+                  f'<code>{esc(summary.get("analysis_run_id", "—"))}</code> · '
+                  f'Verfahren {esc(summary.get("method_version", "—"))}. '
+                  f'{esc(summary.get("epistemik", ""))}</p>')
             a("<h3>Vergleich</h3><div class=\"tablewrap\"><table><thead><tr>"
               "<th>Modell</th><th>Provider</th><th>Status</th><th>Zeichen</th><th>Sätze</th>"
-              "<th>Dauer</th><th>Übereinstimmungen</th><th>Widersprüche</th><th>Einzigartig</th>"
+              "<th>Dauer</th><th>Themenbezug (Hinweis)</th><th>Gegensatzhinweis</th>"
+              "<th>Kein Treffer hier</th>"
               "</tr></thead><tbody>")
             for r in rows:
                 dur = f"{r['latency_ms']} ms" if r.get("latency_ms") else "—"
@@ -591,8 +592,8 @@ def render_html(bundle: dict[str, Any]) -> str:
         themen = themen_aus_markern(entry["markers"])
         if themen:
             a("<h3>Themen</h3><div class=\"tablewrap\"><table><thead><tr>"
-              "<th>Begriff</th><th>Stimmen</th><th>einig</th><th>im Widerspruch</th>"
-              "<th>allein</th></tr></thead><tbody>")
+              "<th>Begriff</th><th>Stimmen</th><th>Themenbezug</th><th>Gegensatzhinweis</th>"
+              "<th>kein Treffer</th></tr></thead><tbody>")
             for t in themen[:12]:
                 a("<tr>"
                   f"<td>{esc(t['begriff'])}</td><td>{esc(t['stimmen'])}</td>"
@@ -603,7 +604,8 @@ def render_html(bundle: dict[str, Any]) -> str:
                 a(f'<p class="note">{esc(len(themen) - 12)} weitere Begriffe sind '
                   "nicht aufgeführt.</p>")
             a('<p class="note">Die Zahlen nennen, wie viele Stimmen an einem Begriff '
-              "hängen. Sie sagen nichts darüber, ob etwas zutrifft.</p>")
+              "hängen (Hinweis-Verfahren). Sie beweisen keine inhaltliche "
+              "Übereinstimmung und keine Einzigartigkeit.</p>")
 
         for job in entry["jobs"]:
             badges = [f'<span class="badge">{esc(job["provider"])} · {esc(job["model"])}</span>']
@@ -638,8 +640,10 @@ def render_html(bundle: dict[str, Any]) -> str:
     if szenarien:
         a("<h2>Folgen</h2>")
         a('<p class="note">Die Folgen stammen aus den Antworten der Stimmen. Die Zahl '
-          "vor einer Folge sagt, <strong>wie viele Stimmen sie genannt haben</strong> — "
-          "eine Häufigkeit, keine Wahrscheinlichkeit und keine Vorhersage.</p>")
+          "ist <strong>Clusterbeteiligung oder gemeinsame Nennung</strong> — "
+          "eine Häufigkeit, keine Zustimmung, keine Wahrscheinlichkeit und keine Vorhersage. "
+          "Ähnlichkeitsketten ohne gemeinsame Aussage erscheinen als Themencluster "
+          "mit einzelnen Aussagen.</p>")
         for sz in szenarien:
             a(f"<h3>Szenario zu Funke {esc(sz['seq'])}</h3>")
             a('<div class="card">')
@@ -650,6 +654,10 @@ def render_html(bundle: dict[str, Any]) -> str:
             if not sz["folgen"]:
                 a('<p class="note">Keine auswertbare Folge genannt.</p>')
             for folge in sz["folgen"]:
+                cluster = (
+                    folge.get("art") == "themencluster"
+                    or folge.get("zaehlung") == "clusterbeteiligung"
+                )
                 klasse = (
                     "umstritten" if folge["gegensatz"]
                     else ("geteilt" if folge["anzahl"] > 1 else "einzeln")
@@ -659,13 +667,24 @@ def render_html(bundle: dict[str, Any]) -> str:
                     if nennung["label"] not in namen_der_stimmen:
                         namen_der_stimmen.append(nennung["label"])
                 a(f'<div class="folge {klasse}">')
-                a('<span class="haeufigkeit">'
-                  f'von {esc(folge["anzahl"])} von {esc(folge["von"])} Stimmen genannt'
-                  f' · {esc(", ".join(namen_der_stimmen))}</span>')
+                if cluster:
+                    a('<span class="haeufigkeit">'
+                      f'Clusterbeteiligung: {esc(folge["anzahl"])} von {esc(folge["von"])} Stimmen'
+                      f' · {esc(", ".join(namen_der_stimmen))}</span>')
+                else:
+                    a('<span class="haeufigkeit">'
+                      f'von {esc(folge["anzahl"])} von {esc(folge["von"])} Stimmen genannt'
+                      f' · {esc(", ".join(namen_der_stimmen))}</span>')
                 a(f'<div class="answer">{esc(folge["text"])}</div>')
+                if cluster:
+                    a('<ul>')
+                    for nennung in folge["nennungen"]:
+                        a(f'<li><strong>{esc(nennung["label"])}:</strong> '
+                          f'{esc(nennung["quote"])}</li>')
+                    a("</ul>")
                 if folge["gegensatz"]:
                     a('<p class="note">Steht einer anderen genannten Folge entgegen '
-                      "(gleiches Thema, entgegengesetzte Polarität).</p>")
+                      "(Themenbezug und entgegengesetzte Polarität — Gegensatzhinweis).</p>")
                 a("</div>")
             if sz["uebergangen"]:
                 a(f'<p class="note">{esc(sz["uebergangen"])} weitere genannte Folgen '
@@ -702,9 +721,11 @@ def render_html(bundle: dict[str, Any]) -> str:
     a("<h2>Hinweise</h2>")
     a('<div class="card"><p class="note">Die Antworten sind unverändert wiedergegeben. '
       "Marker stammen aus einem regelbasierten Textvergleich ohne weitere Modellaufrufe; "
-      "sie sind Lesehilfen, keine Bewertung und keine Rangfolge der Modelle. "
-      "Unterschiedliche Aussagen werden nur dann als Widerspruch ausgewiesen, wenn sie "
-      "dasselbe Thema betreffen und entgegengesetzte Polarität haben.</p></div>")
+      "sie sind Hinweis-Lesehilfen, keine Bewertung und keine Rangfolge der Modelle. "
+      f"{esc(KIND_LABELS[KIND_AGREEMENT])} ist Begriffsüberschneidung, kein Einigkeitsbeweis. "
+      f"{esc(KIND_LABELS[KIND_CONTRADICTION])} nur bei Themenbezug und entgegengesetzter Polarität. "
+      f"{esc(KIND_LABELS[KIND_UNIQUE])} bedeutet fehlende Fundstelle in diesem Verfahren, "
+      "nicht tatsächliche Einzigartigkeit.</p></div>")
     a(f'<footer>XPERTENTiSCH · Bericht erzeugt {esc(fmt_time(bundle["exported_at"]))} · '
       "offline nutzbar, keine externen Ressourcen.</footer>")
     a("</div></body></html>")
@@ -746,7 +767,14 @@ def render_markdown(bundle: dict[str, Any]) -> str:
         summary = entry.get("summary") or {}
         rows = summary.get("models") or []
         if rows:
-            a("| Modell | Provider | Status | Zeichen | Sätze | Dauer | Übereinst. | Widerspr. | Einzigartig |")
+            if summary.get("analysis_run_id") or summary.get("method_version"):
+                a(f"_Auswertungslauf `{summary.get('analysis_run_id', '—')}` · "
+                  f"Verfahren {summary.get('method_version', '—')}_")
+                a("")
+                if summary.get("epistemik"):
+                    a(f"_{summary['epistemik']}_")
+                    a("")
+            a("| Modell | Provider | Status | Zeichen | Sätze | Dauer | Themenbezug | Gegensatz | Kein Treffer |")
             a("| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |")
             for r in rows:
                 dur = f"{r['latency_ms']} ms" if r.get("latency_ms") else "—"
@@ -758,7 +786,7 @@ def render_markdown(bundle: dict[str, Any]) -> str:
         if themen:
             a("**Themen**")
             a("")
-            a("| Begriff | Stimmen | einig | im Widerspruch | allein |")
+            a("| Begriff | Stimmen | Themenbezug | Gegensatzhinweis | kein Treffer |")
             a("| --- | ---: | ---: | ---: | ---: |")
             for t in themen[:12]:
                 a(f"| {t['begriff']} | {t['stimmen']} | {t['einig']} | "
@@ -767,6 +795,8 @@ def render_markdown(bundle: dict[str, Any]) -> str:
             if len(themen) > 12:
                 a(f"_{len(themen) - 12} weitere Begriffe sind nicht aufgeführt._")
                 a("")
+            a("_Hinweis-Verfahren: keine Einigkeits- oder Einzigartigkeitsbehauptung._")
+            a("")
 
         for job in entry["jobs"]:
             a(f"### {job['label']} ({job['provider']} · {job['model']})")
@@ -798,9 +828,10 @@ def render_markdown(bundle: dict[str, Any]) -> str:
     if szenarien:
         a("## Folgen")
         a("")
-        a("Die Folgen stammen aus den Antworten der Stimmen. Die Zahl sagt, wie viele "
-          "Stimmen eine Folge genannt haben — eine Häufigkeit, keine Wahrscheinlichkeit "
-          "und keine Vorhersage.")
+        a("Die Folgen stammen aus den Antworten der Stimmen. Die Zahl ist "
+          "Clusterbeteiligung oder gemeinsame Nennung — eine Häufigkeit, keine "
+          "Zustimmung und keine Wahrscheinlichkeit. Ähnlichkeitsketten ohne "
+          "gemeinsame Aussage erscheinen als Themencluster mit einzelnen Aussagen.")
         a("")
         for sz in szenarien:
             a(f"### Szenario zu Funke {sz['seq']}")
@@ -820,8 +851,18 @@ def render_markdown(bundle: dict[str, Any]) -> str:
                         namen_der_stimmen.append(nennung["label"])
                 hinweis = " — steht einer anderen genannten Folge entgegen" \
                     if folge["gegensatz"] else ""
-                a(f"- **von {folge['anzahl']} von {folge['von']} Stimmen genannt** "
-                  f"({', '.join(namen_der_stimmen)}){hinweis}: {folge['text']}")
+                cluster = (
+                    folge.get("art") == "themencluster"
+                    or folge.get("zaehlung") == "clusterbeteiligung"
+                )
+                if cluster:
+                    a(f"- **Clusterbeteiligung: {folge['anzahl']} von {folge['von']} Stimmen** "
+                      f"({', '.join(namen_der_stimmen)}){hinweis}: {folge['text']}")
+                    for nennung in folge["nennungen"]:
+                        a(f"  - {nennung['label']}: {nennung['quote']}")
+                else:
+                    a(f"- **von {folge['anzahl']} von {folge['von']} Stimmen genannt** "
+                      f"({', '.join(namen_der_stimmen)}){hinweis}: {folge['text']}")
             a("")
             if sz["uebergangen"]:
                 a(f"_{sz['uebergangen']} weitere genannte Folgen sind hier nicht "

@@ -9,7 +9,7 @@
    abgebrochen wurde, bleibt gedämpft — aber immer lesbar. Keine Stimme wird
    heller, weil sie „besser" wäre. Es gibt hier keine Rangfolge.
 
-   FARBE SPRICHT NUR, WO DIE AUSWERTUNG SPRICHT: Grün Übereinstimmung, Orange
+   FARBE SPRICHT NUR, WO DIE AUSWERTUNG SPRICHT: Grün Themenbezug (Hinweis), Orange
    Widerspruch, Violett Einzelaussage. Das Blau der Anwendung ist Bedienung,
    nie Befund, und mischt sich unter diese drei nicht.
 
@@ -1888,7 +1888,7 @@ footer.foot {
 /* --- Themen-Linse -------------------------------------------------------- */
 
 /* Ein Faden führt von einer Stimme zu dem Begriff, an dem ihre Fundstelle
-   hängt. Die Farbe ist dieselbe wie überall: Grün einig, Orange Widerspruch,
+   hängt. Die Farbe ist dieselbe wie überall: Grün Themenbezug (Hinweis), Orange Gegensatzhinweis,
    Violett allein. */
 svg.graph .faden {
   fill: none;
