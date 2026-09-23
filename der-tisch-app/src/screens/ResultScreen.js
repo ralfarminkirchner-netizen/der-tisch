@@ -77,18 +77,18 @@ function FrictionCard({ friction }) {
     <View style={styles.frictionCard}>
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.red }]}>
-          HARTE WIDERSPRÜCHE
+          ECHTE WIDERSPRÜCHE
         </Text>
-        <BulletList items={friction.harte_widersprueche} color={colors.red} />
+        <BulletList items={friction.echte_widersprueche || []} color={colors.red} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
 
       <View style={styles.frictionSection}>
         <Text style={[styles.frictionLabel, { color: colors.redDim }]}>
-          SCHEINKONSENS
+          ÜBERSETZUNGSFEHLER
         </Text>
-        <BulletList items={friction.scheinkonsens} color={colors.redDim} />
+        <BulletList items={friction.uebersetzungsfehler || []} color={colors.redDim} />
       </View>
 
       <View style={[styles.frictionDivider, { backgroundColor: colors.border }]} />
