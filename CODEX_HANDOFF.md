@@ -28,7 +28,7 @@ Dann prüfen: `http://127.0.0.1:8082/trainingstisch.html` — muss dunkles Sport
 ## Kurzstand
 
 - Backend läuft auf Railway: `https://der-tisch-production.up.railway.app`
-- OPENAI_API_KEY ist korrekt gesetzt (`sk-proj-iVw6z88h...`)
+- OPENAI_API_KEY ist korrekt gesetzt (Wert nicht dokumentiert)
 - Alle 11 TiSCH-Seiten sind live und erreichbar
 - OpenAI GPT-4o-mini liefert Antworten — `/api/ask` getestet ✅
 - Lokaler Preview: `http://127.0.0.1:8082/` (python3 -m http.server 8082 in der-tisch-backend)
