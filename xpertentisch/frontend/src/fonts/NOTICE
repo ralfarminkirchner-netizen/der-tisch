@@ -1,0 +1,12 @@
+Inter Variable
+Copyright (c) 2016-2024 The Inter Project Authors
+https://github.com/rsms/inter
+SIL Open Font License 1.1
+
+Source Serif 4 Variable
+Copyright 2014-2024 Adobe (http://www.adobe.com/)
+https://github.com/adobe-fonts/source-serif
+SIL Open Font License 1.1
+
+Beide Dateien liegen im Repository und werden mitgebaut.
+Zur Laufzeit wird kein fremder Schriftdienst aufgerufen.
