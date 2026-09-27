@@ -66,8 +66,20 @@ try {
 
   // Geklickt wird die Gruppe: die Trefferfläche darin gehört zu ihr,
   // ein Klick darauf landet über das Ereignis ohnehin bei der Gruppe.
-  const kante = page.locator('svg.graph g.edge').first();
-  if (await kante.count()) {
+  //
+  // Dieser Nachweis setzt Testdaten mit einer bekannten Beziehung voraus.
+  // „Keine Kante vorhanden" ist hier KEIN Erfolg: dann ist der Kantenklick
+  // schlicht nicht geprüft worden, und das muss auffallen.
+  const kanten = page.locator('svg.graph g.edge');
+  const anzahlKanten = await kanten.count();
+  pruefe('Es gibt eine Kante, an der sich der Klick prüfen lässt',
+    anzahlKanten >= 1,
+    anzahlKanten === 0
+      ? 'keine Beziehung gefunden — der Kantenklick ist damit UNGEPRÜFT'
+      : `${anzahlKanten} Kanten`);
+
+  if (anzahlKanten >= 1) {
+    const kante = kanten.first();
     const a = await kante.getAttribute('data-job-a');
     const b = await kante.getAttribute('data-job-b');
     await kante.click();
@@ -76,9 +88,40 @@ try {
     );
     pruefe('Kantenklick öffnet beide beteiligten Antworten',
       JSON.stringify(paar) === JSON.stringify([a, b].sort()),
-      `markiert: ${paar.join(', ')}`);
-  } else {
-    pruefe('Kantenklick', true, 'keine Kante vorhanden (keine Bezüge gefunden)');
+      `markiert: ${paar.join(', ')} / erwartet: ${[a, b].sort().join(', ')}`);
+  }
+
+  // Zwei Kanten zwischen denselben Knoten dürfen sich nicht verdecken.
+  // Das Testmaterial erzeugt zwischen den beiden Stimmen Übereinstimmung UND
+  // Widerspruch, also zwei Kanten. Kommt nur eine an, ist dieser Nachweis
+  // nicht erbracht — und das muss auffallen, statt still zu entfallen.
+  pruefe('Zwei Kanten für den Überlagerungsnachweis vorhanden',
+    anzahlKanten >= 2,
+    anzahlKanten < 2
+      ? `nur ${anzahlKanten} — Überlagerung der Trefferflächen UNGEPRÜFT`
+      : `${anzahlKanten} Kanten`);
+
+  if (anzahlKanten >= 2) {
+    const mitten = await kanten.evaluateAll((gruppen) =>
+      gruppen.map((g) => {
+        const k = g.querySelector('.edge-hit');
+        return k
+          ? { x: Number(k.getAttribute('cx')), y: Number(k.getAttribute('cy')),
+              r: Number(k.getAttribute('r')) }
+          : null;
+      }),
+    );
+    let verdeckt = '';
+    for (let i = 0; i < mitten.length; i += 1) {
+      for (let j = i + 1; j < mitten.length; j += 1) {
+        const p = mitten[i];
+        const q = mitten[j];
+        if (!p || !q) continue;
+        const d = Math.hypot(p.x - q.x, p.y - q.y);
+        if (d <= Math.max(p.r, q.r)) verdeckt = `Abstand ${d.toFixed(1)} bei r ${p.r}`;
+      }
+    }
+    pruefe('Trefferflächen der Kanten überlagern einander nicht', verdeckt === '', verdeckt);
   }
 
   // Keine horizontale Überbreite in allen Viewports

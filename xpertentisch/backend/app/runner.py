@@ -55,6 +55,8 @@ BEZUG_TYP = {
     "weitergabe": "abgeleitet_aus",
     "gegenposition": "widerspricht",
     "vertiefung": "vertieft",
+    # Ein Szenario leitet Folgen aus einer Aussage ab — es widerspricht ihr nicht.
+    "szenario": "abgeleitet_aus",
     "pingpong": "antwortet_auf",
     "kuratierung": "abgeleitet_aus",
 }
