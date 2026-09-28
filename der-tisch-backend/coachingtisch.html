@@ -368,6 +368,58 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
   .question-input { font-size: 14px; }
   .mode-selector { gap: 6px; }
 }
+
+/* ─── App-level Mode Tabs ───────────────────────────────── */
+.app-mode-tabs{display:flex;justify-content:center;gap:0;margin:0 auto 24px;max-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;width:100%}
+.app-mode-tab{flex:1;padding:10px 4px;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.07em;cursor:pointer;border-radius:7px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:6px;text-transform:uppercase;white-space:nowrap}
+.app-mode-tab.active{background:var(--accent);color:#fff}
+.app-mode-tab:not(.active):hover{color:var(--text)}
+
+/* ─── App Sections ──────────────────────────────────────── */
+.app-section{display:none;padding:28px 0 60px}
+.app-section.active{display:block}
+
+/* ─── ZIEL-RAUM ─────────────────────────────────────────── */
+.zr-wrap{max-width:680px;margin:0 auto;padding:0 20px}
+.zr-intro{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin-bottom:28px;font-size:14px;color:var(--muted);line-height:1.6}
+.zr-grow-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.zr-grow-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.zr-grow-badge{width:34px;height:34px;border-radius:8px;background:var(--accent-dim);border:1px solid rgba(124,92,191,.35);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font)}
+.zr-grow-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.zr-grow-hint{font-size:12px;color:var(--faint);margin-bottom:6px;line-height:1.5}
+.zr-grow-textarea{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);resize:none;outline:none;min-height:70px;line-height:1.5;transition:border-color .2s}
+.zr-grow-textarea::placeholder{color:var(--faint)}
+.zr-grow-textarea:focus{border-color:var(--accent)}
+.zr-action{display:flex;justify-content:center;margin-top:4px}
+.zr-grow-result{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden}
+.zr-grow-result-header{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.zr-grow-result-body{padding:14px 18px;font-size:14px;line-height:1.7;color:var(--muted)}
+.zr-synthese{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-off) 100%);border:1.5px solid var(--border);border-top:3px solid var(--accent);border-radius:12px;padding:22px;margin-top:20px}
+.zr-synthese-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.zr-synthese-content{font-size:15px;line-height:1.75;color:var(--text)}
+@media(max-width:600px){.zr-grow-grid{grid-template-columns:1fr}}
+
+/* ─── iNNERES TEAM ──────────────────────────────────────── */
+.it-wrap{max-width:680px;margin:0 auto;padding:0 20px}
+.it-intro{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 18px;margin-bottom:28px;font-size:14px;color:var(--muted);line-height:1.6}
+.it-form{display:flex;flex-direction:column;gap:16px;margin-bottom:24px}
+.it-field-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.it-field-hint{font-size:12px;color:var(--faint);margin-bottom:8px;line-height:1.5}
+.it-textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;font-family:var(--font);font-size:14px;color:var(--text);resize:none;outline:none;line-height:1.6;transition:border-color .2s;box-shadow:var(--shadow)}
+.it-textarea::placeholder{color:var(--faint)}
+.it-textarea:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(212,168,67,.15),var(--shadow)}
+.it-members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px}
+.it-member-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color .2s}
+.it-member-card:hover{border-color:var(--border-2)}
+.it-member-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.it-member-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.it-member-name{font-size:13px;font-weight:700;color:var(--text)}
+.it-member-role{font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:1px;font-weight:600}
+.it-member-body{font-size:13px;line-height:1.65;color:var(--muted)}
+.it-synthese{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-off) 100%);border:1.5px solid var(--border);border-top:3px solid var(--accent-2);border-radius:12px;padding:22px;margin-top:4px}
+.it-synthese-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2);margin-bottom:10px}
+.it-synthese-content{font-size:15px;line-height:1.75;color:var(--text)}
+@media(max-width:600px){.it-members-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="tisch-responsive.css">
 </head>
@@ -421,6 +473,7 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
 </aside>
 
 <main>
+<div id="perspektiven-wrap">
 <section class="hero">
 
   <!-- ─── Hero Logo: COACHiNG TiSCH — Doppel-T + symbolische i-Punkte ── -->
@@ -573,6 +626,22 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
     <span id="badge-text">8 Coaching-Perspektiven · KI-gestützt</span>
   </div>
 
+  <!-- App-level Modus-Tabs -->
+  <div class="app-mode-tabs">
+    <button class="app-mode-tab active" id="apptab-perspektiven" onclick="setAppMode('perspektiven')">
+      <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="4" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><line x1="10" y1="6" x2="4" y2="14"/><line x1="10" y1="6" x2="16" y2="14"/><line x1="6" y1="16" x2="14" y2="16"/></svg>
+      PERSPEKTiVEN
+    </button>
+    <button class="app-mode-tab" id="apptab-zielraum" onclick="setAppMode('zielraum')">
+      <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="13.5" r=".5" fill="currentColor" stroke="none"/></svg>
+      ZIEL-RAUM
+    </button>
+    <button class="app-mode-tab" id="apptab-inneres-team" onclick="setAppMode('inneres-team')">
+      <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="15" r="2"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="14" y1="9" x2="10" y2="13"/></svg>
+      iNNERES TEAM
+    </button>
+  </div>
+
   <!-- Coaching-Kontext wählen -->
   <div class="mode-selector" id="modeSelector">
     <button class="mode-btn selected" data-mode="alle" onclick="selectMode(this)">
@@ -702,6 +771,150 @@ main { flex: 1; width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; 
     <div class="synthese-content" id="syntheseContent"></div>
   </div>
 </div>
+</div><!-- /perspektiven-wrap -->
+
+<!-- ==================== ZIEL-RAUM ==================== -->
+<div class="app-section" id="mode-zielraum">
+  <div class="zr-wrap">
+
+    <div class="zr-intro">
+      <strong>ZIEL-RAUM</strong> — Zielklärung mit dem GROW-Modell. Beschreibe dein Ziel und deine aktuelle Situation. Die KI analysiert alle vier Schritte aus einer Coach-Perspektive.
+    </div>
+
+    <div class="zr-grow-grid">
+
+      <!-- G — Goal -->
+      <div class="zr-grow-card">
+        <div class="zr-grow-badge">G</div>
+        <div>
+          <div class="zr-grow-label">GOAL — Das Ziel</div>
+          <div class="zr-grow-hint">Was willst du erreichen? Wie sieht Erfolg aus?</div>
+          <textarea class="zr-grow-textarea" id="zr-goal" rows="3" placeholder="z.B. 'Ich will in 6 Monaten eine Stelle in einer anderen Branche gefunden haben.'"></textarea>
+        </div>
+      </div>
+
+      <!-- R — Reality -->
+      <div class="zr-grow-card">
+        <div class="zr-grow-badge" style="background:rgba(93,173,226,.12);border-color:rgba(93,173,226,.3);color:#5DADE2">R</div>
+        <div>
+          <div class="zr-grow-label" style="color:#5DADE2">REALITY — Jetzt-Zustand</div>
+          <div class="zr-grow-hint">Wo stehst du? Was hast du versucht? Was hält dich zurück?</div>
+          <textarea class="zr-grow-textarea" id="zr-reality" rows="3" placeholder="z.B. 'Seit 8 Jahren im selben Job, unsicher wie ich den Wechsel angehen soll.'"></textarea>
+        </div>
+      </div>
+
+      <!-- O — Options -->
+      <div class="zr-grow-card">
+        <div class="zr-grow-badge" style="background:rgba(46,204,113,.12);border-color:rgba(46,204,113,.3);color:#2ECC71">O</div>
+        <div>
+          <div class="zr-grow-label" style="color:#2ECC71">OPTIONS — Möglichkeiten <span style="font-weight:400;opacity:.7">(optional)</span></div>
+          <div class="zr-grow-hint">Welche Wege siehst du? Was hast du noch nicht probiert?</div>
+          <textarea class="zr-grow-textarea" id="zr-options" rows="3" placeholder="z.B. 'Weiterbildung, Netzwerken, Informationsgespräche führen…'"></textarea>
+        </div>
+      </div>
+
+      <!-- W — Way Forward -->
+      <div class="zr-grow-card">
+        <div class="zr-grow-badge" style="background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.3);color:#D4A843">W</div>
+        <div>
+          <div class="zr-grow-label" style="color:#D4A843">WAY FORWARD — Erster Schritt <span style="font-weight:400;opacity:.7">(optional)</span></div>
+          <div class="zr-grow-hint">Was könntest du bis nächste Woche konkret tun?</div>
+          <textarea class="zr-grow-textarea" id="zr-wayforward" rows="3" placeholder="z.B. 'Drei Personen im Netzwerk kontaktieren.'"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="zr-action">
+      <button class="btn-primary" id="zrSubmitBtn" onclick="submitZielRaum()">
+        <span id="zr-btn-text">ZIEL-RAUM öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="17" height="17"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+
+    <div class="loading-wrap" id="zrLoadingWrap">
+      <div class="loading-spiral"></div>
+      <p class="loading-text">Öffne den ZIEL-RAUM…</p>
+    </div>
+
+    <div id="zrResults" style="display:none;margin-top:36px">
+      <div id="zrResultsList"></div>
+      <div class="zr-synthese" id="zrSynthese" style="display:none">
+        <div class="zr-synthese-label">SYNTHESE · NÄCHSTE SCHRITTE</div>
+        <div class="zr-synthese-content" id="zrSyntheseContent"></div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-secondary" onclick="resetZielRaum()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          Neues Ziel klären
+        </button>
+        <button class="btn-secondary" onclick="copyZrResults()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Kopieren
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== iNNERES TEAM ==================== -->
+<div class="app-section" id="mode-inneres-team">
+  <div class="it-wrap">
+
+    <div class="it-intro">
+      <strong>iNNERES TEAM</strong> — Methode nach Schulz von Thun. Beschreibe eine Entscheidung oder einen inneren Konflikt. Die KI zeigt, welche inneren Stimmen in dir aktiv sind — mit Positionen, Bedürfnissen und Beiträgen.
+    </div>
+
+    <div class="it-form">
+
+      <div>
+        <div class="it-field-label">Die Situation / Entscheidung</div>
+        <div class="it-field-hint">Was bewegt dich? Welcher innere Konflikt oder welche Entscheidung liegt an?</div>
+        <textarea class="it-textarea" id="it-situation" rows="4" placeholder="z.B. 'Ich überlege, ob ich meine sichere Stelle aufgeben und selbstständig werden soll. Ein Teil will Freiheit, ein anderer hat Angst vor der Unsicherheit.'"></textarea>
+      </div>
+
+      <div>
+        <div class="it-field-label">Stimmen, die du schon kennst <span style="font-weight:400;letter-spacing:0;font-size:11px">(optional)</span></div>
+        <div class="it-field-hint">Welche inneren Stimmen nimmst du bereits wahr?</div>
+        <textarea class="it-textarea" id="it-known-voices" rows="3" placeholder="z.B. 'Ein ängstlicher Teil sagt: Was wenn es nicht klappt? Ein aufgeregter: Jetzt oder nie!'"></textarea>
+      </div>
+
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-top:4px">
+      <button class="btn-primary" id="itSubmitBtn" onclick="submitInneresTeam()" style="background:var(--accent-2)">
+        <span id="it-btn-text">Inneres Team aufrufen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="17" height="17"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+
+    <div class="loading-wrap" id="itLoadingWrap">
+      <div class="loading-spiral"></div>
+      <p class="loading-text">Das innere Team versammelt sich…</p>
+    </div>
+
+    <div id="itResults" style="display:none;margin-top:36px">
+      <div class="it-members-grid" id="itMembersGrid"></div>
+      <div class="it-synthese" id="itSynthese" style="display:none">
+        <div class="it-synthese-label">TEAMFÜHReR · INTEGRATION</div>
+        <div class="it-synthese-content" id="itSyntheseContent"></div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-secondary" onclick="resetInneresTeam()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          Neue Situation
+        </button>
+        <button class="btn-secondary" onclick="copyItResults()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Kopieren
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -1146,6 +1359,225 @@ function toggleHistory() {
   p.classList.toggle('open', !open);
   o.classList.toggle('open', !open);
   if (!open) loadHistory();
+}
+
+// ─── App Mode Switcher ─────────────────────────────────────────
+let currentAppMode = 'perspektiven';
+
+function setAppMode(mode) {
+  currentAppMode = mode;
+  ['perspektiven', 'zielraum', 'inneres-team'].forEach(m => {
+    const t = document.getElementById(`apptab-${m}`);
+    if (t) t.classList.toggle('active', m === mode);
+  });
+  const pw = document.getElementById('perspektiven-wrap');
+  if (pw) pw.style.display = mode === 'perspektiven' ? '' : 'none';
+  document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+  if (mode !== 'perspektiven') {
+    const s = document.getElementById(`mode-${mode}`);
+    if (s) s.classList.add('active');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── ZIEL-RAUM ─────────────────────────────────────────────────
+let zrLastData = null;
+
+const ZR_GROW_COLORS = ['#7C5CBF', '#5DADE2', '#2ECC71', '#D4A843'];
+const ZR_GROW_LETTERS = ['G', 'R', 'O', 'W'];
+
+async function submitZielRaum() {
+  const goal = document.getElementById('zr-goal').value.trim();
+  const reality = document.getElementById('zr-reality').value.trim();
+  const options = document.getElementById('zr-options').value.trim();
+  const wayforward = document.getElementById('zr-wayforward').value.trim();
+
+  if (goal.length < 8) { document.getElementById('zr-goal').focus(); return; }
+
+  const questionParts = [`GOAL: ${goal}`];
+  if (reality) questionParts.push(`REALITY: ${reality}`);
+  if (options) questionParts.push(`OPTIONS: ${options}`);
+  if (wayforward) questionParts.push(`WAY FORWARD: ${wayforward}`);
+  const question = questionParts.join('\n');
+
+  document.getElementById('zrSubmitBtn').disabled = true;
+  document.getElementById('zrLoadingWrap').classList.add('visible');
+  document.getElementById('zrResults').style.display = 'none';
+
+  const custom_perspectives = [
+    {
+      name: 'Ziel-Coach (G)',
+      position: 'Du bist Coach für Zielklärung. Analysiere das genannte Ziel präzise: Ist es wirklich klar und konkret? Was steckt tiefer dahinter (Werte, Bedürfnisse, Sehnsucht)? Ist es ein "Hin-zu-Ziel" oder "Weg-von-Ziel"? Gib 1–2 konkrete Umformulierungen, die das Ziel noch kraftvoller und erreichbarer machen.'
+    },
+    {
+      name: 'Reality-Coach (R)',
+      position: 'Du bist Coach für ehrliche Bestandsaufnahme. Analysiere die Situation: Was sind die realen Hindernisse (innen & außen)? Welche Ressourcen übersieht die Person? Was ist ihr eigener Anteil, was kommt von außen? Wo ist sie möglicherweise in einer Geschichte gefangen, die nicht mehr stimmt?'
+    },
+    {
+      name: 'Möglichkeiten-Coach (O)',
+      position: 'Du bist Coach für kreative Optionserweiterung. Entwickle 3–4 verschiedenartige Wege: den kleinsten möglichen Schritt, den mutigsten Weg, die unkonventionelle Option, und den mit dem besten Aufwand-Wirkung-Verhältnis. Denke bewusst über das Naheliegende hinaus.'
+    },
+    {
+      name: 'Schritt-Coach (W)',
+      position: 'Du bist Coach für konkretes Commitment. Fokussiere auf: Was ist der erste kleine, konkrete Schritt — umsetzbar in 7 Tagen? Welche Hindernisse sind zu antizipieren? Wie kann die Person ihre Verbindlichkeit stärken? Was braucht es an Unterstützung oder innerer Erlaubnis?'
+    }
+  ];
+
+  const payload = { question, custom_perspectives, methods: [], stil: 'therapeutisch', tone, lang, source_app: 'COACHiNG-TiSCH-ZIEL-RAUM' };
+
+  try {
+    const res = await fetch(API + '/api/ask-table', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderZielRaumResults(data);
+  } catch (err) {
+    alert(lang === 'de' ? `Fehler: ${err.message}` : `Error: ${err.message}`);
+  } finally {
+    document.getElementById('zrSubmitBtn').disabled = false;
+    document.getElementById('zrLoadingWrap').classList.remove('visible');
+  }
+}
+
+function renderZielRaumResults(data) {
+  zrLastData = data;
+  const list = document.getElementById('zrResultsList');
+  list.innerHTML = '';
+  (data.perspectives || []).forEach((p, i) => {
+    const color = ZR_GROW_COLORS[i % ZR_GROW_COLORS.length];
+    const letter = ZR_GROW_LETTERS[i % ZR_GROW_LETTERS.length];
+    const card = document.createElement('div');
+    card.className = 'zr-grow-result';
+    card.style.borderTop = `3px solid ${color}`;
+    card.innerHTML = `
+      <div class="zr-grow-result-header">
+        <div class="zr-grow-badge" style="background:${color}18;border-color:${color}40;color:${color}">${letter}</div>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${color}">${p.role || ''}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-top:3px">${(p.kernanalyse || '').slice(0,90)}${(p.kernanalyse||'').length>90?'…':''}</div>
+        </div>
+      </div>
+      <div class="zr-grow-result-body">${p.kernanalyse || ''}</div>`;
+    list.appendChild(card);
+  });
+  if (data.synthese) {
+    document.getElementById('zrSyntheseContent').textContent = data.synthese;
+    document.getElementById('zrSynthese').style.display = '';
+  }
+  document.getElementById('zrResults').style.display = '';
+  document.getElementById('zrResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetZielRaum() {
+  document.getElementById('zrResults').style.display = 'none';
+  ['zr-goal','zr-reality','zr-options','zr-wayforward'].forEach(id => { document.getElementById(id).value = ''; });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyZrResults() {
+  if (!zrLastData) return;
+  const txt = (zrLastData.perspectives || []).map(p => `${p.role}:\n${p.kernanalyse}`).join('\n\n');
+  navigator.clipboard.writeText(txt + (zrLastData.synthese ? `\n\nSYNTHESE:\n${zrLastData.synthese}` : ''));
+}
+
+// ─── iNNERES TEAM ──────────────────────────────────────────────
+let itLastData = null;
+
+const IT_EMOJIS = ['🛡️', '✨', '🧠', '❤️', '⚡'];
+const IT_COLORS = ['#5DADE2', '#D4A843', '#7C5CBF', '#CF6060', '#2ECC71'];
+
+async function submitInneresTeam() {
+  const situation = document.getElementById('it-situation').value.trim();
+  const knownVoices = document.getElementById('it-known-voices').value.trim();
+  if (situation.length < 20) { document.getElementById('it-situation').focus(); return; }
+
+  const question = situation + (knownVoices ? `\n\nBereits wahrgenommene innere Stimmen: ${knownVoices}` : '');
+
+  document.getElementById('itSubmitBtn').disabled = true;
+  document.getElementById('itLoadingWrap').classList.add('visible');
+  document.getElementById('itResults').style.display = 'none';
+
+  const custom_perspectives = [
+    {
+      name: 'Der/Die Beschützer·in',
+      position: 'Du verkörperst die vorsichtige, schützende Stimme im inneren Team. Deine Kraft kommt aus Sicherheitsbedürfnis und Fürsorge. Beschreibe deinen Standpunkt zur Situation: Was ist deine Botschaft? Welche Angst schützt du? Was brauchst du, damit du beruhigt bist? Was ist dein wertvoller Beitrag zum Team?'
+    },
+    {
+      name: 'Der/Die Abenteurer·in',
+      position: 'Du verkörperst die mutige, aufgeschlossene, neugierige Stimme im inneren Team. Deine Kraft kommt aus Freiheitsdrang, Wachstumssehnsucht, Lebendigkeit. Beschreibe deinen Standpunkt: Was siehst du als Möglichkeit? Was ruft dich? Was würdest du tun, wenn du keine Angst hättest? Was ist dein wertvoller Beitrag zum Team?'
+    },
+    {
+      name: 'Der/Die Vernünftige',
+      position: 'Du verkörperst die realistische, verantwortungsbewusste Stimme im inneren Team. Du denkst an Konsequenzen, andere Menschen, Langfristigkeit. Beschreibe deinen Standpunkt: Was sind deine legitimen Bedenken? Was muss bedacht werden? Was ist deine faire Einschätzung? Was ist dein wertvoller Beitrag zum Team?'
+    },
+    {
+      name: 'Das innere Kind / Das kreative Selbst',
+      position: 'Du verkörperst das spontane, spielerische, authentische Selbst im inneren Team. Du sprichst aus dem Bauchgefühl, aus Freude und echter Sehnsucht. Beschreibe deinen Standpunkt: Was fühlt sich wirklich richtig an — jenseits aller Vernunft? Was willst du wirklich? Was macht dir echte Freude? Was ist dein wertvoller Beitrag zum Team?'
+    },
+    {
+      name: 'Der/Die Innere Kritiker·in',
+      position: 'Du verkörperst die kritische, selbstfordernde Stimme im inneren Team. Du sorgst für hohe Standards — manchmal auch für Blockaden. Beschreibe deinen Standpunkt: Was kritisierst du, und warum? Wo ist deine Kritik berechtigt? Wo übertreibst du oder schadest du? Was wäre konstruktive statt lähmende Kritik? Was ist dein wertvoller Beitrag zum Team?'
+    }
+  ];
+
+  const payload = { question, custom_perspectives, methods: [], stil: 'therapeutisch', tone: 'achtsam', lang, source_app: 'COACHiNG-TiSCH-iNNERES-TEAM' };
+
+  try {
+    const res = await fetch(API + '/api/ask-table', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderInneresTeamResults(data);
+  } catch (err) {
+    alert(lang === 'de' ? `Fehler: ${err.message}` : `Error: ${err.message}`);
+  } finally {
+    document.getElementById('itSubmitBtn').disabled = false;
+    document.getElementById('itLoadingWrap').classList.remove('visible');
+  }
+}
+
+function renderInneresTeamResults(data) {
+  itLastData = data;
+  const grid = document.getElementById('itMembersGrid');
+  grid.innerHTML = '';
+  (data.perspectives || []).forEach((p, i) => {
+    const color = IT_COLORS[i % IT_COLORS.length];
+    const emoji = IT_EMOJIS[i % IT_EMOJIS.length];
+    const card = document.createElement('div');
+    card.className = 'it-member-card';
+    card.style.borderTop = `3px solid ${color}`;
+    card.innerHTML = `
+      <div class="it-member-header">
+        <div class="it-member-icon" style="background:${color}18;border:1.5px solid ${color}35">${emoji}</div>
+        <div>
+          <div class="it-member-name">${p.role || ''}</div>
+          <div class="it-member-role" style="color:${color}">INNERE STiMME</div>
+        </div>
+      </div>
+      <div class="it-member-body">${p.kernanalyse || ''}</div>`;
+    grid.appendChild(card);
+  });
+  if (data.synthese) {
+    document.getElementById('itSyntheseContent').textContent = data.synthese;
+    document.getElementById('itSynthese').style.display = '';
+  }
+  document.getElementById('itResults').style.display = '';
+  document.getElementById('itResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetInneresTeam() {
+  document.getElementById('itResults').style.display = 'none';
+  document.getElementById('it-situation').value = '';
+  document.getElementById('it-known-voices').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyItResults() {
+  if (!itLastData) return;
+  const txt = (itLastData.perspectives || []).map(p => `${p.role}:\n${p.kernanalyse}`).join('\n\n');
+  navigator.clipboard.writeText(txt + (itLastData.synthese ? `\n\nINTEGRATION:\n${itLastData.synthese}` : ''));
 }
 </script>
 <script src="/notizbuch.js"></script>
