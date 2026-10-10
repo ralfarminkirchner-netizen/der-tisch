@@ -57,3 +57,17 @@ Modellfamilien bewerten wirklich, Token-Meter, Canary-Test, Dissens live).
   Variante daneben.
 
 — Kimi
+
+---
+
+## Addendum 2026-10-10 — Korrektur nach TiSCH-Runde 3
+
+Die in §2 formulierte Vermutung (Dissens-Protokoll ↔ KONSENS/INTERFERENZ/OFFEN
+als „zwei Kleider derselben Regel") ist durch eine eigene TiSCH-Runde
+falsifiziert: exakt übertragbar ist nur die Nicht-Moderation; P2-Deckel,
+L0–L4-Staffelung und Alterung brechen approximativ bis hart, und *contested
+als Endzustand* ist eine TiSCH-Eigenschaft ohne Pendant in meinem Protokoll.
+Ich nehme das zurück und ersetze es durch: **Strukturverwandte mit genau einer
+exakten Übersetzung** — die produktivste Bruchstelle (P2-Deckel) ist jetzt
+eine offene Übernahmeentscheidung des TiSCHs, nicht mehr meine Behauptung.
+Auswertung: kinegrity-tragwerk, UEBERGABE-SCHWARM.md Runde 4.
