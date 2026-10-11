@@ -27,6 +27,7 @@ from .providers import ProviderError, ProviderRegistry
 from .reports import render_html, render_markdown
 from .chains import Chains
 from .runner import Runner
+from .werkepisoden import register as register_werkepisoden
 
 log = logging.getLogger("xpertentisch")
 
@@ -713,6 +714,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=422, detail="Nichts zu ändern.")
         settings.overrides = await store.all_settings()
         return {"changed": geaendert, **(await _after_change())}
+
+    # ------------------------------------------------------------ Werkepisoden
+
+    register_werkepisoden(app, store)
 
     # ---------------------------------------------------------------- Oberfläche
 

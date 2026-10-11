@@ -157,6 +157,216 @@ CREATE TABLE IF NOT EXISTS providers (
     position   INTEGER NOT NULL DEFAULT 0,
     updated_at REAL NOT NULL
 );
+
+-- ------------------------------------------------------------ Werkepisoden
+-- Prototyp. Nichts hiervon hängt an einer Sitzung: eine Beobachtung soll die
+-- Sitzung überleben, in der sie gemacht wurde. Verweise auf Marker, Aufträge
+-- und Sitzungen sind deshalb bewusst KEINE Fremdschlüssel.
+
+CREATE TABLE IF NOT EXISTS anliegen (
+    id         TEXT PRIMARY KEY,
+    titel      TEXT NOT NULL,
+    created_at REAL NOT NULL
+);
+
+-- Das Anliegen ist selbst versioniert. Eine Fassung wird nie überschrieben.
+CREATE TABLE IF NOT EXISTS anliegen_fassungen (
+    id                TEXT PRIMARY KEY,
+    anliegen_id       TEXT NOT NULL REFERENCES anliegen(id),
+    nummer            INTEGER NOT NULL,
+    text              TEXT NOT NULL,
+    created_at        REAL NOT NULL,
+    UNIQUE (anliegen_id, nummer)
+);
+
+CREATE TABLE IF NOT EXISTS werke (
+    id         TEXT PRIMARY KEY,
+    titel      TEXT NOT NULL,
+    -- app | text | spielmechanik | … — frei, keine geschlossene Liste.
+    art        TEXT NOT NULL DEFAULT '',
+    created_at REAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS werkfassungen (
+    id                  TEXT PRIMARY KEY,
+    werk_id             TEXT NOT NULL REFERENCES werke(id),
+    nummer              INTEGER NOT NULL,
+    -- Woraus die Fassung besteht (JSON-Liste von Stellen mit Bezeichnung).
+    zusammensetzung     TEXT NOT NULL DEFAULT '[]',
+    anliegen_fassung_id TEXT REFERENCES anliegen_fassungen(id),
+    -- Was dieses Werk zu diesem Werk machen soll, Stand dieser Fassung (JSON).
+    invarianten         TEXT NOT NULL DEFAULT '[]',
+    -- Gegenüber der Vorfassung: geblieben, geaendert, hinzugekommen, verloren (JSON).
+    bilanz              TEXT NOT NULL DEFAULT '{}',
+    created_at          REAL NOT NULL,
+    UNIQUE (werk_id, nummer)
+);
+
+CREATE TABLE IF NOT EXISTS annahmen (
+    id         TEXT PRIMARY KEY,
+    text       TEXT NOT NULL,
+    created_at REAL NOT NULL
+);
+
+-- Welche Werkfassung eine Annahme an welcher Stelle nutzt.
+CREATE TABLE IF NOT EXISTS annahme_verwendungen (
+    id             TEXT PRIMARY KEY,
+    annahme_id     TEXT NOT NULL REFERENCES annahmen(id),
+    werkfassung_id TEXT NOT NULL REFERENCES werkfassungen(id),
+    stelle         TEXT NOT NULL DEFAULT '',
+    created_at     REAL NOT NULL,
+    UNIQUE (annahme_id, werkfassung_id, stelle)
+);
+
+CREATE INDEX IF NOT EXISTS idx_verwendungen_annahme ON annahme_verwendungen(annahme_id);
+
+-- Verankert an Werkfassung und Stelle, nicht an einer Sitzung.
+CREATE TABLE IF NOT EXISTS postits (
+    id                TEXT PRIMARY KEY,
+    werkfassung_id    TEXT NOT NULL REFERENCES werkfassungen(id),
+    stelle            TEXT NOT NULL DEFAULT '',
+    text              TEXT NOT NULL,
+    -- Wörtlicher Beleg, mitgenommen: Marker werden neu berechnet und gelöscht.
+    zitat             TEXT NOT NULL DEFAULT '',
+    -- mensch | maschine
+    origin            TEXT NOT NULL,
+    -- offen | vorgeschlagen | bestaetigt | entkraeftet
+    status            TEXT NOT NULL,
+    -- marker | job | leer. Herkunft ist ein Verweis, keine Abhängigkeit.
+    herkunft_art      TEXT,
+    herkunft_id       TEXT,
+    herkunft_sitzung  TEXT,
+    herkunft_job      TEXT,
+    created_at        REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_postits_fassung ON postits(werkfassung_id);
+
+CREATE TABLE IF NOT EXISTS postit_annahmen (
+    postit_id  TEXT NOT NULL REFERENCES postits(id),
+    annahme_id TEXT NOT NULL REFERENCES annahmen(id),
+    -- einwand | stuetze | frage
+    haltung    TEXT NOT NULL,
+    created_at REAL NOT NULL,
+    PRIMARY KEY (postit_id, annahme_id)
+);
+
+-- Eine Episode verweist, sie kopiert nicht. Abgeschlossen ist sie unveränderlich;
+-- Nachträge sind eigene Episoden mit `ergaenzt_episode_id`.
+CREATE TABLE IF NOT EXISTS episoden (
+    id                   TEXT PRIMARY KEY,
+    werk_id              TEXT NOT NULL REFERENCES werke(id),
+    titel                TEXT NOT NULL,
+    status               TEXT NOT NULL DEFAULT 'offen',
+    -- Ausgangslage: Frage in eigenen Worten, dazu Verweise.
+    ausgangslage         TEXT NOT NULL DEFAULT '',
+    ausgang_werkfassung_id      TEXT REFERENCES werkfassungen(id),
+    ausgang_anliegen_fassung_id TEXT REFERENCES anliegen_fassungen(id),
+    -- Aufträge, deren Kontext-Schnappschuss die Ausgangslage belegt (JSON).
+    ausgang_auftraege    TEXT NOT NULL DEFAULT '[]',
+    -- Modelle, Linsen, Annahmen, unabhängige Erstbefunde (JSON-Liste von Verweisen).
+    perspektiven         TEXT NOT NULL DEFAULT '[]',
+    -- Was getan wurde (JSON-Liste von Verweisen).
+    bearbeitung          TEXT NOT NULL DEFAULT '[]',
+    ergaenzt_episode_id  TEXT REFERENCES episoden(id),
+    created_at           REAL NOT NULL,
+    closed_at            REAL
+);
+
+-- Erprobung: Beobachtungen und Gegenbeispiele sind Post-its.
+CREATE TABLE IF NOT EXISTS episoden_postits (
+    episode_id TEXT NOT NULL REFERENCES episoden(id),
+    postit_id  TEXT NOT NULL REFERENCES postits(id),
+    -- beobachtung | gegenbeispiel
+    rolle      TEXT NOT NULL,
+    created_at REAL NOT NULL,
+    PRIMARY KEY (episode_id, postit_id)
+);
+
+CREATE TABLE IF NOT EXISTS entscheidungen (
+    id              TEXT PRIMARY KEY,
+    episode_id      TEXT NOT NULL REFERENCES episoden(id),
+    -- uebernommen | zurueckgestellt | verworfen | zurueckgenommen
+    art             TEXT NOT NULL,
+    -- annahme | postit | werkfassung | entscheidung
+    gegenstand_art  TEXT NOT NULL,
+    gegenstand_id   TEXT NOT NULL,
+    begruendung     TEXT NOT NULL DEFAULT '',
+    -- Was aus der Entscheidung hervorging, falls etwas hervorging.
+    neue_werkfassung_id     TEXT REFERENCES werkfassungen(id),
+    neue_anliegen_fassung_id TEXT REFERENCES anliegen_fassungen(id),
+    created_at      REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_entscheidungen_episode ON entscheidungen(episode_id);
+
+-- Prüfaufträge: Diese Beobachtung könnte auch jene Werkfassung betreffen.
+-- Gleiche Regel wie bei `relations`: was die Maschine anlegt, ist ein Vorschlag.
+CREATE TABLE IF NOT EXISTS weiterwirkungen (
+    id                 TEXT PRIMARY KEY,
+    -- postit | annahme
+    quelle_art         TEXT NOT NULL,
+    quelle_id          TEXT NOT NULL,
+    -- Die Annahme, über die der Weg führt.
+    annahme_id         TEXT REFERENCES annahmen(id),
+    ziel_werkfassung_id TEXT NOT NULL REFERENCES werkfassungen(id),
+    -- maschine | mensch
+    origin             TEXT NOT NULL,
+    -- vorgeschlagen | angenommen | abgelehnt | geprueft
+    status             TEXT NOT NULL,
+    -- betroffen | nicht_betroffen | unklar — leer, solange nicht geprüft.
+    ergebnis           TEXT,
+    ergebnis_notiz     TEXT NOT NULL DEFAULT '',
+    -- Die Episode, in der geprüft wurde, falls es eine gab.
+    ergebnis_episode_id TEXT REFERENCES episoden(id),
+    created_at         REAL NOT NULL,
+    geprueft_at        REAL,
+    UNIQUE (quelle_art, quelle_id, annahme_id, ziel_werkfassung_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_weiterwirkungen_quelle ON weiterwirkungen(quelle_art, quelle_id);
+
+-- Die Unveränderlichkeit steht in der Datenbank, nicht nur in der Schnittstelle.
+CREATE TRIGGER IF NOT EXISTS trg_episode_abgeschlossen_update
+BEFORE UPDATE ON episoden WHEN OLD.status = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_episode_abgeschlossen_delete
+BEFORE DELETE ON episoden WHEN OLD.status = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_episoden_postits_insert
+BEFORE INSERT ON episoden_postits
+WHEN (SELECT status FROM episoden WHERE id = NEW.episode_id) = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_episoden_postits_delete
+BEFORE DELETE ON episoden_postits
+WHEN (SELECT status FROM episoden WHERE id = OLD.episode_id) = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_entscheidungen_insert
+BEFORE INSERT ON entscheidungen
+WHEN (SELECT status FROM episoden WHERE id = NEW.episode_id) = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_entscheidungen_update
+BEFORE UPDATE ON entscheidungen
+WHEN (SELECT status FROM episoden WHERE id = OLD.episode_id) = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_entscheidungen_delete
+BEFORE DELETE ON entscheidungen
+WHEN (SELECT status FROM episoden WHERE id = OLD.episode_id) = 'abgeschlossen'
+BEGIN SELECT RAISE(ABORT, 'Episode ist abgeschlossen.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_anliegen_fassungen_update
+BEFORE UPDATE ON anliegen_fassungen
+BEGIN SELECT RAISE(ABORT, 'Eine Anliegen-Fassung wird nicht überschrieben.'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_werkfassungen_update
+BEFORE UPDATE ON werkfassungen
+BEGIN SELECT RAISE(ABORT, 'Eine Werkfassung wird nicht überschrieben.'); END;
 """
 
 JOB_NOT_REQUESTED = "not_requested"
