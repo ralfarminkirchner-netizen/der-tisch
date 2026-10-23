@@ -91,52 +91,256 @@ def _beitragsnamen(bundle: dict[str, Any]) -> dict[str, str]:
 
 
 REPORT_CSS = """
+/* Der Bericht ist ein Dokument, kein Abzug der Oberfläche.
+
+   Er soll sich lesen wie ein sauber gesetztes Protokoll: ein ruhiges Maß,
+   Serife im Fließtext, Grotesk für alles Technische, Haarlinien statt Kästen.
+   Er lädt nichts nach — auch keine Schrift. Die Anwendung bringt eine eigene
+   Schrift mit; sie hier als Base64 einzubetten würde die Datei um ein
+   Vielfaches aufblähen, ohne dass der Bericht davon lesbarer würde. Er nutzt
+   darum einen Systemschrift-Stapel, der dieselbe Gliederung trägt. */
+
 :root {
-  color-scheme: light;
-  --ink: #1b1f2a; --muted: #5b6478; --line: #d8dde8; --bg: #f6f7fb;
-  --card: #ffffff; --agree: #1f7a4d; --contra: #b03a2e; --unique: #6b4fa8;
+  color-scheme: light dark;
+  --ink: #1a1815;
+  --muted: #6a645c;
+  --leise: #8c857b;
+  --line: #ddd8ce;
+  --bg: #f7f5f1;
+  --card: #fffdfa;
+  --agree: #1c6b45;
+  --contra: #a63d1c;
+  --unique: #5b3f9e;
+  --warn: #8a6415;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+
 * { box-sizing: border-box; }
+
 body {
-  margin: 0; padding: 32px 20px 64px; background: var(--bg); color: var(--ink);
-  font: 16px/1.6 "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  margin: 0;
+  padding: clamp(28px, 6vw, 72px) clamp(16px, 5vw, 40px) 80px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.62 var(--serif);
+  -webkit-text-size-adjust: 100%;
 }
-.wrap { max-width: 980px; margin: 0 auto; }
-h1 { font-size: 1.9rem; margin: 0 0 4px; letter-spacing: .02em; }
-h2 { font-size: 1.3rem; margin: 40px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
-h3 { font-size: 1.05rem; margin: 24px 0 8px; }
-.meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-        padding: 18px 20px; margin: 14px 0; }
-.answer { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
-.badge { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px;
-         border: 1px solid var(--line); color: var(--muted); margin-right: 6px; font-family: system-ui, sans-serif; }
+
+.wrap { max-width: 44rem; margin: 0 auto; }
+
+/* Titelblock: der Bericht sagt zuerst, was er ist. */
+h1 {
+  font-size: clamp(1.7rem, 1.2rem + 2vw, 2.5rem);
+  line-height: 1.12;
+  margin: 0 0 6px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  font-family: var(--sans);
+  font-size: .78rem;
+  font-weight: 650;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--leise);
+  margin: 52px 0 14px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+h3 {
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin: 0 0 6px;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0 0 .7em; }
+p:last-child { margin-bottom: 0; }
+
+.meta {
+  font-family: var(--sans);
+  color: var(--muted);
+  font-size: .82rem;
+  margin: 0 0 8px;
+  padding-bottom: 22px;
+  border-bottom: 2px solid var(--ink);
+}
+
+/* Ein Beitrag steht auf eigenem Grund, aber ohne Kastencharakter. */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin: 16px 0;
+}
+
+.answer {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.badge {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: .72rem;
+  font-weight: 560;
+  letter-spacing: .02em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  margin: 0 6px 4px 0;
+  white-space: nowrap;
+}
+
 .badge.err { color: var(--contra); border-color: var(--contra); }
-.badge.part { color: #8a6d1f; border-color: #c8a43a; }
-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .92rem;
-        font-family: system-ui, -apple-system, sans-serif; }
-th, td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; vertical-align: top; }
-th { background: #eef1f7; }
-.tablewrap { overflow-x: auto; }
-blockquote { margin: 6px 0 6px 0; padding: 6px 12px; border-left: 3px solid var(--line);
-             color: var(--ink); background: #fbfcfe; }
+.badge.part { color: var(--warn); border-color: var(--warn); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-family: var(--sans);
+  font-size: .82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+th, td {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 8px 10px 8px 0;
+  text-align: right;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+th {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--leise);
+  border-bottom: 1px solid var(--ink);
+}
+
+th:first-child, td:first-child {
+  text-align: left;
+  white-space: normal;
+}
+
+tbody tr:last-child td { border-bottom: 0; }
+
+/* Die Vergleichstabelle hat neun Spalten und passt nicht in das Maß des
+   Fließtextes. Sie darf darum aus dem Satzspiegel heraustreten — aber nur so
+   weit, wie der Bildschirm es hergibt, damit keine Überbreite entsteht. */
+.tablewrap {
+  overflow-x: auto;
+  max-width: 100%;
+  margin-inline: calc(-1 * clamp(0px, (100vw - 44rem) / 2 - 1rem, 7rem));
+}
+
+/* Ein Marker ist ein Beleg am Rand, keine Behauptung im Text. */
+blockquote {
+  margin: 10px 0;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid var(--line);
+  color: var(--ink);
+  font-size: .95rem;
+}
+
 .k-uebereinstimmung { border-left-color: var(--agree); }
 .k-widerspruch { border-left-color: var(--contra); }
 .k-einzigartig { border-left-color: var(--unique); }
-.kind { font-family: system-ui, sans-serif; font-size: .8rem; text-transform: uppercase;
-        letter-spacing: .06em; color: var(--muted); }
-.note { color: var(--muted); font-size: .85rem; font-family: system-ui, sans-serif; }
-details { margin: 8px 0; }
-summary { cursor: pointer; font-family: system-ui, sans-serif; font-size: .92rem; }
-footer { margin-top: 48px; color: var(--muted); font-size: .82rem; }
-@media (max-width: 640px) {
-  body { padding: 18px 12px 48px; font-size: 15px; }
-  h1 { font-size: 1.45rem; }
+
+.kind {
+  font-family: var(--sans);
+  font-size: .68rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--leise);
+  margin-bottom: 2px;
 }
+
+.k-uebereinstimmung .kind { color: var(--agree); }
+.k-widerspruch .kind { color: var(--contra); }
+.k-einzigartig .kind { color: var(--unique); }
+
+.note {
+  color: var(--muted);
+  font-size: .82rem;
+  font-family: var(--sans);
+  line-height: 1.55;
+}
+
+details { margin: 10px 0 0; }
+
+summary {
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+footer {
+  margin-top: 56px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--leise);
+  font-size: .78rem;
+  font-family: var(--sans);
+}
+
+/* Auch ein Dokument wird abends gelesen. Gedruckt wird es trotzdem hell —
+   die Druckregeln unten setzen den Grund wieder auf Weiß. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #eae5dd;
+    --muted: #b0a89c;
+    --leise: #8f877b;
+    --line: #3a352e;
+    --bg: #17150f;
+    --card: #1e1b16;
+    --agree: #74d3a0;
+    --contra: #f0a07a;
+    --unique: #b9a2f0;
+    --warn: #dcc07a;
+  }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+}
+
 @media print {
-  body { background: #fff; padding: 0; font-size: 11pt; }
-  .card { break-inside: avoid; border-color: #bbb; }
-  h2 { break-after: avoid; }
+  /* Auf Papier gilt immer der helle Satz, unabhängig vom Gerät. */
+  :root {
+    --ink: #1a1815;
+    --muted: #55504a;
+    --leise: #6f6961;
+    --line: #c9c3b8;
+    --bg: #fff;
+    --card: #fff;
+    --agree: #1c6b45;
+    --contra: #a63d1c;
+    --unique: #5b3f9e;
+    --warn: #8a6415;
+  }
+
+  body { background: #fff; color: var(--ink); padding: 0; font-size: 10.5pt; }
+  .wrap { max-width: none; }
+
+  /* Kurze Blöcke bleiben zusammen. Eine lange Antwort wird NICHT auf eine
+     Seite gezwungen — sie bräche sonst lieber ganz ab, als umzubrechen. */
+  .card { break-inside: auto; border-color: #bbb; background: #fff; }
+  blockquote, tr, .meta { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
   details { display: block; }
   details > summary { display: none; }
   footer { position: static; }

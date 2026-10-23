@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS sparks (
     prompt            TEXT NOT NULL,
     client_request_id TEXT NOT NULL,
     created_at        REAL NOT NULL,
-    -- funke | antwort | weitergabe | gegenposition | vertiefung
+    -- funke | antwort | weitergabe | gegenposition | vertiefung | szenario
     kind              TEXT NOT NULL DEFAULT 'funke',
     -- Ausdrücklich gewählte Bezugsbeiträge (JSON-Liste von Beitragskennungen)
     refs              TEXT NOT NULL DEFAULT '[]'
@@ -84,6 +84,9 @@ CREATE TABLE IF NOT EXISTS markers (
     end_offset     INTEGER NOT NULL,
     quote          TEXT NOT NULL,
     note           TEXT NOT NULL DEFAULT '',
+    -- Die Begriffe, an denen diese Fundstelle hängt (JSON-Liste). Grundlage
+    -- der Themen-Linse: sie zeigt, WORAN sich die Stimmen treffen.
+    topics         TEXT NOT NULL DEFAULT '[]',
     created_at     REAL NOT NULL
 );
 
@@ -193,6 +196,17 @@ def _spark_row(row: Any) -> dict[str, Any]:
     return spark
 
 
+def _marker_row(row: Any) -> dict[str, Any]:
+    """Themen kommen als Liste heraus, nicht als JSON-Text."""
+    marker = dict(row)
+    roh = marker.get("topics") or "[]"
+    try:
+        marker["topics"] = json.loads(roh) if isinstance(roh, str) else list(roh)
+    except ValueError:
+        marker["topics"] = []
+    return marker
+
+
 class Store:
     """Dünne, bewusst explizite Datenzugriffsschicht."""
 
@@ -222,6 +236,13 @@ class Store:
         if "refs" not in spalten:
             await self._conn.execute(  # type: ignore[union-attr]
                 "ALTER TABLE sparks ADD COLUMN refs TEXT NOT NULL DEFAULT '[]'"
+            )
+
+        async with self._conn.execute("PRAGMA table_info(markers)") as cur:  # type: ignore[union-attr]
+            marker_spalten = {r["name"] for r in await cur.fetchall()}
+        if "topics" not in marker_spalten:
+            await self._conn.execute(  # type: ignore[union-attr]
+                "ALTER TABLE markers ADD COLUMN topics TEXT NOT NULL DEFAULT '[]'"
             )
 
         async with self._conn.execute("PRAGMA table_info(jobs)") as cur:  # type: ignore[union-attr]
@@ -477,10 +498,10 @@ class Store:
         if markers:
             await self.conn.executemany(
                 "INSERT INTO markers (id, session_id, spark_id, job_id, related_job_id,"
-                " kind, start_offset, end_offset, quote, note, created_at) "
+                " kind, start_offset, end_offset, quote, note, topics, created_at) "
                 "VALUES (:id, :session_id, :spark_id, :job_id, :related_job_id, :kind,"
-                " :start_offset, :end_offset, :quote, :note, :created_at)",
-                markers,
+                " :start_offset, :end_offset, :quote, :note, :topics, :created_at)",
+                [{**m, "topics": json.dumps(m.get("topics") or [])} for m in markers],
             )
         await self.conn.commit()
 
@@ -488,13 +509,13 @@ class Store:
         async with self.conn.execute(
             "SELECT * FROM markers WHERE session_id=? ORDER BY created_at", (session_id,)
         ) as cur:
-            return [dict(r) for r in await cur.fetchall()]
+            return [_marker_row(r) for r in await cur.fetchall()]
 
     async def list_markers_for_spark(self, spark_id: str) -> list[dict[str, Any]]:
         async with self.conn.execute(
             "SELECT * FROM markers WHERE spark_id=? ORDER BY created_at", (spark_id,)
         ) as cur:
-            return [dict(r) for r in await cur.fetchall()]
+            return [_marker_row(r) for r in await cur.fetchall()]
 
     # ------------------------------------------------------------ Assessments
 

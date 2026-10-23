@@ -55,22 +55,43 @@ try {
   await page.waitForSelector(`.card[data-job-id="${abbruchId}"].zustand-cancelled`, { timeout: 15000 });
   pruefe('Abbruch trifft genau diesen Auftrag', true, abbruchId);
 
+  // Diese Prüfung ist nur etwas wert, wenn es überhaupt eine andere Karte gibt
+  // und deren Zustand tatsächlich ausgelesen wurde. Ein leeres Feld besteht
+  // sonst jedes every().
   const andere = await page.locator('.card').evaluateAll((nodes, id) =>
     nodes.filter((n) => n.getAttribute('data-job-id') !== id)
-      .map((n) => n.className.match(/zustand-(\w+)/)?.[1]),
+      .map((n) => ({
+        id: n.getAttribute('data-job-id'),
+        zustand: n.className.match(/zustand-(\w+)/)?.[1] ?? null,
+        zeichen: (n.querySelector('.answer')?.textContent ?? '').length,
+      })),
     abbruchId);
-  pruefe('Die übrigen Karten bleiben unberührt',
-    andere.every((z) => z !== 'cancelled'), `übrige Zustände: ${andere.join(', ')}`);
+  const lesbar = andere.filter((k) => k.id && k.zustand);
+  pruefe('Es gibt mindestens eine andere Karte zum Vergleich',
+    lesbar.length >= 1, `${lesbar.length} andere Karten`);
+  pruefe('Keine andere Karte wurde mit abgebrochen',
+    lesbar.length >= 1 && lesbar.every((k) => k.zustand !== 'cancelled'),
+    lesbar.map((k) => `${k.id}:${k.zustand}`).join(', '));
+
+  // Und sie laufen wirklich weiter: mindestens eine andere Karte trägt Text
+  // oder erreicht einen Endzustand, statt bloß „nicht abgebrochen" zu sein.
+  const weiter = lesbar.filter(
+    (k) => k.zeichen > 0 || ['done', 'error', 'streaming', 'running'].includes(k.zustand),
+  );
+  pruefe('Mindestens eine andere Antwort läuft weiter',
+    weiter.length >= 1,
+    weiter.map((k) => `${k.id}:${k.zustand}/${k.zeichen} Zeichen`).join(', '));
 
   await page.waitForSelector('.panel-grid table', { timeout: 30000 });
   pruefe('Die Auswertung läuft trotz Abbruch', true);
 
   // --- Kosten ------------------------------------------------------------
-  const kosten = await page.locator('.card .tags').first().innerText();
+  const kosten = await page.locator('.card .leiste').first().innerText();
   pruefe('Verbrauch steht ohne Neuladen auf der Karte',
-    /\d+\/\d+ Token/.test(kosten), kosten.replace(/\n/g, ' · '));
+    /Token\s*\d+\/\d+/.test(kosten), kosten.replace(/\n/g, ' · '));
   pruefe('Ohne hinterlegte Preise wird nichts geschätzt',
-    kosten.includes('Kosten unbekannt'), kosten.replace(/\n/g, ' · '));
+    kosten.includes('Kosten unbekannt') && !/\d+[.,]\d+\s*(ct|€)/.test(kosten),
+    kosten.replace(/\n/g, ' · '));
 
   // --- Wechselgespräch ---------------------------------------------------
   await page.click('#pingpong > summary');
@@ -118,9 +139,20 @@ try {
   await page.click('#settings-open');
   await page.fill('#admin-token', 'demo-zugangswort');
   await page.click('#einstellungen button.primary');
-  await page.waitForSelector('#price_in-fake-a, #kurator', { timeout: 15000 });
-  pruefe('Die Preisfelder stehen bereit und sind leer',
-    (await page.locator('#kurator').count()) === 1);
+  await page.waitForSelector('#kurator', { timeout: 15000 });
+  // Diese Prüfung hieß „Preisfelder", prüfte aber nur, ob es den Kurator gibt.
+  // Jetzt prüft sie, was ihr Name sagt: die Preisfelder existieren, sind leer
+  // und gehören zu einem tatsächlich vorhandenen Anbieter.
+  const preisfelder = page.locator('input[id^="price_in-"]');
+  const anzahlPreise = await preisfelder.count();
+  const werte = await preisfelder.evaluateAll((felder) =>
+    felder.map((f) => f.value),
+  );
+  pruefe('Für jeden Anbieter gibt es ein Preisfeld',
+    anzahlPreise >= 1, `${anzahlPreise} Felder`);
+  pruefe('Ohne eingetragenen Preis bleiben die Felder leer',
+    anzahlPreise >= 1 && werte.every((w) => w === ''),
+    `Werte: ${JSON.stringify(werte)}`);
   const kuratorLeer = await page.locator('#kurator').inputValue();
   pruefe('Ohne Auswahl gibt es keine Kuratierung', kuratorLeer === '');
 

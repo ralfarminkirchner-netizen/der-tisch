@@ -48,8 +48,17 @@ xpertentisch/
   Modellaufrufe): Übereinstimmung, Widerspruch, Einzigartig. Marker verweisen
   über Zeichenpositionen auf den **unveränderten** Antworttext und führen ein
   wörtliches Textbelegzitat mit.
-- **Vergleichstabelle** und **Beziehungsnetz**; ein Klick auf Knoten oder Kante
-  öffnet genau die zugehörigen Antworten.
+- **Vergleichstabelle** und **Linsen** auf dieselben Daten; ein Klick öffnet
+  jeweils genau die zugehörigen Antworten:
+  - **Stimmen** — wer trifft sich mit wem, wo widersprechen sie einander.
+  - **Themen** — woran die Befunde hängen: links die Stimmen, rechts die
+    Begriffe, an denen sie sich treffen, streiten oder allein stehen.
+  - **Verlauf** — welche Wege tatsächlich verfolgt wurden: jeder Zweig ein
+    Beitrag, der aus einem anderen hervorging. Keine Vorhersage.
+- **Szenarien.** „Folgen durchspielen" fragt die Stimmen nach den Konsequenzen
+  einer Aussage. Die Folgen kommen damit **von den Modellen**, nicht aus der
+  Anwendung — sie erscheinen als eigener Beitrag und als eigener Zweig im
+  Verlauf. Die Anwendung selbst sagt nichts voraus und rechnet nichts hinzu.
 - **Anbieter sind Daten, nicht Quelltext.** Mitgeliefert sind OpenAI, Anthropic,
   Google Gemini, DeepSeek, Mistral und xAI Grok; jeder davon lässt sich ändern
   oder abschalten. Über „Eigenen Anbieter eintragen“ kommt alles dazu, was die
@@ -93,6 +102,9 @@ xpertentisch/
   derselben Anfragekennung nachgereicht — also ohne doppelte Modellaufrufe.
 - **Kein erzwungenes Scrollen.** Trifft ein Beitrag unterhalb des Sichtfelds
   ein, erscheint ein Hinweis „neue Beiträge“; wer liest, bleibt stehen.
+- **Themenwahl in der Kopfzeile**: dem Gerät folgen, ausdrücklich hell oder
+  ausdrücklich dunkel. Die Wahl hat Vorrang vor dem Gerät und überdauert das
+  Neuladen.
 - **Sitzungsabschluss** mit freiwilliger Abschlussnotiz.
 - **Zwei Berichtsexporte**: eigenständiges HTML (offline, druckbar, ohne
   Skripte, alle Inhalte maskiert) und Markdown.
@@ -241,6 +253,37 @@ cd xpertentisch/frontend && PW_CHROMIUM=<pfad/zu/chromium> \
   node e2e/gespraech-check.mjs http://127.0.0.1:8077
 ```
 
+Vier Browserprüfungen gibt es insgesamt. Jede will einen **frisch gestarteten**
+Server mit eigener temporärer Datenbank, sonst stimmen Annahmen wie „noch keine
+Preise eingetragen" nicht mehr:
+
+| Skript | Was es prüft |
+| --- | --- |
+| `e2e/browser-check.mjs` | Layout, Graphklick, Kantenklick, keine Seitenüberbreite |
+| `e2e/gespraech-check.mjs` | Streamen, Abbrechen, Wechselgespräch, Entwürfe, Einstellungen |
+| `e2e/bericht-check.mjs` | der **exportierte Bericht** über `file://`, ohne Server und ohne Netz |
+| `e2e/zugang-check.mjs` | Kontrast (gemessen), Tastatur, Fokus, Themenvorrang, reduzierte Bewegung |
+
+Zwei Werkzeuge stellen dafür Zustände her, die im normalen Lauf nicht auf
+Kommando entstehen. Beide erzeugen **künstliche Testdaten** und sagen das auch
+in den Daten selbst:
+
+```bash
+# Fünf Stimmen mit unterschiedlichem Verhalten — der Belastungsfall:
+XT_DEMO_TISCH=gross .venv/bin/python tools/demo_server.py 8077
+
+# Alle acht Auftragszustände nebeneinander, auch 'interrupted':
+.venv/bin/python tools/zustaende_seed.py /pfad/zur/demo.sqlite3
+```
+
+Den Ansichtsnachweis (sechs Ansichten, je hell und dunkel, je 390 px und
+1440 px) erzeugt:
+
+```bash
+cd xpertentisch/frontend && PW_CHROMIUM=<pfad/zu/chromium> \
+  node e2e/ansichten.mjs http://127.0.0.1:8077 ./ansichten
+```
+
 ---
 
 ## Konfiguration
@@ -356,13 +399,48 @@ Nutzerinhalten, verbindliche Lehren aus Modellkonsens, Rankings der Modelle.
 
 ## Gestaltung
 
-Die Oberfläche folgt der Idee einer **Werkbank**: eine ruhige, warme Fläche,
-darauf körperhafte Karten mit einer farbigen Kante, die den Zustand trägt. Farbe
-ist reserviert für Bedeutung — Grün für Übereinstimmung, Orange für Widerspruch,
-Violett für Einzelaussagen; das Tiefblau der Marke mischt sich da nicht ein.
-Beide Themen (hell und dunkel) sind ausgearbeitet und folgen der Einstellung des
-Geräts. Gesetzt wird in der Systemschrift: das spart den Ladeweg zu einem
-fremden Schriftdienst und damit auch die Datenspur dorthin.
+Die Oberfläche folgt der Idee eines **Saals**: ein ruhiger Raum, und jede
+Antwort ist ein beleuchtetes Pult darin.
+
+**Licht bedeutet Aufmerksamkeit, nicht Qualität.** Was gerade geschrieben wird,
+leuchtet; was fertig ist, ruht im vollen Licht; was scheiterte oder abgebrochen
+wurde, bleibt gedämpft — aber immer auf vollem Lesekontrast. Keine Stimme wird
+heller, weil sie „besser" wäre. Es gibt hier keine Rangfolge, und die
+Gestaltung behauptet auch keine.
+
+**Farbe spricht nur, wo die Auswertung spricht:** Grün Übereinstimmung, Orange
+Widerspruch, Violett Einzelaussage. Das Blau der Anwendung ist Bedienung, nie
+Befund. Die Herkunft einer Antwort trägt darum ein **Signet** aus den
+Anfangsbuchstaben statt einer eigenen Farbe — Farbe wäre hier schon vergeben.
+
+**Zwei Schriften, zwei Ränge.** Der Funke — die Setzung des Menschen — steht in
+einer Serife (Newsreader). Alles, was die Maschine beisteuert, steht in der
+Grotesk (Inter). Beide Schriften liegen **im Repository** (`frontend/src/schrift/`,
+SIL Open Font License) und werden mitgebaut; zur Laufzeit wird nichts von einem
+fremden Server geladen.
+
+**Drei Themen-Zustände**, alle ausgearbeitet: der Vorgabe des Geräts folgen,
+ausdrücklich hell, ausdrücklich dunkel. Der Schalter in der Kopfzeile wechselt
+zwischen ihnen; eine ausdrückliche Wahl hat Vorrang vor dem Gerät und überdauert
+das Neuladen. Dunkel ist kein umgedrehtes Hell: im dunklen Saal trägt
+tatsächlich Leuchten, bei Tag tragen Papier, Erhebung und Kontrast.
+
+**Zustand steht nie allein in der Farbe.** Jeder der acht Auftragszustände hat
+eine eigene Beschriftung, ein eigenes Schild mit Punkt und eine eigene
+Lichtkante. Alle Beschriftungen sind gemessen und liegen über WCAG AA (4,5:1),
+in beiden Themen — siehe `e2e/zugang-check.mjs`.
+
+**Bewegung erklärt Zustandswechsel und drängt sich nicht auf.** Der Warte-Puls
+zeigt „es läuft", ohne einen Fortschritt zu behaupten, den niemand kennt.
+Überblendet wird nur beim Wechsel der Sitzung — während Antworten einlaufen
+ausdrücklich nicht, weil das die Leseposition dessen verschöbe, der gerade
+liest. Unter `prefers-reduced-motion: reduce` steht dieselbe Information ohne
+jede Bewegung da.
+
+Der **HTML-Bericht** hat eine eigene Gestaltung: ein gesetztes Dokument mit
+Satzspiegel, Serife im Fließtext und Haarlinien statt Kästen. Er bindet die
+Schriften **nicht** ein — das würde die Datei um ein Vielfaches aufblähen — und
+nutzt einen Systemschrift-Stapel. Er lädt nach wie vor nichts nach.
 
 ## Bekannte Einschränkungen
 

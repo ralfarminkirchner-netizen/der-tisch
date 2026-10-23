@@ -2,6 +2,8 @@ import './styles.css';
 
 import { ApiError, api, connectEvents, newRequestId } from './api';
 import { renderGraph, type GraphSelection } from './graph';
+import { LINSEN, renderThemen, renderVerlauf } from './linsen';
+import type { LinsenArt } from './linsen';
 import { createCard, el, legend, renderQuestion, renderTable, updateCard } from './render';
 import { renderSettings } from './settings';
 import type {
@@ -42,6 +44,8 @@ interface AppState {
   sessions: Session[];
   /** Kennung des laufenden Absendevorgangs — bleibt bei Wiederholung gleich. */
   pendingRequestId: string | null;
+  /** Welche Linse gerade auf die Daten gelegt ist. */
+  linse: LinsenArt;
 }
 
 const state: AppState = {
@@ -57,10 +61,13 @@ const state: AppState = {
   curate: false,
   sessions: [],
   pendingRequestId: null,
+  linse: 'stimmen',
 };
 
 const ENTWURF_KEY = 'xpertentisch.entwuerfe';
 const EINGABE_KEY = 'xpertentisch.eingabe';
+const THEMA_KEY = 'xpertentisch.thema';
+const LINSEN_KEY = 'xpertentisch.linse';
 
 function ladeEntwuerfe(): Entwurf[] {
   try {
@@ -88,6 +95,10 @@ const root = document.getElementById('app')!;
 // --------------------------------------------------------------------- Start
 
 async function boot(): Promise<void> {
+  // Vor allem anderen: eine ausdrücklich gewählte Themenwahl greift sofort,
+  // sonst blitzte beim Laden kurz das Thema des Geräts auf.
+  themaAnwenden();
+  state.linse = gemerkteLinse();
   try {
     const [config, health] = await Promise.all([api.config(), api.health()]);
     state.config = config;
@@ -197,6 +208,7 @@ function renderShell(): void {
     blocks.set(entry.spark.id, block);
     stream.append(block);
   }
+  if (bundle.sparks.length === 0) stream.append(gedeckterTisch());
 
   root.append(closingSection());
   root.append(
@@ -325,7 +337,7 @@ function header(): HTMLElement {
       el('p', { class: 'sub' }, ['Mobiler TiSCH']),
       sitzungswahl(),
     ]),
-    el('div', { class: 'row' }, [status, zahnrad]),
+    el('div', { class: 'row' }, [status, themenschalter(), zahnrad]),
   ]);
 }
 
@@ -378,12 +390,93 @@ async function wechsleSitzung(sessionId: string): Promise<void> {
     state.bezug = null;
     state.pingpong = [];
     rememberSession(sessionId);
-    renderShell();
+    mitUebergang(renderShell);
     openStream();
     void ladePingPong();
   } catch (fehler) {
     window.alert(`Sitzung konnte nicht geöffnet werden: ${(fehler as Error).message}`);
   }
+}
+
+/** Blendet einen echten Zustandswechsel über, wo der Browser das kann.
+ *
+ * Bewusst nur beim Wechsel der Sitzung: dort wechselt der ganze Inhalt, und
+ * die Überblendung macht verständlich, dass man woanders ist. Während
+ * Antworten einlaufen, wird NICHT überblendet — das verschöbe die Leseposition
+ * dessen, der gerade liest. Kann der Browser es nicht, passiert dasselbe ohne
+ * Überblendung; es geht dabei nichts verloren.
+ */
+function mitUebergang(zeichnen: () => void): void {
+  const starten = (document as Document & {
+    startViewTransition?: (cb: () => void) => unknown;
+  }).startViewTransition;
+  const ruhig = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (typeof starten !== 'function' || ruhig) {
+    zeichnen();
+    return;
+  }
+  starten.call(document, zeichnen);
+}
+
+// ------------------------------------------------------------------- Thema
+
+/** Systemvorgabe, ausdrücklich hell oder ausdrücklich dunkel.
+ *
+ * Das Gestaltungssystem kennt diese drei Zustände; ohne Schalter wären die
+ * beiden ausdrücklichen Zustände nicht erreichbar. Eine ausdrückliche Wahl
+ * hat Vorrang vor der Einstellung des Geräts und überdauert das Neuladen.
+ */
+type Thema = 'system' | 'light' | 'dark';
+
+const THEMA_TEXT: Record<Thema, { zeichen: string; name: string }> = {
+  system: { zeichen: '◐', name: 'Thema: dem Gerät folgen' },
+  light: { zeichen: '☀', name: 'Thema: hell' },
+  dark: { zeichen: '☾', name: 'Thema: dunkel' },
+};
+
+function gemerktesThema(): Thema {
+  try {
+    const wert = localStorage.getItem(THEMA_KEY);
+    if (wert === 'light' || wert === 'dark') return wert;
+  } catch {
+    /* Ohne Speicher folgt das Thema dem Gerät. */
+  }
+  return 'system';
+}
+
+export function themaAnwenden(thema: Thema = gemerktesThema()): void {
+  if (thema === 'system') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', thema);
+}
+
+function themenschalter(): HTMLElement {
+  const folge: Thema[] = ['system', 'light', 'dark'];
+  let aktuell = gemerktesThema();
+  const knopf = el('button', {
+    type: 'button', class: 'iconbutton', id: 'thema-schalter',
+  }, []);
+
+  const zeichnen = () => {
+    knopf.textContent = THEMA_TEXT[aktuell].zeichen;
+    knopf.setAttribute('aria-label', THEMA_TEXT[aktuell].name);
+    knopf.setAttribute('title', `${THEMA_TEXT[aktuell].name} — zum Wechseln klicken`);
+    knopf.dataset.thema = aktuell;
+  };
+
+  knopf.addEventListener('click', () => {
+    aktuell = folge[(folge.indexOf(aktuell) + 1) % folge.length];
+    try {
+      if (aktuell === 'system') localStorage.removeItem(THEMA_KEY);
+      else localStorage.setItem(THEMA_KEY, aktuell);
+    } catch {
+      /* Dann gilt die Wahl nur für diesen Besuch. */
+    }
+    themaAnwenden(aktuell);
+    zeichnen();
+  });
+
+  zeichnen();
+  return knopf;
 }
 
 function updateStatusline(node?: HTMLElement | null): void {
@@ -572,6 +665,7 @@ const BEZUG_KNOPF: Record<SparkKind, string> = {
   weitergabe: 'Zur Prüfung geben',
   gegenposition: 'Gegenposition anfragen',
   vertiefung: 'Strang vertiefen',
+  szenario: 'Folgen durchspielen',
   pingpong: 'Wechselgespräch',
   kuratierung: 'Kuratierung',
 };
@@ -582,6 +676,7 @@ const FUNKE_ART: Record<SparkKind, string> = {
   weitergabe: 'Weitergabe',
   gegenposition: 'Gegenposition',
   vertiefung: 'Vertiefung',
+  szenario: 'Szenario',
   pingpong: 'Wechselgespräch',
   kuratierung: 'Kuratierung (maschinell)',
 };
@@ -622,33 +717,24 @@ function setzeBezug(bezug: Bezug, vorschlag = ''): void {
 
 /** Die Handlungen an einer Modellkarte: antworten, weitergeben, vertiefen. */
 function kartenAktionen(job: Job, entry: SparkEntry): HTMLElement {
+  const behaelter = el('div', { class: 'aktionen' });
   const zeile = el('div', { class: 'row card-actions' });
   const andere = (state.config?.models ?? []).filter((m) => m.id !== job.model_id);
 
-  const knopf = (text: string, bauen: () => void) => {
+  const knopf = (text: string, bauen: () => void, wohin: HTMLElement = zeile) => {
     const b = el('button', { type: 'button' }, [text]);
     b.addEventListener('click', bauen);
-    zeile.append(b);
+    wohin.append(b);
+    return b;
   };
 
+  // Die drei Handlungen, die sich an den ganzen Tisch richten, stehen offen da.
   knopf('Antworten', () =>
     setzeBezug({
       id: job.id, label: `${job.label}, Funke ${entry.spark.seq}`, kind: 'antwort',
       hint: 'geht an alle Modelle am Tisch',
     }),
   );
-
-  for (const ziel of andere) {
-    knopf(`An ${ziel.label} geben`, () =>
-      setzeBezug(
-        {
-          id: job.id, label: `${job.label} → ${ziel.label}`, kind: 'weitergabe',
-          modelId: ziel.id, hint: `nur ${ziel.label} antwortet`,
-        },
-        'Prüfe diese Aussage kritisch.',
-      ),
-    );
-  }
 
   knopf('Gegenposition', () =>
     setzeBezug(
@@ -667,7 +753,51 @@ function kartenAktionen(job: Job, entry: SparkEntry): HTMLElement {
     }),
   );
 
-  return zeile;
+  // Folgen kommen von den Stimmen, nicht aus der Anwendung. Sie erscheinen als
+  // eigener Beitrag und tauchen im Verlauf als eigener Zweig auf.
+  knopf('Folgen durchspielen', () =>
+    setzeBezug(
+      {
+        id: job.id, label: `Folgen von ${job.label}`, kind: 'szenario',
+        hint: 'geht an alle Modelle am Tisch',
+      },
+      'Angenommen, das trifft zu: welche konkreten Folgen hätte es? Nenne die ' +
+        'wahrscheinlichen und die unangenehmen, und sag, woran man früh merken ' +
+        'würde, dass es anders kommt.',
+    ),
+  );
+  behaelter.append(zeile);
+
+  // Die Weitergabe an eine einzelne Stimme ist eine andere Art von Handlung —
+  // und mit fünf Stimmen am Tisch wären es fünf weitere gleich aussehende
+  // Knöpfe. Sie stehen darum zusammengefasst darunter, einen Griff entfernt.
+  if (andere.length > 0) {
+    const auswahl = el('details', { class: 'weitergabe' });
+    auswahl.append(
+      el('summary', {}, [
+        andere.length === 1 ? 'An eine andere Stimme geben' : 'An eine Stimme geben',
+      ]),
+    );
+    const ziele = el('div', { class: 'row' });
+    for (const ziel of andere) {
+      knopf(
+        ziel.label,
+        () =>
+          setzeBezug(
+            {
+              id: job.id, label: `${job.label} → ${ziel.label}`, kind: 'weitergabe',
+              modelId: ziel.id, hint: `nur ${ziel.label} antwortet`,
+            },
+            'Prüfe diese Aussage kritisch.',
+          ),
+        ziele,
+      );
+    }
+    auswahl.append(ziele);
+    behaelter.append(auswahl);
+  }
+
+  return behaelter;
 }
 
 /** „Worauf antwortet diese Stimme?“ — erst beim Aufklappen geladen. */
@@ -901,6 +1031,34 @@ function sparkForm(): HTMLElement {
 
 // -------------------------------------------------------------------- Funken
 
+/** Der leere Tisch: kein Formular ins Leere, sondern eine Ansage der Regeln.
+ *
+ * Es ist der erste Eindruck der Anwendung, und er soll sagen, worauf man sich
+ * einlässt — nicht bloß, dass hier noch nichts steht.
+ */
+function gedeckterTisch(): HTMLElement {
+  const anzahl = state.config?.models.length ?? 0;
+  const namen = (state.config?.models ?? []).map((m) => m.label);
+  return el('section', { class: 'flaeche leerer-tisch', id: 'leerer-tisch' }, [
+    el('p', { class: 'gedeckt-zahl' }, [
+      anzahl === 0 ? 'Niemand' : anzahl === 1 ? 'Eine Stimme' : `${anzahl} Stimmen`,
+    ]),
+    el('p', { class: 'gedeckt-satz' }, [
+      anzahl === 0
+        ? 'sitzt bisher am Tisch.'
+        : 'am Tisch. Sie antworten unabhängig voneinander auf denselben Funken.',
+    ]),
+    anzahl > 0
+      ? el('p', { class: 'hint' }, [namen.join(' · ')])
+      : el('span', {}),
+    el('p', { class: 'hint' }, [
+      'Es entsteht keine Rangfolge und keine gemeinsame Antwort. Was ' +
+        'übereinstimmt, was sich widerspricht und was nur einer sagt, wird ' +
+        'markiert — einordnen musst du selbst.',
+    ]),
+  ]);
+}
+
 function renderSparkBlock(entry: SparkEntry): HTMLElement {
   const kopf = el('h2', {}, [`Funke ${entry.spark.seq}`]);
   const art = FUNKE_ART[entry.spark.kind] ?? '';
@@ -929,16 +1087,23 @@ function ruesteKarteAus(card: HTMLElement, job: Job, entry: SparkEntry): void {
   if (!fuss) return;
   fuss.replaceChildren();
   if (job.status === 'not_requested') return;
-  if (job.status === 'queued' || job.status === 'running' || job.status === 'streaming') {
-    fuss.append(abbruchKnopf(job));
+  const laeuft =
+    job.status === 'queued' || job.status === 'running' || job.status === 'streaming';
+  if ((job.text ?? '').trim()) {
+    const aktionen = kartenAktionen(job, entry);
+    // Der Abbruch gehört in dieselbe Zeile, aber ans Ende: er ist die einzige
+    // Handlung hier, die etwas beendet.
+    if (laeuft) aktionen.querySelector('.card-actions')?.append(abbruchKnopf(job));
+    fuss.append(aktionen);
+  } else if (laeuft) {
+    fuss.append(el('div', { class: 'row card-actions' }, [abbruchKnopf(job)]));
   }
-  if ((job.text ?? '').trim()) fuss.append(kartenAktionen(job, entry));
   fuss.append(kontextAnsicht(job));
 }
 
 /** Bricht genau diesen Auftrag ab. Die anderen Modelle laufen weiter. */
 function abbruchKnopf(job: Job): HTMLElement {
-  const zeile = el('div', { class: 'row card-actions' });
+  const gruppe = el('span', { class: 'abbruch' });
   const knopf = el('button', { type: 'button', class: 'gefahr' }, ['Abbrechen']);
   const meldung = el('span', { class: 'hint' }, []);
   knopf.addEventListener('click', async () => {
@@ -953,8 +1118,8 @@ function abbruchKnopf(job: Job): HTMLElement {
       meldung.textContent = (fehler as Error).message;
     }
   });
-  zeile.append(knopf, meldung);
-  return zeile;
+  gruppe.append(knopf, meldung);
+  return gruppe;
 }
 
 /** Maschinelle Bezüge — als Vorschlag, den man bestätigen oder verwerfen kann. */
@@ -1021,23 +1186,98 @@ function renderPanels(block: HTMLElement, summary: Summary): void {
   if (!panels) return;
   panels.replaceChildren();
   panels.append(renderTable(summary));
-
-  const graphPanel = el('section', { class: 'flaeche panel' }, [el('h4', {}, ['Beziehungsnetz'])]);
-  const wrap = el('div', { class: 'graphwrap' });
-  wrap.append(renderGraph(summary, (selection) => openAnswers(block, selection)));
-  graphPanel.append(wrap, legend());
-  graphPanel.append(
-    el('p', { class: 'hint' }, [
-      'Knoten oder Kante anklicken, um die zugehörigen Antworten zu öffnen.',
-    ]),
-  );
-  panels.append(graphPanel);
+  panels.append(linsenPanel(block, summary));
 
   const spark = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
   if (spark) {
     const bezuege = beziehungsPanel(spark);
     if (bezuege) panels.append(bezuege);
   }
+}
+
+/** Welche Linse zuletzt gewählt war. Überdauert das Neuladen. */
+function gemerkteLinse(): LinsenArt {
+  try {
+    const wert = localStorage.getItem(LINSEN_KEY);
+    if (LINSEN.some((l) => l.id === wert)) return wert as LinsenArt;
+  } catch {
+    /* ohne Speicher gilt die Vorgabe */
+  }
+  return 'stimmen';
+}
+
+/**
+ * Drei Blicke auf dieselben Daten.
+ *
+ * Keine Linse rechnet etwas hinzu: die Stimmen-Linse zeigt die ausgewiesenen
+ * Fundstellen, die Themen-Linse die Begriffe, an denen sie hängen, und der
+ * Verlauf die Beiträge, die tatsächlich auseinander hervorgegangen sind.
+ */
+function linsenPanel(block: HTMLElement, summary: Summary): HTMLElement {
+  const panel = el('section', { class: 'flaeche panel linsen-panel' });
+  const kopf = el('div', { class: 'row spread' }, [el('h4', {}, ['Linsen'])]);
+  const schalter = el('div', { class: 'linsenwahl', role: 'tablist' });
+  kopf.append(schalter);
+  panel.append(kopf);
+
+  const flaeche = el('div', { class: 'graphwrap' });
+  const erklaerung = el('p', { class: 'hint linsen-text' }, []);
+  const beine = el('div', { class: 'linsen-fuss' }, [legend(), erklaerung]);
+  panel.append(flaeche, beine);
+
+  const eintrag = state.bundle?.sparks.find((e) => e.spark.id === summary.spark_id);
+
+  const zeichne = (art: LinsenArt) => {
+    flaeche.replaceChildren();
+    if (art === 'themen') {
+      flaeche.append(
+        renderThemen(summary, eintrag?.markers ?? [], (auswahl) => openAnswers(block, auswahl)),
+      );
+    } else if (art === 'verlauf') {
+      flaeche.append(
+        renderVerlauf(state.bundle!, summary.spark_id, (sparkId) => {
+          const ziel = blocks.get(sparkId);
+          ziel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          ziel?.classList.add('angesteuert');
+          window.setTimeout(() => ziel?.classList.remove('angesteuert'), 1600);
+        }),
+      );
+    } else {
+      flaeche.append(renderGraph(summary, (auswahl) => openAnswers(block, auswahl)));
+    }
+    erklaerung.textContent = LINSEN.find((l) => l.id === art)?.erklaerung ?? '';
+    // Die Legende erklärt die drei Bedeutungen; im Verlauf sagen sie nichts.
+    beine.querySelector('.legend')?.toggleAttribute('hidden', art === 'verlauf');
+    for (const knopf of schalter.querySelectorAll('button')) {
+      const gewaehlt = knopf.dataset.linse === art;
+      knopf.classList.toggle('gewaehlt', gewaehlt);
+      knopf.setAttribute('aria-selected', String(gewaehlt));
+    }
+  };
+
+  for (const linse of LINSEN) {
+    const knopf = el('button', {
+      type: 'button', role: 'tab', 'data-linse': linse.id, title: linse.erklaerung,
+    }, [linse.name]);
+    knopf.addEventListener('click', () => {
+      state.linse = linse.id;
+      try {
+        localStorage.setItem(LINSEN_KEY, linse.id);
+      } catch {
+        /* dann gilt die Wahl nur für diesen Besuch */
+      }
+      // Alle Funkenblöcke folgen derselben Linse: ein Wechsel ist eine
+      // Entscheidung über die Sichtweise, nicht über einen einzelnen Block.
+      for (const [sparkId, b] of blocks) {
+        const s2 = state.bundle?.sparks.find((e) => e.spark.id === sparkId)?.summary;
+        if (s2) renderPanels(b, s2);
+      }
+    });
+    schalter.append(knopf);
+  }
+
+  zeichne(state.linse);
+  return panel;
 }
 
 /** Öffnet genau die Antworten, die zum angeklickten Graphelement gehören. */
