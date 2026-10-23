@@ -91,7 +91,9 @@ describe('Verstecken von Bausteinen', () => {
   });
 });
 
-describe('Werkbank-Gestaltung', () => {
+describe('Satzspiegel-Gestaltung', () => {
+  // Begründung: Die Werkbank (farbige Kante oben als alleiniges Zustandssignal)
+  // ist ersetzt. Substanz bleibt: Bedeutungfarben, drei Themen, eigener Grund.
   it('bringt Farbe nur mit Bedeutung ins Spiel', () => {
     for (const marke of ['--einig', '--gegen', '--einzeln', '--marke']) {
       expect(css).toContain(`${marke}:`);
@@ -106,11 +108,28 @@ describe('Werkbank-Gestaltung', () => {
   });
 
   it('malt den Untergrund selbst, statt ihn vom Wirt zu erben', () => {
-    expect(css).toMatch(/body \{[^}]*background: var\(--flaeche\)/);
+    // Der Grund ist eine Rampe plus --flaeche, nicht mehr nur die eine Variable.
+    expect(css).toMatch(/body \{[^}]*var\(--flaeche\)/);
   });
 
-  it('trägt den Zustand einer Karte an der oberen Kante', () => {
+  it('trägt den Zustand einer Karte als Klasse, Schild und Kante — nicht allein über Farbe', () => {
     expect(css).toMatch(/\.card\.zustand-error \{ border-top-color: var\(--gegen\)/);
+    expect(css).toMatch(/\.tag\.error::before/);
+    expect(css).toMatch(/\.card\.zustand-not_requested \{ border-top-color/);
+    expect(css).toMatch(/\.card\.zustand-queued \{ border-top-color/);
+    expect(css).toMatch(/\.card\.zustand-running \{ border-top-color/);
+    expect(css).toMatch(/\.card\.zustand-done \{ border-top-color/);
+    expect(css).toMatch(/\.card\.zustand-interrupted \{ border-top-color/);
+    expect(css).toMatch(/\.card\.zustand-not_requested/);
+    expect(css).toMatch(/\.card\.zustand-queued/);
+    expect(css).toMatch(/\.card\.zustand-running/);
+    expect(css).toMatch(/\.card\.zustand-done/);
+    expect(css).toMatch(/\.card\.zustand-interrupted/);
+  });
+
+  it('setzt Farben in OKLCH und leitet Töne mit color-mix ab', () => {
+    expect(css).toMatch(/--flaeche:\s*oklch\(/);
+    expect(css).toMatch(/color-mix\(in oklch/);
   });
 });
 

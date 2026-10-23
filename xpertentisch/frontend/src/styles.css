@@ -1,8 +1,9 @@
-/* XPERTENTiSCH — Werkbank.
-   Eine ruhige, warme Fläche; darauf körperhafte Karten mit einer farbigen
-   Kante oben, die den Zustand trägt. Farbe wird sparsam und immer bedeutungs-
-   tragend eingesetzt: Grün Übereinstimmung, Orange Widerspruch, Violett
-   Einzelaussage. Die Marke selbst ist tiefblau und mischt sich da nicht ein.
+/* XPERTENTiSCH — Satzspiegel.
+
+   Mehrere Stimmen setzen denselben Gedanken, jede in ihrer eigenen Spalte.
+   Nichts gewinnt; der Tisch bleibt die gemeinsame Fläche. Die Marke ist Tinte,
+   nicht Farbe: Grün, Orange und Violett bleiben den Einschätzungen.
+   Der Moment, in dem geschrieben wird, ist der Satzvorgang — kein Platzhalter.
 
    Regeln gegen horizontale Überbreite:
    - jedes Rasterkind bekommt min-width: 0
@@ -10,88 +11,117 @@
    - breite Elemente (Tabelle, Diagramm) bekommen einen eigenen Scrollbereich
 */
 
+@font-face {
+  font-family: 'Inter';
+  src: url('./fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  font-optical-sizing: auto;
+}
+
+@font-face {
+  font-family: 'Source Serif 4';
+  src: url('./fonts/SourceSerif4Variable-Roman.otf.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+  font-optical-sizing: auto;
+}
+
 :root {
   color-scheme: light;
 
-  --flaeche: #e9e7e2;
-  --flaeche-tief: #dedbd4;
-  --karte: #ffffff;
-  --karte-matt: #f6f4f0;
-  --tinte: #1c1b19;
-  --tinte-matt: #6b6862;
-  --linie: #d5d1c8;
-  --linie-kraeftig: #bdb8ac;
+  --flaeche: oklch(0.972 0.01 255);
+  --flaeche-tief: oklch(0.94 0.012 255);
+  --karte: oklch(0.995 0.004 255);
+  --karte-matt: oklch(0.965 0.01 255);
+  --tinte: oklch(0.22 0.028 260);
+  --tinte-matt: oklch(0.4 0.024 260);
+  --linie: oklch(0.9 0.014 255);
+  --linie-kraeftig: oklch(0.8 0.02 255);
 
-  --marke: #1e3a5f;
-  --marke-hell: #e7edf5;
-  --einig: #15803d;
-  --einig-hell: #e4f2e8;
-  --gegen: #c2410c;
-  --gegen-hell: #fbeadf;
-  --einzeln: #6d28d9;
-  --einzeln-hell: #eee9fb;
-  --achtung: #92600a;
-  --achtung-hell: #f8eed9;
+  --marke: oklch(0.42 0.08 255);
+  --marke-hell: color-mix(in oklch, var(--marke) 12%, var(--karte));
+  --marke-tinte: oklch(0.99 0.004 255);
+  --einig: oklch(0.47 0.13 150);
+  --einig-hell: color-mix(in oklch, var(--einig) 14%, var(--karte));
+  --gegen: oklch(0.55 0.15 45);
+  --gegen-hell: color-mix(in oklch, var(--gegen) 14%, var(--karte));
+  --einzeln: oklch(0.48 0.15 300);
+  --einzeln-hell: color-mix(in oklch, var(--einzeln) 14%, var(--karte));
+  --achtung: oklch(0.52 0.11 80);
+  --achtung-hell: color-mix(in oklch, var(--achtung) 16%, var(--karte));
 
-  --radius: 10px;
-  --radius-klein: 6px;
-  --kante: 4px;
-  --schatten: 0 1px 2px rgba(28, 27, 25, 0.06), 0 8px 20px rgba(28, 27, 25, 0.07);
-  --schatten-tief: 0 2px 4px rgba(28, 27, 25, 0.08), 0 16px 34px rgba(28, 27, 25, 0.12);
+  --radius: 12px;
+  --radius-klein: 8px;
+  --kante: 1px;
+  --schatten: none;
+  --schatten-tief: none;
   --pad: clamp(16px, 2.4vw, 24px);
 
-  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+  --schrift: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, 'Noto Sans', sans-serif;
+  --schrift-anzeige: 'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+
+  --bewegung: 180ms;
+  --bewegung-lang: 520ms;
+  --ease: linear(0, 0.006 1.2%, 0.028 2.4%, 0.108 5.6%, 0.22 9.2%, 0.492 18%, 0.721 27%, 0.87 36%, 0.953 45%, 0.99 58%, 1);
+  --ease-spring: linear(0, 0.09 7%, 0.34 18%, 0.74 36%, 0.91 48%, 0.985 62%, 1 78%, 1);
+
+  --z-hinweis: 20;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --flaeche: #191817;
-    --flaeche-tief: #121111;
-    --karte: #232221;
-    --karte-matt: #2b2a28;
-    --tinte: #edeae4;
-    --tinte-matt: #a39e95;
-    --linie: #3a3836;
-    --linie-kraeftig: #4e4b47;
-    --marke: #7fa9d9;
-    --marke-hell: #24313f;
-    --einig: #5fbf82;
-    --einig-hell: #1e2f25;
-    --gegen: #f08a5d;
-    --gegen-hell: #38251c;
-    --einzeln: #b49bf0;
-    --einzeln-hell: #2b2440;
-    --achtung: #e0b45f;
-    --achtung-hell: #362c19;
-    --schatten: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.32);
-    --schatten-tief: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 34px rgba(0, 0, 0, 0.44);
+    --flaeche: oklch(0.168 0.016 260);
+    --flaeche-tief: oklch(0.13 0.014 260);
+    --karte: oklch(0.226 0.018 260);
+    --karte-matt: oklch(0.27 0.02 260);
+    --tinte: oklch(0.93 0.012 255);
+    --tinte-matt: oklch(0.78 0.02 255);
+    --linie: oklch(0.32 0.018 260);
+    --linie-kraeftig: oklch(0.42 0.022 260);
+    --marke: oklch(0.78 0.07 250);
+    --marke-hell: color-mix(in oklch, var(--marke) 16%, var(--karte));
+    --marke-tinte: oklch(0.16 0.02 260);
+    --einig: oklch(0.78 0.11 150);
+    --einig-hell: color-mix(in oklch, var(--einig) 16%, var(--karte));
+    --gegen: oklch(0.78 0.12 45);
+    --gegen-hell: color-mix(in oklch, var(--gegen) 16%, var(--karte));
+    --einzeln: oklch(0.78 0.12 300);
+    --einzeln-hell: color-mix(in oklch, var(--einzeln) 16%, var(--karte));
+    --achtung: oklch(0.82 0.1 80);
+    --achtung-hell: color-mix(in oklch, var(--achtung) 16%, var(--karte));
+    --schatten: none;
+    --schatten-tief: none;
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --flaeche: #191817;
-  --flaeche-tief: #121111;
-  --karte: #232221;
-  --karte-matt: #2b2a28;
-  --tinte: #edeae4;
-  --tinte-matt: #a39e95;
-  --linie: #3a3836;
-  --linie-kraeftig: #4e4b47;
-  --marke: #7fa9d9;
-  --marke-hell: #24313f;
-  --einig: #5fbf82;
-  --einig-hell: #1e2f25;
-  --gegen: #f08a5d;
-  --gegen-hell: #38251c;
-  --einzeln: #b49bf0;
-  --einzeln-hell: #2b2440;
-  --achtung: #e0b45f;
-  --achtung-hell: #362c19;
-  --schatten: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.32);
-  --schatten-tief: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 34px rgba(0, 0, 0, 0.44);
+  --flaeche: oklch(0.168 0.016 260);
+  --flaeche-tief: oklch(0.13 0.014 260);
+  --karte: oklch(0.226 0.018 260);
+  --karte-matt: oklch(0.27 0.02 260);
+  --tinte: oklch(0.93 0.012 255);
+  --tinte-matt: oklch(0.78 0.02 255);
+  --linie: oklch(0.32 0.018 260);
+  --linie-kraeftig: oklch(0.42 0.022 260);
+  --marke: oklch(0.78 0.07 250);
+  --marke-hell: color-mix(in oklch, var(--marke) 16%, var(--karte));
+  --marke-tinte: oklch(0.16 0.02 260);
+  --einig: oklch(0.78 0.11 150);
+  --einig-hell: color-mix(in oklch, var(--einig) 16%, var(--karte));
+  --gegen: oklch(0.78 0.12 45);
+  --gegen-hell: color-mix(in oklch, var(--gegen) 16%, var(--karte));
+  --einzeln: oklch(0.78 0.12 300);
+  --einzeln-hell: color-mix(in oklch, var(--einzeln) 16%, var(--karte));
+  --achtung: oklch(0.82 0.1 80);
+  --achtung-hell: color-mix(in oklch, var(--achtung) 16%, var(--karte));
+  --schatten: none;
+  --schatten-tief: none;
 }
 
 * {
@@ -111,19 +141,27 @@ body {
   max-width: 100%;
 }
 
+html {
+  hanging-punctuation: first last;
+}
+
 body {
   min-height: 100svh;
-  background: var(--flaeche);
+  background:
+    radial-gradient(90rem 28rem at 50% -8%, color-mix(in oklch, var(--marke) 9%, transparent), transparent 70%),
+    var(--flaeche);
   color: var(--tinte);
   font: 400 16px/1.6 var(--schrift);
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #app {
   width: 100%;
-  max-width: 1200px;
+  max-width: 72rem;
   margin: 0 auto;
-  padding-block: clamp(20px, 3vw, 36px) 96px;
+  padding-block: clamp(20px, 3vw, 40px) 96px;
   padding-inline: clamp(16px, 3vw, 32px);
 }
 
@@ -131,6 +169,8 @@ body {
   color: var(--tinte-matt);
   text-align: center;
   padding: 80px 0;
+  font-family: var(--schrift-anzeige);
+  font-size: 1.15rem;
 }
 
 /* ------------------------------------------------------------------- Flächen */
@@ -142,6 +182,7 @@ body {
   box-shadow: var(--schatten);
   padding: var(--pad);
   min-width: 0;
+  max-width: 100%;
 }
 
 /* -------------------------------------------------------------------- Kopf */
@@ -152,23 +193,28 @@ header.top {
   gap: 14px 20px;
   align-items: flex-end;
   justify-content: space-between;
-  padding-bottom: 16px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid var(--linie-kraeftig);
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--linie);
+  view-transition-name: kopf;
+  max-width: 100%;
 }
 
 header.top h1 {
-  font-size: clamp(1.5rem, 4.4vw, 2rem);
-  font-weight: 750;
-  letter-spacing: -0.02em;
+  font-size: 1.75rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
   margin: 0;
   min-width: 0;
   overflow-wrap: anywhere;
   color: var(--tinte);
+  text-wrap: balance;
+  font-optical-sizing: auto;
 }
 
 header.top h1 span {
   color: var(--marke);
+  font-weight: 550;
 }
 
 .sub {
@@ -199,6 +245,36 @@ header.top h1 span {
 .dot.warn { background: var(--achtung); }
 .dot.err { background: var(--gegen); }
 
+.thema-wahl {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-klein);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.thema-wahl button {
+  border: 0;
+  border-radius: 0;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 550;
+  background: transparent;
+  color: var(--tinte-matt);
+}
+
+.thema-wahl button[aria-pressed='true'] {
+  background: var(--marke-hell);
+  color: var(--tinte);
+}
+
+.thema-wahl button:hover:not(:disabled) {
+  background: var(--karte-matt);
+  border-color: transparent;
+}
+
 /* ------------------------------------------------------------- Bedienelemente */
 
 button,
@@ -216,8 +292,14 @@ button,
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  transition: background-color 0.12s ease, border-color 0.12s ease;
+  max-width: 100%;
+  transition:
+    background-color var(--bewegung) var(--ease),
+    border-color var(--bewegung) var(--ease),
+    color var(--bewegung) var(--ease),
+    transform var(--bewegung) var(--ease);
 }
 
 button:hover:not(:disabled),
@@ -226,10 +308,14 @@ button:hover:not(:disabled),
   border-color: var(--tinte-matt);
 }
 
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
 button.primary {
   background: var(--marke);
   border-color: var(--marke);
-  color: var(--karte);
+  color: var(--marke-tinte);
 }
 
 button.primary:hover:not(:disabled) {
@@ -251,7 +337,8 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
-select:focus-visible {
+select:focus-visible,
+summary:focus-visible {
   outline: 2px solid var(--marke);
   outline-offset: 2px;
 }
@@ -269,6 +356,19 @@ select {
   font: inherit;
   font-size: 0.92rem;
   min-width: 0;
+  transition: border-color var(--bewegung) var(--ease);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--tinte-matt);
+  opacity: 1;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: color-mix(in oklch, var(--marke) 35%, var(--linie-kraeftig));
 }
 
 input[type='checkbox'] {
@@ -277,10 +377,10 @@ input[type='checkbox'] {
 }
 
 label {
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--tinte-matt);
 }
 
@@ -290,6 +390,7 @@ label {
   gap: 10px;
   align-items: center;
   min-width: 0;
+  max-width: 100%;
 }
 
 .row.spread {
@@ -320,15 +421,17 @@ label {
   display: grid;
   gap: 14px;
   margin-bottom: 28px;
-  border-top: var(--kante) solid var(--marke);
-  padding-top: calc(var(--pad) - 2px);
+  container-type: inline-size;
+  container-name: spark;
 }
 
 .spark textarea {
   min-height: 108px;
   resize: vertical;
   line-height: 1.55;
-  font-size: 1rem;
+  font-size: 1.02rem;
+  font-family: var(--schrift-anzeige);
+  font-weight: 450;
 }
 
 .modelpicker {
@@ -336,6 +439,7 @@ label {
   flex-wrap: wrap;
   gap: 8px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .modelpicker label {
@@ -349,38 +453,63 @@ label {
   color: var(--tinte);
   padding: 7px 12px;
   border: 1px solid var(--linie);
-  border-radius: var(--radius-klein);
+  border-radius: 999px;
   background: var(--karte-matt);
   cursor: pointer;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
 
+.modelpicker label:has(input:checked) {
+  border-color: color-mix(in oklch, var(--marke) 45%, var(--linie));
+  background: var(--marke-hell);
+}
+
+@container spark (max-width: 36rem) {
+  .spark .row.spread {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .spark button.primary {
+    width: 100%;
+  }
+}
+
 /* ------------------------------------------------------------------- Funken */
 
 .spark-block {
-  margin: 32px 0;
+  margin: 36px 0;
+  container-type: inline-size;
+  container-name: funke;
 }
 
 .spark-block > h2 {
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--tinte-matt);
-  margin: 0 0 10px;
+  margin: 0 0 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
 .question {
-  margin: 0 0 18px;
-  padding: 0 0 0 16px;
-  border-left: var(--kante) solid var(--linie-kraeftig);
-  font-size: 1.12rem;
-  font-weight: 550;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
+  margin: 0 0 20px;
+  padding: 0;
+  font-family: var(--schrift-anzeige);
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-weight: 520;
+  font-optical-sizing: auto;
+  line-height: 1.4;
+  letter-spacing: -0.018em;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  text-wrap: pretty;
+  max-width: 46rem;
 }
 
 /* -------------------------------------------------------------- Modellkarten */
@@ -389,6 +518,8 @@ label {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  container-type: inline-size;
+  container-name: karten;
 }
 
 .card {
@@ -397,37 +528,86 @@ label {
   gap: 12px;
   min-width: 0;
   scroll-margin-top: 16px;
-  border-top: var(--kante) solid var(--linie-kraeftig);
-  padding-top: calc(var(--pad) - 2px);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  padding: var(--pad);
+  border-top-width: 3px;
+  transition:
+    border-color var(--bewegung) var(--ease),
+    background-color var(--bewegung) var(--ease);
 }
 
-.card.zustand-done { border-top-color: var(--einig); }
-.card.zustand-error { border-top-color: var(--gegen); }
-.card.zustand-interrupted { border-top-color: var(--achtung); }
-.card.zustand-running,
-.card.zustand-queued { border-top-color: var(--marke); }
+.card.zustand-not_requested {
+  border-style: dashed;
+  background: color-mix(in oklch, var(--karte-matt) 70%, var(--karte));
+}
+
+.card.zustand-queued {
+  background: color-mix(in oklch, var(--marke) 4%, var(--karte));
+}
+
+.card.zustand-running {
+  background: color-mix(in oklch, var(--marke) 6%, var(--karte));
+}
+
+.card.zustand-streaming {
+  border-color: color-mix(in oklch, var(--marke) 55%, var(--linie));
+  background: color-mix(in oklch, var(--marke) 5%, var(--karte));
+}
+
+.card.zustand-done {
+  border-color: var(--linie);
+}
+
+.card.zustand-error {
+  border-color: color-mix(in oklch, var(--gegen) 50%, var(--linie));
+  background: color-mix(in oklch, var(--gegen) 6%, var(--karte));
+}
+
+.card.zustand-interrupted {
+  border-style: dashed;
+  border-color: color-mix(in oklch, var(--achtung) 50%, var(--linie));
+  background: var(--achtung-hell);
+}
+
+.card.zustand-cancelled {
+  background: var(--flaeche-tief);
+  border-color: var(--linie-kraeftig);
+}
 
 .card.highlight {
-  box-shadow: var(--schatten-tief);
   border-color: var(--marke);
+  outline: 2px solid color-mix(in oklch, var(--marke) 55%, transparent);
+  outline-offset: 2px;
 }
 
 .card > header {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  align-items: baseline;
+  gap: 8px 12px;
+  align-items: flex-start;
   justify-content: space-between;
   min-width: 0;
 }
 
+.card-titel {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 10rem;
+}
+
 .card h3 {
   margin: 0;
-  font-size: 1.02rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
   min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.card-herkunft {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--tinte-matt);
   overflow-wrap: anywhere;
 }
 
@@ -436,14 +616,16 @@ label {
   flex-wrap: wrap;
   gap: 6px;
   min-width: 0;
+  justify-content: flex-end;
+  flex: 1 1 8rem;
 }
 
 .tag {
   font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
   padding: 3px 8px;
-  border-radius: var(--radius-klein);
+  border-radius: 999px;
   background: var(--karte-matt);
   border: 1px solid var(--linie);
   color: var(--tinte-matt);
@@ -451,12 +633,70 @@ label {
   font-variant-numeric: tabular-nums;
 }
 
-.tag.done { color: var(--einig); background: var(--einig-hell); border-color: transparent; }
-.tag.error { color: var(--gegen); background: var(--gegen-hell); border-color: transparent; }
+.tag.meta {
+  font-weight: 500;
+}
+
+.tag.not_requested { color: var(--tinte-matt); }
+.tag.not_requested::before { content: '○ '; }
+
+.tag.queued {
+  color: var(--marke);
+  background: var(--marke-hell);
+  border-color: transparent;
+  animation: atem 1.8s var(--ease) infinite;
+}
+.tag.queued::before { content: '… '; }
+
+.tag.running {
+  color: var(--marke);
+  background: var(--marke-hell);
+  border-color: transparent;
+  animation: atem 0.9s var(--ease) infinite;
+}
+.tag.running::before { content: '◐ '; }
+
+.tag.streaming {
+  color: var(--marke);
+  background: var(--marke-hell);
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--marke) 40%, transparent);
+}
+.tag.streaming::before { content: '▎'; margin-right: 0.25em; }
+
+.tag.done {
+  color: var(--einig);
+  background: var(--einig-hell);
+  border-color: transparent;
+}
+
+.tag.error {
+  color: var(--gegen);
+  background: var(--gegen-hell);
+  border-color: transparent;
+}
+.tag.error::before { content: '! '; }
+
 .tag.interrupted,
-.tag.partial { color: var(--achtung); background: var(--achtung-hell); border-color: transparent; }
-.tag.running,
-.tag.queued { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
+.tag.partial {
+  color: var(--achtung);
+  background: var(--achtung-hell);
+  border-color: transparent;
+}
+.tag.interrupted::before { content: '❙❙ '; font-size: 0.72em; }
+
+.tag.cancelled {
+  color: var(--tinte-matt);
+  background: var(--flaeche-tief);
+  border-color: transparent;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.tag.cancelled::before { content: '× '; text-decoration: none; display: inline-block; }
+
+@keyframes atem {
+  50% { opacity: 0.55; }
+}
 
 .answer {
   white-space: pre-wrap;
@@ -464,9 +704,10 @@ label {
   word-break: normal;
   margin: 0;
   font-size: 0.95rem;
-  line-height: 1.62;
+  line-height: 1.65;
   max-height: 460px;
   overflow-y: auto;
+  max-width: 72ch;
 }
 
 /* Marker liegen als Fläche über dem Text — der Text selbst bleibt unverändert. */
@@ -496,30 +737,55 @@ label {
   margin: 0;
   padding: 10px 12px;
   border-radius: var(--radius-klein);
-  border-left: 3px solid var(--gegen);
+  border: 1px solid color-mix(in oklch, var(--gegen) 40%, var(--linie));
   background: var(--gegen-hell);
   color: var(--tinte);
   font-size: 0.86rem;
   overflow-wrap: anywhere;
 }
 
-.skeleton {
-  height: 10px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--karte-matt), var(--flaeche-tief), var(--karte-matt));
-  background-size: 220% 100%;
-  animation: schimmer 1.6s linear infinite;
+/* Satzvorgang: der eindrucksvollste Zustand — Zeilen, die gesetzt werden. */
+.skeleton,
+.satzvorgang {
+  display: grid;
+  gap: 10px;
 }
-.skeleton + .skeleton { margin-top: 9px; width: 84%; }
-.skeleton + .skeleton + .skeleton { width: 62%; }
+
+.skeleton,
+.satzvorgang span {
+  height: 11px;
+  border-radius: 2px;
+  background: color-mix(in oklch, var(--tinte) 10%, var(--karte-matt));
+  transform-origin: left center;
+  animation: setzen 1.1s var(--ease) infinite alternate;
+}
+
+.skeleton + .skeleton { margin-top: 0; width: 84%; animation-delay: 90ms; }
+.skeleton + .skeleton + .skeleton { width: 62%; animation-delay: 180ms; }
+
+.satzvorgang span:nth-child(1) { width: 92%; }
+.satzvorgang span:nth-child(2) { width: 74%; animation-delay: 110ms; }
+.satzvorgang span:nth-child(3) { width: 58%; animation-delay: 220ms; }
+
+.card.zustand-queued .satzvorgang span,
+.card.zustand-queued .skeleton {
+  animation-duration: 1.8s;
+  opacity: 0.6;
+}
+
+.card.zustand-running .satzvorgang span,
+.card.zustand-running .skeleton {
+  animation-duration: 0.85s;
+}
+
+@keyframes setzen {
+  from { transform: scaleX(0.22); opacity: 0.35; }
+  to { transform: scaleX(1); opacity: 1; }
+}
 
 @keyframes schimmer {
   from { background-position: 180% 0; }
   to { background-position: -40% 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
 /* ------------------------------------------------------ Tabelle und Diagramm */
@@ -538,18 +804,23 @@ label {
   }
 }
 
+@container funke (min-width: 48rem) {
+  .panel-grid {
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  }
+}
+
 .panel {
-  border-top: var(--kante) solid var(--linie-kraeftig);
-  padding-top: calc(var(--pad) - 2px);
+  padding: var(--pad);
 }
 
 .panel h4 {
   margin: 0 0 12px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tinte-matt);
+  font-size: 0.92rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--tinte);
 }
 
 .tablewrap {
@@ -584,10 +855,10 @@ td:nth-child(2) {
 
 th {
   color: var(--tinte-matt);
-  font-weight: 700;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-weight: 650;
+  font-size: 0.72rem;
+  text-transform: none;
+  letter-spacing: 0;
   border-bottom-color: var(--linie-kraeftig);
 }
 
@@ -612,10 +883,7 @@ svg.graph {
   height: auto;
   display: block;
   touch-action: manipulation;
-}
-
-svg.graph .node {
-  cursor: pointer;
+  font-family: var(--schrift);
 }
 
 /* Der Standard-Fokusrahmen umschließt bei SVG-Gruppen den ganzen Kasten und
@@ -626,17 +894,31 @@ svg.graph .edge:focus {
   outline: none;
 }
 
-svg.graph .node circle {
-  fill: var(--karte-matt);
+svg.graph .node circle.knoten {
+  fill: var(--karte);
   stroke: var(--linie-kraeftig);
   stroke-width: 1.5;
-  transition: stroke 0.15s ease;
+  transition: stroke var(--bewegung) var(--ease), fill var(--bewegung) var(--ease);
 }
 
-svg.graph .node:hover circle,
-svg.graph .node:focus-visible circle {
+svg.graph .node:hover circle.knoten,
+svg.graph .node:focus-visible circle.knoten {
   stroke: var(--marke);
   stroke-width: 2.5;
+  fill: var(--marke-hell);
+}
+
+svg.graph .node:focus-visible circle.fokusring {
+  stroke: var(--marke);
+  stroke-width: 2;
+  fill: none;
+  opacity: 1;
+}
+
+svg.graph .node circle.fokusring {
+  fill: none;
+  stroke: transparent;
+  opacity: 0;
 }
 
 svg.graph .node text {
@@ -652,11 +934,22 @@ svg.graph .edge {
   stroke-linecap: round;
 }
 
+svg.graph .edge.agree path,
 svg.graph .edge.agree line { stroke: var(--einig); }
+svg.graph .edge.contra path,
 svg.graph .edge.contra line { stroke: var(--gegen); }
-svg.graph .edge line { transition: stroke-width 0.12s ease; }
+svg.graph .edge path,
+svg.graph .edge line { transition: stroke-width 0.12s var(--ease); fill: none; }
+svg.graph .edge:hover path,
+svg.graph .edge:focus-visible path,
 svg.graph .edge:hover line,
 svg.graph .edge:focus-visible line { stroke-width: 7; }
+
+svg.graph .edge:focus-visible .edge-hit {
+  stroke: var(--marke);
+  stroke-width: 2;
+  fill: color-mix(in oklch, var(--marke) 18%, transparent);
+}
 
 svg.graph .edge-hit {
   fill: transparent;
@@ -668,6 +961,19 @@ svg.graph .edge:hover .edge-hit,
 svg.graph .edge:focus-visible .edge-hit {
   fill: currentColor;
   fill-opacity: 0.16;
+}
+
+svg.graph .edge-count {
+  font-size: 11px;
+  font-weight: 650;
+  pointer-events: none;
+  fill: var(--tinte);
+}
+svg.graph .edge.agree .edge-count { fill: var(--einig); }
+svg.graph .edge.contra .edge-count { fill: var(--gegen); }
+
+svg.graph .node {
+  cursor: pointer;
 }
 
 .legend {
@@ -698,12 +1004,13 @@ svg.graph .edge:focus-visible .edge-hit {
 /* --------------------------------------------------------------- Hinweise */
 
 .banner {
-  border-top: var(--kante) solid var(--achtung);
-  padding-top: calc(var(--pad) - 2px);
+  padding: var(--pad);
   margin-bottom: 20px;
   display: grid;
   gap: 10px;
   justify-items: start;
+  border-color: color-mix(in oklch, var(--achtung) 45%, var(--linie));
+  background: color-mix(in oklch, var(--achtung) 8%, var(--karte));
 }
 
 .banner .hint {
@@ -716,8 +1023,6 @@ svg.graph .edge:focus-visible .edge-hit {
   margin-top: 36px;
   display: grid;
   gap: 14px;
-  border-top: var(--kante) solid var(--linie-kraeftig);
-  padding-top: calc(var(--pad) - 2px);
 }
 
 .closing textarea {
@@ -725,7 +1030,7 @@ svg.graph .edge:focus-visible .edge-hit {
 }
 
 .closed-banner {
-  border-top-color: var(--achtung);
+  border-color: color-mix(in oklch, var(--achtung) 45%, var(--linie));
 }
 
 footer.foot {
@@ -735,6 +1040,7 @@ footer.foot {
   color: var(--tinte-matt);
   font-size: 0.78rem;
   overflow-wrap: anywhere;
+  max-width: 46rem;
 }
 
 .sr-only {
@@ -749,23 +1055,46 @@ footer.foot {
   border: 0;
 }
 
+/* ------------------------------------------------------------ Leerer Tisch */
+
+.tisch-leer {
+  margin: 12px 0 28px;
+  padding: 28px 4px 8px;
+  max-width: 36rem;
+  view-transition-name: leer;
+}
+
+.tisch-leer .leer-zeile {
+  margin: 0 0 8px;
+  font-family: var(--schrift-anzeige);
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.tisch-leer .hint {
+  font-size: 0.95rem;
+  max-width: 38ch;
+}
+
 /* ----------------------------------------------------------- Einstellungen */
 
 .settings {
   display: grid;
   gap: 16px;
   margin-bottom: 28px;
-  border-top: var(--kante) solid var(--marke);
-  padding-top: calc(var(--pad) - 2px);
+  view-transition-name: einstellungen;
 }
 
 .settings h4 {
   margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tinte-matt);
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--tinte);
 }
 
 .settings-body {
@@ -779,13 +1108,16 @@ footer.foot {
   gap: 10px;
   padding: 14px;
   border: 1px solid var(--linie);
-  border-left: 3px solid var(--linie-kraeftig);
   border-radius: var(--radius-klein);
   background: var(--karte-matt);
   min-width: 0;
 }
 
-.anbieter.bereit { border-left-color: var(--einig); }
+.anbieter.bereit {
+  background: color-mix(in oklch, var(--einig) 7%, var(--karte-matt));
+  border-color: color-mix(in oklch, var(--einig) 28%, var(--linie));
+}
+
 .anbieter.aus { opacity: 0.72; }
 
 .anbieter-kopf {
@@ -884,7 +1216,7 @@ footer.foot {
   gap: 8px;
   align-items: center;
   padding: 10px 12px;
-  border-left: 3px solid var(--marke);
+  border: 1px solid color-mix(in oklch, var(--marke) 35%, var(--linie));
   background: var(--marke-hell);
   border-radius: var(--radius-klein);
   min-width: 0;
@@ -961,33 +1293,37 @@ details.kontext-roh > summary {
   gap: 8px;
   padding: 10px 12px;
   border: 1px solid var(--linie);
-  border-left: 3px solid var(--tinte-matt);
   border-radius: var(--radius-klein);
   margin-bottom: 8px;
   min-width: 0;
   font-size: 0.86rem;
 }
 
-.bezug-zeile.bestaetigt { border-left-color: var(--einig); }
-.bezug-zeile.abgelehnt { border-left-color: var(--linie-kraeftig); opacity: 0.66; }
+.bezug-zeile.bestaetigt {
+  border-color: color-mix(in oklch, var(--einig) 40%, var(--linie));
+  background: color-mix(in oklch, var(--einig) 7%, var(--karte));
+}
+.bezug-zeile.abgelehnt { border-color: var(--linie-kraeftig); opacity: 0.66; }
 .bezug-zeile button { font-size: 0.78rem; padding: 5px 10px; }
 
 /* --- Zustände, die beim Bau dazugekommen sind ---------------------------- */
 
-/* „schreibt“ ist ein laufender Zustand: dieselbe ruhige Marke wie „denkt nach“.
-   Abgebrochen ist kein Fehler, sondern eine Entscheidung — darum grau, nicht rot. */
+/* Kante trägt den Zustand mit, nie allein. Acht Zustände, acht Farben der Kante. */
+.card.zustand-not_requested { border-top-color: var(--linie-kraeftig); }
+.card.zustand-queued { border-top-color: var(--marke); }
+.card.zustand-running { border-top-color: var(--marke); }
 .card.zustand-streaming { border-top-color: var(--marke); }
+.card.zustand-done { border-top-color: var(--linie); }
+.card.zustand-error { border-top-color: var(--gegen); }
+.card.zustand-interrupted { border-top-color: var(--achtung); }
 .card.zustand-cancelled { border-top-color: var(--linie-kraeftig); }
-
-.tag.streaming { color: var(--marke); background: var(--marke-hell); border-color: transparent; }
-.tag.cancelled { color: var(--tinte-matt); background: var(--flaeche-tief); border-color: transparent; }
 
 /* Solange geschrieben wird, zeigt ein kleiner Balken, dass der Text noch wächst. */
 .card.zustand-streaming .answer::after {
   content: '';
   display: inline-block;
-  width: 0.5ch;
-  height: 1em;
+  width: 0.45ch;
+  height: 0.95em;
   margin-left: 2px;
   vertical-align: text-bottom;
   background: var(--marke);
@@ -996,16 +1332,12 @@ details.kontext-roh > summary {
 
 @keyframes schreibt { 50% { opacity: 0; } }
 
-@media (prefers-reduced-motion: reduce) {
-  .card.zustand-streaming .answer::after { animation: none; }
-}
-
 /* --- Entwürfe ------------------------------------------------------------ */
 
 #entwuerfe {
   display: grid;
   gap: 10px;
-  border-left: 3px solid var(--achtung);
+  border-color: color-mix(in oklch, var(--achtung) 45%, var(--linie));
 }
 
 .entwurf {
@@ -1019,7 +1351,7 @@ details.kontext-roh > summary {
 }
 
 .entwurf p { margin: 0; overflow-wrap: anywhere; }
-.entwurf .question { font-size: 0.9rem; }
+.entwurf .question { font-size: 1rem; }
 
 /* --- Wechselgespräch ----------------------------------------------------- */
 
@@ -1033,28 +1365,21 @@ details.kontext-roh > summary {
   padding: 10px 12px;
   margin: 10px 0;
   border: 1px solid var(--linie);
-  border-left: 3px solid var(--linie-kraeftig);
   border-radius: var(--radius-klein);
   min-width: 0;
 }
 
-.pingpong-lauf.laeuft { border-left-color: var(--marke); }
-.pingpong-lauf.beendet { border-left-color: var(--einig); }
-.pingpong-lauf.gestoppt { border-left-color: var(--achtung); }
+.pingpong-lauf.laeuft {
+  border-color: color-mix(in oklch, var(--marke) 45%, var(--linie));
+  background: var(--marke-hell);
+}
+.pingpong-lauf.beendet {
+  border-color: color-mix(in oklch, var(--einig) 40%, var(--linie));
+}
+.pingpong-lauf.gestoppt {
+  border-color: color-mix(in oklch, var(--achtung) 40%, var(--linie));
+}
 .pingpong-lauf button { justify-self: start; font-size: 0.78rem; padding: 5px 10px; }
-
-.modelpicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-}
-
-.modelpicker label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 400;
-}
 
 /* --- Hinweis auf neue Beiträge ------------------------------------------ */
 
@@ -1065,11 +1390,10 @@ details.kontext-roh > summary {
   left: 50%;
   bottom: 18px;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: var(--z-hinweis);
   background: var(--marke);
   border-color: var(--marke);
-  color: #fff;
-  box-shadow: var(--schatten-tief);
+  color: var(--marke-tinte);
 }
 
 /* --- Sitzungswahl -------------------------------------------------------- */
@@ -1080,6 +1404,7 @@ details.kontext-roh > summary {
   gap: 8px;
   min-width: 0;
   margin-top: 8px;
+  max-width: 100%;
 }
 
 .sitzungen select { max-width: 100%; font-size: 0.86rem; }
@@ -1089,3 +1414,43 @@ details.kontext-roh > summary {
 
 .spark-block.art-kuratierung > h2,
 .spark-block.art-pingpong > h2 { color: var(--tinte-matt); }
+
+/* Scroll: Funken treten ein, ohne den Lesefluss zu choreografieren. */
+@supports (animation-timeline: view()) {
+  .spark-block {
+    animation: eintritt linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 18%;
+  }
+
+  @keyframes eintritt {
+    from { opacity: 0.55; }
+    to { opacity: 1; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-timeline: none !important;
+  }
+
+  .card.zustand-streaming .answer::after { animation: none; opacity: 1; }
+
+  .satzvorgang span,
+  .skeleton {
+    animation: none !important;
+    transform: none;
+    opacity: 0.7;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

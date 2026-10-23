@@ -22,6 +22,41 @@ import type {
 } from './types';
 
 const STORAGE_KEY = 'xpertentisch.session';
+const THEME_KEY = 'xpertentisch.theme';
+
+type Thema = 'system' | 'light' | 'dark';
+
+function geltendesThema(): Thema {
+  try {
+    const wert = localStorage.getItem(THEME_KEY);
+    if (wert === 'light' || wert === 'dark') return wert;
+  } catch {
+    /* ohne Speicher folgt die Systemeinstellung */
+  }
+  return 'system';
+}
+
+function setzeThema(mode: Thema): void {
+  try {
+    localStorage.setItem(THEME_KEY, mode);
+  } catch {
+    /* ohne Speicher gilt die Wahl nur für diese Ansicht */
+  }
+  if (mode === 'system') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = mode;
+}
+
+function mitUebergang(arbeit: () => void): void {
+  const reduziert = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const start = (
+    document as Document & { startViewTransition?: (cb: () => void) => unknown }
+  ).startViewTransition;
+  if (reduziert || typeof start !== 'function') {
+    arbeit();
+    return;
+  }
+  start.call(document, arbeit);
+}
 
 interface AppState {
   config: AppConfig | null;
@@ -88,6 +123,7 @@ const root = document.getElementById('app')!;
 // --------------------------------------------------------------------- Start
 
 async function boot(): Promise<void> {
+  setzeThema(geltendesThema());
   try {
     const [config, health] = await Promise.all([api.config(), api.health()]);
     state.config = config;
@@ -196,6 +232,16 @@ function renderShell(): void {
     const block = renderSparkBlock(entry);
     blocks.set(entry.spark.id, block);
     stream.append(block);
+  }
+  if (bundle.sparks.length === 0) {
+    stream.append(
+      el('div', { class: 'tisch-leer', id: 'tisch-leer' }, [
+        el('p', { class: 'leer-zeile' }, ['Noch keine Stimme am Tisch.']),
+        el('p', { class: 'hint' }, [
+          'Ein Funke oben. Die Modelle antworten unabhängig — nichts wird verrechnet, nichts gewinnt.',
+        ]),
+      ]),
+    );
   }
 
   root.append(closingSection());
@@ -312,8 +358,10 @@ function header(): HTMLElement {
     title: 'Einstellungen — Zugangsdaten und Modelle',
   }, ['⚙︎']);
   zahnrad.addEventListener('click', () => {
-    state.settingsOpen = !state.settingsOpen;
-    renderShell();
+    mitUebergang(() => {
+      state.settingsOpen = !state.settingsOpen;
+      renderShell();
+    });
     if (state.settingsOpen) {
       document.getElementById('einstellungen')?.scrollIntoView({ block: 'nearest' });
     }
@@ -325,8 +373,31 @@ function header(): HTMLElement {
       el('p', { class: 'sub' }, ['Mobiler TiSCH']),
       sitzungswahl(),
     ]),
-    el('div', { class: 'row' }, [status, zahnrad]),
+    el('div', { class: 'row' }, [status, themaWahl(), zahnrad]),
   ]);
+}
+
+function themaWahl(): HTMLElement {
+  const wrap = el('div', { class: 'thema-wahl', role: 'group', 'aria-label': 'Darstellung' });
+  const aktuell = geltendesThema();
+  const knoepfe: Array<[Thema, string]> = [
+    ['system', 'System'],
+    ['light', 'Hell'],
+    ['dark', 'Dunkel'],
+  ];
+  for (const [mode, label] of knoepfe) {
+    const knopf = el('button', {
+      type: 'button',
+      'aria-pressed': aktuell === mode ? 'true' : 'false',
+    }, [label]);
+    knopf.addEventListener('click', () => {
+      setzeThema(mode);
+      wrap.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      knopf.setAttribute('aria-pressed', 'true');
+    });
+    wrap.append(knopf);
+  }
+  return wrap;
 }
 
 /** Zwischen Sitzungen wechseln oder eine neue beginnen. */
@@ -378,7 +449,7 @@ async function wechsleSitzung(sessionId: string): Promise<void> {
     state.bezug = null;
     state.pingpong = [];
     rememberSession(sessionId);
-    renderShell();
+    mitUebergang(() => renderShell());
     openStream();
     void ladePingPong();
   } catch (fehler) {

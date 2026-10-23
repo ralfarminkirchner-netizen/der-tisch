@@ -54,9 +54,13 @@ function formatDuration(ms: number | null): string {
  */
 export function createCard(job: Job, markers: Marker[]): HTMLElement {
   const card = el('article', { class: 'flaeche card', 'data-job-id': job.id });
+  card.style.viewTransitionName = `karte-${cssIdent(job.id)}`;
   card.append(
     el('header', {}, [
-      el('h3', {}, [job.label]),
+      el('div', { class: 'card-titel' }, [
+        el('h3', {}, [job.label]),
+        el('p', { class: 'card-herkunft' }, []),
+      ]),
       el('div', { class: 'tags' }),
     ]),
     el('div', { class: 'card-body' }),
@@ -67,38 +71,43 @@ export function createCard(job: Job, markers: Marker[]): HTMLElement {
   return card;
 }
 
+function cssIdent(value: string): string {
+  return value.replace(/[^A-Za-z0-9_-]/g, '-');
+}
+
 export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void {
-  // Die farbige Kante oben trägt den Zustand.
   card.className = `flaeche card zustand-${job.status}${
     card.classList.contains('highlight') ? ' highlight' : ''
   }`;
   const tags = card.querySelector('.tags');
   const body = card.querySelector('.card-body');
+  const herkunft = card.querySelector('.card-herkunft');
   if (!tags || !body) return;
+
+  if (herkunft) herkunft.textContent = `${job.provider} · ${job.model}`;
 
   tags.replaceChildren();
   tags.append(el('span', { class: `tag ${job.status}` }, [STATUS_LABEL[job.status] ?? job.status]));
   if (job.partial) tags.append(el('span', { class: 'tag partial' }, ['Teilantwort']));
-  tags.append(el('span', { class: 'tag' }, [`${job.provider} · ${job.model}`]));
   if (job.latency_ms !== null && job.status !== 'running' && job.status !== 'streaming') {
-    tags.append(el('span', { class: 'tag' }, [formatDuration(job.latency_ms)]));
+    tags.append(el('span', { class: 'tag meta' }, [formatDuration(job.latency_ms)]));
   }
   if (job.tokens_in !== null || job.tokens_out !== null) {
     tags.append(
-      el('span', { class: 'tag', title: 'verbrauchte Token (ein/aus)' }, [
+      el('span', { class: 'tag meta', title: 'verbrauchte Token (ein/aus)' }, [
         `${job.tokens_in ?? '?'}/${job.tokens_out ?? '?'} Token`,
       ]),
     );
   }
   if (job.cost_source === 'berechnet' && job.cost_micro !== null) {
     tags.append(
-      el('span', { class: 'tag', title: 'mit den von dir eingetragenen Preisen berechnet' }, [
+      el('span', { class: 'tag meta', title: 'mit den von dir eingetragenen Preisen berechnet' }, [
         formatCost(job.cost_micro),
       ]),
     );
   } else if ((job.tokens_in ?? job.tokens_out) !== null) {
     tags.append(
-      el('span', { class: 'tag', title: 'ohne hinterlegte Preise wird nichts geschätzt' }, [
+      el('span', { class: 'tag meta', title: 'ohne hinterlegte Preise wird nichts geschätzt' }, [
         'Kosten unbekannt',
       ]),
     );
@@ -107,11 +116,12 @@ export function updateCard(card: HTMLElement, job: Job, markers: Marker[]): void
   body.replaceChildren();
 
   if (job.status === 'queued' || job.status === 'running') {
-    body.append(
-      el('div', { class: 'skeleton' }),
-      el('div', { class: 'skeleton' }),
-      el('div', { class: 'skeleton' }),
-    );
+    const vorgang = el('div', {
+      class: 'satzvorgang',
+      'aria-hidden': 'true',
+    });
+    vorgang.append(el('span'), el('span'), el('span'));
+    body.append(vorgang);
   }
 
   if (job.error) {
